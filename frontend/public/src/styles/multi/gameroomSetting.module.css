@@ -1,0 +1,4 @@
+.gameroomSetting {
+  height: 80px;
+  @apply grid grid-cols-12 border items-center bg-gray-200
+}

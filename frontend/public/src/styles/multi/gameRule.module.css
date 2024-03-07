@@ -1,0 +1,4 @@
+.gameRule {
+  height: 150px;
+  @apply bg-gray-500 border text-white 
+}

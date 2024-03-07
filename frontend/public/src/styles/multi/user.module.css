@@ -1,0 +1,4 @@
+.user {
+  height: 80px;
+  @apply border border-black bg-slate-100 grid grid-cols-12 items-center
+}

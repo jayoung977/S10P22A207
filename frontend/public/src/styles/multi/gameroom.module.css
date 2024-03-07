@@ -1,0 +1,4 @@
+.gameroom {
+  height: 50px;
+  @apply border rounded-md mt-1 p-1 bg-slate-50
+}

@@ -1,0 +1,4 @@
+.roomInfo {
+  height: 200px;
+  @apply bg-indigo-100 border
+}
