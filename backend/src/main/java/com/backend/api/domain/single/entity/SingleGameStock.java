@@ -1,10 +1,12 @@
 package com.backend.api.domain.single.entity;
 
-import static jakarta.persistence.FetchType.LAZY;
-import static jakarta.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.PROTECTED;
+import static jakarta.persistence.FetchType.*;
+import static jakarta.persistence.GenerationType.*;
+import static lombok.AccessLevel.*;
 
 import com.backend.api.domain.BaseEntity;
+import com.backend.api.domain.stock.entity.Stock;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,6 +31,9 @@ public class SingleGameStock extends BaseEntity {
 
     @ManyToOne(fetch = LAZY)
     private SingleGameLog singleGameLog;
+
+    @ManyToOne(fetch = LAZY)
+    private Stock stock;
 
     @NotNull
     private Long stockId;
