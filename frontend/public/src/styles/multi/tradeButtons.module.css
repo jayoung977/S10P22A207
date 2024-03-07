@@ -1,0 +1,7 @@
+.buttons {
+  @apply grid grid-rows-4 gap-4 m-1
+}
+
+.buttons button {
+  @apply border p-1 rounded-md bg-slate-600
+}

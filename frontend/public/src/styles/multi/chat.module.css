@@ -1,0 +1,12 @@
+.chat {
+  height: auto;
+  @apply border grid grid-cols-12
+}
+
+.chat input{
+  @apply w-2/3 p-1 m-1
+}
+
+.chat button {
+  @apply rounded-md p-1 bg-slate-600 text-white m-1
+}

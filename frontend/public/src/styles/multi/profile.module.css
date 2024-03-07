@@ -1,0 +1,4 @@
+.profile {
+  height: 250px;
+  @apply grid grid-rows-4  bg-slate-500 text-white items-center
+}
