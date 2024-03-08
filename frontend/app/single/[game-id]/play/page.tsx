@@ -18,20 +18,20 @@ export default function SinglePlay () {
         <div className="grid grid-rows-12 h-screen border-separate" style={{ borderCollapse: 'separate' }}>
             {/* navbar */}
             <Navbar />
-            <div className="row-start-2 row-end-13 grid grid-cols-12 border border-black">
+            <div className="row-span-11 grid grid-cols-12 border border-black">
                 {/* left aside */}
-                <aside className="col-start-1 col-end-4 grid grid-rows-3 border border-black">
+                <aside className="col-span-3 grid grid-rows-3 border border-black">
                     <TotalAssets />
                     <AssetsHeld />
                     <SalesHistory />
                 </aside>
                 {/* main */}
-                <main className="col-start-4 col-end-10 grid grid-rows-12 border border-black">
+                <main className="col-span-6 grid grid-rows-12 border border-black">
                     <Chart />
                     <StockMarket />
                 </main>
                 {/* right aside */}
-                <aside className="col-start-10 col-end-13 grid grid-rows-6 border border-black">
+                <aside className="col-span-3 grid grid-rows-6 border border-black">
                     <TurnInfo />
                     <StockList />
                     <MarketAndTrends />
