@@ -24,14 +24,9 @@ function AssetHeld() {
 
 export default function AssetsHeld () {
     return (
-        <div className="row-start-2 row-end-3 grid grid-rows-6 border border-black">
+        <div className="row-span-1 grid grid-rows-6 border border-black">
             <div className="row-span-1 flex items-center border border-black pl-2">보유 자산</div>
-            <div className="row-span-5 overflow-y-auto block mt-3" style={{height: 'calc(22vh)'}}>
-                <AssetHeld />
-                <AssetHeld />
-                <AssetHeld />
-                <AssetHeld />
-                <AssetHeld />
+            <div className="row-span-5 overflow-y-auto block border border-black" style={{height: 'calc(25vh)'}}>
                 <AssetHeld />
                 <AssetHeld />
                 <AssetHeld />
