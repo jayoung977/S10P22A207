@@ -54,7 +54,7 @@ public class Member extends BaseEntity {
 	private GenderType gender;
 
 	@NotNull
-	private Long asset = 10000000L;
+	private Long asset = 10_000_000L;
 
 	@NotNull
 	private Integer rankPoint = 0;
@@ -77,9 +77,6 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "follower")
 	private List<Friend> followers = new ArrayList<>();
 
-	@OneToMany(mappedBy = "following")
-	private List<Friend> followings = new ArrayList<>();
-
 	@OneToMany(mappedBy = "receiver")
 	private List<FriendAsk> receivers = new ArrayList<>();
 
@@ -101,13 +98,29 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "member")
 	private List<SingleGameLog> singleGameLogs = new ArrayList<>();
 
+	/* Fund */
+	@OneToMany(mappedBy = "manager")    // 매니저로 활동하는 펀드 리스트
+	private List<Fund> fundList = new ArrayList<>();
+
+	/* Friend */
+	@OneToMany(mappedBy = "follower")
+	private List<Friend> friendList = new ArrayList<>();    // 내 친구 목록
+
+	/* FriendAsk */
+	@OneToMany(mappedBy = "sender")
+	private List<FriendAsk> friendAskSendList = new ArrayList<>();  // 내가 친구요청 보낸 목록
+
+	@OneToMany(mappedBy = "receiver")
+	private List<FriendAsk> friendAskReceiveList = new ArrayList<>();  // 나에게 온 친구 요청
+
 	@Builder
-	public Member(Long id, String email, String nickname, Short birthYear, GenderType gender, Long asset,
-		Integer rankPoint, Integer win, Integer lose, Double singleAvgRoi, Double multiAvgRoi, List<Notice> notices,
-		List<Friend> followers, List<Friend> followings, List<FriendAsk> receivers, List<FriendAsk> senders,
-		List<Fund> funds, List<FundMember> fundMembers, List<Community> communities, List<MultiGameLog> multiGameLogs,
-		List<SingleGameLog> singleGameLogs) {
-		this.id = id;
+	public Member(String email, String nickname, Short birthYear, GenderType gender, Long asset, Integer rankPoint,
+		Integer win, Integer lose, Double singleAvgRoi, Double multiAvgRoi, List<Notice> notices,
+		List<Friend> followers,
+		List<FriendAsk> receivers, List<FriendAsk> senders, List<Fund> funds, List<FundMember> fundMembers,
+		List<Community> communities, List<MultiGameLog> multiGameLogs, List<SingleGameLog> singleGameLogs,
+		List<Fund> fundList, List<Friend> friendList, List<FriendAsk> friendAskSendList,
+		List<FriendAsk> friendAskReceiveList) {
 		this.email = email;
 		this.nickname = nickname;
 		this.birthYear = birthYear;
@@ -120,7 +133,6 @@ public class Member extends BaseEntity {
 		this.multiAvgRoi = multiAvgRoi;
 		this.notices = notices;
 		this.followers = followers;
-		this.followings = followings;
 		this.receivers = receivers;
 		this.senders = senders;
 		this.funds = funds;
@@ -128,18 +140,9 @@ public class Member extends BaseEntity {
 		this.communities = communities;
 		this.multiGameLogs = multiGameLogs;
 		this.singleGameLogs = singleGameLogs;
+		this.fundList = fundList;
+		this.friendList = friendList;
+		this.friendAskSendList = friendAskSendList;
+		this.friendAskReceiveList = friendAskReceiveList;
 	}
-
-	/* Fund */
-	@OneToMany(mappedBy = "manager")    // 매니저로 활동하는 펀드 리스트
-	private List<Fund> fundList = new ArrayList<>();
-	/* Friend */
-	@OneToMany(mappedBy = "follower")
-	private List<Friend> friendList = new ArrayList<>();    // 내 친구 목록
-	/* FriendAsk */
-	@OneToMany(mappedBy = "sender")
-	private List<FriendAsk> friendAskSendList = new ArrayList<>();  // 내가 친구요청 보낸 목록
-	@OneToMany(mappedBy = "receiver")
-	private List<FriendAsk> friendAskReceiveList = new ArrayList<>();  // 나에게 온 친구 요청
-
 }
