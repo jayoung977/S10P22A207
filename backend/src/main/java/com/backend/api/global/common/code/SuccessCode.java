@@ -14,6 +14,7 @@ public enum SuccessCode {
     SIGNOUT_SUCCESS(200, "200", "SIGN OUT SUCCESS"),
     // 삽입 성공 코드 (HTTP Response: 201 Created)
     INSERT_SUCCESS(201, "201", "INSERT SUCCESS"),
+    CREATE_SUCCESS(201, "201", "CREATE SUCCESS"),
     // 수정 성공 코드 (HTTP Response: 201 Created)
     UPDATE_SUCCESS(201, "201", "UPDATE SUCCESS"),
 

@@ -40,5 +40,4 @@ public class FriendAsk extends BaseEntity {
 		this.sender = sender;
 		this.receiver = receiver;
 	}
-
 }
