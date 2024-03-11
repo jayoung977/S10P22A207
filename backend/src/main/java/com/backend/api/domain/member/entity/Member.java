@@ -41,11 +41,11 @@ public class Member extends BaseEntity {
 	private Long id;
 
 	@NotNull
-	@Column(length = 100)
+	@Column(unique = true, length = 100)
 	private String email;
 
 	@NotNull
-	@Column(length = 100)
+	@Column(unique = true, length = 100)
 	private String nickname;
 
 	private Short birthYear; //null값 사용하므로 Wrapper Class 사용
