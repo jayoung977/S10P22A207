@@ -1,65 +1,139 @@
 export default function UserRecordInfoFund() {
   return (
-    <div className="row-span-5 grid grid-rows-6">
-      <div className="row-span-1 grid grid-cols-5">
-        <div className="col-span-1 border border-black">펀드이름</div>
-        <div className="col-span-1 border border-black">기간</div>
-        <div className="col-span-1 border border-black">펀드자금</div>
-        <div className="col-span-1 border border-black">수익률</div>
-        <div className="col-span-1 border border-black">수익</div>
-      </div>
-      <div className="row-span-5 grid grid-rows-6">
-        <div className="row-span-1 grid grid-cols-5">
-          <div className="col-span-1">마음을비우세요</div>
-          <div className="col-span-1">모집중</div>
-          <div className="col-span-1">10,000,000원</div>
-          <div className="col-span-1">-</div>
-          <div className="col-span-1">-</div>
-        </div>
-        <div className="row-span-1 grid grid-cols-5">
-          <div className="col-span-1">마음을비우세요</div>
-          <div className="col-span-1">모집중</div>
-          <div className="col-span-1">10,000,000원</div>
-          <div className="col-span-1">-</div>
-          <div className="col-span-1">-</div>
-        </div>
-        <div className="row-span-1 grid grid-cols-5">
-          <div className="col-span-1">마음을비우세요</div>
-          <div className="col-span-1">모집중</div>
-          <div className="col-span-1">10,000,000원</div>
-          <div className="col-span-1">-</div>
-          <div className="col-span-1">-</div>
-        </div>
-        <div className="row-span-1 grid grid-cols-5">
-          <div className="col-span-1">마음을비우세요</div>
-          <div className="col-span-1">모집중</div>
-          <div className="col-span-1">10,000,000원</div>
-          <div className="col-span-1">-</div>
-          <div className="col-span-1">-</div>
-        </div>
-        <div className="row-span-1 grid grid-cols-5">
-          <div className="col-span-1">마음을비우세요</div>
-          <div className="col-span-1">모집중</div>
-          <div className="col-span-1">10,000,000원</div>
-          <div className="col-span-1">-</div>
-          <div className="col-span-1">-</div>
-        </div>
-        <div className="row-span-1 grid grid-cols-5">
-          <div className="col-span-1">마음을비우세요</div>
-          <div className="col-span-1">모집중</div>
-          <div className="col-span-1">10,000,000원</div>
-          <div className="col-span-1">-</div>
-          <div className="col-span-1">-</div>
-        </div>
-        <div className="row-span-1 grid grid-cols-5">
-          <div className="col-span-1">마음을비우세요</div>
-          <div className="col-span-1">모집중</div>
-          <div className="col-span-1">10,000,000원</div>
-          <div className="col-span-1">-</div>
-          <div className="col-span-1">-</div>
-        </div>
-      </div>
-
+    <div className="row-span-5 relative overflow-auto max-h-80">
+      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" className="px-6 py-3">
+              펀드이름
+            </th>
+            <th scope="col" className="px-6 py-3">
+              기간
+            </th>
+            <th scope="col" className="px-6 py-3">
+              펀드 자금
+            </th>
+            <th scope="col" className="px-6 py-3">
+              수익률
+            </th>
+            <th scope="col" className="px-6 py-3">
+              수익
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              Apple MacBook Pro 17"
+            </th>
+            <td className="px-6 py-4">Silver</td>
+            <td className="px-6 py-4">Laptop</td>
+            <td className="px-6 py-4">$2999</td>
+          </tr>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              Apple MacBook Pro 17"
+            </th>
+            <td className="px-6 py-4">Silver</td>
+            <td className="px-6 py-4">Laptop</td>
+            <td className="px-6 py-4">$2999</td>
+          </tr>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              Apple MacBook Pro 17"
+            </th>
+            <td className="px-6 py-4">Silver</td>
+            <td className="px-6 py-4">Laptop</td>
+            <td className="px-6 py-4">$2999</td>
+          </tr>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              Apple MacBook Pro 17"
+            </th>
+            <td className="px-6 py-4">Silver</td>
+            <td className="px-6 py-4">Laptop</td>
+            <td className="px-6 py-4">$2999</td>
+          </tr>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              Apple MacBook Pro 17"
+            </th>
+            <td className="px-6 py-4">Silver</td>
+            <td className="px-6 py-4">Laptop</td>
+            <td className="px-6 py-4">$2999</td>
+          </tr>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              Apple MacBook Pro 17"
+            </th>
+            <td className="px-6 py-4">Silver</td>
+            <td className="px-6 py-4">Laptop</td>
+            <td className="px-6 py-4">$2999</td>
+          </tr>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              Apple MacBook Pro 17"
+            </th>
+            <td className="px-6 py-4">Silver</td>
+            <td className="px-6 py-4">Laptop</td>
+            <td className="px-6 py-4">$2999</td>
+          </tr>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              Apple MacBook Pro 17"
+            </th>
+            <td className="px-6 py-4">Silver</td>
+            <td className="px-6 py-4">Laptop</td>
+            <td className="px-6 py-4">$2999</td>
+          </tr>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              Microsoft Surface Pro
+            </th>
+            <td className="px-6 py-4">White</td>
+            <td className="px-6 py-4">Laptop PC</td>
+            <td className="px-6 py-4">$1999</td>
+          </tr>
+          <tr className="bg-white dark:bg-gray-800">
+            <th
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              Magic Mouse 2
+            </th>
+            <td className="px-6 py-4">Black</td>
+            <td className="px-6 py-4">Accessories</td>
+            <td className="px-6 py-4">$99</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }
