@@ -10,7 +10,7 @@ export default function UserRecordInfo() {
   return (
     <div className="row-start-4 row-end-13 grid grid-rows-6">
       <div className="row-span-1 grid grid-cols-4">
-        <div className="border border-black col-span-1">
+        <div className="flex items-center justify-center col-span-1">
           <button
             onClick={() => {
               setToggleButton("single");
@@ -19,7 +19,7 @@ export default function UserRecordInfo() {
             싱글기록
           </button>
         </div>
-        <div className="border border-black col-span-1">
+        <div className="flex items-center justify-center col-span-1">
           <button
             onClick={() => {
               setToggleButton("multi");
@@ -28,7 +28,7 @@ export default function UserRecordInfo() {
             멀티기록
           </button>
         </div>
-        <div className="border border-black col-span-1">
+        <div className="flex items-center justify-center col-span-1">
           <button
             onClick={() => {
               setToggleButton("fund");
@@ -37,7 +37,7 @@ export default function UserRecordInfo() {
             펀드
           </button>
         </div>
-        <div className="border border-black col-span-1">
+        <div className="flex items-center justify-center col-span-1">
           <button
             onClick={() => {
               setToggleButton("board");

@@ -5,20 +5,35 @@ import { useRouter } from "next/navigation";
 export default function Navbar() {
   const router = useRouter();
   return (
-    <div className="row-span-1 grid grid-cols-12 border border-black">
-      <div className="col-start-1 col-end-2 border border-black flex items-center justify-center">
+    <div className="row-start-1 row-end-2 grid grid-cols-12 border border-black">
+      <div
+        className="col-start-1 col-end-2 border border-black flex items-center justify-center"
+        onClick={() => {
+          router.push("/multi");
+        }}
+      >
         로고 이미지
       </div>
       <div className="col-start-2 col-end-5 border border-black flex items-center justify-center">
         빈칸
       </div>
-      <div className="col-start-5 col-end-6 border border-black flex items-center justify-center">
+      <div
+        className="col-start-5 col-end-6 border border-black flex items-center justify-center"
+        onClick={() => {
+          router.push("/single/1/play");
+        }}
+      >
         게임
       </div>
-      <div className="col-start-6 col-end-7 border border-black flex items-center justify-center">
+      <div
+        className="col-start-6 col-end-7 border border-black flex items-center justify-center"
+        onClick={() => {
+          router.push("/fund/recruiting");
+        }}
+      >
         펀드
       </div>
-      <div 
+      <div
         className="col-start-7 col-end-8 border border-black flex items-center justify-center"
         onClick={() => {
           router.push("/board");

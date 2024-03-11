@@ -1,6 +1,6 @@
 export default function SingleRanking() {
   return (
-    <div className="border border-black row-span-5 grid grid-rows-4">
+    <div className="p-4 row-span-5 grid grid-rows-4">
       <div className="row-span-1 border border-black grid grid-cols-5">랭킹</div>
       <div className="row-span-1 border border-black grid grid-cols-5">
         <div className="col-span-1">순위</div>

@@ -1,59 +1,276 @@
 export default function SingleTradeHistory() {
   return (
-    <div className="border border-black col-span-3 grid grid-rows-12">
-      <div className="row-span-1 border border-black">매매내역</div>
-      <div className="row-span-2 grid grid-cols-12 border border-black">
-        <div className="col-span-4">유형</div>
-        <div className="col-span-4">
-          <div>가격(수량)</div>
-          <div>수수료 및 세금</div>
-        </div>
-        <div className="col-span-4">
-          <div>체결금액</div>
-          <div>실현손익</div>
-        </div>
-      </div>
-      <div className="row-span-9 grid grid-rows-8 border border-black">
-        <div className="row-span-1 grid grid-cols-12 h-4 ">
-          <div className="col-span-4">매수</div>
-          <div className="col-span-4">5,624(1000)</div>
-          <div className="col-span-4">5,654,000</div>
-        </div>
-        <div className="row-span-1 grid grid-cols-12 h-4 ">
-          <div className="col-span-4">매수</div>
-          <div className="col-span-4">5,624(1000)</div>
-          <div className="col-span-4">5,654,000</div>
-        </div>
-        <div className="row-span-1 grid grid-cols-12 h-4 ">
-          <div className="col-span-4">매수</div>
-          <div className="col-span-4">5,624(1000)</div>
-          <div className="col-span-4">5,654,000</div>
-        </div>
-        <div className="row-span-1 grid grid-cols-12 h-4 ">
-          <div className="col-span-4">매수</div>
-          <div className="col-span-4">5,624(1000)</div>
-          <div className="col-span-4">5,654,000</div>
-        </div>
-        <div className="row-span-1 grid grid-cols-12 h-4 ">
-          <div className="col-span-4">매수</div>
-          <div className="col-span-4">5,624(1000)</div>
-          <div className="col-span-4">5,654,000</div>
-        </div>
-        <div className="row-span-1 grid grid-cols-12 h-4 ">
-          <div className="col-span-4">매수</div>
-          <div className="col-span-4">5,624(1000)</div>
-          <div className="col-span-4">5,654,000</div>
-        </div>
-        <div className="row-span-1 grid grid-cols-12 h-4 ">
-          <div className="col-span-4">매수</div>
-          <div className="col-span-4">5,624(1000)</div>
-          <div className="col-span-4">5,654,000</div>
-        </div>
-        <div className="row-span-1 grid grid-cols-12 h-4 ">
-          <div className="col-span-4">매수</div>
-          <div className="col-span-4">5,624(1000)</div>
-          <div className="col-span-4">5,654,000</div>
-        </div>
+    <div className="col-span-3 grid grid-rows-12 p-4">
+      <div className="row-span-1">매매내역</div>
+      <div className="row-span-11 relative overflow-auto shadow-md sm:rounded-lg max-h-96">
+        <table className="w-full text-sm text-left rtl:text-right text-blue-100 dark:text-blue-100">
+          <thead className="text-xs text-white uppercase bg-blue-600 border-b border-blue-400 dark:text-white ">
+            <tr>
+              <th scope="col" className="px-6 py-3">
+                유형
+              </th>
+              <th scope="col" className="px-6 py-3">
+                <p>가격(수량)</p>
+                <p>수수료 및 세금</p>
+              </th>
+              <th scope="col" className="px-6 py-3">
+                체결금액
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+            <tr className="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
+              >
+                매수
+              </th>
+              <td className="px-6 py-4">Silver</td>
+              <td className="px-6 py-4">Laptop</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   );
