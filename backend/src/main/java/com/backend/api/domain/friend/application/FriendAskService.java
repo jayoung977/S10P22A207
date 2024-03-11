@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.backend.api.domain.friend.dao.FriendAskRepository;
 import com.backend.api.domain.friend.dto.response.FriendRes;
 import com.backend.api.domain.friend.entity.FriendAsk;
-import com.backend.api.domain.member.dao.MemberRepository;
 import com.backend.api.domain.member.entity.Member;
+import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.exception.BaseExceptionHandler;
 
