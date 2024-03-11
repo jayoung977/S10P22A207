@@ -5,7 +5,7 @@ import StockTrade from './stockTrade'
 export default function TradeHistory(){
   return(
     <div className={styles.tradeHistory}>
-      <div className="grid grid-cols-12 items-center">
+      <div className="grid grid-cols-12 items-center text-sm shadow-md">
         <div className="col-span-4"> 유형</div>
         <div className="col-span-4">
           <div>가격</div>
@@ -16,7 +16,15 @@ export default function TradeHistory(){
           <div>체결 수량</div>
         </div>
       </div>
+      <div className='overflow-auto' style={{height: 'calc(30vh)'}}>
       <StockTrade/>
+      <StockTrade/>
+      <StockTrade/>
+      <StockTrade/>
+      <StockTrade/>
+      <StockTrade/>
+      <StockTrade/>
+      </div>
     </div>
   )
 }

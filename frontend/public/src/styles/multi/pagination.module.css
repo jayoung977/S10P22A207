@@ -1,5 +1,4 @@
 .pagination {
   width: 200px;
-  height: 40px;
-  @apply text-white m-2 bg-slate-400 flex justify-around items-center border
+  @apply text-white p-2 m-2 rounded-lg bg-slate-400 flex justify-around items-center border
 }

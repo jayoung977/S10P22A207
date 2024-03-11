@@ -5,16 +5,18 @@ import ProfileImage from '@/public/src/assets/images/profile-image.png'
 export default function User(){
   return (
     <div className={styles.user}>
-      <div className='col-span-3'>
-        <Image
-          src={ProfileImage}
-          alt='profile'
-        />
-        <div>개미는차갑다</div>
+      <div className='col-span-4 text-center'>
+        <div className='imageContainer'>
+          <Image
+            src={ProfileImage}
+            alt='profile'
+          />
+        </div>
+        <div>개미는뚠뚠</div>
       </div>
-      <div className='col-span-9'>
-        <div className='bg-blue-200'>(27/50)</div>
-        <div className='bg-gray-300'>10,000,000원 (-%)</div>
+      <div className='col-span-8'>
+        <div className='border'>(27/50)</div>
+        <div>1,000,000원 (-%)</div>
 
       </div>
     </div>

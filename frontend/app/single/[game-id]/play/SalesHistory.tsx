@@ -23,12 +23,15 @@ export default function SalesHistory () {
                     <SaleHistory />
                     <SaleHistory />
                     <SaleHistory />
+                    <SaleHistory />
+                    <SaleHistory />
+                    <SaleHistory />
+                    <SaleHistory />
+                    <SaleHistory />
+                    <SaleHistory />
+                    <SaleHistory />
                 </tbody>
             </table>
-            
-            
-            
-          
         </div>
     )
 }

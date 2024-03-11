@@ -3,12 +3,13 @@ import Profile from '@/public/src/assets/images/profile-image.png'
 
 export default function ProfileImage(){
   return(
-    <div className="bg-blue-400 col-span-3">
+    <div className="col-span-4">
       <Image
         src={Profile}
         alt="profile-image"
+        className="w-24 h-24 mb-3 rounded-full shadow-lg"
         />
-      <div>개미는차갑다</div>
+      <h5 className="mb-1 text-sm font-medium text-gray-900 dark:text-white">개미는 차갑다</h5>
     </div>
   )
 }

@@ -1,3 +1,3 @@
 .tradeHistory {
-  @apply bg-sky-300 row-span-5
+  @apply row-span-5 border
 }
