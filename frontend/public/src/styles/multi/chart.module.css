@@ -1,4 +1,7 @@
 .chart {
-  height: 400px;
-  @apply border
+  @apply border row-span-7
+}
+
+.chart img {
+  height: 350px;
 }

@@ -1,4 +1,3 @@
 .roomInfo {
-  height: 200px;
-  @apply bg-indigo-100 border
+  @apply  border row-span-3 grid grid-rows-3
 }

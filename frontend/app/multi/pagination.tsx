@@ -6,9 +6,9 @@ export default function Pagination(){
     <div className={styles.pagination}>
       {
         pages.map((page:number,i:number)=> (
-          <div key={i}>
+          <button key={i}>
             {page}
-          </div>
+          </button>
         ))
       }
     </div>

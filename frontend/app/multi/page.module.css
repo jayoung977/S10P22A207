@@ -1,9 +1,7 @@
 .upper {
-  height: 300px;
-  @apply grid grid-cols-12
+  @apply grid grid-cols-12 gap-4 row-span-4
 }
 
 .lower {
-  height: 400px;
-  @apply grid grid-cols-12 border gap-4
+  @apply grid grid-cols-12 gap-4 row-span-8 mt-4
 }

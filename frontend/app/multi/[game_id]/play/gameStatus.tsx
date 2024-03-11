@@ -4,16 +4,17 @@ import styles from '@/public/src/styles/multi/gameStatus.module.css'
 export default function GameStatus(){
   return(
     <div className={styles.gameStatus}>
-      <div className='row-span-2 grid grid-cols-12'>
-        <div className='col-span-3'>게임현황</div>
-        <div className='col-start-7 col-span-6'>초기자산: 10,000,000원</div>
+      <div className='row-span-1 flex justify-center text-sm'>
+        <div>
+          초기자산: 10,000,000원
+          </div>
       </div>
-      <div className='row-span-5'>
+      <div className='row-span-3'>
         <div>총 평가 자산</div>
         <div>12,000,000원</div>
         <div>+2,000,000원(+20%)</div>
       </div>
-      <div className='row-span-3 grid grid-cols-12'>
+      <div className='row-span-4 grid grid-cols-12 text-sm'>
         <div className='col-span-4'>
           <div>보유 현금</div>
           <div>9,000,000원</div>
@@ -27,7 +28,7 @@ export default function GameStatus(){
           <div>3,000,000원</div>
         </div>
       </div>
-      <div className='row-span-3 grid grid-cols-12'>
+      <div className='row-span-4 grid grid-cols-12 text-sm'>
         <div className='col-span-4'>
           <div>주식수</div>
           <div>100</div>
