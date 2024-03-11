@@ -1,6 +1,5 @@
 package com.backend.api.domain.multi.entity;
 
-import static jakarta.persistence.FetchType.*;
 import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
@@ -9,13 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.backend.api.domain.BaseEntity;
-import com.backend.api.domain.member.entity.Member;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -29,45 +26,29 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 public class MultiGameLog extends BaseEntity {
 
-    @Id
-    @Column(name = "multi_game_log_id")
-    @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+	@Id
+	@Column(name = "multi_game_log_id")
+	@GeneratedValue(strategy = IDENTITY)
+	private Long id;
 
-    @ManyToOne(fetch = LAZY)
-    private Member member;
+	@OneToMany(mappedBy = "multiGameLog")
+	private List<MultiTrade> multiTrade = new ArrayList<>();
 
-    @OneToMany(mappedBy = "multiGameLog")
-    private List<MultiTrade> multiTrade = new ArrayList<>();
+	@NotNull
+	private String gameLogId;
 
-    @NotNull
-    private String gameLogId;
+	@NotNull
+	private LocalDateTime startDate;
 
-    @NotNull
-    private Integer ranking = 0;
+	@OneToMany(mappedBy = "multiGameLog")
+	List<MultiGamePlayer> multiGamePlayers = new ArrayList<>();
 
-    @NotNull
-    private LocalDateTime startDate;
-
-    @OneToMany(mappedBy = "multiGameLog")
-    List<MultiGamePlayer> multiGamePlayers = new ArrayList<>();
-
-    @NotNull
-    private Double finalRoi;
-
-    @NotNull
-    private Integer finalProfit;
-
-    @Builder
-    public MultiGameLog(Member member, List<MultiTrade> multiTrade, String gameLogId, Integer ranking, LocalDateTime startDate,
-        List<MultiGamePlayer> multiGamePlayers, Double finalRoi, Integer finalProfit) {
-        this.member = member;
-        this.multiTrade = multiTrade;
-        this.gameLogId = gameLogId;
-        this.ranking = ranking;
-        this.startDate = startDate;
-        this.multiGamePlayers = multiGamePlayers;
-        this.finalRoi = finalRoi;
-        this.finalProfit = finalProfit;
-    }
+	@Builder
+	public MultiGameLog(List<MultiTrade> multiTrade, String gameLogId, LocalDateTime startDate,
+		List<MultiGamePlayer> multiGamePlayers) {
+		this.multiTrade = multiTrade;
+		this.gameLogId = gameLogId;
+		this.startDate = startDate;
+		this.multiGamePlayers = multiGamePlayers;
+	}
 }

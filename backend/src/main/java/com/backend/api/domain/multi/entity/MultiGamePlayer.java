@@ -1,14 +1,17 @@
 package com.backend.api.domain.multi.entity;
 
-import static jakarta.persistence.FetchType.LAZY;
-import static jakarta.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.PROTECTED;
+import static jakarta.persistence.FetchType.*;
+import static jakarta.persistence.GenerationType.*;
+import static lombok.AccessLevel.*;
 
 import com.backend.api.domain.BaseEntity;
+import com.backend.api.domain.member.entity.Member;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -29,13 +32,26 @@ public class MultiGamePlayer extends BaseEntity {
 
     @ManyToOne(fetch = LAZY)
     private MultiGameLog multiGameLog;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id", referencedColumnName = "member_id")
+    private Member member;
 
     @NotNull
-    private Long memberId;
+    private Integer ranking = 0;
+
+    @NotNull
+    private Double finalRoi;
+
+    @NotNull
+    private Integer finalProfit;
 
     @Builder
-    public MultiGamePlayer(MultiGameLog multiGameLog, Long memberId) {
+    public MultiGamePlayer(MultiGameLog multiGameLog, Member member, Integer ranking, Double finalRoi,
+        Integer finalProfit) {
         this.multiGameLog = multiGameLog;
-        this.memberId = memberId;
+        this.member = member;
+        this.ranking = ranking;
+        this.finalRoi = finalRoi;
+        this.finalProfit = finalProfit;
     }
 }

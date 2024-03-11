@@ -13,7 +13,7 @@ import com.backend.api.domain.friend.entity.FriendAsk;
 import com.backend.api.domain.fund.entity.Fund;
 import com.backend.api.domain.fund.entity.FundMember;
 import com.backend.api.domain.member.entity.type.GenderType;
-import com.backend.api.domain.multi.entity.MultiGameLog;
+import com.backend.api.domain.multi.entity.MultiGamePlayer;
 import com.backend.api.domain.notice.entity.Notice;
 import com.backend.api.domain.single.entity.SingleGameLog;
 
@@ -93,7 +93,7 @@ public class Member extends BaseEntity {
 	private List<Community> communities = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member")
-	private List<MultiGameLog> multiGameLogs = new ArrayList<>();
+	private List<MultiGamePlayer> multiGamePlayers = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member")
 	private List<SingleGameLog> singleGameLogs = new ArrayList<>();
@@ -118,7 +118,7 @@ public class Member extends BaseEntity {
 		Integer win, Integer lose, Double singleAvgRoi, Double multiAvgRoi, List<Notice> notices,
 		List<Friend> followers,
 		List<FriendAsk> receivers, List<FriendAsk> senders, List<Fund> funds, List<FundMember> fundMembers,
-		List<Community> communities, List<MultiGameLog> multiGameLogs, List<SingleGameLog> singleGameLogs,
+		List<Community> communities, List<SingleGameLog> singleGameLogs,
 		List<Fund> fundList, List<Friend> friendList, List<FriendAsk> friendAskSendList,
 		List<FriendAsk> friendAskReceiveList) {
 		this.email = email;
@@ -138,11 +138,16 @@ public class Member extends BaseEntity {
 		this.funds = funds;
 		this.fundMembers = fundMembers;
 		this.communities = communities;
-		this.multiGameLogs = multiGameLogs;
 		this.singleGameLogs = singleGameLogs;
 		this.fundList = fundList;
 		this.friendList = friendList;
 		this.friendAskSendList = friendAskSendList;
 		this.friendAskReceiveList = friendAskReceiveList;
+	}
+
+	public void updateMemberInfo(String nickname, Short birthYear, GenderType gender){
+		this.nickname = nickname;
+		this.birthYear = birthYear;
+		this.gender = gender;
 	}
 }
