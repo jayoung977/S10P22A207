@@ -24,7 +24,7 @@ RUN rm /etc/nginx/conf.d/default.conf
 #호스트의 'nginx.conf' 파일을 Nginx 설정 디렉토리로 복사
 COPY ./nginx.conf /etc/nginx/conf.d
 #'builder' 이미지의 '/app/build' 디렉토리를 작업 디렉토리로 복사
-COPY --from=builder ./.next/standalone ./
+COPY --from=builder ./.next ./
 #EXPOSE 80 - 컨테이너의 80 포트를 포트를 개방
 EXPOSE 80
 #Nginx 서버를 백그라운드로 동작
