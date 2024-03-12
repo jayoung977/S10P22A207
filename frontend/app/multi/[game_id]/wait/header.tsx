@@ -1,6 +1,8 @@
 'use client'
 
 import { useRouter } from "next/navigation"
+import Image from "next/image";
+import penguin from '@/public/src/assets/images/penguin.png'
 
 export default function Header(){
   const router = useRouter();
@@ -10,9 +12,19 @@ export default function Header(){
   }
   return( 
     <header className="row-span-1 grid grid-cols-12 border items-center">
-    <div className="col-span-2 grid grid-cols-3 justify-items-center">
-      <div className="col-span-1 flex items-center">로고</div>
-      <div className="col-span-2 flex items-center">지금이니?!</div>
+    <div className="col-start-2 col-end-3 flex items-center">
+      <div className="flex gap-2 items-center">
+        <Image
+          src={penguin}
+          alt="Logo"
+          className="h-8"
+          width={32}
+          height={32}
+        />
+        <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+          지금이니
+        </span>
+      </div>
     </div>
     <div className="col-span-8 flex justify-center">
       <div>맞짱 까든가</div>
@@ -21,7 +33,7 @@ export default function Header(){
     <button
      className="border p-2 rounded-md bg-red-500 text-white"
      onClick={handleGameStart}>시작하기</button>
-      <button className="border p-2 rounded-md border-red-500">나가기</button>
+      <button onClick={()=>{router.back()}} className="border p-2 rounded-md border-red-500 hover:bg-red-100 hover:border-2">나가기</button>
     </div>
   </header>
   )

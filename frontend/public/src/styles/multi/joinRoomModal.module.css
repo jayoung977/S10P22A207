@@ -1,5 +1,5 @@
 .modal {
   position: fixed;
-  transform: translate(-25%, 25%);
+  transform: translate(-50%, 25%);
   @apply inset-0 left-1/2 justify-center items-center hidden
 }

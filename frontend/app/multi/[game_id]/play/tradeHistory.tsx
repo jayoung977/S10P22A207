@@ -24,6 +24,8 @@ export default function TradeHistory(){
       <StockTrade/>
       <StockTrade/>
       <StockTrade/>
+      <StockTrade/>
+      <StockTrade/>
       </div>
     </div>
   )

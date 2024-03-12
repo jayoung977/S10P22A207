@@ -5,39 +5,39 @@ export default function GameStatus(){
   return(
     <div className={styles.gameStatus}>
       <div className='row-span-1 flex justify-center text-sm'>
-        <div>
-          초기자산: 10,000,000원
-          </div>
+        <div>초기자산: 10,000,000원</div>
       </div>
-      <div className='row-span-3'>
+      <div className='row-span-4'>
         <div>총 평가 자산</div>
         <div>12,000,000원</div>
         <div>+2,000,000원(+20%)</div>
       </div>
-      <div className='row-span-4 grid grid-cols-12 text-sm'>
-        <div className='col-span-4'>
+      <div className='row-span-2 grid grid-cols-12 text-xs'>
+        <div className='col-span-6'>
           <div>보유 현금</div>
           <div>9,000,000원</div>
         </div>
-        <div className='col-span-4'>
-          <div>주식 매입금</div>
-          <div>1,000,000원</div>
-        </div>
-        <div className='col-span-4'>
-          <div>주식 평가금</div>
-          <div>3,000,000원</div>
-        </div>
-      </div>
-      <div className='row-span-4 grid grid-cols-12 text-sm'>
-        <div className='col-span-4'>
+        <div className='col-span-6'>
           <div>주식수</div>
           <div>100</div>
         </div>
-        <div className='col-span-4'>
+      </div>
+      <div className='row-span-2 grid grid-cols-12 text-xs'>
+        <div className='col-span-6'>
+          <div>주식 매입금</div>
+          <div>10,000,000원</div>
+        </div>
+        <div className='col-span-6'>
           <div>평단가</div>
           <div>10,000원</div>
         </div>
-        <div className='col-span-4'>
+      </div>
+      <div className='row-span-2 grid grid-cols-12 text-xs'>
+        <div className='col-span-6'>
+          <div>주식 평가금</div>
+          <div>3,000,000원</div>
+        </div>
+        <div className='col-span-6'>
           <div>현재가</div>
           <div>30,000원</div>
         </div>

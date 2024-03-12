@@ -169,7 +169,12 @@ export default function SinglePlay () {
                 </aside>
                 {/* main */}
                 <main className="col-span-6 grid grid-rows-12 border border-black">
-                    <Chart data={data} />
+                    <div className="row-start-1 row-end-12 grid grid-rows-12 border border-black">
+                        <div className="row-start-1 row-end-2 border border-b-black flex items-center p-2">
+                            차트 이름
+                        </div>
+                        <Chart data={data} />
+                    </div>
                     <StockMarket />
                 </main>
                 {/* right aside */}
