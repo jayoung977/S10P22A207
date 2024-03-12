@@ -6,7 +6,7 @@ export default function JoinRoomModal(){
       <div id="joinroom-modal" tabIndex={0} aria-hidden="true" className={styles.modal}>
         <div className="relative p-4 w-full max-h-full">
             {/* <!-- Modal content --> */}
-            <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <div className="relative border bg-white rounded-lg shadow dark:bg-gray-700">
                 {/* <!-- Modal body --> */}
                 <div className="p-4 md:p-5">
                     <form className="space-y-4" action="#">

@@ -1,5 +1,5 @@
 .buttons {
-  @apply gap-2 grid grid-rows-4
+  @apply gap-1 grid grid-rows-4
 }
 
 .buttons button {

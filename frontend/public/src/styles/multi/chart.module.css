@@ -1,7 +1,0 @@
-.chart {
-  @apply border row-span-7
-}
-
-.chart img {
-  height: 350px;
-}

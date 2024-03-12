@@ -1,5 +1,5 @@
 import styles from './page.module.css'
-import Chart from '../chart' 
+import ChartImage from '../chartImage' 
 import Chat from '../chat'
 import GameUser from './gameUser'
 import RoomInfo from './roomInfo'
@@ -19,7 +19,7 @@ export default function MultiWait(){
           <GameRule/>
         </aside>
         <main className="col-span-6 grid grid-rows-12">
-          <Chart/>
+          <ChartImage/>
           <Chat/>
         </main>
         <aside className="col-span-3 grid grid-rows-6">
