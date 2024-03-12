@@ -26,8 +26,6 @@ type dataType = {
 }
 
 export default function SinglePlay () {
-<<<<<<< Updated upstream
-=======
     const [data, setData] = useState<dataType[]>([]);
     useEffect(() => {
         setData([
@@ -159,7 +157,6 @@ export default function SinglePlay () {
         console.log('page.tsx의 data : ', data);
     }, [])
 
->>>>>>> Stashed changes
     return (
         <div className="grid grid-rows-12 h-screen border-separate" style={{ borderCollapse: 'separate' }}>
             {/* navbar */}
