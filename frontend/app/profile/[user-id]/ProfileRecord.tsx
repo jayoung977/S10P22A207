@@ -5,10 +5,10 @@ import penguin from "../../../public/src/assets/images/penguin.png";
 export default function UserRecord() {
   return (
     <div className="col-start-4 col-end-11 grid grid-rows-12">
-      <div className="row-start-1 row-end-4 grid grid-cols-12">
+      <div className="shadow row-start-1 row-end-4 grid grid-cols-12">
         <div className="col-start-1 col-end-5 flex justify-center items-center">
           <Image
-            className="rounded w-32 h-32"
+            className="w-32 h-32 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500"
             src={penguin}
             alt="Extra large avatar"
             width={100}

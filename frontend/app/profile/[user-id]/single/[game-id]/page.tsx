@@ -10,7 +10,7 @@ export default function page() {
     <div className="border border-black grid grid-rows-12 h-screen">
       <Navbar></Navbar>
       <header className="row-span-2 border border-black">
-        <div>삼성전자</div>
+        <div className="text">삼성전자</div>
       </header>
       <main className="border border-black row-span-10 grid grid-cols-12">
         <SingleTradeHistory></SingleTradeHistory>
