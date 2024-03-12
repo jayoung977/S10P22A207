@@ -5,7 +5,7 @@ WORKDIR /app
 #환경변수 REACT_APP_ALLOW를 'ALLOW'로 설정
 ENV REACT_APP_ALLOW ALLOW
 # 컨테이너 내부로 package.json 파일들을 복사
-COPY package*.json .
+COPY package*.json ./
 #package-lock.json에 명시된 정확한 버전의 패키지들을 설치
 RUN npm ci
 #현재 호스트의 모든 파일들을 작업 디렉토리로 복사
