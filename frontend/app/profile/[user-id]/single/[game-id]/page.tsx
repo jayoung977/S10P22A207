@@ -9,8 +9,8 @@ export default function page() {
   return (
     <div className="border border-black grid grid-rows-12 h-screen">
       <Navbar></Navbar>
-      <header className="row-span-2 border border-black">
-        <div className="text">삼성전자</div>
+      <header className="flex justify-end items-center row-span-2 border border-black">
+        <div className="text-6xl">삼성전자</div>
       </header>
       <main className="border border-black row-span-10 grid grid-cols-12">
         <SingleTradeHistory></SingleTradeHistory>
