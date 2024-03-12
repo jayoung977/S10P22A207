@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 스크롤바 전체 스타일 */
+::-webkit-scrollbar {
+  width: 12px; /* 스크롤바의 너비 */
+}
+
+/* 스크롤바 트랙(바탕) 스타일 */
+::-webkit-scrollbar-track {
+  background: #ffe7e7; /* 트랙의 배경 색상 */
+}
+
+/* 스크롤바 핸들(움직이는 부분) 스타일 */
+::-webkit-scrollbar-thumb {
+  background: #ffcbcb; /* 핸들의 배경 색상 */
+  border-radius: 30px;
+}
+
+/* 스크롤바 핸들:hover 스타일 */
+::-webkit-scrollbar-thumb:hover {
+  background: #ffb0b0; /* 핸들을 마우스로 가리킬 때의 배경 색상 */
+  border-radius: 30px;
+}

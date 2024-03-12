@@ -3,12 +3,30 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
 import penguin from "../public/src/assets/images/penguin.png";
-
+import Swal from "sweetalert2";
 export default function Navbar() {
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
+  };
+  const openSinglePlay = () => {
+    Swal.fire({
+      title: "기존 기록이 없습니다",
+      text: "플레이 하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: "플레이",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // 플레이 버튼을 클릭한 경우
+        console.log("플레이 버튼을 클릭했습니다.");
+        router.push("/single/1/play");
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // 취소 버튼을 클릭한 경우
+        console.log("취소 버튼을 클릭했습니다.");
+      }
+    });
   };
   return (
     <nav className="shadow row-span-1 bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
@@ -70,8 +88,11 @@ export default function Navbar() {
                   </li>
                   <li>
                     <a
+                      data-modal-target="popup-modal"
+                      data-modal-toggle="popup-modal"
                       className="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      onClick={() => router.push("/single/1/play")}
+                      // onClick={() => router.push("/single/1/play")}
+                      onClick={() => openSinglePlay()}
                     >
                       싱글 플레이
                     </a>

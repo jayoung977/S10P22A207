@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function MultiChart() {
   return (
-    <div className="col-start-6 col-end-12">
+    <div className="flex justify-center items-center col-start-6 col-end-12">
       <Image src={chart} alt=""></Image>
     </div>
   );
