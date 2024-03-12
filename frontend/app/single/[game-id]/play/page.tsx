@@ -154,7 +154,6 @@ export default function SinglePlay () {
             { date: '2022-05-03', open: 140, high: 140, low: 80, close: 80, volume: 1000 },
             { date: '2022-05-04', open: 100, high: 120, low: 90, close: 110, volume: 1000 },
         ]);
-        console.log('page.tsx의 data : ', data);
     }, [])
 
     return (
