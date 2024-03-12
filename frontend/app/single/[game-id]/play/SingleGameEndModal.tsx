@@ -1,4 +1,7 @@
+'use client'
+import { useRouter } from 'next/navigation'
 export default function SingleGameEndModal ({ isOpen, onClose }:any) {
+    const router = useRouter();
     if (!isOpen) return null;
     
     return (
@@ -26,7 +29,11 @@ export default function SingleGameEndModal ({ isOpen, onClose }:any) {
                 </div>
                 <div className="row-start-11 row-end-13 grid grid-rows-3">
                     <div className="row-start-2 row-end-3">
-                        <button onClick={() => {onClose()}} className="rounded-full text-white bg-gray-500">나가기</button>
+                        <button onClick={() => {
+                            onClose();
+                            router.push('/multi')
+                            
+                            }} className="rounded-full text-white bg-gray-500">나가기</button>
                     </div>
                 </div>
             </div>

@@ -1,37 +1,54 @@
-// 보유 자산 목록
-function AssetHeld() {
-
-    return (
-        <div className="row-span-3 bg-blue-100 border-black m-1 grid grid-rows-3 rounded-lg">
-            <div className="row-span-1">삼성전자</div>
-            <div className="row-span-2 grid grid-rows-2">
-                <div className="row-span-1 grid grid-cols-4 justify-center">
-                    <div className="col-span-1 m-auto">평가 손익</div>
-                    <div className="col-span-1 m-auto text-pink-300">6,574</div>
-                    <div className="col-span-1 m-auto">매도 가능</div>
-                    <div className="col-span-1 m-auto">10</div>
-                </div>
-                <div className="row-span-1 grid grid-cols-4">
-                    <div className="col-span-1 m-auto">손익률</div>
-                    <div className="col-span-1 m-auto text-pink-300">18.25 %</div>
-                    <div className="col-span-1 m-auto">평균 단가</div>
-                    <div className="col-span-1 m-auto">3,605</div>
-                </div>
-            </div>
-        </div>
-    )
-}
-
+'use client'
+import { useState } from 'react'
+import AssetHeld from './AssetHeld'
 export default function AssetsHeld () {
+    const [AssetData, setAssetData] = useState([
+        {
+            종목명: '종목1',
+            평가손익: 1000,
+            매도가능: 1,
+            손익률: 10.00,
+            평균단가: 10000,
+        },
+        {
+            종목명: '종목2',
+            평가손익: 2000,
+            매도가능: 2,
+            손익률: 20.00,
+            평균단가: 20000,
+        },
+        {
+            종목명: '종목3',
+            평가손익: 3000,
+            매도가능: 3,
+            손익률: 30.00,
+            평균단가: 30000,
+        },
+        {
+            종목명: '종목4',
+            평가손익: 4000,
+            매도가능: 4,
+            손익률: 40.00,
+            평균단가: 40000,
+        },
+        {
+            종목명: '종목5',
+            평가손익: 5000,
+            매도가능: 5,
+            손익률: 50.00,
+            평균단가: 50000,
+        },    
+
+    ])
     return (
         <div className="row-span-1 grid grid-rows-6 border border-black">
             <div className="row-span-1 flex items-center border border-black pl-2">보유 자산</div>
             <div className="row-span-5 overflow-y-auto block border border-black" style={{height: 'calc(25vh)'}}>
-                <AssetHeld />
-                <AssetHeld />
-                <AssetHeld />
-                <AssetHeld />
-                <AssetHeld />
+                {
+                    AssetData.map((x, index) => (
+                        <AssetHeld key={index} data={x}/>
+                    ))
+                }
             </div>
         </div>
     )

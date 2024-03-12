@@ -6,9 +6,14 @@ import BuySellModal from './BuySellModal';
 import SingleGameEndModal from './SingleGameEndModal';
 
 export default function TurnInfo () {
+    // 현재 턴
     const [turn, setTurn] = useState(0);
+    // 매수 / 매도 모달창 open 여부
     const [isOpen, setIsOpen] = useState(false);
+    // 매수 or 매도(true시 매수)
+    const [isBuy, setIsBuy] = useState(true);
 
+    // 싱글 게임 종료 모달창 open 여부
     const [isOpenEndModal, setIsOpenEndModal] = useState(false);
 
     const handleClickTurn = function () {
@@ -28,13 +33,19 @@ export default function TurnInfo () {
                 </div>
                 <div className="row-start-3 row-end-4 grid grid-cols-7 mb-1">
                     <button 
-                        onClick={() => {setIsOpen(true)}} 
+                        onClick={() => {
+                            setIsBuy(true);
+                            setIsOpen(true);
+                        }} 
                         className="col-start-2 col-end-4 rounded-full text-white bg-red-600"
                     >
                         매수    
                     </button>
                     <button 
-                        onClick={() => {setIsOpen(true)}} 
+                        onClick={() => {
+                            setIsBuy(false);
+                            setIsOpen(true);
+                        }} 
                         className="col-start-5 col-end-7 rounded-full text-white bg-blue-600"
                     >
                         매도   
@@ -47,7 +58,7 @@ export default function TurnInfo () {
             >
                 다음
             </button>
-            <BuySellModal isOpen={isOpen} onClose={() =>setIsOpen(false) }/>
+            <BuySellModal isBuy={isBuy} isOpen={isOpen} onClose={() =>setIsOpen(false) }/>
             <SingleGameEndModal isOpen={isOpenEndModal} onClose={() => setIsOpenEndModal(false)}/>
         </div>
     )
