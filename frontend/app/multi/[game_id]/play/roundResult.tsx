@@ -2,7 +2,7 @@
 
 
 import styles from '@/public/src/styles/multi/roundResult.module.css'
-import Chart from '@/app/single/[game-id]/play/Chart'
+import RoundChart from './roundChart' 
 import RoundUser from './roundUser'
 import { useEffect, useState } from 'react'
 import type { dataType } from './page'
@@ -11,7 +11,7 @@ import Image from 'next/image'
 
 export default function RoundResult(){
 
-  const [data, setData] = useState<dataType[]>([]);
+  const [RoundData, setData] = useState<dataType[]>([]);
   useEffect(() => {
       setData([
           { date: '2022-01-01', open: 100, high: 120, low: 90, close: 110, volume: 1000 },
@@ -139,11 +139,11 @@ export default function RoundResult(){
           { date: '2022-05-03', open: 140, high: 140, low: 80, close: 80, volume: 1000 },
           { date: '2022-05-04', open: 100, high: 120, low: 90, close: 110, volume: 1000 },
       ]);
-      console.log('page.tsx의 data : ', data);
+      console.log('page.tsx의 data : ', RoundData);
   }, [])
 
   return(
-    <div className={styles.modal}>
+    <div className="fixed -translate-x-1/2 translate-y-1/5 z-50 h-4/5 w-3/4 inset-0 left-1/2 border-4 bg-slate-50 rounded-md grid grid-rows-6 gap-2">
       <div className='row-span-1 grid grid-cols-12 items-center'>
         <div className='col-span-2 justify-center items-center m-2'>
           <Image
@@ -180,7 +180,7 @@ export default function RoundResult(){
       </div>
       <div className='row-span-5 grid grid-cols-12 gap-2'>
         <div className='col-span-8 grid grid-rows-12 m-2'>
-          <Chart data={data}/>
+          <RoundChart data={RoundData}/>
         </div>
         <div className='col-span-4 grid grid-rows-6'>
           <RoundUser/>

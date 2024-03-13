@@ -60,6 +60,7 @@ public enum ErrorCode {
     /**
      * ******************************* Business Error CodeList ***************************************
      */
+    //TODO : 예시로 남겨놓되, 배포시에 없앨 것. ~ 3/14
 
     // 사용자 권한 인증 실패 (CODE: 100)
     UNAUTHORIZED_USER_EXCEPTION(403, "B100", "권한이 없는 사용자입니다."),
@@ -85,13 +86,33 @@ public enum ErrorCode {
     // S3 File 에러 (CODE: 900)
     NOT_FOUND_S3FILE(404, "B900", "존재하지 않는 S3 파일입니다."),
     // 친구 요청 에러 (CODE: 201)
-    ALREADY_EXIST_FRIEND_REQUEST(404,"B201" ,"이미 요청을 보냈습니다" ),
+    ALREADY_EXIST_FRIEND_REQUEST(409,"B201" ,"이미 요청을 보냈습니다" ),
     // 친구 에러 (CODE: 202)
-    ALREADY_EXIST_FRIEND(404,"B202" ,"이미 친구입니다." ),
+    ALREADY_EXIST_FRIEND(409,"B202" ,"이미 친구입니다." ),
     //매칭 에러 (CODE: 500)
 
     NOT_MATCHING(404,"B501" , "매칭중이 아닙니다."),
-    NOT_FOUND_WAITING_ROOM(404, "B502", "존재하지 않는 대기실입니다.");
+    NOT_FOUND_WAITING_ROOM(404, "B502", "존재하지 않는 대기실입니다."),
+
+
+    //펀드 에러 (CODE: 600)
+    NOT_FOUND_FUND(404,"B600" , "존재하지 않는 펀드입니다" ),
+    FULL_CAPACITY_EXCEPTION(400, "B601" , "모집 인원이 가득 찼습니다"),
+    NOT_RECRUITING_FUND(400,"B602" , "모집 중인 펀드가 아닙니다" ),
+    MINIMUM_AMOUNT_EXCEPTION(400,"B603" , "최소 금액보다 적습니다" ),
+    ALREADY_REGISTERED_FUND(400, "B604" , "이미 가입한 펀드입니다"),
+    CLOSED_FUND_EXCEPTION(400, "B605" , "이미 종료된 펀드입니다" ),
+    NOT_ENOUGH_ASSET(400,"B606" ,"자산이 부족합니다" ),
+
+    /**
+     * ******************************* Error Code Constructor ***************************************
+     */
+    // 주식 에러 (CODE: 300)
+    NOT_ENOUGH_STOCK_AMOUNT(404, "S300", "보유중인 주식이 부족합니다."),
+    NO_SINGLE_GAME_STOCK(404, "S301", "해당하는 주식 정보가 없습니다."),
+    NOT_ENOUGH_MONEY(404, "S302", "보유중인 자금이 부족합니다."),
+    NOT_ENOUGH_CHANCE(400, "S303", "기회가 부족합니다."),
+    ;
 
     /**
      * ******************************* Error Code Constructor ***************************************

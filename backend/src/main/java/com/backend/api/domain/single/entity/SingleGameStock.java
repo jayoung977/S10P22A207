@@ -1,12 +1,11 @@
 package com.backend.api.domain.single.entity;
 
-import static jakarta.persistence.FetchType.*;
-import static jakarta.persistence.GenerationType.*;
-import static lombok.AccessLevel.*;
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
 import com.backend.api.domain.BaseEntity;
 import com.backend.api.domain.stock.entity.Stock;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +16,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -36,19 +36,22 @@ public class SingleGameStock extends BaseEntity {
     private Stock stock;
 
     @NotNull
-    private Long stockId;
+    private Double roi = 0D;
 
     @NotNull
-    private Double roi;
+    private Integer profit = 0;
 
+    // TODO : 평균단가 @Setter 써서 표현해야할듯!
     @NotNull
-    private int profit;
+    @Setter
+    private Integer averagePurchasePrice = 0;
 
     @Builder
-    public SingleGameStock(SingleGameLog singleGameLog, Long stockId, Double roi, int profit) {
+    public SingleGameStock(SingleGameLog singleGameLog, Stock stock, Double roi, Integer profit, Integer averagePurchasePrice) {
         this.singleGameLog = singleGameLog;
-        this.stockId = stockId;
+        this.stock = stock;
         this.roi = roi;
         this.profit = profit;
+        this.averagePurchasePrice = averagePurchasePrice;
     }
 }

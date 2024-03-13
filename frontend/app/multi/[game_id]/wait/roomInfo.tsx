@@ -3,7 +3,7 @@ import styles from '@/public/src/styles/multi/roomInfo.module.css'
 
 export default function RoomInfo() {
   return (
-    <div className={styles.roomInfo}>
+    <div className="border row-span-3 grid grid-rows-3">
       <div className='row-span-1 items-center text-lg font-bold m-1'>게임규칙</div>
       <div className='row-span-1 grid grid-cols-12 items-center'>
         <div className='col-span-3'>라운드: </div>

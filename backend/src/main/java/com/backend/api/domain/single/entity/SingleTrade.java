@@ -1,11 +1,14 @@
 package com.backend.api.domain.single.entity;
 
-import static jakarta.persistence.FetchType.LAZY;
-import static jakarta.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.PROTECTED;
+import static jakarta.persistence.FetchType.*;
+import static jakarta.persistence.GenerationType.*;
+import static lombok.AccessLevel.*;
+
+import java.time.LocalDateTime;
 
 import com.backend.api.domain.BaseEntity;
-import com.backend.api.domain.type.TradeType;
+import com.backend.api.global.common.type.TradeType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,7 +18,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,10 +56,10 @@ public class SingleTrade extends BaseEntity {
     private Double roi; // 수익률
 
     @NotNull
-    private Integer profit; // 수익금
+    private Long profit; // 수익금
 
     @Builder
-    public SingleTrade(SingleGameStock singleGameStock, LocalDateTime date, TradeType tradeType, Integer amount, Integer price, Integer stockQuantity, Double roi, Integer profit) {
+    public SingleTrade(SingleGameStock singleGameStock, LocalDateTime date, TradeType tradeType, Integer amount, Integer price, Integer stockQuantity, Double roi, Long profit) {
         this.singleGameStock = singleGameStock;
         this.date = date;
         this.tradeType = tradeType;

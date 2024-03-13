@@ -14,4 +14,5 @@ public interface MultiGameLogRepository extends JpaRepository<MultiGameLog, Long
 		    WHERE mgp.member.id = :loginUserId
 		""")
 	List<MultiGameLog> findAllByMemberId(Long loginUserId);
+
 }

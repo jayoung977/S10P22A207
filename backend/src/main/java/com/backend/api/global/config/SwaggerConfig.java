@@ -10,13 +10,10 @@ package com.backend.api.global.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
@@ -42,7 +39,7 @@ public class SwaggerConfig {
                 .version("v0.0.1");
 
         var localServer = new Server().description("local server").url("http://localhost:8080");
-        // var webServer = new Server().description("web server").url("https://i10a702.p.ssafy.io");
+        var webServer = new Server().description("web server").url("https://j10a207.p.ssafy.io");
 
         String jwt = "JWT";
         // SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
@@ -56,8 +53,8 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(info)
                 // .addSecurityItem(securityRequirement)
-                .addServersItem(localServer);
-                // .addServersItem(webServer)
+                .addServersItem(localServer)
+                .addServersItem(webServer);
                 // .components(components);
     }
 }

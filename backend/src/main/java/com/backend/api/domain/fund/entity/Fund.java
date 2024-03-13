@@ -11,7 +11,7 @@ import java.util.List;
 import com.backend.api.domain.BaseEntity;
 import com.backend.api.domain.fund.entity.type.FundStatus;
 import com.backend.api.domain.member.entity.Member;
-import com.backend.api.domain.type.FeeType;
+import com.backend.api.global.common.type.FeeType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,11 +46,16 @@ public class Fund extends BaseEntity {
 	private List<FundMember> fundMemberList = new ArrayList<>();
 	@OneToMany(mappedBy = "fund")
 	private List<FundTrade> fundTradeList = new ArrayList<>();
+	@OneToMany(mappedBy = "fund")
+	private List<FundStock> fundStockList = new ArrayList<>();
 
 	@NotNull
 	private String fundName;
 	@NotNull
 	private Long targetAmount;
+	@NotNull
+	private Long fundAsset = 0L; // 전체 펀드 자산
+	private Long startAsset = 0L; // 펀드 투자 시작 시 자산 펀드 시작 시 한번 갱신
 	private LocalDateTime startDate;
 	@NotNull
 	private Short period;
@@ -62,18 +67,23 @@ public class Fund extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private FundStatus status;
 	@NotNull
+	@Enumerated(EnumType.STRING)
 	private FeeType feeType;
 	private String industry;
 
 	@Builder
-	public Fund(Member manager, List<FundMember> fundMemberList, List<FundTrade> fundTradeList, String fundName,
-		Long targetAmount, LocalDateTime startDate, Short period, Long capacity, Long minimumAmount, FundStatus status,
-		FeeType feeType, String industry) {
+	public Fund(Member manager, List<FundMember> fundMemberList, List<FundTrade> fundTradeList,
+		List<FundStock> fundStockList, String fundName, Long targetAmount, Long fundAsset, Long startAsset,
+		LocalDateTime startDate, Short period, Long capacity, Long minimumAmount, FundStatus status, FeeType feeType,
+		String industry) {
 		this.manager = manager;
 		this.fundMemberList = fundMemberList;
 		this.fundTradeList = fundTradeList;
+		this.fundStockList = fundStockList;
 		this.fundName = fundName;
 		this.targetAmount = targetAmount;
+		this.fundAsset = fundAsset;
+		this.startAsset = startAsset;
 		this.startDate = startDate;
 		this.period = period;
 		this.capacity = capacity;
@@ -81,5 +91,17 @@ public class Fund extends BaseEntity {
 		this.status = status;
 		this.feeType = feeType;
 		this.industry = industry;
+	}
+
+	public void updateFundStatus(FundStatus status) {
+		this.status = status;
+	}
+	public void updateFundAsset(Long investmentAmount) {
+		this.fundAsset += investmentAmount;
+	}
+
+	public void updateFundStart(){
+		this.startAsset = this.fundAsset;
+		this.startDate = LocalDateTime.now();
 	}
 }

@@ -4,7 +4,7 @@ import ProfileImage from '@/app/multi/profileImage'
 
 export default function User(){
   return (
-    <div className={styles.user}>
+    <div className="border gap-1 row-span-1">
       <div className='grid grid-cols-12 text-center items-center'>
         <div className='col-span-3 border p-1 m-1 bg-yellow-300 rounded-lg'>1위</div>
         <div className='col-start-4 col-end-13'>난딴돈의반만가져가</div>

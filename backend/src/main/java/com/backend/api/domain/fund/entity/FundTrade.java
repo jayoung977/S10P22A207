@@ -6,10 +6,13 @@ import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
 
-import com.backend.api.domain.type.TradeType;
+import com.backend.api.domain.stock.entity.Stock;
+import com.backend.api.global.common.type.TradeType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -32,19 +35,24 @@ public class FundTrade {
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "fund_id", referencedColumnName = "fund_id")
 	private Fund fund;
+	@ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "stock_id", referencedColumnName = "stock_id")
+	private Stock stock;
 
 	private LocalDateTime tradeDate;
+	@Enumerated(EnumType.STRING)
 	private TradeType tradeType;
 	private Integer tradeAmount;
 	private Integer tradePrice;
 	private Integer stockQuantity;    // 보유 수량
-	private Integer roi;    // 수익률
+	private Double roi;    // 수익률
 	private Long profit; // 수익금
 
 	@Builder
-	public FundTrade(Fund fund, LocalDateTime tradeDate, TradeType tradeType, Integer tradeAmount, Integer tradePrice,
-		Integer stockQuantity, Integer roi, Long profit) {
+	public FundTrade(Fund fund, Stock stock, LocalDateTime tradeDate, TradeType tradeType, Integer tradeAmount,
+		Integer tradePrice, Integer stockQuantity, Double roi, Long profit) {
 		this.fund = fund;
+		this.stock = stock;
 		this.tradeDate = tradeDate;
 		this.tradeType = tradeType;
 		this.tradeAmount = tradeAmount;

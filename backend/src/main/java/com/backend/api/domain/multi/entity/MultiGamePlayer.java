@@ -1,8 +1,8 @@
 package com.backend.api.domain.multi.entity;
 
-import static jakarta.persistence.FetchType.*;
-import static jakarta.persistence.GenerationType.*;
-import static lombok.AccessLevel.*;
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
 import com.backend.api.domain.BaseEntity;
 import com.backend.api.domain.member.entity.Member;
@@ -32,6 +32,7 @@ public class MultiGamePlayer extends BaseEntity {
 
     @ManyToOne(fetch = LAZY)
     private MultiGameLog multiGameLog;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id", referencedColumnName = "member_id")
     private Member member;
