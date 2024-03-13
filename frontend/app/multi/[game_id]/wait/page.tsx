@@ -1,4 +1,3 @@
-import styles from './page.module.css'
 import ChartImage from '../chartImage' 
 import Chat from '../chat'
 import GameUser from './gameUser'
@@ -6,7 +5,6 @@ import RoomInfo from './roomInfo'
 import FriendSearch from './friendSearch'
 import GameRule from './gameRule'
 import Header from './header'
-import ProfileImage from '@/public/src/assets/images/profile-image.png'
 
 export default function MultiWait(){
   return (
