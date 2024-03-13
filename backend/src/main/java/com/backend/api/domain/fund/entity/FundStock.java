@@ -33,9 +33,14 @@ public class FundStock {
 	@JoinColumn(name = "fund_id", referencedColumnName = "fund_id")
 	private Fund fund;
 
+	private Long stockAmount = 0L; // 보유 개수
+	private Long investmentAmount = 0L; // 투자 금액
+
 	@Builder
-	public FundStock(Stock stock, Fund fund) {
+	public FundStock(Stock stock, Fund fund, Long stockAmount, Long investmentAmount) {
 		this.stock = stock;
 		this.fund = fund;
+		this.stockAmount = stockAmount;
+		this.investmentAmount = investmentAmount;
 	}
 }
