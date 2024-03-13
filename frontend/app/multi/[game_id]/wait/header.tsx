@@ -11,7 +11,7 @@ export default function Header(){
     router.push('/multi/1/play')
   }
   return( 
-    <header className="row-span-1 grid grid-cols-12 border items-center">
+    <header className="row-span-1 grid grid-cols-12 border items-center gap-2">
     <div className="col-start-2 col-end-3 flex items-center">
       <div className="flex gap-2 items-center">
         <Image

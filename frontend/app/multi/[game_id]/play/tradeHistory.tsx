@@ -4,7 +4,7 @@ import StockTrade from './stockTrade'
 
 export default function TradeHistory(){
   return(
-    <div className={styles.tradeHistory}>
+    <div className="row-span-5 border text-sm">
       <div className="grid grid-cols-12 items-center text-sm shadow-md">
         <div className="col-span-4"> 유형</div>
         <div className="col-span-4">

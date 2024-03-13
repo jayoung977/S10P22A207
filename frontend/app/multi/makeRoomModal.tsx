@@ -6,7 +6,7 @@ export default function MakeRoomModal({isOpen ,onClose} : any){
   if (!isOpen) return null;
 
   return (
-      <div id="gameroom-modal" tabIndex={-1} aria-hidden="true" className={styles.modal}>
+      <div id="gameroom-modal" tabIndex={-1} aria-hidden="true" className="fixed -translate-x-1/2 translate-y-1/4 inset-0 left-1/2 justify-center items-center">
         <div className="relative p-4 w-full max-h-full">
             {/* <!-- Modal content --> */}
             <div className="relative bg-white rounded-lg border shadow dark:bg-gray-700">
