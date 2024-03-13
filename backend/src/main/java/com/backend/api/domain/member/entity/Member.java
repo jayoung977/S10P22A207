@@ -1,10 +1,7 @@
 package com.backend.api.domain.member.entity;
 
-import static jakarta.persistence.GenerationType.*;
-import static lombok.AccessLevel.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
 import com.backend.api.domain.BaseEntity;
 import com.backend.api.domain.community.entity.Community;
@@ -16,7 +13,6 @@ import com.backend.api.domain.member.entity.type.GenderType;
 import com.backend.api.domain.multi.entity.MultiGamePlayer;
 import com.backend.api.domain.notice.entity.Notice;
 import com.backend.api.domain.single.entity.SingleGameLog;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -26,6 +22,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -66,6 +64,9 @@ public class Member extends BaseEntity {
 	private Integer lose = 0;
 
 	@NotNull
+	private Integer singleGameChance = 5;
+
+	@NotNull
 	private Double singleAvgRoi = 0D;
 
 	@NotNull
@@ -92,8 +93,9 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "member")
 	private List<Community> communities = new ArrayList<>();
 
-	@OneToMany(mappedBy = "member")
-	private List<MultiGamePlayer> multiGamePlayers = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<MultiGamePlayer> multiGamePlayers = new ArrayList<>();
+
 
 	@OneToMany(mappedBy = "member")
 	private List<SingleGameLog> singleGameLogs = new ArrayList<>();
@@ -113,14 +115,12 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "receiver")
 	private List<FriendAsk> friendAskReceiveList = new ArrayList<>();  // 나에게 온 친구 요청
 
+
 	@Builder
-	public Member(String email, String nickname, Short birthYear, GenderType gender, Long asset, Integer rankPoint,
-		Integer win, Integer lose, Double singleAvgRoi, Double multiAvgRoi, List<Notice> notices,
-		List<Friend> followers,
-		List<FriendAsk> receivers, List<FriendAsk> senders, List<Fund> funds, List<FundMember> fundMembers,
-		List<Community> communities, List<SingleGameLog> singleGameLogs,
-		List<Fund> fundList, List<Friend> friendList, List<FriendAsk> friendAskSendList,
-		List<FriendAsk> friendAskReceiveList) {
+	public Member(String email, String nickname, Short birthYear, GenderType gender, Long asset, Integer rankPoint, Integer win, Integer lose, Integer singleGameChance, Double singleAvgRoi,
+		Double multiAvgRoi, List<Notice> notices, List<Friend> followers, List<FriendAsk> receivers, List<FriendAsk> senders, List<Fund> funds, List<FundMember> fundMembers,
+		List<Community> communities, List<SingleGameLog> singleGameLogs, List<MultiGamePlayer> multiGamePlayers, List<Fund> fundList, List<Friend> friendList,
+		List<FriendAsk> friendAskSendList, List<FriendAsk> friendAskReceiveList) {
 		this.email = email;
 		this.nickname = nickname;
 		this.birthYear = birthYear;
@@ -129,6 +129,7 @@ public class Member extends BaseEntity {
 		this.rankPoint = rankPoint;
 		this.win = win;
 		this.lose = lose;
+		this.singleGameChance = singleGameChance;
 		this.singleAvgRoi = singleAvgRoi;
 		this.multiAvgRoi = multiAvgRoi;
 		this.notices = notices;
@@ -139,6 +140,7 @@ public class Member extends BaseEntity {
 		this.fundMembers = fundMembers;
 		this.communities = communities;
 		this.singleGameLogs = singleGameLogs;
+		this.multiGamePlayers = multiGamePlayers;
 		this.fundList = fundList;
 		this.friendList = friendList;
 		this.friendAskSendList = friendAskSendList;
@@ -150,4 +152,31 @@ public class Member extends BaseEntity {
 		this.birthYear = birthYear;
 		this.gender = gender;
 	}
+
+	public void updateSingleAvgRoi(double v) {
+		this.singleAvgRoi = v;
+	}
+
+	public void increaseWin() {
+		this.win++;
+	}
+
+	public void increaseLose() {
+		this.lose++;
+	}
+
+	public void updateAsset(long totalAsset) {
+		this.asset = totalAsset;
+	}
+
+	public void increaseChance() {
+		this.singleGameChance++;
+	}
+
+	public void decreaseChance() {
+		this.singleGameChance--;
+	}
 }
+
+
+

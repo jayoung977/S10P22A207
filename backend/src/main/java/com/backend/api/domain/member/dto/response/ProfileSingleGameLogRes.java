@@ -14,7 +14,7 @@ public record ProfileSingleGameLogRes(
 	Double finalRoi,
 
 	@Schema(description = "최종 수익")
-	Integer finalProfit,
+	Long finalProfit,
 	@Schema(description = "게임 플레이 날짜")
 	String gameDate
 ) {
