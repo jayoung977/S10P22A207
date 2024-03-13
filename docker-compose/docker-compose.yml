@@ -19,7 +19,7 @@ services:
       - "8081:80"
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
-      - /usr/share/nginx/statics:/usr/share/nginx/statics/server/app
+      - /usr/share/nginx/statics:/usr/share/nginx/statics
     image: jayoung977/frontend
     env_file:
       - .env

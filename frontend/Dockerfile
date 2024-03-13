@@ -24,7 +24,7 @@ RUN rm /etc/nginx/conf.d/default.conf
 #호스트의 'nginx.conf' 파일을 Nginx 설정 디렉토리로 복사
 COPY ./nginx.conf /etc/nginx/conf.d
 #'builder' 이미지의 '/app/build' 디렉토리를 작업 디렉토리로 복사
-COPY --from=builder /app/.next ./
+COPY --from=builder /app/.next/build ./
 # Nginx에 /usr/share/nginx/statics 디렉토리에 대한 권한 부여
 RUN chgrp -R 0 /usr/share/nginx/statics && \
     chmod -R g+rwX /usr/share/nginx/statics
