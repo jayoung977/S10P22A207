@@ -48,10 +48,10 @@ public class SingleGameLog extends BaseEntity {
     private Double finalRoi;
 
     @NotNull
-    private Integer finalProfit;
+    private Long finalProfit;
 
     @Builder
-    public SingleGameLog(Member member, LocalDateTime startDate, Long initialAsset, List<SingleGameStock> singleGameStock, Double finalRoi, Integer finalProfit) {
+    public SingleGameLog(Member member, LocalDateTime startDate, Long initialAsset, List<SingleGameStock> singleGameStock, Double finalRoi, Long finalProfit) {
         this.member = member;
         this.startDate = startDate;
         this.initialAsset = initialAsset;

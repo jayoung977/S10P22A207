@@ -18,6 +18,9 @@ public enum SuccessCode {
     // 수정 성공 코드 (HTTP Response: 201 Created)
     UPDATE_SUCCESS(201, "201", "UPDATE SUCCESS"),
 
+    // 매도 성공 코드(HTTP Response: 200 OK)
+    SELL_SUCCESS(200, "200", "SELL SUCCESS"),
+    BUY_SUCCESS(200, "200", "BUY SUCCESS"),
     ; // End
 
     // 성공 코드의 '코드 상태'를 반환한다.

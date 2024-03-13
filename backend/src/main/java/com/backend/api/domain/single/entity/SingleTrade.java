@@ -56,10 +56,10 @@ public class SingleTrade extends BaseEntity {
     private Double roi; // 수익률
 
     @NotNull
-    private Integer profit; // 수익금
+    private Long profit; // 수익금
 
     @Builder
-    public SingleTrade(SingleGameStock singleGameStock, LocalDateTime date, TradeType tradeType, Integer amount, Integer price, Integer stockQuantity, Double roi, Integer profit) {
+    public SingleTrade(SingleGameStock singleGameStock, LocalDateTime date, TradeType tradeType, Integer amount, Integer price, Integer stockQuantity, Double roi, Long profit) {
         this.singleGameStock = singleGameStock;
         this.date = date;
         this.tradeType = tradeType;
