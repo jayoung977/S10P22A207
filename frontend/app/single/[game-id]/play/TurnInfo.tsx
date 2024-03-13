@@ -1,14 +1,13 @@
 'use client'
 // 턴 정보, 매수 + 매도 버튼 컴포넌트
 import { useState } from 'react';
-import SingleGameStore from '@/public/src/stores/single/singleGameStore';
 import TurnNow from './TurnNow';
 import BuySellModal from './BuySellModal';
 import SingleGameEndModal from './SingleGameEndModal';
 
 export default function TurnInfo () {
     // 현재 턴
-    const { turn, setTurn } = SingleGameStore();
+    const [turn, setTurn ] = useState(1);
     // const [turn, setTurn] = useState<number>(0);
     // 매수 / 매도 모달창 open 여부
     const [isOpenSaleModal, setIsOpenSaleModal] = useState<boolean>(false);
