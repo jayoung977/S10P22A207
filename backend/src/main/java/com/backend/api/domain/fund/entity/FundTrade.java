@@ -6,7 +6,7 @@ import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
 
-import com.backend.api.domain.type.TradeType;
+import com.backend.api.global.common.type.TradeType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
