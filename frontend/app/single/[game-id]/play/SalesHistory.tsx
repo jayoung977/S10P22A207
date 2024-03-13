@@ -1,32 +1,41 @@
 'use client'
 import { useState } from 'react';
+
+
+import SingleGameStore from '@/public/src/stores/single/singleGameStore';
 import SaleHistory from "./SaleHistory";
 
 export default function SalesHistory () {
+    const { saleHistoryListData, setSaleHistoryListData } = SingleGameStore();
+
     const [saleData, setSaleData] = useState([
         {
-            유형: '매수',
-            가격: 10000,
-            수량: 1000,
-            체결금액: 10000000,
+            stock: '종목1',
+            saleType: '매수',
+            price: 10000,
+            quantity: 1000,
+            contractAmount: 10000000,
         },
         {
-            유형: '매도',
-            가격: 20000,
-            수량: 2000,
-            체결금액: 40000000,
+            stock: '종목2',
+            saleType: '매도',
+            price: 20000,
+            quantity: 2000,
+            contractAmount: 40000000,
         },
         {
-            유형: '매수',
-            가격: 30000,
-            수량: 3000,
-            체결금액: 90000000,
+            stock: '종목3',
+            saleType: '매수',
+            price: 30000,
+            quantity: 3000,
+            contractAmount: 90000000,
         },
         {
-            유형: '매도',
-            가격: 40000,
-            수량: 4000,
-            체결금액: 160000000,
+            stock: '종목4',
+            saleType: '매도',
+            price: 40000,
+            quantity: 4000,
+            contractAmount: 160000000,
         },
 
     ])
@@ -34,11 +43,11 @@ export default function SalesHistory () {
         <div className="row-span-1 grid grid-rows-6 border border-black">
             <div className="row-span-1 flex items-center border border-black pl-2">매매 내역</div>
             <table className="row-span-5 table-fixed overflow-y-auto block border border-black">
-                <thead>
-                    <tr className="flex items-center" style={{ width: '290px'}}>
-                        <th className="w-1/5">유형</th>
-                        <th className="w-2/5">가격</th>
-                        <th className="w-2/5">체결금액</th>
+                <thead className="grid grid-cols-6 items-center m-1">
+                    <tr className="col-span-6 grid grid-cols-6 items-center">
+                        <th className="col-span-1 text-center mr-3">종목</th>
+                        <th className="col-span-1 text-center">유형</th>
+                        <th className="col-span-2">가격(수량)</th>
                     </tr>
                 </thead>
                 <tbody className="overflow-y-auto block" style={{ height: 'calc(20vh)' }}>
