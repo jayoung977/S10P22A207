@@ -20,7 +20,10 @@ export default function MultiWait(){
         </aside>
         <main className="col-span-6 grid grid-rows-12">
           <ChartImage/>
-          <Chat/>
+          <div className="border grid grid-cols-12 row-span-4">
+            <Chat/>
+            <div className='col-span-2 bg-gray-500 text-white text-center'>게임 대기 중 .....</div>
+          </div>
         </main>
         <aside className="col-span-3 grid grid-rows-6">
           <GameUser/>

@@ -8,6 +8,7 @@ import TradeHistory from "./tradeHistory"
 import User from "./user"
 import RoundResult from "./roundResult"
 import { useState, useEffect } from "react"
+import TradeButtons from "../tradeButton"
 
 export type dataType = {
   date: string,
@@ -19,6 +20,7 @@ export type dataType = {
 }
 
 export default function MultiPlay(){
+  const [roundFinish, setRoundFinish] = useState(false)
   const [data, setData] = useState<dataType[]>([]);
     useEffect(() => {
         setData([
@@ -152,7 +154,7 @@ export default function MultiPlay(){
 
   return (
     <div>
-      <RoundResult/>
+      {/* <RoundResult/> */}
       <div className="grid grid-rows-12 h-screen border-separate">
         <Header/>
         <div className="row-span-11 grid grid-cols-12 border">
@@ -162,7 +164,10 @@ export default function MultiPlay(){
           </aside>
           <main className="col-span-8 grid grid-rows-16">
             <Chart data={data}/>
-            <Chat/>
+            <div className="border grid grid-cols-12 row-span-4">
+              <Chat/>
+              <TradeButtons/>
+            </div>
           </main>
           <aside className="col-span-2 grid grid-rows-6 text-sm">
             <User/>
