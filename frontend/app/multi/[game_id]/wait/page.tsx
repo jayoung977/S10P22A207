@@ -6,7 +6,13 @@ import FriendSearch from './friendSearch'
 import GameRule from './gameRule'
 import Header from './header'
 
-export default function MultiWait(){
+export async function generateStaticParams(){
+  return [{game_id: '1'}]
+}
+
+
+export default function MultiWait({ params }: {params: { game_id: string }}){
+  const { game_id } = params;
   return (
     <div className="grid grid-rows-12 h-screen border-separate">
       <Header/>

@@ -19,7 +19,14 @@ export type dataType = {
   volume: number,
 }
 
-export default function MultiPlay(){
+export async function generateStaticParams(){
+  return [{game_id: '1'}]
+}
+
+
+export default function MultiPlay({ params }: {params: { game_id: string }}){
+  const { game_id } = params;
+  
   const [roundFinish, setRoundFinish] = useState(false)
   const [data, setData] = useState<dataType[]>([]);
     useEffect(() => {
