@@ -29,7 +29,7 @@ export default function Navbar() {
     });
   };
   return (
-    <nav className="shadow row-span-1 bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+    <nav className="shadow row-span-1 opacity-90 bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image
