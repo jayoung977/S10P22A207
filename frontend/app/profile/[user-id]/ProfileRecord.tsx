@@ -16,17 +16,27 @@ export default function UserRecord() {
           ></Image>
         </div>
         <div className="col-start-5 col-end-13 grid grid-rows-12">
-          <div className="row-start-1 row-end-6 flex items-center grid grid-cols-4">
-            <div className="col-span-1">2,345,654,321원</div>
-            <div className="col-span-1">1승 300패</div>
-            <div className="col-span-1">0.3%</div>
-            <div className="col-span-1">+10.1%</div>
-          </div>
-          <div className="row-start-6 row-end-13 flex items-center grid grid-cols-4">
-            <div className="col-span-1">시드머니</div>
-            <div className="col-span-1">전적</div>
-            <div className="col-span-1">승률</div>
-            <div className="col-span-1">평균 수익률</div>
+          <div className=" m-4 row-start-1 row-end-13 flex justify-center items-center grid grid-cols-4">
+            <div className="flex-col justify-center items-center col-span-1">
+              <div className="text-center font-extrabold text-xl">
+                2,345,654,324,212
+              </div>
+              <div className="text-center">시드</div>
+            </div>
+            <div className="flex-col justify-center items-center col-span-1">
+              <div className="text-center font-extrabold text-xl">
+                1승 300패
+              </div>
+              <div className="text-center">전적</div>
+            </div>
+            <div className="flex-col justify-center items-center col-span-1">
+              <div className="text-center font-extrabold text-xl">0.3%</div>
+              <div className="text-center">승률</div>
+            </div>
+            <div className="flex-col justify-center items-center col-span-1">
+              <div className="text-center font-extrabold text-xl">+10.1%</div>
+              <div className="text-center">평균 수익률</div>
+            </div>
           </div>
         </div>
       </div>
