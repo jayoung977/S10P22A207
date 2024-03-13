@@ -7,7 +7,7 @@ type Store = {
 
 const profileStore = create<Store>((set: any) => ({
   toggleButton: "single",
-  setToggleButton: (value: string) => set({ toggleButton: value }),
+  setToggleButton: (value) => set({ toggleButton: value }),
 }));
 
 export default profileStore;
