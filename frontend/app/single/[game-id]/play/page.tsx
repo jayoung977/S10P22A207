@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react';
 
-import SingleGameStore from '@/public/src/stores/single/singleGameStore';
 // navbar
 import Navbar from '@/app/Navbar';
 
@@ -27,7 +26,6 @@ type dataType = {
 }
 
 export default function SinglePlay () {
-    const { turn, setTurn } = SingleGameStore();
     const [data, setData] = useState<dataType[]>([]);
     useEffect(() => {
         const newData = [
@@ -157,7 +155,6 @@ export default function SinglePlay () {
             { date: '2022-05-04', open: 100, high: 120, low: 90, close: 110, volume: 1000 },
         ]
         setData(newData);
-        setTurn(0);
     }, [])
 
     return (

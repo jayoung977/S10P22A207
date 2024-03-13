@@ -9,13 +9,13 @@ export default function page() {
   return (
     <div className=" grid grid-rows-12 h-screen">
       <Navbar></Navbar>
-      <header className="flex justify-end items-center row-span-2 shadow">
-        <div className="text-6xl">삼성전자</div>
+      <header className="flex justify-end items-center row-span-2 shadow bg-background-1">
+        <div className="text-6xl m-4 text-textColor-1">삼성전자</div>
       </header>
-      <main className=" row-span-10 grid grid-cols-12">
+      <main className=" row-span-10 grid grid-cols-12 bg-background-1">
         <SingleTradeHistory></SingleTradeHistory>
         <SingleChart></SingleChart>
-        <div className=" shadow  col-span-3 grid grid-rows-12">
+        <div className="col-span-3 grid grid-rows-12">
           <SingleStockTicker></SingleStockTicker>
           <SingleRanking></SingleRanking>
         </div>

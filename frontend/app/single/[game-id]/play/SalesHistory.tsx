@@ -2,11 +2,9 @@
 import { useState } from 'react';
 
 
-import SingleGameStore from '@/public/src/stores/single/singleGameStore';
 import SaleHistory from "./SaleHistory";
 
 export default function SalesHistory () {
-    const { saleHistoryListData, setSaleHistoryListData } = SingleGameStore();
 
     const [saleData, setSaleData] = useState([
         {

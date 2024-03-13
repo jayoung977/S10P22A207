@@ -4,7 +4,7 @@ import penguin from "../../../public/src/assets/images/penguin.png";
 
 export default function UserRecord() {
   return (
-    <div className="col-start-4 col-end-11 grid grid-rows-12">
+    <div className="m-4 bg-white rounded-md col-start-4 col-end-11 grid grid-rows-12">
       <div className="shadow row-start-1 row-end-4 grid grid-cols-12">
         <div className="col-start-1 col-end-5 flex justify-center items-center">
           <Image
@@ -21,21 +21,21 @@ export default function UserRecord() {
               <div className="text-center font-extrabold text-xl">
                 2,345,654,324,212
               </div>
-              <div className="text-center">시드</div>
+              <div className="text-center text-textColor-1">시드</div>
             </div>
             <div className="flex-col justify-center items-center col-span-1">
               <div className="text-center font-extrabold text-xl">
                 1승 300패
               </div>
-              <div className="text-center">전적</div>
+              <div className="text-center text-textColor-1">전적</div>
             </div>
             <div className="flex-col justify-center items-center col-span-1">
-              <div className="text-center font-extrabold text-xl">0.3%</div>
-              <div className="text-center">승률</div>
+              <div className="text-center font-extrabold text-xl text-red-500">0.3%</div>
+              <div className="text-center text-textColor-1">승률</div>
             </div>
             <div className="flex-col justify-center items-center col-span-1">
-              <div className="text-center font-extrabold text-xl">+10.1%</div>
-              <div className="text-center">평균 수익률</div>
+              <div className="text-center font-extrabold text-xl text-red-500">+10.1%</div>
+              <div className="text-center text-textColor-1">평균 수익률</div>
             </div>
           </div>
         </div>
