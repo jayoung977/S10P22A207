@@ -23,7 +23,7 @@ export default function TurnInfo () {
             setIsOpenEndModal(true);
             setTurn(1);
         } else {
-            setTurn(30)
+            setTurn(turn+1)
             console.log(turn);
 
         }

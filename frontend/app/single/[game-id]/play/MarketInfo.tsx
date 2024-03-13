@@ -10,19 +10,19 @@ export default function MarketInfo () {
             price: 2083.39,
         },
         {
-            name: '은',
+            name: '철',
             price: 2083.49,
         },
         {
-            name: '동',
+            name: '구리',
             price: 2083.59,
         },
         {
-            name: '구리',
+            name: '석유',
             price: 9323.39,
         },
         {
-            name: '다이아',
+            name: '금리',
             price: 100000.39,
         },
     ])

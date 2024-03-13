@@ -96,7 +96,7 @@ type Store = {
 
     // 10개의 랜덤 종목 주식 데이터 상태관리 변수
     randomStockListData :stockListDataType[] | [];
-    setRandomStockData :(value :stockListDataType[]) => void;
+    setRandomStockListData :(value :stockListDataType[]) => void;
 
     // 날짜별 증가 상태관리 변수
     stockMarketListData :stockMarketType[] | [];
@@ -126,40 +126,40 @@ type Store = {
 const SingleGameStore = create<Store>((set: any) => ({
     // 총 평가 자산 상태관리 변수
     totalAssetData: null,
-    setTotalAssetData: (value :totalAssetDataType) => set({ totalAssetData: value }),
+    setTotalAssetData: (value) => set({ totalAssetData: value }),
     
     // 보유 자산 상태관리 변수
     assetHeldListData: [],
-    setAssetHeldListData: (value :assetHeldDataType[]) => set({ assetHeldListData: value }),
+    setAssetHeldListData: (value) => set({ assetHeldListData: value }),
 
     // 매매 내역 상태관리 변수
     saleHistoryListData: [],
-    setSaleHistoryListData: (value :saleHistoryDataType[]) => set({ saleHistoryListData: value }),
+    setSaleHistoryListData: (value) => set({ saleHistoryListData: value }),
 
     // 10개의 랜덤 종목 주식 데이터 상태관리 변수
     randomStockListData: [],
-    setRandomStockData: (value :stockListDataType[]) => set({ ramndomStockListData: value }),
+    setRandomStockListData: (value :any) => set({ randomStockListData: value }),
 
     // 날짜별 증가 상태관리 변수
     stockMarketListData: [],
-    setStockMarketListData: (value :stockMarketType[]) => set({ stockMarketListData: value }),
+    setStockMarketListData: (value) => set({ stockMarketListData: value }),
 
     // 현재 턴 상태관리 변수
-    turn: 0,
-    setTurn: (value :number) => set({ turn: value }),
+    turn: 1,
+    setTurn: (value) => set({ turn: value }),
     
     isOpenSaleModal: false,
-    setIsOpenSaleModal: (value :isOpenSaleModalType) => set({ isOpenSaleModal: value }),
+    setIsOpenSaleModal: (value) => set({ isOpenSaleModal: value }),
 
     isOpenEndModal: false,
-    setIsOpenEndModal: (value :isOpenEndModalType) => set({ isOpenEndModal: value }),
+    setIsOpenEndModal: (value) => set({ isOpenEndModal: value }),
     // 트렌드 목록 상태관리 변수
     trendList: [],
-    setTrendList: (value :dateTrendType[]) => set({ trendList: value }),
+    setTrendList: (value) => set({ trendList: value }),
 
     // 시장 정보 상태관리 변수
     marketInfoList: [],
-    setMarketInfoList: (value :dateMarketInfoType[]) => set({ marketInfoList: value }),
+    setMarketInfoList: (value) => set({ marketInfoList: value }),
  
 }));
 
