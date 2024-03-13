@@ -1,28 +1,29 @@
 'use client'
 import { useState } from 'react';
+
 // 시장 정보 컴포넌트
 import Market from "./Market"
 export default function MarketInfo () {
     const [marketData, setMarketData] = useState([
         {
-            정보: '금',
-            가격: 2083.39,
+            name: '금',
+            price: 2083.39,
         },
         {
-            정보: '은',
-            가격: 2083.49,
+            name: '은',
+            price: 2083.49,
         },
         {
-            정보: '동',
-            가격: 2083.59,
+            name: '동',
+            price: 2083.59,
         },
         {
-            정보: '구리',
-            가격: 9323.39,
+            name: '구리',
+            price: 9323.39,
         },
         {
-            정보: '다이아',
-            가격: 100000.39,
+            name: '다이아',
+            price: 100000.39,
         },
     ])
     return (

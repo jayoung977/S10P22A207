@@ -1,27 +1,31 @@
 'use client'
 // 턴 정보, 매수 + 매도 버튼 컴포넌트
 import { useState } from 'react';
+import SingleGameStore from '@/public/src/stores/single/singleGameStore';
 import TurnNow from './TurnNow';
 import BuySellModal from './BuySellModal';
 import SingleGameEndModal from './SingleGameEndModal';
 
 export default function TurnInfo () {
     // 현재 턴
-    const [turn, setTurn] = useState(0);
+    const { turn, setTurn } = SingleGameStore();
+    // const [turn, setTurn] = useState<number>(0);
     // 매수 / 매도 모달창 open 여부
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpenSaleModal, setIsOpenSaleModal] = useState<boolean>(false);
     // 매수 or 매도(true시 매수)
-    const [isBuy, setIsBuy] = useState(true);
+    const [isBuy, setIsBuy] = useState<boolean>(true);
 
     // 싱글 게임 종료 모달창 open 여부
-    const [isOpenEndModal, setIsOpenEndModal] = useState(false);
+    const [isOpenEndModal, setIsOpenEndModal] = useState<boolean>(false);
 
     const handleClickTurn = function () {
         if (turn == 50) {
             setIsOpenEndModal(true);
             setTurn(1);
         } else {
-            setTurn(turn+1)
+            setTurn(30)
+            console.log(turn);
+
         }
     }
     return (
@@ -35,7 +39,7 @@ export default function TurnInfo () {
                     <button 
                         onClick={() => {
                             setIsBuy(true);
-                            setIsOpen(true);
+                            setIsOpenSaleModal(true);
                         }} 
                         className="col-start-2 col-end-4 rounded-full text-white bg-red-600"
                     >
@@ -44,7 +48,7 @@ export default function TurnInfo () {
                     <button 
                         onClick={() => {
                             setIsBuy(false);
-                            setIsOpen(true);
+                            setIsOpenSaleModal(true);
                         }} 
                         className="col-start-5 col-end-7 rounded-full text-white bg-blue-600"
                     >
@@ -58,7 +62,7 @@ export default function TurnInfo () {
             >
                 다음
             </button>
-            <BuySellModal isBuy={isBuy} isOpen={isOpen} onClose={() =>setIsOpen(false) }/>
+            <BuySellModal isBuy={isBuy} isOpen={isOpenSaleModal} onClose={() =>setIsOpenSaleModal(false) }/>
             <SingleGameEndModal isOpen={isOpenEndModal} onClose={() => setIsOpenEndModal(false)}/>
         </div>
     )
