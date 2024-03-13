@@ -32,7 +32,7 @@ export default function TurnInfo () {
         <div className="row-start-1 row-end-2 grid grid-cols-3 border border-black">
             <div className="col-start-1 col-end-3 grid grid-rows-3 border border-black">
                 <div className="row-start-1 row-end-3">
-                    <div className="m-1">현재 턴 : {turn} / 50</div>
+                    <div className="m-1 text-textColor-1">현재 턴 : {turn} / 50</div>
                     <TurnNow turn={turn} />
                 </div>
                 <div className="row-start-3 row-end-4 grid grid-cols-7 mb-1">
@@ -41,7 +41,7 @@ export default function TurnInfo () {
                             setIsBuy(true);
                             setIsOpenSaleModal(true);
                         }} 
-                        className="col-start-2 col-end-4 rounded-full text-white bg-red-600"
+                        className="col-start-2 col-end-4 rounded-full text-textColor-2 bg-small-3"
                     >
                         매수    
                     </button>
@@ -50,7 +50,7 @@ export default function TurnInfo () {
                             setIsBuy(false);
                             setIsOpenSaleModal(true);
                         }} 
-                        className="col-start-5 col-end-7 rounded-full text-white bg-blue-600"
+                        className="col-start-5 col-end-7 rounded-full text-textColor-2 bg-small-1"
                     >
                         매도   
                     </button>
@@ -58,7 +58,7 @@ export default function TurnInfo () {
             </div>
             <button 
                 onClick={() => {handleClickTurn()}} 
-                className="col-start-3 col-end-4  rounded-full text-white border border-gray-400 bg-gray-400"
+                className="col-start-3 col-end-4  rounded-full text-textColor-1 border bg-small-14"
             >
                 다음
             </button>
