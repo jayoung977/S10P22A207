@@ -1,7 +1,10 @@
 package com.backend.api.domain.member.entity;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.PROTECTED;
+import static jakarta.persistence.GenerationType.*;
+import static lombok.AccessLevel.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.backend.api.domain.BaseEntity;
 import com.backend.api.domain.community.entity.Community;
@@ -13,6 +16,7 @@ import com.backend.api.domain.member.entity.type.GenderType;
 import com.backend.api.domain.multi.entity.MultiGamePlayer;
 import com.backend.api.domain.notice.entity.Notice;
 import com.backend.api.domain.single.entity.SingleGameLog;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -22,8 +26,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -96,7 +98,6 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<MultiGamePlayer> multiGamePlayers = new ArrayList<>();
 
-
 	@OneToMany(mappedBy = "member")
 	private List<SingleGameLog> singleGameLogs = new ArrayList<>();
 
@@ -114,7 +115,6 @@ public class Member extends BaseEntity {
 
 	@OneToMany(mappedBy = "receiver")
 	private List<FriendAsk> friendAskReceiveList = new ArrayList<>();  // 나에게 온 친구 요청
-
 
 	@Builder
 	public Member(String email, String nickname, Short birthYear, GenderType gender, Long asset, Integer rankPoint, Integer win, Integer lose, Integer singleGameChance, Double singleAvgRoi,
@@ -152,6 +152,9 @@ public class Member extends BaseEntity {
 		this.birthYear = birthYear;
 		this.gender = gender;
 	}
+	public void addAsset(Long profit){
+		this.asset += profit;
+	}
 
 	public void updateSingleAvgRoi(double v) {
 		this.singleAvgRoi = v;
@@ -165,7 +168,7 @@ public class Member extends BaseEntity {
 		this.lose++;
 	}
 
-	public void updateAsset(long totalAsset) {
+	public void addAsset(long totalAsset) {
 		this.asset = totalAsset;
 	}
 
