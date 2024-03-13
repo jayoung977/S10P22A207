@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 
 export default function Header(){
+
     const [turn, setTurn] = useState<number>(0)
     const [round, setRound] = useState<number>(1)
     const roundPercentage = (turn/50)*100
