@@ -11,7 +11,7 @@ import java.util.List;
 import com.backend.api.domain.BaseEntity;
 import com.backend.api.domain.fund.entity.type.FundStatus;
 import com.backend.api.domain.member.entity.Member;
-import com.backend.api.domain.type.FeeType;
+import com.backend.api.global.common.type.FeeType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

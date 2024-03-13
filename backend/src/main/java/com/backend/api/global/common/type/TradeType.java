@@ -1,4 +1,4 @@
-package com.backend.api.domain.type;
+package com.backend.api.global.common.type;
 
 public enum TradeType {
     BUY, SELL, SHORT
