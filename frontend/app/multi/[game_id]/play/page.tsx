@@ -17,13 +17,13 @@ export type dataType = {
   volume: number,
 }
 
-export async function generateStaticParams(){
-  return [{game_id: '1'}]
-}
+// export async function generateStaticParams(){
+//   return [{game_id: '1'}]
+// }
 
 
-export default function MultiPlay({ params }: {params: { game_id: string }}){
-  const { game_id } = params;
+export default function MultiPlay(){
+  // const { game_id } = params;
   
 
   return (
