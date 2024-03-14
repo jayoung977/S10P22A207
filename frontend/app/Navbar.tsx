@@ -71,7 +71,7 @@ export default function Navbar() {
               </button>
               <div
                 id="dropdownNavbar"
-                className={`absolute z-10 font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 ${
+                className={`absolute font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 ${
                   dropdownOpen ? "" : "hidden"
                 }`}
               >

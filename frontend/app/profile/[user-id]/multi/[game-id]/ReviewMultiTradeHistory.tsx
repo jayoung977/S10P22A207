@@ -1,6 +1,6 @@
 export default function MultiTradeHistroy() {
   return (
-    <div className="row-span-6 relative sm:rounded-lg bg-small-10 p-4 max-h-60 overflow-y-auto shadow-lg hover:-translate-y-1 transition ease-in-out duration-500" style={{maxHeight: '35vh'}} >
+    <div className="m-2 row-span-6 relative sm:rounded-lg bg-small-10 p-4 max-h-60 overflow-y-auto shadow-lg hover:-translate-y-1 transition ease-in-out duration-500" style={{maxHeight: '35vh'}} >
       <div className="rounded-md" >
         <div>
           <p className="text-white">매매내역</p>

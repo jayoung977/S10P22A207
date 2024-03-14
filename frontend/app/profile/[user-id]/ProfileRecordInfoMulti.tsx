@@ -32,11 +32,11 @@ export default function UserRecordInfoMulti() {
               scope="row"
               className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-              멀티 날짜
+              2024.03.14
             </th>
-            <td className="px-6 py-4">Silver</td>
-            <td className="px-6 py-4">Laptop</td>
-            <td className="px-6 py-4">$2999</td>
+            <td className="px-6 py-4">창효, 제희, 민기, 자양</td>
+            <td className="px-6 py-4">1위</td>
+            <td className="px-6 py-4">10%</td>
           </tr>
         </tbody>
       </table>

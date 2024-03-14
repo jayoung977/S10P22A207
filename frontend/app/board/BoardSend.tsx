@@ -1,6 +1,17 @@
+import Image from "next/image";
+import penguin from "./../../public/src/assets/images/penguin.png";
 export default function BoardSend() {
   return (
-    <div className="row-span-5 grid grid-cols-12 rounded-md ">
+    <div className="flex justify-center items-center row-span-5 grid grid-cols-12 rounded-md ">
+      <div className="col-start-4">
+        <Image
+          className="w-24 h-24 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500"
+          src={penguin}
+          alt="Extra large avatar"
+          width={100}
+          height={100}
+        ></Image>
+      </div>
       <div className="col-start-5 col-end-10 rounded-lg m-2">
         <form>
           <label htmlFor="chat" className="sr-only">
