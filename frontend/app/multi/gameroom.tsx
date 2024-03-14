@@ -12,7 +12,6 @@ export default function Gameroom(props: {color: string}) {
           <div>3명</div>
         </div>
       </a>
-
       <JoinRoomModal/>
     </div>
   )
