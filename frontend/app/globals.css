@@ -14,12 +14,24 @@
 
 /* 스크롤바 핸들(움직이는 부분) 스타일 */
 ::-webkit-scrollbar-thumb {
-  background: #F1F3F8; /* 핸들의 배경 색상 */
+  background: #f1f3f8; /* 핸들의 배경 색상 */
   border-radius: 30px;
 }
 
 /* 스크롤바 핸들:hover 스타일 */
 ::-webkit-scrollbar-thumb:hover {
-  background: #F1F3F8; /* 핸들을 마우스로 가리킬 때의 배경 색상 */
+  background: #f1f3f8; /* 핸들을 마우스로 가리킬 때의 배경 색상 */
   border-radius: 30px;
+}
+
+div {
+  padding: 0;
+  margin: 0;
+  font-family: DungGeunMo;
+}
+
+@font-face {
+  font-family: "DungGeunMo";
+  font-weight: 200;
+  src: url("../public/src/fonts/DungGeunMo.ttf") format("truetype");
 }
