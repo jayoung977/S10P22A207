@@ -1,15 +1,13 @@
 'use client'
-// 턴 정보, 매수 + 매도 버튼 컴포넌트
+// 현재 턴, 매매 버튼, 다음 턴 버튼 목록 (right side bar - 1)
 import { useState } from 'react';
-import SingleGameStore from '@/public/src/stores/single/singleGameStore';
 import TurnNow from './TurnNow';
 import BuySellModal from './BuySellModal';
 import SingleGameEndModal from './SingleGameEndModal';
 
 export default function TurnInfo () {
     // 현재 턴
-    const { turn, setTurn } = SingleGameStore();
-    // const [turn, setTurn] = useState<number>(0);
+    const [turn, setTurn] = useState<number>(0);
     // 매수 / 매도 모달창 open 여부
     const [isOpenSaleModal, setIsOpenSaleModal] = useState<boolean>(false);
     // 매수 or 매도(true시 매수)
@@ -29,8 +27,8 @@ export default function TurnInfo () {
         }
     }
     return (
-        <div className="row-start-1 row-end-2 grid grid-cols-3 border border-black">
-            <div className="col-start-1 col-end-3 grid grid-rows-3 border border-black">
+        <div className="row-start-1 row-end-2 grid grid-cols-3">
+            <div className="col-start-1 col-end-3 grid grid-rows-3">
                 <div className="row-start-1 row-end-3">
                     <div className="m-1 text-textColor-1">현재 턴 : {turn} / 50</div>
                     <TurnNow turn={turn} />
@@ -58,7 +56,7 @@ export default function TurnInfo () {
             </div>
             <button 
                 onClick={() => {handleClickTurn()}} 
-                className="col-start-3 col-end-4  rounded-full text-textColor-1 border bg-small-14"
+                className="col-start-3 col-end-4 rounded-full text-textColor-1 border bg-small-14 m-10"
             >
                 다음
             </button>

@@ -21,7 +21,7 @@ export default function Trends () {
         },
     ])
     return (
-        <div className="row-start-2 row-end-7 border border-black">
+        <div className="row-start-2 row-end-7">
             {
                 trendData.map((x, index) => (
                     <Trend key={index} rank={index+1} data={x}/>

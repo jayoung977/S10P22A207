@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react';
 
-import SingleGameStore from '@/public/src/stores/single/singleGameStore';
 // navbar
 import Navbar from '@/app/Navbar';
 
@@ -27,7 +26,6 @@ type dataType = {
 }
 
 export default function SinglePlay () {
-    const { turn, setTurn } = SingleGameStore();
     const [data, setData] = useState<dataType[]>([]);
     useEffect(() => {
         const newData = [
@@ -157,24 +155,23 @@ export default function SinglePlay () {
             { date: '2022-05-04', open: 100, high: 120, low: 90, close: 110, volume: 1000 },
         ]
         setData(newData);
-        setTurn(0);
     }, [])
 
     return (
         <div className="grid grid-rows-12 h-screen border-separate" style={{ borderCollapse: 'separate' }}>
             {/* navbar */}
             <Navbar />
-            <div className="row-span-11 grid grid-cols-12 border border-black">
+            <div className="row-span-11 grid grid-cols-12 border border-t-black">
                 {/* left aside */}
-                <aside className="col-span-3 grid grid-rows-3 border border-black">
+                <aside className="col-span-3 grid grid-rows-3">
                     <TotalAssets />
                     <AssetsHeld />
                     <SalesHistory />
                 </aside>
                 {/* main */}
-                <main className="col-span-7 grid grid-rows-12 border border-black">
-                    <div className="row-start-1 row-end-12 grid grid-rows-12 border border-black">
-                        <div className="row-start-1 row-end-2 border border-b-black flex items-center p-2">
+                <main className="col-span-7 grid grid-rows-12 border border-x-black">
+                    <div className="row-start-1 row-end-12 grid grid-rows-12">
+                        <div className="row-start-1 row-end-2 flex items-center p-2">
                             차트 이름
                         </div>
                         <Chart data={data} />
@@ -182,7 +179,7 @@ export default function SinglePlay () {
                     <StockMarket />
                 </main>
                 {/* right aside */}
-                <aside className="col-span-2 grid grid-rows-6 border border-black">
+                <aside className="col-span-2 grid grid-rows-6">
                     <TurnInfo />
                     <StockList />
                     <MarketAndTrends />

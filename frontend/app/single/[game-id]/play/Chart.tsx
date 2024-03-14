@@ -1,5 +1,5 @@
-// 차트 컴포넌트
 'use client'
+// 현재 턴/종목에 대한 차트 정보 (main - 1)
 import { useEffect } from 'react';
 import anychart from 'anychart';
 
@@ -75,7 +75,7 @@ export default function Chart ({ data } :any) {
         }
     }, [data])
     return (
-        <div id="chart-container" className="row-start-2 row-end-13 border border-black flex items-center justify-center">
+        <div id="chart-container" className="row-start-2 row-end-13 flex items-center justify-center">
         </div>
     )
 }

@@ -27,7 +27,7 @@ export default function MarketInfo () {
         },
     ])
     return (
-        <div className="row-start-2 row-end-7 border border-black">
+        <div className="row-start-2 row-end-7">
             {
                 marketData.map((x, index) => (
                     <Market key={index} data={x}/>
