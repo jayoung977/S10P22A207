@@ -1,7 +1,7 @@
 export default function SingleTradeHistory() {
   return (
     <div
-      className="col-span-3 grid grid-rows-12 p-4 m-4 bg-small-10 rounded-md overflow-y-auto max-h-96"
+      className="col-span-3 grid grid-rows-12 p-4 m-4 bg-small-10 rounded-md  overflow-y-auto max-h-96 shadow-lg hover:-translate-y-1 transition ease-in-out duration-500"
       style={{ maxHeight: "100vh" }}
     >
       <div className="row-span-1">

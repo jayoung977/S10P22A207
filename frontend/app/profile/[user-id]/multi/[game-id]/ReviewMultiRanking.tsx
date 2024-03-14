@@ -1,6 +1,6 @@
 export default function MultiRanking() {
   return (
-    <div className="p-4 row-span-6 grid grid-rows-6 m-4 bg-small-9 rounded-md">
+    <div className="p-4 row-span-6 grid grid-rows-6 m-4 bg-small-9 rounded-md shadow-lg hover:-translate-y-1 transition ease-in-out duration-500">
       <div className="row-span-1">
         <p className="text-textColor-2">랭킹</p>
       </div>

@@ -5,8 +5,8 @@ import bronze from "../../../public/src/assets/images/bronze.png";
 
 export default function UserInfo() {
   return (
-    <div className="row-start-2 row-end-13 grid grid-cols-10 bg-background-1">
-      <aside className="m-4 bg-white rounded-md col-start-1 col-end-4 grid grid-rows-12">
+    <div className="row-start-2 row-end-13 grid grid-cols-10 bg-background-1 ">
+      <aside className="m-4 bg-white rounded-md col-start-1 col-end-4 grid grid-rows-12 shadow-lg hover:-translate-y-1 transition ease-in-out duration-500">
         <div className="bg-textColor-1 rounded-md row-start-1 row-end-5 flex justify-center items-center">
           <p className="text-6xl text-textColor-2  dark:text-white">펭귄</p>
           
