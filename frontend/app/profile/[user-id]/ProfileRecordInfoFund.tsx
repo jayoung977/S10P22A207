@@ -28,12 +28,12 @@ export default function UserRecordInfoFund() {
               scope="row"
               className="cursor-pointer px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-              Apple MacBook Pro 17"
+              원영 펀드
             </th>
-            <td className="px-6 py-4">Silver</td>
-            <td className="px-6 py-4">Laptop</td>
-            <td className="px-6 py-4">$2999</td>
-            <td className="px-6 py-4">$2999</td>
+            <td className="px-6 py-4">모집중</td>
+            <td className="px-6 py-4">1,000,000,000</td>
+            <td className="px-6 py-4">-</td>
+            <td className="px-6 py-4">-</td>
           </tr>
           
         </tbody>
