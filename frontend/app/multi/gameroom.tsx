@@ -1,14 +1,13 @@
-import styles from '@/public/src/styles/multi/gameroom.module.css'
+'use client'
 import JoinRoomModal from './joinRoomModal';
 
-
-
-export default function Gameroom() {
+export default function Gameroom(props: {color: string}) {
+  const { color } = props
   return (
-    <div className="h-auto rounded-md">
-      <a href="/multi/1/wait" className="block p-2 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-        <h5 className="mb-1 text-md font-bold tracking-tight text-gray-900 dark:text-white">파산할 때까지 가보자</h5>
-        <div className="flex justify-end gap-4 text-sm text-gray-700 dark:text-gray-400">
+    <div className={`h-auto rounded-md shadow-md text-textColor-2 ${color}`}>
+      <a href="/multi/1/wait" className="block p-2  border rounded-lg shadow">
+        <h5 className="mb-1 text-md font-bold tracking-tight">파산할 때까지 가보자</h5>
+        <div className="flex justify-end gap-4 text-sm">
           <div>3라운드</div>
           <div>3명</div>
         </div>

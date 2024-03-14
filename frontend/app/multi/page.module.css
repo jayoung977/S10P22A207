@@ -1,7 +1,0 @@
-.upper {
-  @apply grid grid-cols-12 gap-4 row-span-4
-}
-
-.lower {
-  @apply grid grid-cols-12 gap-4 row-span-8 mt-4
-}
