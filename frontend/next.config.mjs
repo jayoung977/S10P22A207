@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: "standalone"
+    // distDir: 'build',
+    output: "standalone",
 };
 
 export default nextConfig;

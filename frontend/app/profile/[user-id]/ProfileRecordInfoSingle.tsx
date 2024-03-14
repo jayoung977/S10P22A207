@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 export default function UserRecordInfoSingle() {
   const router = useRouter();
   return (
-    <div className="shadow row-span-5 relative overflow-auto max-h-96">
+    <div className="shadow row-span-5 relative overflow-auto max-h-96 p-4">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>

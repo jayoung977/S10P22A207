@@ -14,7 +14,11 @@ type totalAssetDataType = {
 
 // 보유 자산
 type assetHeldDataType = {
+<<<<<<< HEAD
     name: string,              // 종목명 
+=======
+    stock: string,              // 종목명 
+>>>>>>> 1a8aa1cd3b45dbf18f1aec8c026e8c98241fc690
     valuationPL: number,        // 평가 손익 
     availableForSale: number,   // 매도가능(해당 종목 보유 수)
     profitMargin: number,       // 손익률
@@ -22,7 +26,11 @@ type assetHeldDataType = {
 }
 // 매매 내역
 type saleHistoryDataType = {
+<<<<<<< HEAD
     name: string,          // 종목명
+=======
+    stock: string,          // 종목명
+>>>>>>> 1a8aa1cd3b45dbf18f1aec8c026e8c98241fc690
     saleType: string,       // 매매 유형
     price: number,          // 가격
     quantity: number,       // 수량

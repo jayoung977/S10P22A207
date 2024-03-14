@@ -5,6 +5,7 @@ import { useState } from 'react';
 import SaleHistory from "./SaleHistory";
 
 export default function SalesHistory () {
+
     const [saleData, setSaleData] = useState([
         {
             stock: '종목1',

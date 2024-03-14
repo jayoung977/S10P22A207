@@ -1,5 +1,0 @@
-.button {
-  width: 100px;
-  height: 40px;
-  @apply border bg-gray-700 text-white rounded-md
-}
