@@ -6,7 +6,7 @@ export async function generateStaticParams(){
 }
 
 
-export default async function Page(params: {game_id: string}){
+export default function Page(params: {game_id: string}){
   const { game_id } = params
   return <MultiWait/>
 }
