@@ -1,5 +1,5 @@
 'use client'
-// 턴 정보, 매수 + 매도 버튼 컴포넌트
+// 매수/매도 버튼 목록
 import { useState } from 'react';
 import SaleModal from './SaleModal';
 

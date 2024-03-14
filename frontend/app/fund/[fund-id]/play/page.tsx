@@ -6,8 +6,8 @@ import Navbar from '@/app/Navbar';
 
 // left 
 import FundTotalAssets from './FundTotalAssets';
-import AssetsHeld from './AssetsHeld'; 
-import SalesHistory from './SalesHistory';
+import FundAssetsHeld from './FundAssetsHeld'; 
+import FundSalesHistory from './FundSalesHistory';
 // middle
 import Chart from './Chart';
 import StockMarket from './StockMarket';
@@ -165,8 +165,8 @@ export default function SinglePlay () {
                 {/* left aside */}
                 <aside className="col-span-3 grid grid-rows-3">
                     <FundTotalAssets />
-                    <AssetsHeld />
-                    <SalesHistory />
+                    <FundAssetsHeld />
+                    <FundSalesHistory />
                 </aside>
                 {/* main */}
                 <main className="col-span-7 grid grid-rows-12 border border-x-black">

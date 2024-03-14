@@ -1,5 +1,5 @@
 // 매매 내역 컴포넌트
-export default function SaleHistory ({ data } :any) {
+export default function FundSalesHistory ({ data } :any) {
 
     return (
         <tr className="row-span-1 bg-small-5 grid grid-cols-6 text-center rounded-lg m-1">

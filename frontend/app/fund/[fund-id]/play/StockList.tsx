@@ -1,5 +1,5 @@
 'use client'
-// 사용자가 받은 10개의 랜덤한 주식 종목 목록 (right side bar - 2)
+// 검색창 및 검색한 주식 목록 (right side bar - 2)
 import { useState } from 'react'
 import Stock from "./Stock"
 
@@ -54,60 +54,76 @@ function computeLPS(pattern :any, m :any) {
 
 
 export default function StockList () {
-    const [selectedStock, setSelectedStock] = useState(0);
+    const [selectedStock, setSelectedStock] = useState<number | null>(null);
     const [searchedStockData, setSearchedStockData] = useState([]);
     const [stockData, setStockData] = useState([
         {
-            name : '종목1', 
+            name : '종목1',
+            id: 0, 
             riseRate : -1.5,
             price : 70000,
         },
         {
             name : '종목2', 
+            id: 1, 
             riseRate : -2.8,
             price : 50000,
         },
         {
             name : '종목3', 
+            id: 2, 
             riseRate : +3.5,
             price : 80000,
         },
         {
             name : '종목4', 
+            id: 3, 
             riseRate : +10.9,
             price : 200000,
         },
         {
             name : '종목4', 
+            id: 4, 
             riseRate : +10.9,
             price : 200000,
         },
         {
             name : '종목4', 
+            id: 5, 
             riseRate : +10.9,
             price : 200000,
         },
         {
             name : '종목4', 
+            id: 6, 
             riseRate : +10.9,
             price : 200000,
         },
         {
             name : '종목4', 
+            id: 7, 
             riseRate : +10.9,
             price : 200000,
         },
         {
             name : '종목4', 
+            id: 8, 
             riseRate : +10.9,
             price : 200000,
         },
         {
             name : '종목4', 
+            id: 9, 
             riseRate : +10.9,
             price : 200000,
         },
-        
+        {
+            name : '종목3', 
+            id: 10, 
+            riseRate : +3.5,
+            price : 80000,
+        },
+
 
     ])
 
@@ -133,20 +149,21 @@ export default function StockList () {
                         findMatchingValues(e.currentTarget.value, stockData)
                         }}
                     type="search"
-                    className="relative m-0 block w-full rounded border border-solid border-neutral-200 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-surface outline-none transition duration-200 ease-in-out placeholder:text-neutral-500 focus:z-[3] focus:border-primary focus:shadow-inset focus:outline-none motion-reduce:transition-none dark:border-white/10 dark:text-white dark:placeholder:text-neutral-200 dark:autofill:shadow-autofill dark:focus:border-primary"
-                    placeholder="Search"
+                    className="relative m-0 block w-full rounded border border-small-1 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-surface outline-none transition duration-200 ease-in-out placeholder:text-neutral-500 focus:z-[3] focus:border-primary focus:shadow-inset focus:outline-none motion-reduce:transition-none dark:border-white/10 dark:text-white dark:placeholder:text-neutral-200 dark:autofill:shadow-autofill dark:focus:border-primary"
+                    placeholder="종목을 검색해 주세요."
                     aria-label="Search"
-                    id="exampleFormControlInput4" />
+                    id="search" />
             </div>
-            <div className="row-span-6 overflow-y-auto block" style={{height: 'calc(30vh)'}}>
+            <div className="row-span-6 overflow-y-auto block rounded border border-small-1" style={{height: 'calc(30vh)'}}>
                 {
-                    searchedStockData && searchedStockData.map((x, index) => (
+                    searchedStockData && searchedStockData.map((x :any, index :number) => (
                         <Stock 
-                            key={index} 
-                            id={index}
+                            key={x.id} 
+                            id={x.id}
+                            index={index}
                             data={x} 
-                            isSelected={selectedStock==index}
-                            onClick={()=>{setSelectedStock(index)}}
+                            isSelected={selectedStock==x.id}
+                            onClick={()=>{setSelectedStock(x.id)}}
                             />
                         )
                     )

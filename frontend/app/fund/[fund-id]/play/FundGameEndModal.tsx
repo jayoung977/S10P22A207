@@ -1,6 +1,6 @@
 'use client'
 import { useRouter } from 'next/navigation'
-export default function SingleGameEndModal ({ isOpen, onClose }:any) {
+export default function FundGameEndModal ({ isOpen, onClose }:any) {
     const router = useRouter();
     if (!isOpen) return null;
     
