@@ -18,9 +18,9 @@ export default function UserRecordInfoBoard() {
               scope="row"
               className="cursor-pointer px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-              Apple MacBook Pro 17"
+              2024.03.14
             </th>
-            <td className="px-6 py-4">Silver</td>
+            <td className="px-6 py-4">내용</td>
           </tr>
         </tbody>
       </table>

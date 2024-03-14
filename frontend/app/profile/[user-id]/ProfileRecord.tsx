@@ -19,7 +19,7 @@ export default function UserRecord() {
           <div className=" m-4 row-start-1 row-end-13 flex justify-center items-center grid grid-cols-4">
             <div className="flex-col justify-center items-center col-span-1">
               <div className="text-center font-extrabold text-xl">
-                2,345,654,324,212
+                1,0000,000,000원
               </div>
               <div className="text-center text-textColor-1">시드</div>
             </div>
