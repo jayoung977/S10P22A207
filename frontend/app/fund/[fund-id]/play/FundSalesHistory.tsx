@@ -1,10 +1,10 @@
 'use client'
-// 사용자의 매매 내역 (left side bar - 3)
+// 펀드 매매 내역 (left side bar - 3)
 import { useState } from 'react';
 
-import SaleHistory from "./SaleHistory";
+import FundSaleHistory from "./FundSaleHistory";
 
-export default function SalesHistory () {
+export default function FundSalesHistory () {
 
     const [saleData, setSaleData] = useState([
         {
@@ -53,7 +53,7 @@ export default function SalesHistory () {
                 <tbody className="overflow-y-auto block" style={{ height: 'calc(20vh)' }}>
                     {
                         saleData.map((x, index) => (
-                            <SaleHistory key={index} data={x}/>
+                            <FundSaleHistory key={index} data={x}/>
                         ))
                     }
                 </tbody>

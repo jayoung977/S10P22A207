@@ -1,9 +1,9 @@
-// 사용자의 현재 총 자산 정보 (left side bar - 1)
-export default function TotalAssets () {
+// 펀드 현재 총 자산 정보 (left side bar - 1)
+export default function FundTotalAssets () {
     return (
         <div className="row-span-1 grid grid-rows-6">
             <div className="row-start-1 row-end-2 flex items-center justify-between pl-2">
-                <div className="rounded-t-lg bg-small-5 text-textColor-2"><span className="mx-1">총 평가 자산</span></div>
+                <div className="rounded-t-lg bg-small-5 text-textColor-2"><span className="mx-1">펀드 평가 자산</span></div>
                 <div>10,000,000원(- %)</div>
             </div>
             <div className="row-start-2 row-end-7 grid grid-rows-6 m-2 rounded-md" >

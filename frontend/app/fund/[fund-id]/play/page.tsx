@@ -5,14 +5,14 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/app/Navbar';
 
 // left 
-import TotalAssets from './TotalAssets';
-import AssetsHeld from './AssetsHeld'; 
-import SalesHistory from './SalesHistory';
+import FundTotalAssets from './FundTotalAssets';
+import FundAssetsHeld from './FundAssetsHeld'; 
+import FundSalesHistory from './FundSalesHistory';
 // middle
 import Chart from './Chart';
 import StockMarket from './StockMarket';
 // right
-import TurnInfo from './TurnInfo';
+import SaleBtn from './SaleBtn';
 import StockList from './StockList';
 import MarketAndTrends from './MarketAndTrends';
 
@@ -164,9 +164,9 @@ export default function SinglePlay () {
             <div className="row-span-11 grid grid-cols-12 border border-t-black">
                 {/* left aside */}
                 <aside className="col-span-3 grid grid-rows-3">
-                    <TotalAssets />
-                    <AssetsHeld />
-                    <SalesHistory />
+                    <FundTotalAssets />
+                    <FundAssetsHeld />
+                    <FundSalesHistory />
                 </aside>
                 {/* main */}
                 <main className="col-span-7 grid grid-rows-12 border border-x-black">
@@ -180,7 +180,7 @@ export default function SinglePlay () {
                 </main>
                 {/* right aside */}
                 <aside className="col-span-2 grid grid-rows-6">
-                    <TurnInfo />
+                    <SaleBtn />
                     <StockList />
                     <MarketAndTrends />
                 </aside>

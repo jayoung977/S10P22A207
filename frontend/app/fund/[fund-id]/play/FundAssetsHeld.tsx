@@ -1,8 +1,8 @@
 'use client'
-// 보유 자산 목록 (left side bar - 2)
+// 펀드 보유 자산 목록 (left side bar - 2)
 import { useState } from 'react'
-import AssetHeld from './AssetHeld'
-export default function AssetsHeld () {
+import FundAssetHeld from './FundAssetHeld'
+export default function FundAssetsHeld () {
     const [AssetData, setAssetData] = useState([
         {
             name: '종목1',
@@ -49,7 +49,7 @@ export default function AssetsHeld () {
             <div className="row-span-5 overflow-y-auto block" style={{height: 'calc(25vh)'}}>
                 {
                     AssetData.map((x, index) => (
-                        <AssetHeld key={index} data={x}/>
+                        <FundAssetHeld key={index} data={x}/>
                     ))
                 }
             </div>
