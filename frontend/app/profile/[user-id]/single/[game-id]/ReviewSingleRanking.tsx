@@ -1,6 +1,6 @@
 export default function SingleRanking() {
   return (
-    <div className="p-4 row-span-5 grid grid-rows-4 m-4 bg-small-3  rounded-md">
+    <div className="p-4 row-span-5 grid grid-rows-4 m-4 bg-small-3  rounded-md shadow-lg hover:-translate-y-1 transition ease-in-out duration-500">
       <div className="row-span-1 grid grid-cols-5">
         <p className="text-textColor-2">랭킹</p>
       </div>

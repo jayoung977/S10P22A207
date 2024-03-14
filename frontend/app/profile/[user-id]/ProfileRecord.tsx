@@ -4,7 +4,7 @@ import penguin from "../../../public/src/assets/images/penguin.png";
 
 export default function UserRecord() {
   return (
-    <div className="m-4 bg-white rounded-md col-start-4 col-end-11 grid grid-rows-12">
+    <div className="m-4 bg-white rounded-md col-start-4 col-end-11 grid grid-rows-12 shadow-lg hover:-translate-y-1 transition ease-in-out duration-500">
       <div className="shadow row-start-1 row-end-4 grid grid-cols-12">
         <div className="col-start-1 col-end-5 flex justify-center items-center">
           <Image

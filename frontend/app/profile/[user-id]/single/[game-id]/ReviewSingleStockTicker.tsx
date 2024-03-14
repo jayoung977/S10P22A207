@@ -1,6 +1,6 @@
 export default function SingleStockTicker() {
   return (
-    <div className="p-4 row-span-7 grid grid-rows-5 m-4 bg-small-8 rounded-md">
+    <div className="p-4 row-span-7 grid grid-rows-5 m-4 bg-small-8 rounded-md shadow-lg hover:-translate-y-1 transition ease-in-out duration-500">
       <div>
         <p className="text-textColor-2">종목</p>
       </div>
