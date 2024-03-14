@@ -31,10 +31,8 @@ export default function Stock ({ id, index, data, isSelected, onClick } :any) {
                         <FontAwesomeIcon icon={faPlay} size="sm" style={{ color: "#B197FC" }} />
                     </div>
                 ) : (
-                    <div className="col-span-4 grid grid-cols-4 items-center">
-                        <div className="col-span-2">{data.riseRate}%</div>
-                        <div className="col-span-2">{data.price}</div>
-                    </div>
+                    // <div className="col-span-2 flex items-center justify-center">{data.riseRate}%</div>
+                    <div className="col-span-4 flex items-center justify-center">{data.price}</div>
                 )
 
             }

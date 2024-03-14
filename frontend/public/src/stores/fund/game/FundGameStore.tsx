@@ -3,7 +3,7 @@ import { create } from "zustand";
 // 1. left side bar
 
 // 총 평가 자산
-type totalAssetDataType = {
+type fundTotalAssetDataType = {
     totalAssessedAssets: number,    // 총 평가 자산
     cashOnHand: number,             // 보유 현금
     totalValuationdPL: number,      // 총 평가 손익
@@ -52,14 +52,10 @@ type stockMarketType = {
 
 // 3. right side bar
 
-// 현재 턴
-type turnType = number;
-
 // 매수|매도 모달창
 type isOpenSaleModalType = boolean;
 // 싱글 게임 끝 모달창
 type isOpenEndModalType = boolean;
-
 
 // 트렌드
 type trendType = string;
@@ -82,8 +78,8 @@ type dateMarketInfoType = {
 
 type Store = {
     // 총 평가 자산 상태관리 변수
-    totalAssetData :totalAssetDataType | null;
-    setTotalAssetData :(value :totalAssetDataType) => void;
+    fundTotalAssetData :fundTotalAssetDataType | null;
+    setFundTotalAssetData :(value :fundTotalAssetDataType) => void;
     
     // 보유 자산 상태관리 변수
     assetHeldListData :assetHeldDataType[] | [];
@@ -122,10 +118,10 @@ type Store = {
 };
 
 
-const SingleGameStore = create<Store>((set: any) => ({
+const FundGameStore = create<Store>((set: any) => ({
     // 총 평가 자산 상태관리 변수
-    totalAssetData: null,
-    setTotalAssetData: (value) => set({ totalAssetData: value }),
+    fundTotalAssetData: null,
+    setFundTotalAssetData: (value) => set({ fundTotalAssetData: value }),
     
     // 보유 자산 상태관리 변수
     assetHeldListData: [],
@@ -162,5 +158,5 @@ const SingleGameStore = create<Store>((set: any) => ({
  
 }));
 
-export default SingleGameStore;
+export default FundGameStore;
 

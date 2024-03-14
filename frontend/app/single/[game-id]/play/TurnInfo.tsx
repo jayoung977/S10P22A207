@@ -28,39 +28,38 @@ export default function TurnInfo () {
         }
     }
     return (
-        <div className="row-start-1 row-end-2 grid grid-cols-3 border border-black">
-            <div className="col-start-1 col-end-3 grid grid-rows-3 border border-black">
-                <div className="row-start-1 row-end-3">
-                    <div className="m-1 text-textColor-1">현재 턴 : {turn} / 50</div>
-                    <TurnNow turn={turn} />
-                </div>
-                <div className="row-start-3 row-end-4 grid grid-cols-7 mb-1">
-                    <button 
-                        onClick={() => {
-                            setIsBuy(true);
-                            setIsOpenSaleModal(true);
-                        }} 
-                        className="col-start-2 col-end-4 rounded-full text-textColor-2 bg-small-3"
-                    >
-                        매수    
-                    </button>
-                    <button 
-                        onClick={() => {
-                            setIsBuy(false);
-                            setIsOpenSaleModal(true);
-                        }} 
-                        className="col-start-5 col-end-7 rounded-full text-textColor-2 bg-small-1"
-                    >
-                        매도   
-                    </button>
-                </div>
+        <div className="row-start-1 row-end-2 grid grid-rows-2">
+            <div className="row-span-1">
+                <div className="m-1 text-textColor-1">현재 턴 : {turn} / 50</div>
+                <TurnNow turn={turn} />
             </div>
-            <button 
-                onClick={() => {handleClickTurn()}} 
-                className="col-start-3 col-end-4  rounded-full text-textColor-1 border bg-small-14"
-            >
-                다음
-            </button>
+            <div className="row-span-1 grid grid-cols-3 items-center justify-center">
+                <button 
+                    onClick={() => {
+                        setIsBuy(true);
+                        setIsOpenSaleModal(true);
+                    }} 
+                    className="col-span-1 rounded-md text-textColor-2 bg-small-3 m-2"
+                >
+                    매수    
+                </button>
+                <button 
+                    onClick={() => {
+                        setIsBuy(false);
+                        setIsOpenSaleModal(true);
+                    }} 
+                    className="col-span-1 rounded-md text-textColor-2 bg-small-1 m-2"
+                >
+                    매도   
+                </button>
+                <button 
+                    onClick={() => {handleClickTurn()}} 
+                    className="col-span-1 rounded-full text-textColor-1 bg-small-14 m-1"
+                >
+                    다음
+                </button>
+            
+            </div>
             <BuySellModal isBuy={isBuy} isOpen={isOpenSaleModal} onClose={() =>setIsOpenSaleModal(false) }/>
             <SingleGameEndModal isOpen={isOpenEndModal} onClose={() => setIsOpenEndModal(false)}/>
         </div>

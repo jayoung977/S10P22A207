@@ -35,7 +35,6 @@ export default function Chart ({ data } :any) {
                     )
 
         })
-        console.log(plot1);
         plot1.legend().title().useHtml(true);
         plot1.legend().titleFormat(<span></span>);
         plot1.legend().useHtml(true);
@@ -53,6 +52,7 @@ export default function Chart ({ data } :any) {
               }
         })
         const plot2 = chart.plot(1);
+        plot2.title('거래량')
         plot2.legend().title().useHtml(true);
         plot2.legend().titleFormat(<span></span>);
         const columnSeries = plot2.column(data?.map((item :any) => ([item.date, item.volume])));

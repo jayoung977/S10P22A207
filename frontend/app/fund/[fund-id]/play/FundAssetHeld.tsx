@@ -1,4 +1,4 @@
-export default function AssetHeld({ data } :any) {
+export default function FundAssetHeld({ data } :any) {
 
     return (
         <div className="row-span-3 bg-small-6 border-black m-3 grid grid-rows-3 rounded-lg shadow-lg hover:scale-105 ease-in-out duration-500">
