@@ -24,11 +24,17 @@ RUN rm /etc/nginx/conf.d/default.conf
 #호스트의 'nginx.conf' 파일을 Nginx 설정 디렉토리로 복사
 COPY ./nginx.conf /etc/nginx/conf.d
 #'builder' 이미지의 '/app/build' 디렉토리를 작업 디렉토리로 복사
+COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./standalone
+COPY --from=builder /app/.next/static ./.next/static
 # Nginx에 /usr/share/nginx/statics 디렉토리에 대한 권한 부여
 RUN chgrp -R 0 /usr/share/nginx/statics && \
     chmod -R g+rwX /usr/share/nginx/statics
 #EXPOSE 80 - 컨테이너의 80 포트를 포트를 개방
-EXPOSE 80
+#EXPOSE 80
 #Nginx 서버를 백그라운드로 동작
-CMD ["nginx", "-g", "daemon off;"]
+#CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 80
+ENV PORT 80
+CMD ["node", "server.js"]
+

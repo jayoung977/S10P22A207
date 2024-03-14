@@ -1,8 +1,10 @@
 package com.backend.api.domain.stock.entity;
 
-import static jakarta.persistence.FetchType.LAZY;
-import static jakarta.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.PROTECTED;
+import static jakarta.persistence.FetchType.*;
+import static jakarta.persistence.GenerationType.*;
+import static lombok.AccessLevel.*;
+
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,15 +13,24 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@Table(name = "stock_chart")
+@Table(
+	name = "stock_chart",
+	uniqueConstraints = {
+		@UniqueConstraint(
+			name = "contstraintName",
+			columnNames = {"date", "stock_code"}
+		)
+	}
+)
 public class StockChart {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -27,7 +38,7 @@ public class StockChart {
 	private Long id;
 
 	@ManyToOne(fetch = LAZY)
-	@JoinColumn(name = "stock_id", referencedColumnName = "stock_id")
+	@JoinColumn(name = "stock_code", referencedColumnName = "stock_code")
 	private Stock stock;
 
 	@NotNull
@@ -42,9 +53,11 @@ public class StockChart {
 	private Integer tradingVolume;
 	@NotNull
 	private LocalDateTime date;
+	private Double changeRate;
 
+	@Builder
 	public StockChart(Stock stock, Integer marketPrice, Integer highPrice, Integer lowPrice, Integer endPrice,
-		Integer tradingVolume, LocalDateTime date) {
+		Integer tradingVolume, LocalDateTime date, Double changeRate) {
 		this.stock = stock;
 		this.marketPrice = marketPrice;
 		this.highPrice = highPrice;
@@ -52,5 +65,6 @@ public class StockChart {
 		this.endPrice = endPrice;
 		this.tradingVolume = tradingVolume;
 		this.date = date;
+		this.changeRate = changeRate;
 	}
 }
