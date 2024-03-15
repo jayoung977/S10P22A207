@@ -31,7 +31,7 @@ export default function Header(){
     </div>
     <div className="col-span-2 flex justify-center gap-4">
     <button
-     className="border p-2 rounded-md bg-red-500 text-white"
+     className="border p-2 rounded-md bg-red-500 text-white hover:bg-red-400"
      onClick={handleGameStart}>시작하기</button>
       <button onClick={()=>{router.back()}} className="border p-2 rounded-md border-red-500 hover:bg-red-100 hover:border-2">나가기</button>
     </div>

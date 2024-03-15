@@ -77,7 +77,7 @@ export default function Page(){
             </div>
           </div>
           {/* 가입자 */}
-          <div className="row-span-8 border rounded-md overflow-y-auto" style={{height: 'calc(54vh)'}}>
+          <div className="row-span-7 border rounded-md overflow-y-auto" style={{height: 'calc(50vh)'}}>
             <table className="w-full  text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"   >
               <thead className="text-md border-b bg-background-1 text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -126,8 +126,9 @@ export default function Page(){
             <div className="col-span-1 text-lg mt-2 ms-10">100,000,000원</div>
             <div className="col-span-1 text-lg mt-2 ms-10">+ 20 %</div>
           </div>
-
-
+          <div className="row-span-1">
+              <button className="w-full border rounded-md bg-small-9 hover:bg-teal-400 py-2 text-textColor-2 text-center">펀드 게임하러 가기</button>
+          </div>
         </div>
       </div>
     </div>

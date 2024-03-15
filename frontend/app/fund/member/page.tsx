@@ -12,7 +12,6 @@ export default function Page(){
           <FundMainComponent/>
           <FundTabs/>
           <main className='row-span-7'>
-            내가 펀드 회원입니다.
             <FundTable/>
           </main>
         </div>
