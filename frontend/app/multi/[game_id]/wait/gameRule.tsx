@@ -3,7 +3,7 @@ import styles from '@/public/src/styles/multi/gameRule.module.css'
 
 export default function GameRule(){
   return (
-    <div className="border row-span-3">
+    <div className="border row-span-2">
       <div className='border'>룰 설명</div>
       <div className='flex-col text-start m-2'>
         <div>1. 라운드당 50턴으로 진행된다.</div>

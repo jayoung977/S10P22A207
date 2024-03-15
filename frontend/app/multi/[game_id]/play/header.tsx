@@ -26,8 +26,8 @@ export default function Header(){
         </span>
       </div>
     </div>
-    <div className="col-span-6 flex justify-center text-lg font-bold">
-      <div>맞짱 까든가</div>
+    <div className="col-start-5 col-end-9 flex justify-center text-xl font-bold">
+      <div>이겨보시던지</div>
     </div>
     <div className="col-span-1 flex justify-center font-bold">
     <button

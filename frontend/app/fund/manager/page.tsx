@@ -9,10 +9,10 @@ export default function Page(){
       <div className="grid grid-rows-12 h-screen border-separate">
         <Navbar/>
         <div className='bg-big-1 p-2 rounded-md row-span-11 grid grid-rows-12 gap-2 mx-auto xl:max-w-screen-xl'>
-          <FundMainComponent/>
+         <FundMainComponent/>
           <FundTabs/>
           <main className='row-span-7'>
-            펀드 모집중입니다.
+            내가 펀드 매니저입니다.
             <FundTable/>
           </main>
         </div>

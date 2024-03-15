@@ -12,8 +12,8 @@ export default function TradeHistory(){
           <div>수량</div>
         </div>
         <div className="col-span-4">
-          <div>체결 금액</div>
-          <div>체결 수량</div>
+          <div>체결금액</div>
+          <div>체결수량</div>
         </div>
       </div>
       <div className='overflow-auto' style={{height: 'calc(30vh)'}}>
