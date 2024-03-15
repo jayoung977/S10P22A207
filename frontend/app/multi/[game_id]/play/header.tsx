@@ -41,7 +41,7 @@ export default function Header(){
           setTurn(turn + 1);
         }
       }}
-      className={`bg-teal-400 px-2 py-1 m-1 text-white rounded-md ${
+      className={`bg-teal-400 hover:bg-teal-300 px-2 py-1 m-1 text-white rounded-md ${
         turn === 50 ? 'opacity-50 cursor-not-allowed' : '' // turn이 50이면 스타일을 적용합니다.
       }`}
     >  다음 턴으로!

@@ -12,7 +12,7 @@ export default function Friend(){
         className='rounded-full'
         />
     </div>
-    <div className="col-span-6 text-base font-semibold">Neil Sims</div>
+    <div className="col-span-6 text-base font-semibold">일은적게돈은많이</div>
     <div className="col-span-4 px-6 py-4">
       <button className='bg-blue-500 text-white px-2 py-1 rounded-md '>초대</button>
     </div>

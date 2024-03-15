@@ -18,21 +18,21 @@ export default function MultiWait() {
           <GameRule/>
         </aside>
         <main className="col-span-6 grid grid-rows-8">
-          <div className='row-span-5'>
+          <div className="row-span-5">
             <ChartImage/>
           </div>
-          <div className="row-span-3 border grid grid-cols-12">
+          <div className="border grid grid-cols-12 row-span-4">
             <Chat/>
             <div className='col-span-2 text-white text-center'></div>
           </div>
         </main>
-        <aside className="col-span-3 grid grid-rows-6">
-          <GameUser />
-          <GameUser />
-          <GameUser />
-          <GameUser />
-          <GameUser />
-          <GameUser />
+        <aside className="col-span-3 border-s grid grid-rows-6">
+          <GameUser/>
+          <GameUser/>
+          <GameUser/>
+          <GameUser/>
+          <GameUser/>
+          <GameUser/>
         </aside>
       </div>
     </div>
