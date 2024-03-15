@@ -46,7 +46,7 @@ export default function AssetsHeld () {
             <div className="row-span-1 flex items-center justify-between pl-2">
                 <div className="rounded-t-lg bg-small-6 text-textColor-2"><span className="mx-1">보유 자산</span></div>
             </div>
-            <div className="row-span-5 overflow-y-auto block" style={{height: 'calc(25vh)'}}>
+            <div className="row-span-5 overflow-y-auto block" style={{ height: 'calc(25vh)' }}>
                 {
                     AssetData.map((x, index) => (
                         <AssetHeld key={index} data={x}/>

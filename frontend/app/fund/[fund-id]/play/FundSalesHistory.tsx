@@ -35,6 +35,42 @@ export default function FundSalesHistory () {
             quantity: 4000,
             contractAmount: 160000000,
         },
+        {
+            stock: '종목4',
+            saleType: '매도',
+            price: 40000,
+            quantity: 4000,
+            contractAmount: 160000000,
+        },
+        {
+            stock: '종목4',
+            saleType: '매도',
+            price: 40000,
+            quantity: 4000,
+            contractAmount: 160000000,
+        },
+        {
+            stock: '종목4',
+            saleType: '매도',
+            price: 40000,
+            quantity: 4000,
+            contractAmount: 160000000,
+        },
+        {
+            stock: '종목4',
+            saleType: '매도',
+            price: 40000,
+            quantity: 4000,
+            contractAmount: 160000000,
+        },
+        {
+            stock: '종목4',
+            saleType: '매도',
+            price: 40000,
+            quantity: 4000,
+            contractAmount: 160000000,
+        },
+        
 
     ])
     return (

@@ -10,17 +10,21 @@ export default function Chart ({ data } :any) {
  
         const chart = anychart.stock();
         const container = chart.container('chart-container');
-        chart.scroller().xAxis(false);
         chart.contextMenu(false);
-        const tooltip = chart.tooltip();
-        tooltip.titleFormat('');
+
         const plot1 = chart.plot(0);
-        plot1.title('일 별 종가 & OHLC')
+        plot1.title('일 별 주가 & OHLC')
         
         const lineSeries = plot1.line(data?.map((item :any) => ([item.date, item.close])))
         lineSeries.name('종가');
         lineSeries.hovered().markers().enabled(true).type('circle').size(4);
-        
+        lineSeries.tooltip().useHtml(true);
+        lineSeries.tooltip().format(function (this :any) {
+            const series = this.series;
+            return ("")
+
+        })
+
         const candlestickSeries = plot1.candlestick(data?.map((item :any) => ([item.date, item.open, item.high, item.low, item.close])))
         candlestickSeries.name('OHLC');
         candlestickSeries.legendItem().iconType('risingfalling');
@@ -28,25 +32,22 @@ export default function Chart ({ data } :any) {
         candlestickSeries.tooltip().format(function (this :any) {
             const series = this.series;
             return ( 
-                        "시가 : " + this.open + "\n" +  
-                        "고가 : " + this.high + "\n" +
-                        "저가 : " + this.low + "\n" + 
-                        "종가 : " + this.close + "\n"
+                        "시가(O) : " + this.open + "\n" +  
+                        "고가(H) : " + this.high + "\n" +
+                        "저가(L) : " + this.low + "\n" + 
+                        "종가(E) : " + this.close + "\n"
                     )
 
         })
         plot1.legend().title().useHtml(true);
-        plot1.legend().titleFormat(<span></span>);
         plot1.legend().useHtml(true);
         plot1.legend().itemsFormat(function (this :any) {
             const series = this.series;
             if (series.getType() == "line") {
-                return "<span style='color:#455a64;font-weight:600'>" +
-                       series.name() + ":</span>" + this.value;
+                return "<span style='color:#455a64;font-weight:600'>주가 : </span>" + this.value;
               }
               if (series.getType() == "candlestick") {
-                return "<span style='color:#455a64;font-weight:600'>" +
-                       series.name() + ":</span>" +
+                return "<span style='color:#455a64;font-weight:600'>OHLE : </span>" +
                        this.open + " | " + this.high + " | " +
                        this.low + " | " + this.close;
               }

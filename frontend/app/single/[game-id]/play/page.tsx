@@ -161,7 +161,7 @@ export default function SinglePlay () {
         <div className="grid grid-rows-12 h-screen border-separate">
             {/* navbar */}
             <Navbar />
-            <div className="row-span-11 grid grid-cols-12 border border-t-black">
+            <div className="row-span-11 grid grid-cols-12">
                 {/* left aside */}
                 <aside className="col-span-3 grid grid-rows-3">
                     <TotalAssets />
@@ -169,7 +169,7 @@ export default function SinglePlay () {
                     <SalesHistory />
                 </aside>
                 {/* main */}
-                <main className="col-span-7 grid grid-rows-12 border border-x-black">
+                <main className="col-span-7 grid grid-rows-12">
                     <div className="row-start-1 row-end-12 grid grid-rows-12">
                         <div className="row-start-1 row-end-2 flex items-center p-2">
                             차트 이름

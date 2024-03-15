@@ -18,7 +18,9 @@ export default function Stock ({ id, index, data, isSelected, onClick } :any) {
     const textColor = isSelected ? 'textColor-2' : 'textColor-1'
     return (
         <div
-            className={`row-span-1 grid grid-cols-8 items-center justify-center rounded-full bg-${bgColor} text-${textColor} hover:bg-small-1 hover:text-textColor-2 active:bg-small-11 active:text-textColor-2 m-1`}
+            className={`row-span-1 grid grid-cols-8 items-center justify-center rounded-full bg-${bgColor} text-${textColor} 
+                    hover:bg-small-1 hover:text-textColor-2 
+                    active:bg-small-11 active:text-textColor-2 m-1`}
             onMouseEnter={handleHover}
             onMouseLeave={handleMouseLeave}
             onClick={onClick}
