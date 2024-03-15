@@ -5,9 +5,11 @@ import SingleTradeHistory from "./ReviewSingleTradeHistory";
 import SingleChart from "./ReviewSingleChart";
 import SingleStockTicker from "./ReviewSingleStockTicker";
 import SingleRanking from "./ReviewSingleRanking";
+import PeacefulBgm from "@/public/src/components/PeacefulBgm";
 export default function page() {
   return (
     <div className=" grid grid-rows-12 h-screen">
+      <PeacefulBgm></PeacefulBgm>
       <Navbar></Navbar>
       <header className="flex justify-end items-center row-span-2 shadow bg-background-1">
         <div className="text-6xl m-4 text-textColor-1">삼성전자</div>

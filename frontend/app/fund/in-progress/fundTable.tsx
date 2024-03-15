@@ -33,7 +33,7 @@ export default function FundTable(){
                   return (
                     <tr key={i}
                       onClick={()=> {router.push(`./in-progress/${i}`, )}} 
-                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 hover:cursor-pointer">
                         <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             용수는 돈을 복사해요 {i}
                         </th>
