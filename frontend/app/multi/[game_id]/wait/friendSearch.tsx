@@ -4,8 +4,8 @@ import Friend from './friend'
 
 export default function FriendSearch() {
   return (
-    <div className="row-span-6 grid grid-rows-6">
-      <div className='row-span-1 flex justify-center gap-2 items-center'>
+    <div className="row-span-3 grid grid-rows-6">
+      <div className='row-span-1 flex justify-center border-b gap-2 items-center'>
         <div>친구초대</div>
         <SearchBar/>
       </div>

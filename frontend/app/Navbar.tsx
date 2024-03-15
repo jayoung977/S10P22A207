@@ -40,7 +40,7 @@ export default function Navbar() {
             width={32}
             height={32}
           />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white hover:cursor-pointer" onClick={() => router.push("/multi")}>
             지금이니
           </span>
         </a>

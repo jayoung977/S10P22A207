@@ -19,7 +19,7 @@ export default function Multi() {
     5: 'bg-small-8',
   }
   return (
-    <div className='relative bg-background-1'>
+    <div className='font-DungGeun relative bg-background-1'>
       <div className="grid grid-rows-12 h-screen border-separate">
         <Navbar/>
         <div className='bg-big-1 rounded-md row-span-11 grid grid-rows-12 mx-auto xl:max-w-screen-xl'>

@@ -3,8 +3,8 @@ import styles from '@/public/src/styles/multi/roomInfo.module.css'
 
 export default function RoomInfo() {
   return (
-    <div className="border row-span-3 grid grid-rows-3">
-      <div className='row-span-1 items-center text-lg font-bold m-1'>게임규칙</div>
+    <div className="border row-span-1 grid grid-rows-3">
+      <div className='row-span-1 text-lg font-bold'>게임규칙</div>
       <div className='row-span-1 grid grid-cols-12 items-center'>
         <div className='col-span-3'>라운드: </div>
         <div className='col-span-3'>
@@ -20,10 +20,8 @@ export default function RoomInfo() {
           <label htmlFor="7round" className="col-span-2 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">7</label>
         </div>
       </div>
-      <div className='row-span-1 border items-center'>
-        <div className='text-lg'>
+      <div className='row-span-1 items-center text-lg'>
           시드머니: 10,000,000원
-          </div>
       </div>
     </div>
   )
