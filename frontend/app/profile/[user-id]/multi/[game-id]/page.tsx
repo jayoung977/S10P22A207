@@ -4,9 +4,11 @@ import Navbar from "@/app/Navbar";
 import MultiTradeHistroy from "./ReviewMultiTradeHistory";
 import MultiRanking from "./ReviewMultiRanking";
 import MultiChart from "./ReviewMultiChart";
+import PeacefulBgm from "@/public/src/components/PeacefulBgm";
 export default function page() {
   return (
     <div className=" grid grid-rows-12 h-screen">
+      <PeacefulBgm></PeacefulBgm>
       <Navbar></Navbar>
       <header className="flex justify-end items-center row-span-2 bg-background-1">
         <div className="text-6xl m-4 text-textColor-1">삼성전자</div>

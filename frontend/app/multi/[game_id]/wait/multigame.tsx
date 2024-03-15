@@ -1,14 +1,13 @@
-'use client'
+"use client";
 
-import ChartImage from '../chartImage' 
-import Chat from '../chat'
-import GameUser from './gameUser'
-import RoomInfo from './roomInfo'
-import FriendSearch from './friendSearch'
-import GameRule from './gameRule'
-import Header from './header'
-
-export default function MultiWait(){
+import ChartImage from "../chartImage";
+import Chat from "../chat";
+import GameUser from "./gameUser";
+import RoomInfo from "./roomInfo";
+import FriendSearch from "./friendSearch";
+import GameRule from "./gameRule";
+import Header from "./header";
+export default function MultiWait() {
   return (
     <div className="grid grid-rows-12 h-screen border-separate">
       <Header/>
@@ -28,14 +27,14 @@ export default function MultiWait(){
           </div>
         </main>
         <aside className="col-span-3 grid grid-rows-6">
-          <GameUser/>
-          <GameUser/>
-          <GameUser/>
-          <GameUser/>
-          <GameUser/>
-          <GameUser/>
+          <GameUser />
+          <GameUser />
+          <GameUser />
+          <GameUser />
+          <GameUser />
+          <GameUser />
         </aside>
       </div>
     </div>
-  )
+  );
 }

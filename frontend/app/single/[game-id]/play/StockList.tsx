@@ -71,11 +71,11 @@ export default function StockList () {
 
 
     return (
-        <div className="row-start-2 row-end-5 grid grid-rows-6">
-            <div className="row-start-1 row-end-2 flex items-center justify-between pl-2">
+        <div className="row-start-2 row-end-5 grid grid-rows-7">
+            <div className="row-span-1 flex items-center justify-between pl-2">
                 <div className="rounded-t-lg bg-small-1 text-textColor-2"><span className="mx-1">종목</span></div>
             </div>
-            <div className="row-span-5 overflow-y-auto block" style={{height: 'calc(37vh)'}}>
+            <div className="row-span-6 overflow-y-auto block" style={{height: 'calc(39vh)'}}>
                 {
                     stockData.map((x :any, index) => (
                         <Stock 

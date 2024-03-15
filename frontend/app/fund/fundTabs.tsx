@@ -11,7 +11,7 @@ export default function FundTabs(){
   return (
     <div className="row-span-1 grid grid-cols-12 items-center">
       <div className="col-start-2 col-span-7 flex justify-around">
-        <label className="inline-flex items-center">
+        <label className="inline-flex items-center hover:cursor-pointer">
           <input
             type="radio"
             className="sr-only peer"
@@ -30,7 +30,7 @@ export default function FundTabs(){
             모집 중
           </span>
         </label>
-        <label className="inline-flex items-center">
+        <label className="inline-flex items-center hover:cursor-pointer">
           <input
             type="radio"
             className="sr-only peer"
@@ -49,7 +49,7 @@ export default function FundTabs(){
             운영 중
           </span>
         </label>
-        <label className="inline-flex items-center">
+        <label className="inline-flex items-center hover:cursor-pointer">
           <input
             type="radio"
             className="sr-only peer"
@@ -68,7 +68,7 @@ export default function FundTabs(){
             내가 가입한 펀드
           </span>
         </label>
-        <label className="inline-flex items-center">
+        <label className="inline-flex items-center hover:cursor-pointer">
           <input
             type="radio"
             className="sr-only peer"
