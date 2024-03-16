@@ -30,7 +30,7 @@ export default function TurnInfo () {
     return (
         <div className="row-start-1 row-end-2 grid grid-rows-2">
             <div className="row-span-1">
-                <div className="m-1 text-textColor-1">현재 턴 : {turn} / 50</div>
+                <div className="m-1 text-textColor-1 text-center">현재 턴 : {turn} / 50</div>
                 <TurnNow turn={turn} />
             </div>
             <div className="row-span-1 grid grid-cols-3 items-center justify-center">
@@ -39,7 +39,7 @@ export default function TurnInfo () {
                         setIsBuy(true);
                         setIsOpenSaleModal(true);
                     }} 
-                    className="col-span-1 rounded-md text-textColor-2 bg-small-3 m-2"
+                    className="col-span-1 rounded-md scale-95 text-small-3 bg-textColor-2 border border-small-3 m-2 hover:text-textColor-2 hover:bg-small-3 hover:scale-105 shadow-md shadow-small-3 ease-in-out duration-500"
                 >
                     매수    
                 </button>
@@ -48,13 +48,13 @@ export default function TurnInfo () {
                         setIsBuy(false);
                         setIsOpenSaleModal(true);
                     }} 
-                    className="col-span-1 rounded-md text-textColor-2 bg-small-1 m-2"
+                    className="col-span-1 rounded-md scale-95 text-small-1 bg-textColor-2 border border-small-1 m-2 hover:text-textColor-2 hover:bg-small-1 hover:scale-105 shadow-md shadow-small-1 ease-in-out duration-500"
                 >
                     매도   
                 </button>
                 <button 
                     onClick={() => {handleClickTurn()}} 
-                    className="col-span-1 rounded-full text-textColor-1 bg-small-14 m-1"
+                    className="col-span-1 rounded-md scale-95 text-textColor-1 bg-textColor-2 border border-textColor-1 m-2 hover:text-textColor-2 hover:bg-textColor-1 hover:scale-105 shadow-md shadow-textColor-1"
                 >
                     다음
                 </button>

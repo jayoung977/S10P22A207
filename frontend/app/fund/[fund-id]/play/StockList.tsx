@@ -149,12 +149,12 @@ export default function StockList () {
                         findMatchingValues(e.currentTarget.value, stockData)
                         }}
                     type="search"
-                    className="relative m-0 block w-full rounded border border-small-1 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-surface outline-none transition duration-200 ease-in-out placeholder:text-neutral-500 focus:z-[3] focus:border-primary focus:shadow-inset focus:outline-none motion-reduce:transition-none dark:border-white/10 dark:text-white dark:placeholder:text-neutral-200 dark:autofill:shadow-autofill dark:focus:border-primary"
+                    className="relative m-auto block w-4/5 rounded border border-small-1 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-surface outline-none transition duration-200 ease-in-out placeholder:text-neutral-500 focus:z-[3] focus:border-primary focus:shadow-inset focus:outline-none motion-reduce:transition-none dark:border-white/10 dark:text-white dark:placeholder:text-neutral-200 dark:autofill:shadow-autofill dark:focus:border-primary"
                     placeholder="종목을 검색해 주세요."
                     aria-label="Search"
                     id="search" />
             </div>
-            <div className="row-span-6 overflow-y-auto block rounded border border-small-1" style={{height: 'calc(30vh)'}}>
+            <div className="row-span-6 overflow-y-auto block rounded border border-small-1 mx-1" style={{height: 'calc(30vh)'}}>
                 {
                     searchedStockData && searchedStockData.map((x :any, index :number) => (
                         <Stock 
