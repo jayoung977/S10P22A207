@@ -26,6 +26,15 @@ export default function MultiWait() {
             <div className='col-span-2 text-white text-center'></div>
           </div>
         </main>
+<<<<<<< HEAD
+        <aside className="col-span-3 grid grid-rows-6">
+          <GameUser />
+          <GameUser />
+          <GameUser />
+          <GameUser />
+          <GameUser />
+          <GameUser />
+=======
         <aside className="col-span-3 border-s grid grid-rows-6">
           <GameUser/>
           <GameUser/>
@@ -33,6 +42,7 @@ export default function MultiWait() {
           <GameUser/>
           <GameUser/>
           <GameUser/>
+>>>>>>> a8d3aa4926b163390c0fd37190342bde18217bb0
         </aside>
       </div>
     </div>
