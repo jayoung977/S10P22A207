@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 export default function KakaoLogin() {
   const router = useRouter();
   return (
-    <div style={{ position: "absolute", zIndex: 60, left: "45%", top: "50%" }}>
+    <div className="flex justify-center items-center h-screen">
       <button
         onClick={() => {
           router.push("/multi");
