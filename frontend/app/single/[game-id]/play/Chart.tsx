@@ -3,23 +3,44 @@
 import { useEffect } from "react";
 import anychart from "anychart";
 
+// 이동평균선 데이터 생성 함수
+function calculateMovingAverage(data :any, period :any) {
+    const result = [];
+    for (let i = period - 1; i < data.length; i++) {
+        const sum = data.slice(i - period + 1, i + 1).reduce((acc :any, curr:any) => acc + curr.close, 0);
+        const average = sum / period;
+        result.push([data[i].date, average]);
+    }
+    return result;
+  }
+
 export default function Chart({ data }: any) {
   useEffect(() => {
+    // 차트 생성
     const chart = anychart.stock();
+    // 차트를 담을 컨테이너 생성
     const container = chart.container("chart-container");
     chart.scroller().xAxis(false);
     chart.contextMenu(false);
+    
+    // 툴 팁 내용 수정
     const tooltip = chart.tooltip();
     tooltip.titleFormat("");
-    const plot1 = chart.plot(0);
-    plot1.title("일 별 종가 & OHLC");
 
+    // 첫 번재 plot 생성(line, OHLC, 이동평균선)
+    const plot1 = chart.plot(0);
+    plot1.title("일 별 주가 & OHLC");
+
+    // line series 생성
     const lineSeries = plot1.line(
       data?.map((item: any) => [item.date, item.close])
     );
+    // line series 속성 설정
     lineSeries.name("종가");
     lineSeries.hovered().markers().enabled(true).type("circle").size(4);
     lineSeries.stroke("#86BF15", 1);
+
+    // candlestick series 생성
     const candlestickSeries = plot1.candlestick(
       data?.map((item: any) => [
         item.date,
@@ -29,7 +50,7 @@ export default function Chart({ data }: any) {
         item.close,
       ])
     );
-    
+    // candlestick series 속성 설정
     candlestickSeries.name("OHLC");
     candlestickSeries.legendItem().iconType("risingfalling");
     candlestickSeries.tooltip().useHtml(true);
@@ -50,13 +71,23 @@ export default function Chart({ data }: any) {
         "\n"
       );
     });
-    // 음봉 / 양봉 색상 반대로 설정했어 !!
+    // candlestick series 색상 지정
     candlestickSeries.risingFill("#F65742", 1);
     candlestickSeries.risingStroke("#F65742", 1);
     candlestickSeries.fallingFill("#0597FF", 1);
     candlestickSeries.fallingStroke("#0597FF", 1);
 
-    console.log(plot1);
+    // 이동평균선 그래프 생성(sma)
+    const sma10Series = plot1.line(calculateMovingAverage(data, 10));
+    sma10Series.name('10일 이동평균선');
+    const sma20Series = plot1.line(calculateMovingAverage(data, 20));
+    sma20Series.name('20일 이동평균선');
+
+    // 이동평균선 그래프 색상 지정
+    sma10Series.stroke('pink');
+    sma20Series.stroke('purple');
+
+    // 첫 번째 plot 속성 설정
     plot1.legend().title().useHtml(true);
     plot1.legend().titleFormat(<span></span>);
     plot1.legend().useHtml(true);

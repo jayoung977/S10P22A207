@@ -16,7 +16,7 @@ export default function SaleBtn () {
                     setIsBuy(true);
                     setIsOpenSaleModal(true);
                 }} 
-                className="col-span-1 rounded-lg text-textColor-2 bg-small-3 m-4"
+                className="col-span-1 rounded-lg text-small-3 bg-textColor-2 m-4 border border-small-3 hover:text-textColor-2 hover:bg-small-3 hover:scale-105 shadow-md shadow-small-3 ease-in-out duration-500"
             >
                 매수    
             </button>
@@ -25,7 +25,7 @@ export default function SaleBtn () {
                     setIsBuy(false);
                     setIsOpenSaleModal(true);
                 }} 
-                className="col-span-1 rounded-lg text-textColor-2 bg-small-1 m-4"
+                className="col-span-1 rounded-lg text-small-1 bg-textColor-2 m-4 border border-small-1 hover:text-textColor-2 hover:bg-small-1 hover:scale-105 shadow-md shadow-small-1 ease-in-out duration-500"
             >
                 매도   
             </button>
