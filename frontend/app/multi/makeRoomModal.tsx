@@ -1,4 +1,3 @@
-import styles from '@/public/src/styles/multi/makeRoomModal.module.css'
 import { useRouter } from 'next/navigation';
 
 export default function MakeRoomModal({isOpen ,onClose} : any){
