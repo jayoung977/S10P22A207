@@ -3,15 +3,28 @@
 import penguin from '@/public/src/assets/images/penguin.png'
 import Image from 'next/image'
 import { useState } from 'react'
+import RoundResult from './roundResult'
+import FinalResult from './finalResult'
 
 export default function Header(){
-
+    const [isOpen, setIsOpen] = useState(false);
+    const [isGameover, setIsGameover] = useState(false);
     const [turn, setTurn] = useState<number>(0)
     const [round, setRound] = useState<number>(1)
     const roundPercentage = (turn/50)*100
     const allPercentage = ((50*(round-1)+turn)/150)*100
+
+
   return( 
   <header className="row-span-1 grid grid-cols-12 border gap-2 items-center">
+    <FinalResult
+      isOpen={isGameover}
+      onClose={()=>{setIsGameover(false)}}
+    />
+    <RoundResult 
+     isOpen={isOpen}
+     onClose={()=>{setIsOpen(false)}}
+     />
     <div className="col-start-2 col-end-3 flex items-center">
       <div className="flex gap-2 items-center">
         <Image
@@ -34,15 +47,22 @@ export default function Header(){
       disabled={turn === 50} 
       // turn이 50이면 disabled 속성이 true가 됩니다.
       onClick={() => {
-        if (turn === 50) {
+        // if (round == 3 && turn == 49){
+          console.log('경기 종료')
+          setIsGameover(true)
+        // }
+        if (turn === 49) {
+          setIsOpen(true)
+          // 일단 3초로 설정
+          setTimeout(()=> setIsOpen(false),3000)
           setRound(round + 1);
-          setTurn(1);
+          setTurn(0);
         } else {
           setTurn(turn + 1);
         }
       }}
       className={`bg-teal-400 hover:bg-teal-300 px-2 py-1 m-1 text-white rounded-md ${
-        turn === 50 ? 'opacity-50 cursor-not-allowed' : '' // turn이 50이면 스타일을 적용합니다.
+        turn === 50 ? 'opacity-50 cursor-not-allowed' : ''
       }`}
     >  다음 턴으로!
     </button>

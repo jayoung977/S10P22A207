@@ -97,9 +97,9 @@ export default function Page(){
               </thead>
               <tbody>
                 {
-                fundMembers.map((fundmember)=> {
+                fundMembers.map((fundmember, i:number)=> {
                   return (
-                  <tr className="bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                  <tr key={i} className="bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {fundmember.nickname}
                     </th>
@@ -127,7 +127,10 @@ export default function Page(){
             <div className="col-span-1 text-lg mt-2 ms-10">+ 20 %</div>
           </div>
           <div className="row-span-1">
-              <button className="w-full border rounded-md bg-small-9 hover:bg-teal-400 py-2 text-textColor-2 text-center">펀드 게임하러 가기</button>
+              <button
+                onClick={()=> {router.push('/fund/1/play')}}
+               className="w-full border rounded-md bg-small-9 hover:bg-teal-400 py-2 text-textColor-2 text-center">펀드 게임하러 가기
+               </button>
           </div>
         </div>
       </div>

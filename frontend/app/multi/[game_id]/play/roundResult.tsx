@@ -1,15 +1,14 @@
 'use client'
 
-
-import styles from '@/public/src/styles/multi/roundResult.module.css'
 import RoundChart from './roundChart' 
 import RoundUser from './roundUser'
 import { useEffect, useState } from 'react'
 import type { dataType } from './multigame'
-import Penguin from '@/public/src/assets/images/penguin.png'
+import Penguin from '@/public/src/assets/images/profile-person-image.png'
 import Image from 'next/image'
 
-export default function RoundResult(){
+export default function RoundResult({isOpen, onClose}: any){
+  if (!isOpen) return null;
 
   const [RoundData, setData] = useState<dataType[]>([]);
   useEffect(() => {
@@ -143,14 +142,14 @@ export default function RoundResult(){
   }, [])
 
   return(
-    <div className="fixed -translate-x-1/2 translate-y-1/5 z-50 h-4/5 w-3/4 inset-0 left-1/2 border-4 bg-slate-50 rounded-md grid grid-rows-6 gap-2">
+    <div className="fixed -translate-x-1/2 translate-y-1/5 z-50 h-4/5 w-3/4 inset-0 left-1/2 border-4 bg-slate-50 rounded-md grid grid-rows-8 gap-2">
       <div className='row-span-1 grid grid-cols-12 items-center'>
         <div className='col-span-2 justify-center items-center m-2'>
           <Image
             src={Penguin}
             alt='Profile-image'
-            width={100}
-            height={100}
+            width={80}
+            height={80}
           />
         </div>
         <div className='col-span-1 justify-items-center'>
@@ -158,10 +157,7 @@ export default function RoundResult(){
         </div>
         <div className='col-span-4 justify-items-center text-lg text-center'> 
           <div>새삼문득이용수가대단하네</div>
-          <div className='flex items-center justify-center'>
-            <div>
-              떡상
-            </div>
+          <div className='flex items-center justify-around'>
             <div className='text-red-500'>
               541,000,000 (+400%)
             </div>
@@ -178,7 +174,7 @@ export default function RoundResult(){
           <button className='border rounded-md font-bold bg-slate-300 text-gray-700 px-2 py-1 text-normal'>기록저장</button>
         </div> 
       </div>
-      <div className='row-span-5 grid grid-cols-12 gap-2'>
+      <div className='row-span-7 grid grid-cols-12 gap-2'>
         <div className='col-span-8 grid grid-rows-12 m-2'>
           <RoundChart data={RoundData}/>
         </div>

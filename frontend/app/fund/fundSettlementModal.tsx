@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import ProfileImage from '@/public/src/assets/images/profile-person-image.png'
 
 export default function FundSettlementModal(){
 
