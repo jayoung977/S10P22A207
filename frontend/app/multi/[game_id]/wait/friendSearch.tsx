@@ -1,4 +1,4 @@
-import SearchBar from '../../SearchBar'
+import SearchBar from '../../searchBar'
 import Friend from './friend'
 
 export default function FriendSearch() {

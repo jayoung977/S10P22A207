@@ -1,6 +1,6 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import MakeRoomModal from './MakeRoomModal'
+import MakeRoomModal from './makeRoomModal'
 import { useState } from 'react';
 
 export default function GameRoomSetting () {

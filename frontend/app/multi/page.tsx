@@ -1,10 +1,10 @@
 'use client'
 import Navbar from "../Navbar";
-import Profile from "./Profile";
+import Profile from "./profile";
 import Ranking from "./Ranking";
-import GameRoomSetting from "./GameRoomSetting";
-import GameRoom from "./GameRoom";
-import Pagination from "./Pagination";
+import GameRoomSetting from "./gameroomSetting";
+import GameRoom from "./gameroom";
+import Pagination from "./pagination";
 import PeacefulBgm from "@/public/src/components/PeacefulBgm";
 import { QueryClient, QueryClientProvider } from "react-query";
 

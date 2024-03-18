@@ -1,5 +1,5 @@
 'use client'
-import JoinRoomModal from "./JoinRoomModal";
+import JoinRoomModal from "./joinRoomModal";
 
 export default function GameRoom (props: {color: string}) {
   const { color } = props
