@@ -1,7 +1,7 @@
 'use client'
-import JoinRoomModal from './joinRoomModal';
+import JoinRoomModal from "./JoinRoomModal";
 
-export default function Gameroom(props: {color: string}) {
+export default function GameRoom (props: {color: string}) {
   const { color } = props
   return (
     <div className={`hover:-translate-y-1 transition ease-in-out duration-500 h-auto rounded-md shadow-md text-textColor-2 ${color}`}>

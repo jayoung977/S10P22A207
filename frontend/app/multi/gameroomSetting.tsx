@@ -2,12 +2,14 @@
 
 import styles from '@/public/src/styles/multi/gameroomSetting.module.css'
 import { useRouter } from 'next/navigation'
-import MakeRoomModal from './makeRoomModal';
+import MakeRoomModal from './MakeRoomModal'
 import { useState } from 'react';
 
-export default function GameroomSetting(){
+export default function GameRoomSetting () {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [isWaiting, setIsWaiting] = useState(false);
+  const [round, setRound] = useState(3);
 
   const handleQuickstart = () => {
     router.push('multi/1/wait')
@@ -16,23 +18,23 @@ export default function GameroomSetting(){
     <div className="row-span-2 grid grid-cols-12 border items-center bg-background-1 rounded-lg shadow m-2 p-2 dark:bg-gray-800">
       <div className="col-span-8 grid grid-cols-5 gap-2 justify-center items-center text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">    
         <div className="col-span-1 flex items-center">
-          <input id="default-checkbox" type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+          <input id="default-checkbox" type="checkbox" value="" checked={isWaiting == false} onChange={() => setIsWaiting(false)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
           <label htmlFor="default-checkbox" className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300">전체방</label>
         </div>
         <div className="col-span-1 flex items-center">
-          <input id="default-checkbox" type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+          <input id="default-checkbox" type="checkbox" value="" checked={isWaiting == true} onChange={() => setIsWaiting(true)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
           <label htmlFor="default-checkbox" className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300">대기방</label>
         </div>
         <div className="col-span-1 flex items-center">
-          <input id="default-checkbox" type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+          <input id="default-checkbox" type="checkbox" value="" checked={round==3} onChange={() => setRound(3)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
           <label htmlFor="default-checkbox" className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300">3라운드</label>
         </div>
         <div className="col-span-1 flex items-center">
-          <input id="default-checkbox" type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+          <input id="default-checkbox" type="checkbox" value="" checked={round==5} onChange={() => setRound(5)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
           <label htmlFor="default-checkbox" className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300">5라운드</label>
         </div>
         <div className="col-span-1 flex items-center">
-          <input id="default-checkbox" type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+          <input id="default-checkbox" type="checkbox" value="" checked={round==7} onChange={() => setRound(7)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
           <label htmlFor="default-checkbox" className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300">7라운드</label>
         </div>
       </div>
