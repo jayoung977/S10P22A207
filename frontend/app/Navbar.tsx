@@ -102,7 +102,7 @@ export default function Navbar() {
               </a>
             </li>
             {/*NavBar에 시간 넣을까 ? 말까 ? 의견 주세요 ~_~*/}
-            {/* <li>
+            {/* <li className="">
               <p suppressHydrationWarning>{currentTime.toLocaleTimeString()}</p>
             </li> */}
             <svg
