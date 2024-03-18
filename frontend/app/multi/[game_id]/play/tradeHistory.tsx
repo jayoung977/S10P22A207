@@ -1,4 +1,4 @@
-import StockTrade from './StockTrade'
+import StockTrade from "./stockTrade"
 
 export default function TradeHistory () {
   return(

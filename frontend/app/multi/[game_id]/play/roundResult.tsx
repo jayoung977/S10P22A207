@@ -1,6 +1,6 @@
 'use client'
-import RoundChart from './RoundChart' 
-import RoundUser from './RoundUser'
+import RoundChart from './roundChart'
+import RoundUser from './roundUser'
 import { useEffect, useState } from 'react'
 import type { dataType } from './MultiPlay'
 import Penguin from '@/public/src/assets/images/profile-person-image.png'

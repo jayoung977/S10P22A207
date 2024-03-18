@@ -3,9 +3,9 @@ import Image from "next/image"
 import ProfileImage from '@/public/src/assets/images/profile-person-image.png'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons"
-import FinalUser from "./FinalUser"
+import FinalUser from "./finalUser"
 import { useRouter } from "next/navigation"
-import RoundResult from "./RoundResult"
+import RoundResult from "./roundResult"
 import { useState } from "react"
 
 export default function FinalResult({ isOpen, onClose }: any){
