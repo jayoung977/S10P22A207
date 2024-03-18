@@ -1,6 +1,5 @@
-import styles from '@/public/src/styles/multi/freindSearch.module.css'
 import SearchBar from '../../SearchBar'
-import Friend from './Friend'
+import Friend from './friend'
 
 export default function FriendSearch() {
   return (
@@ -10,11 +9,11 @@ export default function FriendSearch() {
         <SearchBar/>
       </div>
       <div className='overflow-auto row-span-5' style={{height: 'calc(35vh)'}}>
-      <Friend/>
-      <Friend/>
-      <Friend/>
-      <Friend/>
-      <Friend/>
+        <Friend/>
+        <Friend/>
+        <Friend/>
+        <Friend/>
+        <Friend/>
       </div>
     </div>
   )

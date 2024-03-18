@@ -29,27 +29,19 @@ export default function Chart({ data }: any) {
 
     // 첫 번재 plot 생성(line, OHLC, 이동평균선)
     const plot1 = chart.plot(0);
-    plot1.title("일 별 주가 & OHLC");
+    plot1.title("일 별 주가 & OHLC, 이동평균선");
 
     // line series 생성
     const lineSeries = plot1.line(
       data?.map((item: any) => [item.date, item.close])
     );
     // line series 속성 설정
-    lineSeries.name("종가");
+    lineSeries.name("주가");
     lineSeries.hovered().markers().enabled(true).type("circle").size(4);
     lineSeries.stroke("#86BF15", 1);
 
     // candlestick series 생성
-    const candlestickSeries = plot1.candlestick(
-      data?.map((item: any) => [
-        item.date,
-        item.open,
-        item.high,
-        item.low,
-        item.close,
-      ])
-    );
+    const candlestickSeries = plot1.candlestick(data?.map((item: any) => [item.date, item.open, item.high, item.low, item.close]));
     // candlestick series 속성 설정
     candlestickSeries.name("OHLC");
     candlestickSeries.legendItem().iconType("risingfalling");
@@ -57,18 +49,10 @@ export default function Chart({ data }: any) {
     candlestickSeries.tooltip().format(function (this: any) {
       const series = this.series;
       return (
-        "시가 : " +
-        this.open +
-        "\n" +
-        "고가 : " +
-        this.high +
-        "\n" +
-        "저가 : " +
-        this.low +
-        "\n" +
-        "종가 : " +
-        this.close +
-        "\n"
+        "시가 : " + this.open + "\n" +
+        "고가 : " + this.high + "\n" +
+        "저가 : " + this.low + "\n" +
+        "종가 : " + this.close + "\n"
       );
     });
     // candlestick series 색상 지정
@@ -77,15 +61,24 @@ export default function Chart({ data }: any) {
     candlestickSeries.fallingFill("#0597FF", 1);
     candlestickSeries.fallingStroke("#0597FF", 1);
 
-   // 이동평균선 그래프 생성(sma)
-   const sma5Series = plot1.line(calculateMovingAverage(data, 5));
-   sma5Series.name('5');
-   const sma20Series = plot1.line(calculateMovingAverage(data, 20));
-   sma20Series.name('20');
-   const sma60Series = plot1.line(calculateMovingAverage(data, 60));
-   sma60Series.name('60');
-   const sma120Series = plot1.line(calculateMovingAverage(data, 120));
-   sma120Series.name('120');
+
+    // 이동평균선 그래프 생성(sma)
+    const sma5Series = plot1.line(calculateMovingAverage(data, 5));
+    sma5Series.name('5');
+    const sma20Series = plot1.line(calculateMovingAverage(data, 20));
+    sma20Series.name('20');
+    const sma60Series = plot1.line(calculateMovingAverage(data, 60));
+    sma60Series.name('60');
+    const sma120Series = plot1.line(calculateMovingAverage(data, 120));
+    sma120Series.name('120');
+
+    // 이동평균선 그래프 색상 지정
+    sma5Series.stroke('purple');
+    sma20Series.stroke('yello');
+    sma60Series.stroke('green');
+    sma120Series.stroke('blue');
+
+
 
    // 이동평균선 그래프 색상 지정
    sma5Series.stroke('purple');
@@ -129,6 +122,10 @@ export default function Chart({ data }: any) {
       data?.map((item: any) => [item.date, item.volume])
     );
     columnSeries.name("거래량");
+    columnSeries.risingFill("#F65742", 1);
+    columnSeries.risingStroke("#F65742", 1);
+    columnSeries.fallingFill("#0597FF", 1);
+    columnSeries.fallingStroke("#0597FF", 1);
 
     plot2.legend().useHtml(true);
     plot2.legend().itemsFormat(function (this: any) {

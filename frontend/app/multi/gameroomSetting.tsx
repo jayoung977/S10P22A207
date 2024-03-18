@@ -1,6 +1,4 @@
 'use client'
-
-import styles from '@/public/src/styles/multi/gameroomSetting.module.css'
 import { useRouter } from 'next/navigation'
 import MakeRoomModal from './MakeRoomModal'
 import { useState } from 'react';

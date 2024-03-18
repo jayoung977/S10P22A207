@@ -1,5 +1,3 @@
-import styles from '@/public/src/styles/multi/pagination.module.css'
-
 export default function Pagination(){
   const pages:number[] = [1,2,3,4,5];
   return(
@@ -15,7 +13,7 @@ export default function Pagination(){
           </a>
         </li>
           {
-            pages.map((page:number,i:number)=> (
+            pages.map((page :number, i :number)=> (
               <a href="#" key={i}  className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                 {page}
               </a>

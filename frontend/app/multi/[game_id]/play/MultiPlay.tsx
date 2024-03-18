@@ -1,14 +1,13 @@
 "use client";
 
 import Header from "./header";
-import GameStatus from "./GameStatus";
-import Chat from "../Chat";
+import GameStatus from "./gameStatus";
+import Chat from "../chat";
 import Chart from "@/app/single/[game-id]/play/Chart";
-import TradeHistory from "./TradeHistory";
-import User from "./User";
-import RoundResult from "./RoundResult";
+import TradeHistory from "./tradeHistory";
+import User from "./user";
 import { useState, useEffect } from "react";
-import TradeButtons from "../TradeButton";
+import TradeButtons from "../tradeButton";
 
 export type dataType = {
   date: string;
@@ -19,7 +18,7 @@ export type dataType = {
   volume: number;
 };
 
-export default function MultiPlay() {
+export default function MultiPlay () {
   const [data, setData] = useState<dataType[]>([]);
   useEffect(() => {
     setData([

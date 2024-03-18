@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import ProfileModal from './ProfileModal'
+import ProfileModal from './profileModal';
 
 interface userType {
   memberId: number,
@@ -8,13 +8,8 @@ interface userType {
   assets: number
 }
 
-export default function UserRanking({ user } : { user : userType }){
+export default function UserRanking({ user } :{ user :userType }){
   const [isOpen, setIsOpen] = useState(false)
-
-  
-  const handleClose = () => {
-    setIsOpen(false);
-  };
 
   return(
     <div

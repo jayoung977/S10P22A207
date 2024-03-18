@@ -1,12 +1,12 @@
 'use client'
 import { easeInOut } from 'framer-motion/dom';
 import { useState } from 'react';
-import UserRanking from './UserRanking';
+import UserRanking from './userRanking';
 
 interface userType {
-    memberId: number,
-    nickname: string,
-    assets: number
+    memberId: number;
+    nickname: string;
+    assets: number;
 }
   
 const userRankingList :userType[] = [
@@ -83,7 +83,6 @@ function computeLPS(pattern :any, m :any) {
     return lps;
 }
 
-
 export default function SearchedUserRankingList () {
     const [searchedUserList, setSearchedUserList] = useState<userType[]>([]);
     const [search, setSearch] = useState<string>('');
@@ -130,7 +129,7 @@ export default function SearchedUserRankingList () {
                 {
                     searchedUserList.length > 0 ? (
                         searchedUserList.map((x, index) => (
-                            <UserRanking key={index} user={x}/>
+                            <UserRanking key={x.memberId} user={x}/>
                         ))
                     ) : (
                         <div>없음</div>

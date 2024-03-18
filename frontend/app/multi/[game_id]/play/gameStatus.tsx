@@ -1,7 +1,4 @@
-import styles from '@/public/src/styles/multi/gameStatus.module.css'
-
-
-export default function GameStatus(){
+export default function GameStatus () {
   return(
     <div className="border row-span-7 grid grid-rows-12 gap-2 items-center">
       <div className='row-span-1 flex justify-center text-sm'>

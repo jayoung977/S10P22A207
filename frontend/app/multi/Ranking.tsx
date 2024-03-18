@@ -1,17 +1,17 @@
 'use client'
-
-import UserRankingList from "./AllUserRankingList"
-
 import AllUserRankingList from './AllUserRankingList';
 import FriendUserRankingList from "./FriendUserRankingList";
 import SearchedUserRankingList from "./SearchedUserRankingList"
-
-import UserRanking from "./UserRanking"
-import SearchBar from "./SearchBar"
+<<<<<<< HEAD
 import multigameStore from "@/public/src/stores/multi/MultiGameStore"
 
+export default function Ranking () {
+=======
+
+import multigameStore from "@/public/src/stores/multi/MultiGameStore"
 
 export default function Ranking(){
+>>>>>>> 6a3ee5af831155a850e20e83cff0426506a07792
   const { toggleTab, setToggleTab } = multigameStore();
 
   return (
@@ -74,38 +74,15 @@ export default function Ranking(){
         </div>
           {
             toggleTab == 'all' ? (
-              <AllUserRankingList toggleTab={toggleTab} />
+              <AllUserRankingList />
             ) : (
               toggleTab == 'friend' ? (
-                <FriendUserRankingList toggleTab={toggleTab}/>
+                <FriendUserRankingList />
               ) : (
-                <SearchedUserRankingList toggleTab={toggleTab} />
+                <SearchedUserRankingList />
               )
             )
           }
-          {/* {
-            toggleTab == 'search' ?  (
-              <div className="row-span-2 border flex items-center justify-center">
-                <div><SearchBar/></div>
-              </div>
-            ) : toggleTab == 'all' ? (
-              <div className="text-center mt-1 text-lg">전체랭킹</div>
-              ) : (
-                <div className="text-center mt-1 text-lg">친구랭킹</div>
-            )
-          } */}
-        
-        {/* <div className='row-span-9 overflow-auto border' style={{height: 'calc(42vh)'}}>
-          <UserRanking/>
-          <UserRanking/>
-          <UserRanking/>
-          <UserRanking/>
-          <UserRanking/>
-          <UserRanking/>
-          <UserRanking/>
-          <UserRanking/>
-          <UserRanking/>
-        </div> */}
       </div>
   )
 }
