@@ -7,7 +7,7 @@ export default function ChartImage(){
       <Image
         src={chartImage}
         alt='chartimage'
-      height={400}
+        height={400}
       />
     </div>
   )

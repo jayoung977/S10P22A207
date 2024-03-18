@@ -145,7 +145,6 @@ export default function StockList () {
             <div className="row-span-1 relative">
                 <input
                     onChange={(e) => {
-                        console.log(e.currentTarget.value)
                         findMatchingValues(e.currentTarget.value, stockData)
                         }}
                     type="search"

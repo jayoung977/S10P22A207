@@ -1,5 +1,4 @@
 "use client";
-
 import ChartImage from "../ChartImage";
 import Chat from "../Chat";
 import GameUser from "./GameUser";
@@ -7,6 +6,7 @@ import RoomInfo from "./RoomInfo";
 import FriendSearch from "./FriendSearch";
 import GameRule from "./GameRule";
 import Header from "./Header";
+
 export default function MultiWait() {
   return (
     <div className="grid grid-rows-12 h-screen border-separate">

@@ -29,7 +29,8 @@ export default function Chart ({ data } :any) {
         const lineSeries = plot1.line(data?.map((item :any) => ([item.date, item.close])))
         lineSeries.name('주가');
         lineSeries.hovered().markers().enabled(true).type('circle').size(4);
-        
+        lineSeries.stroke("#86BF15", 1);
+
         // candlestick 그래프 생성
         const candlestickSeries = plot1.candlestick(data?.map((item :any) => ([item.date, item.open, item.high, item.low, item.close])))
         candlestickSeries.name('OHLC');

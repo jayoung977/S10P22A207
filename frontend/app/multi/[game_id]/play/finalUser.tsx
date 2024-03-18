@@ -1,5 +1,4 @@
 'use client'
-
 import ProfileImage from '@/public/src/assets/images/profile-image.png'
 import Image from 'next/image'
 

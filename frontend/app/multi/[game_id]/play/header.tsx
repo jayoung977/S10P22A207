@@ -1,19 +1,17 @@
 'use client'
-
 import penguin from '@/public/src/assets/images/penguin.png'
 import Image from 'next/image'
 import { useState } from 'react'
 import RoundResult from './RoundResult'
 import FinalResult from './FinalResult'
 
-export default function Header(){
+export default function Header () {
     const [isOpen, setIsOpen] = useState(false);
     const [isGameover, setIsGameover] = useState(false);
     const [turn, setTurn] = useState<number>(0)
     const [round, setRound] = useState<number>(1)
     const roundPercentage = (turn/50)*100
     const allPercentage = ((50*(round-1)+turn)/150)*100
-
 
   return( 
   <header className="row-span-1 grid grid-cols-12 border gap-2 items-center">

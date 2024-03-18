@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function MakeRoomModal ({isOpen ,onClose} : any) {
+export default function MakeRoomModal ({ isOpen, onClose } : any) {
   const [title, setTitle] = useState<string>("");  
   const [round, setRound] = useState<number>(3);
   const [isRevealed, setIsRevealed] = useState<boolean>(true);
@@ -85,7 +85,7 @@ export default function MakeRoomModal ({isOpen ,onClose} : any) {
                             }} className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">방만들기</button>
                         </div>
                         <div className='col-span-1'>
-                          <button onClick={()=> {onClose()}}className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">취소</button>
+                          <button onClick={()=> {onClose()}} className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">취소</button>
                         </div>
                       </div>
                     </div>

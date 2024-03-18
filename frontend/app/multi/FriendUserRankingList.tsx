@@ -1,11 +1,11 @@
 'use client'
-import UserRanking from './UserRanking';
+import UserRanking from './userRanking';
 import { useQuery, UseQueryResult } from 'react-query';
 
 interface userType {
-   memberId: number,
-   nickname: string,
-   assets: number
+    memberId: number,
+    nickname: string,
+    assets: number
 }
 
 interface userInfo {
@@ -13,7 +13,7 @@ interface userInfo {
 }
 
 export default function FriendUserRankingList () {
-    const fetchFriendUserRankingInfo = async () => {
+    const fetchFriendUserRankingInfo :any = async () => {
         const response = await fetch(`https://j10a207.p.ssafy.io/api/friend/list?followerId=${1}`)
         return response.json()
     }    
@@ -37,7 +37,7 @@ export default function FriendUserRankingList () {
             <div className='row-span-9 overflow-auto border' style={{ height: 'calc(42vh)'}}>
                 {
                     result?.map((x, index) => (
-                        <UserRanking key={index} user={x}/>
+                        <UserRanking key={x.memberId} user={x}/>
                         )
                     )
                 }

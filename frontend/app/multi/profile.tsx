@@ -16,7 +16,7 @@ interface userType {
   multiAvgRoi : number
 }
 
-export default function Profile({ user } : { user : userType }){
+export default function Profile({ user } :{ user :userType }){
   return (
     <div className="col-span-4 bg-background-1 rounded-md grid grid-rows-5 gap-2 shadow-md m-2">
       {/* 프로필 상단 */}
