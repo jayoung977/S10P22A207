@@ -47,4 +47,8 @@ public class Community extends BaseEntity {
         this.isDelete = isDelete;
         this.communityFileList = communityFileList;
     }
+
+    public void updateCommunityDeleteStatus() {
+        this.isDelete = true;
+    }
 }
