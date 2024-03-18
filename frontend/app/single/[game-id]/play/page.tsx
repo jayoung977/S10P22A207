@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 
 // navbar
 import Navbar from "@/app/Navbar";
@@ -27,6 +28,8 @@ type dataType = {
 
 export default function SinglePlay() {
   const [data, setData] = useState<dataType[]>([]);
+  const params = useParams();
+  // console.log(params['game-id'])
   useEffect(() => {
     // 실제 주식 데이터 더미로 들고왔어!!
     const newData = [

@@ -1,5 +1,19 @@
+'use client'
+
+import { useState } from "react";
+import axios from "axios";
+
+
 // 매수, 매도 클릭 시 활성화되는 모달창
-export default function BuySellModal({ isBuy, isOpen, onClose } :any) {
+export default function BuySellModal({ isBuy, isOpen, onClose, turn } :any) {
+    const [stocks, setStocks] = useState(0)
+    const handleStocksChange = (event: any) => {
+        if(event.target.value < 0){
+          event.target.value = 0
+        }
+        setStocks(event.target.value)
+    }
+
     if (!isOpen) return null;
     
     return (
@@ -52,17 +66,51 @@ export default function BuySellModal({ isBuy, isOpen, onClose } :any) {
                     }
                 </div>
                 <div>
-                <input type="number" id="number-input" aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="수량 입력" required />
+                <input 
+                    type="number" 
+                    id="number-input" 
+                    value={stocks} 
+                    onChange={handleStocksChange}
+                    aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="수량 입력" required />
                 </div>
             </div>
             <div className="row-start-10 row-end-13 grid grid-rows-3">
-                <div className="row-start-1 row-end-3 grid grid-cols-4">
-                    <button onClick={() => {onClose()}} className="col-start-1 col-end-2 rounded-full ml-1 text-textColor-2 bg-small-10">취소</button>
+                <div className="row-start-1 row-end-3 grid grid-cols-8">
+                    <button onClick={() => {
+                        setStocks(0)
+                        onClose()
+                        }} className="col-start-2 col-end-4 rounded-full ml-1 text-textColor-2 bg-small-10">취소</button>
                     {
                         isBuy ? (
-                            <button onClick={() => {onClose()}} className="col-start-4 col-end-5 rounded-full mr-1 text-textColor-2 bg-small-3">매수</button>
+                            <button onClick={() => {
+                                axios.post('https://j10a207.p.ssafy.io/api/single/buy',{
+                                 gameLogId: 1,
+                                 stockId: 1,
+                                 amount: stocks,
+                                 day: turn,
+                                })
+                                .then((res)=> {
+                                    console.log(res)
+                                    onClose()
+                                    setStocks(0)
+                                })
+                                .catch((err)=> {console.error(err)})
+                            }} className="col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 bg-small-3">매수</button>
                         ) : (
-                            <button onClick={() => {onClose()}} className="col-start-4 col-end-5 rounded-full mr-1 text-textColor-2 bg-small-1">매도</button>
+                            <button onClick={() => {
+                                axios.post('https://j10a207.p.ssafy.io/api/single/sell',{
+                                 gameLogId: 1,
+                                 stockId: 1,
+                                 amount: stocks,
+                                 day: turn,
+                                })
+                                .then((res)=> {
+                                    console.log(res)
+                                    onClose()
+                                    setStocks(0)
+                                })
+                                .catch((err)=> {console.error(err)})
+                            }} className="col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 bg-small-1">매도</button>
 
                         )
                     }
