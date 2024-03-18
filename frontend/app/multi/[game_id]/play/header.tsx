@@ -3,8 +3,8 @@
 import penguin from '@/public/src/assets/images/penguin.png'
 import Image from 'next/image'
 import { useState } from 'react'
-import RoundResult from './roundResult'
-import FinalResult from './finalResult'
+import RoundResult from './RoundResult'
+import FinalResult from './FinalResult'
 
 export default function Header(){
     const [isOpen, setIsOpen] = useState(false);

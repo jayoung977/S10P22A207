@@ -1,6 +1,3 @@
-import styles from '@/public/src/styles/multi/roomInfo.module.css'
-
-
 export default function RoomInfo() {
   return (
     <div className="border row-span-1 grid grid-rows-3">
