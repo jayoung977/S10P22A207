@@ -1,6 +1,6 @@
 import styles from '@/public/src/styles/multi/freindSearch.module.css'
 import SearchBar from '../../SearchBar'
-import Friend from './friend'
+import Friend from './Friend'
 
 export default function FriendSearch() {
   return (

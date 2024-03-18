@@ -1,14 +1,14 @@
 "use client";
 
 import Header from "./header";
-import GameStatus from "./gameStatus";
-import Chat from "../chat";
+import GameStatus from "./GameStatus";
+import Chat from "../Chat";
 import Chart from "@/app/single/[game-id]/play/Chart";
-import TradeHistory from "./tradeHistory";
-import User from "./user";
-import RoundResult from "./roundResult";
+import TradeHistory from "./TradeHistory";
+import User from "./User";
+import RoundResult from "./RoundResult";
 import { useState, useEffect } from "react";
-import TradeButtons from "../tradeButton";
+import TradeButtons from "../TradeButton";
 
 export type dataType = {
   date: string;

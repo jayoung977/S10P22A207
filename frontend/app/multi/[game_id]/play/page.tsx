@@ -1,4 +1,4 @@
-import MultiPlay from "./multigame";
+import MultiPlay from "./MultiPlay";
 
 
 export async function generateStaticParams(){

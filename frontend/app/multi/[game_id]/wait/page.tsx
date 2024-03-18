@@ -1,4 +1,4 @@
-import MultiWait from "./multigame";
+import MultiWait from "./MultiWait";
 
 export async function generateStaticParams() {
   // 반환 값을 객체 대신 문자열 배열로 변경

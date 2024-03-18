@@ -1,5 +1,5 @@
 import styles from '@/public/src/styles/multi/tradeHistory.module.css'
-import StockTrade from './stockTrade'
+import StockTrade from './StockTrade'
 
 
 export default function TradeHistory(){
