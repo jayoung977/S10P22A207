@@ -1,7 +1,13 @@
 'use client'
 
-import UserRanking from "./userRanking"
-import SearchBar from "./searchBar"
+import UserRankingList from "./AllUserRankingList"
+
+import AllUserRankingList from './AllUserRankingList';
+import FriendUserRankingList from "./FriendUserRankingList";
+import SearchedUserRankingList from "./SearchedUserRankingList"
+
+import UserRanking from "./UserRanking"
+import SearchBar from "./SearchBar"
 import multigameStore from "@/public/src/stores/multi/MultiGameStore"
 
 
@@ -67,6 +73,17 @@ export default function Ranking(){
         </label>
         </div>
           {
+            toggleTab == 'all' ? (
+              <AllUserRankingList toggleTab={toggleTab} />
+            ) : (
+              toggleTab == 'friend' ? (
+                <FriendUserRankingList toggleTab={toggleTab}/>
+              ) : (
+                <SearchedUserRankingList toggleTab={toggleTab} />
+              )
+            )
+          }
+          {/* {
             toggleTab == 'search' ?  (
               <div className="row-span-2 border flex items-center justify-center">
                 <div><SearchBar/></div>
@@ -76,8 +93,9 @@ export default function Ranking(){
               ) : (
                 <div className="text-center mt-1 text-lg">친구랭킹</div>
             )
-          }
-        <div className='row-span-9 overflow-auto border' style={{height: 'calc(42vh)'}}>
+          } */}
+        
+        {/* <div className='row-span-9 overflow-auto border' style={{height: 'calc(42vh)'}}>
           <UserRanking/>
           <UserRanking/>
           <UserRanking/>
@@ -87,7 +105,7 @@ export default function Ranking(){
           <UserRanking/>
           <UserRanking/>
           <UserRanking/>
-        </div>
+        </div> */}
       </div>
   )
 }

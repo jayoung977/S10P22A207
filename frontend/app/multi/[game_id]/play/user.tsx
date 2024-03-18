@@ -1,6 +1,5 @@
-import styles from '@/public/src/styles/multi/user.module.css'
 import Image from 'next/image'
-import ProfileImage from '@/app/multi/profileImage'
+import ProfileImage from '@/app/multi/ProfileImage'
 
 export default function User(){
   return (
