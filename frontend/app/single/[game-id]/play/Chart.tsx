@@ -6,7 +6,7 @@ import anychart from "anychart";
 // 이동평균선 데이터 생성 함수
 function calculateMovingAverage(data :any, period :any) {
     const result = [];
-    for (let i = period - 1; i < data.length; i++) {
+    for (let i = period-1; i < data.length; i++) {
         const sum = data.slice(i - period + 1, i + 1).reduce((acc :any, curr:any) => acc + curr.close, 0);
         const average = (sum / period).toFixed(2);
         result.push([data[i].date, parseFloat(average)]);
@@ -19,7 +19,7 @@ export default function Chart({ data }: any) {
     // 차트 생성
     const chart = anychart.stock();
     // 차트를 담을 컨테이너 생성
-    const container = chart.container("chart-container");
+    const container = chart.container("chart-container")
     chart.scroller().xAxis(false);
     chart.contextMenu(false);
     

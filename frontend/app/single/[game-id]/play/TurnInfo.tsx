@@ -4,6 +4,8 @@ import { useState } from 'react';
 import TurnNow from './TurnNow';
 import BuySellModal from './BuySellModal';
 import SingleGameEndModal from './SingleGameEndModal';
+import axios from 'axios';
+
 
 export default function TurnInfo () {
     // 현재 턴
@@ -17,13 +19,23 @@ export default function TurnInfo () {
     // 싱글 게임 종료 모달창 open 여부
     const [isOpenEndModal, setIsOpenEndModal] = useState<boolean>(false);
 
-    const handleClickTurn = function () {
+    const handleClickTurn = async function () {
+        await axios.get('https://j10a207.p.ssafy.io/api/single/tomorrow',{
+        params: {
+          gameLogId: 1,
+          day: turn
+        }})
+        .then((res)=>{
+            console.log(res)
+        })
+        .catch((err)=>{
+            console.error(err)
+        })
         if (turn == 50) {
             setIsOpenEndModal(true);
             setTurn(1);
         } else {
             setTurn(turn+1)
-            console.log(turn);
 
         }
     }
@@ -60,7 +72,7 @@ export default function TurnInfo () {
                 </button>
             
             </div>
-            <BuySellModal isBuy={isBuy} isOpen={isOpenSaleModal} onClose={() =>setIsOpenSaleModal(false) }/>
+            <BuySellModal turn={turn} isBuy={isBuy} isOpen={isOpenSaleModal} onClose={() =>setIsOpenSaleModal(false) }/>
             <SingleGameEndModal isOpen={isOpenEndModal} onClose={() => setIsOpenEndModal(false)}/>
         </div>
     )

@@ -12,7 +12,6 @@ export default function Page(){
           <FundMainComponent/>
           <FundTabs/>
           <main className='row-span-7'>
-            펀드 진행중입니다.
             <FundTable/>
           </main>
         </div>

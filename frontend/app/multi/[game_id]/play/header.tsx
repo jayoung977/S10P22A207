@@ -45,11 +45,11 @@ export default function Header () {
       disabled={turn === 50} 
       // turn이 50이면 disabled 속성이 true가 됩니다.
       onClick={() => {
-        // if (round == 3 && turn == 49){
+        if (round == 3 && turn == 49){
           console.log('경기 종료')
           setIsGameover(true)
-        // }
-        if (turn === 49) {
+        }
+        else if (turn === 49) {
           setIsOpen(true)
           // 일단 3초로 설정
           setTimeout(()=> setIsOpen(false),3000)
