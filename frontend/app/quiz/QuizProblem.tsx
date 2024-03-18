@@ -96,7 +96,7 @@ export default function QuizProblem() {
     <div className="row-span-10 grid grid-rows-12">
       <div className="row-span-12 grid grid-cols-12 ">
         <div className="col-start-4 col-end-10 grid grid-rows-12 bg-white shadow">
-          <div className="row-start-1 row-end-3 flex items-center m-2 justify-center text-2xl p-4 text-center">
+          <div className="row-start-1 row-end-3 flex items-center m-2 justify-center text-xl p-4 text-center">
             Q. {data[page].title}
           </div>
           <div className="row-start-3 row-end-12 grid grid-row-12 items-center m-2 ">
