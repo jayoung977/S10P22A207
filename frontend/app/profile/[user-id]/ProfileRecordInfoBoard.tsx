@@ -13,10 +13,10 @@ export default function UserRecordInfoBoard() {
           </tr>
         </thead>
         <tbody>
-          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <tr className="cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th
               scope="row"
-              className="cursor-pointer px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              className=" px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
               2024.03.14
             </th>
