@@ -1,7 +1,7 @@
 'use client'
 import Image from "next/image";
 import styles from "./page.module.css";
-import UserRecord from "./ProfileRecord";
+import UserRecord from "../[userId]/ProfileRecord";
 import bronze from "../../../public/src/assets/images/bronze.png";
 import profileStore from "@/public/src/stores/profile/profileStore";
 
