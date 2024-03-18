@@ -1,5 +1,5 @@
-import GameRoom from './GameRoom';
-import Pagination from './Pagination';
+import GameRoom from './gameroom';
+import Pagination from './pagination';
 
 export default function GameRoomList () {
 

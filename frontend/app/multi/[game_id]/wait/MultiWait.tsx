@@ -1,11 +1,11 @@
 "use client";
-import ChartImage from "../ChartImage";
-import Chat from "../Chat";
-import GameUser from "./GameUser";
-import RoomInfo from "./RoomInfo";
-import FriendSearch from "./FriendSearch";
-import GameRule from "./GameRule";
-import Header from "./Header";
+import ChartImage from "../chartImage";
+import Chat from "../chat";
+import GameUser from "./gameUser";
+import RoomInfo from "./roomInfo";
+import FriendSearch from "./friendSearch";
+import GameRule from "./gameRule";
+import Header from "./header";
 
 export default function MultiWait() {
   return (

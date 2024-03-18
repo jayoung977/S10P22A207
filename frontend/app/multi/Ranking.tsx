@@ -2,16 +2,10 @@
 import AllUserRankingList from './AllUserRankingList';
 import FriendUserRankingList from "./FriendUserRankingList";
 import SearchedUserRankingList from "./SearchedUserRankingList"
-<<<<<<< HEAD
-import multigameStore from "@/public/src/stores/multi/MultiGameStore"
-
-export default function Ranking () {
-=======
 
 import multigameStore from "@/public/src/stores/multi/MultiGameStore"
 
 export default function Ranking(){
->>>>>>> 6a3ee5af831155a850e20e83cff0426506a07792
   const { toggleTab, setToggleTab } = multigameStore();
 
   return (
