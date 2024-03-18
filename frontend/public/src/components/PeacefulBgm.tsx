@@ -8,7 +8,7 @@ const PeacefulBgm: React.FC = () => {
   useEffect(() => {
     if (audioRef.current) {
       console.log("지금 재생중");
-      audioRef.current.volume = 0.2; // 볼륨 조절 (0.0 ~ 1.0)
+      audioRef.current.volume = 0.1; // 볼륨 조절 (0.0 ~ 1.0)
       audioRef.current.loop = true; // 반복 재생 여부
     }
   }, []);

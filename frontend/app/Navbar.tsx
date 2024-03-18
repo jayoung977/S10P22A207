@@ -1,34 +1,30 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useLayoutEffect } from "react";
 import Image from "next/image";
 import penguin from "../public/src/assets/images/penguin.png";
-import Swal from "sweetalert2";
+import logo from "../public/src/assets/images/logo.png";
+import NavbarGameModal from "./NavbarGameModal";
+
 export default function Navbar() {
+  const [currentTime, setCurrentTime] = useState<Date>(new Date());
+
+  useLayoutEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
-  const openSinglePlay = () => {
-    Swal.fire({
-      title: "기존 기록이 없습니다",
-      text: "플레이 하시겠습니까?",
-      showCancelButton: true,
-      confirmButtonText: "플레이",
-      confirmButtonColor: "#1454FF",
-      cancelButtonText: "취소",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // 플레이 버튼을 클릭한 경우
-        console.log("플레이 버튼을 클릭했습니다.");
-        router.push("/single/1/play");
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        // 취소 버튼을 클릭한 경우
-        console.log("취소 버튼을 클릭했습니다.");
-      }
-    });
-  };
+
   return (
     <nav className="row-span-1 opacity-90 bg-background-1 border-gray-200 dark:bg-gray-900 dark:border-gray-700">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -36,11 +32,14 @@ export default function Navbar() {
           <Image
             src={penguin}
             alt="Logo"
-            className="h-8"
+            className="h-8 bg-background-1"
             width={32}
             height={32}
           />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white hover:cursor-pointer" onClick={() => router.push("/multi")}>
+          <span
+            className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white hover:cursor-pointer"
+            onClick={() => router.push("/multi")}
+          >
             지금이니
           </span>
         </a>
@@ -75,39 +74,7 @@ export default function Navbar() {
                   dropdownOpen ? "" : "hidden"
                 }`}
               >
-                <ul
-                  className="py-2 text-sm text-gray-700 dark:text-gray-400"
-                  aria-labelledby="dropdownLargeButton"
-                >
-                  <li>
-                    <a
-                      className="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      onClick={() => router.push("/multi")}
-                    >
-                      멀티 플레이
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      data-modal-target="popup-modal"
-                      data-modal-toggle="popup-modal"
-                      className="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      // onClick={() => router.push("/single/1/play")}
-                      onClick={() => openSinglePlay()}
-                    >
-                      싱글 플레이
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      className="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      onClick={() => router.push("/quiz")}
-                    >
-                      퀴즈
-                    </a>
-                  </li>
-                </ul>
+                <NavbarGameModal></NavbarGameModal>
               </div>
             </li>
             <li>
@@ -134,6 +101,28 @@ export default function Navbar() {
                 프로필
               </a>
             </li>
+            {/*NavBar에 시간 넣을까 ? 말까 ? 의견 주세요 ~_~*/}
+            {/* <li>
+              <p suppressHydrationWarning>{currentTime.toLocaleTimeString()}</p>
+            </li> */}
+            <svg
+              className="w-6 h-6 text-gray-800 dark:text-white hover:cursor-pointer"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 5.365V3m0 2.365a5.338 5.338 0 0 1 5.133 5.368v1.8c0 2.386 1.867 2.982 1.867 4.175 0 .593 0 1.292-.538 1.292H5.538C5 18 5 17.301 5 16.708c0-1.193 1.867-1.789 1.867-4.175v-1.8A5.338 5.338 0 0 1 12 5.365ZM8.733 18c.094.852.306 1.54.944 2.112a3.48 3.48 0 0 0 4.646 0c.638-.572 1.236-1.26 1.33-2.112h-6.92Z"
+              />
+            </svg>
+
             <li>
               <a
                 className="cursor-pointer block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
