@@ -413,7 +413,7 @@ public class SingleGameService {
 		} else if (avgRoi < 0) {
 			me.increaseLose();
 		}
-		me.addAsset(totalAsset);
+		me.updateAsset(totalAsset);
 	}
 
 	// 시작날짜, 끝 날짜 사이의 랜덤한 날을 가져온다.

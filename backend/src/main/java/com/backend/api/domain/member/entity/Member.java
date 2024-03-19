@@ -172,7 +172,7 @@ public class Member extends BaseEntity {
 		this.lose++;
 	}
 
-	public void addAsset(long totalAsset) {
+	public void updateAsset(long totalAsset) {
 		this.asset = totalAsset;
 	}
 
