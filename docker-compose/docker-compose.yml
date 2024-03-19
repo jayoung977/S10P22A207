@@ -27,3 +27,7 @@ services:
       - .env
     networks:
       - zigeumnet
+networks:
+  zigeumnet:
+    driver: bridge
+
