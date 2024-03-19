@@ -29,5 +29,5 @@ services:
       - zigeumnet
 networks:
   zigeumnet:
-    driver: bridge
+    driver: host
 
