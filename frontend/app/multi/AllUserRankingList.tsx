@@ -35,16 +35,15 @@ export default function AllUserRankingList () {
     const {result} : {result: userType[] | null} = data ? data : {result : null}
 
     return (
-        <>  
-            <div className="text-center mt-1 text-lg">전체랭킹</div>
-            <div className='row-span-9 overflow-auto border' style={{ height: 'calc(42vh)'}}>
-                {
-                    result?.map((x, index) => (
-                        <UserRanking key={x.memberId} user={x}/>
-                        )
+        <>
+        <div className='row-span-9 overflow-auto border' style={{ height: 'calc(42vh)'}}>
+            {
+                result?.map((x, index) => (
+                    <UserRanking key={x.memberId} user={x}/>
                     )
-                }
-            </div>
+                )
+            }
+        </div>
         </>
     )
 }

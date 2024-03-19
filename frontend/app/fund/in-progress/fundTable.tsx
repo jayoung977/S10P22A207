@@ -1,10 +1,33 @@
 'use client'
 
 import { useRouter } from "next/navigation"
+import { useQuery, UseQueryResult } from "react-query";
+import type { FundResult } from "@/public/src/stores/fund/crud/FundCrudStore";
+import { FundInfo } from "@/public/src/stores/fund/crud/FundCrudStore";
+
+const fetchFundInfo = async() => {
+    const response = await fetch('https://j10a207.p.ssafy.io/api/fund/running-list');
+    return response.json();
+  }
+
 
 export default function FundTable(){
   const fundList = [1,2,3,4,5]
   const router = useRouter();
+  const { data, isLoading, error } : UseQueryResult<FundInfo,Error> = useQuery('FundInfo', fetchFundInfo)
+
+  if (isLoading) {
+    return <div>Loading..</div>
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>
+  }
+
+  const { result }: {result: FundResult | null} = data ? data: {result: null};
+  console.log(data)
+
+
   return (
     <div className="overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
