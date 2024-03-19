@@ -72,8 +72,7 @@ public class MemberController {
 			tokenDto
 		);
 	}
-	//TODO: Long loginUserId -> @AuthenticationPrincipal UserDetails userDetails
-	@PreAuthorize("USER")
+	@PreAuthorize("hasAnyRole('USER')")
 	@Operation(summary = "내 정보 조회")
 	@GetMapping("")
 	public ResponseEntity<BaseResponse<MemberProfileRes>> getMyProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -84,31 +83,40 @@ public class MemberController {
 		);
 	}
 
-	//TODO: Long loginUserId -> @AuthenticationPrincipal UserDetails userDetails
-	@PreAuthorize("USER")
+	@PreAuthorize("hasAnyRole('USER')")
+	@Operation(summary = "유저 정보 조회")
+	@GetMapping("/profile")
+	public ResponseEntity<BaseResponse<MemberProfileRes>> getMemberProfile(@RequestParam Long memberId) {
+		MemberProfileRes memberProfileRes = memberService.getProfile(memberId);
+		return BaseResponse.success(
+			SuccessCode.SELECT_SUCCESS,
+			memberProfileRes
+		);
+	}
+
+	@PreAuthorize("hasAnyRole('USER')")
 	@Operation(summary = "내 싱글게임 기록 조회")
 	@GetMapping("/single-game-log")
-	public ResponseEntity<BaseResponse<List<ProfileSingleGameLogRes>>> getMySingleGameLog(Long loginUserId) {
-		List<ProfileSingleGameLogRes> ProfileSingleGameLogResList = memberService.getSingleGameLogs(loginUserId);
+	public ResponseEntity<BaseResponse<List<ProfileSingleGameLogRes>>> getMySingleGameLog(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		List<ProfileSingleGameLogRes> ProfileSingleGameLogResList = memberService.getSingleGameLogs(userDetails.getId());
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
 			ProfileSingleGameLogResList
 		);
 	}
 
-	//TODO: Long loginUserId -> @AuthenticationPrincipal UserDetails userDetails
-	@PreAuthorize("USER")
+	@PreAuthorize("hasAnyRole('USER')")
 	@Operation(summary = "내 멀티게임 기록 조회")
 	@GetMapping("/multi-game-log")
-	public ResponseEntity<BaseResponse<List<ProfileMultiGameLogRes>>> getMyMultiGameLog(Long loginUserId) {
-		List<ProfileMultiGameLogRes> ProfileMultiGameLogResList = memberService.getMultiGameLogs(loginUserId);
+	public ResponseEntity<BaseResponse<List<ProfileMultiGameLogRes>>> getMyMultiGameLog(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		List<ProfileMultiGameLogRes> ProfileMultiGameLogResList = memberService.getMultiGameLogs(userDetails.getId());
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
 			ProfileMultiGameLogResList
 		);
 	}
 
-	@PreAuthorize("USER")
+	@PreAuthorize("hasAnyRole('USER')")
 	@Operation(summary = "멤버 검색")
 	@GetMapping("/search")
 	public ResponseEntity<BaseResponse<List<MemberSearchRes>>> searchMember(String nickname) {

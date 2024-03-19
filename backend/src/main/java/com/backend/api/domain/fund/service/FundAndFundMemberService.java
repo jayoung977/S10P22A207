@@ -26,7 +26,7 @@ public class FundAndFundMemberService {
 	private final MemberRepository memberRepository;
 
 	@Transactional
-	public void registerFund(Long loginUserId, FundRegisterReq fundRegisterReq) {
+	public Long registerFund(Long loginUserId, FundRegisterReq fundRegisterReq) {
 		Fund fund = fundRepository.findById(fundRegisterReq.fundId())
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_FUND));
 		Member member = memberRepository.findById(loginUserId)
@@ -58,6 +58,6 @@ public class FundAndFundMemberService {
 		fundRepository.save(fund);
 		member.addAsset(-fundRegisterReq.investmentAmount());
 		memberRepository.save(member);
+		return fund.getId();
 	}
-
 }

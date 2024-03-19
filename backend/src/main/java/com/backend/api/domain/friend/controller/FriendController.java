@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import com.backend.api.domain.friend.dto.response.FriendRes;
 import com.backend.api.domain.friend.service.FriendService;
 import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.SuccessCode;
+import com.backend.api.global.security.userdetails.CustomUserDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,47 +34,43 @@ import lombok.extern.log4j.Log4j2;
 public class FriendController {
 	private final FriendService friendService;
 
-	//TODO: Long followerId -> @AuthenticationPrincipal UserDetails userDetails
 	@Operation(summary = "친구 전체 목록 조회")
 	@GetMapping("/list")
-	public ResponseEntity<BaseResponse<List<FriendRes>>> getAllFriends(Long followerId) {
-		List<FriendRes> friendResList = friendService.getAllFriends(followerId);
+	public ResponseEntity<BaseResponse<List<FriendRes>>> getAllFriends(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		List<FriendRes> friendResList = friendService.getAllFriends(userDetails.getId());
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
 			friendResList
 		);
 	}
 
-	//TODO: Long followerId -> @AuthenticationPrincipal UserDetails userDetails
 	@Operation(summary = "친구 목록 조회 커서 기반 페이징")
 	@GetMapping("/cursor")
-	public ResponseEntity<BaseResponse<FriendCursorRes>> getAllFriendsWithCursor(Long followerId,
+	public ResponseEntity<BaseResponse<FriendCursorRes>> getAllFriendsWithCursor(@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @NotNull @RequestParam(name = "cursor") Long cursor) {
-		FriendCursorRes friendCursorRes = friendService.getFriendsWithCursor(followerId, cursor);
+		FriendCursorRes friendCursorRes = friendService.getFriendsWithCursor(userDetails.getId(), cursor);
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
 			friendCursorRes
 		);
 	}
 
-	//TODO: Long followerId -> @AuthenticationPrincipal UserDetails userDetails
 	@Operation(summary = "친구 검색")
 	@GetMapping("/search")
-	public ResponseEntity<BaseResponse<List<FriendRes>>> searchFriends(Long followerId,
+	public ResponseEntity<BaseResponse<List<FriendRes>>> searchFriends(@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @NotNull @RequestParam(name = "nickname") String nickname) {
-		List<FriendRes> friendResList = friendService.searchFriends(followerId, nickname);
+		List<FriendRes> friendResList = friendService.searchFriends(userDetails.getId(), nickname);
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
 			friendResList
 		);
 	}
 
-	//TODO: Long followerId -> @AuthenticationPrincipal UserDetails userDetails
 	@Operation(summary = "친구 삭제")
 	@DeleteMapping("/delete")
-	public ResponseEntity<BaseResponse<String>> deleteFriend(Long followerId,
+	public ResponseEntity<BaseResponse<String>> deleteFriend(@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @NotNull @RequestParam(name = "followingId") Long followingId) {
-		friendService.deleteFriend(followerId, followingId);
+		friendService.deleteFriend(userDetails.getId(), followingId);
 		return BaseResponse.success(
 			SuccessCode.DELETE_SUCCESS,
 			"친구 삭제 성공"

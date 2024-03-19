@@ -2,8 +2,10 @@ package com.backend.api.domain.fund.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,6 +25,7 @@ import com.backend.api.domain.fund.service.FundAndMemberService;
 import com.backend.api.domain.fund.service.FundService;
 import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.SuccessCode;
+import com.backend.api.global.security.userdetails.CustomUserDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,7 +40,7 @@ import lombok.extern.log4j.Log4j2;
 @PreAuthorize("hasAnyRole('USER')")
 @RequiredArgsConstructor
 @Tag(name = "펀드", description = "펀드 관련 API")
-public class FundContorller {
+public class FundController {
 	private final FundService fundService;
 	private final FundAndFundMemberService fundAndFundMemberService;
 	private final FundAndMemberService fundAndMemberService;
@@ -71,12 +74,11 @@ public class FundContorller {
 			fundResList
 		);
 	}
-	//TODO: loginUserId -> @AuthenticationPrincipal UserDetails userDetails
 
 	@Operation(summary = "내가 운영중인 펀드 목록 조회")
 	@GetMapping("/managing-list")
-	public ResponseEntity<BaseResponse<List<FundRes>>> getManagingFunds(Long loginUserId) {
-		List<FundRes> fundResList = fundService.getManagingFunds(loginUserId);
+	public ResponseEntity<BaseResponse<List<FundRes>>> getManagingFunds(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		List<FundRes> fundResList = fundService.getManagingFunds(userDetails.getId());
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
 			fundResList
@@ -85,8 +87,8 @@ public class FundContorller {
 
 	@Operation(summary = "내가 가입한 펀드 목록 조회")
 	@GetMapping("/investing-list")
-	public ResponseEntity<BaseResponse<List<FundRes>>> getInvestingFunds(Long loginUserId) {
-		List<FundRes> fundResList = fundService.getInvestingFunds(loginUserId);
+	public ResponseEntity<BaseResponse<List<FundRes>>> getInvestingFunds(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		List<FundRes> fundResList = fundService.getInvestingFunds(userDetails.getId());
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
 			fundResList
@@ -95,8 +97,8 @@ public class FundContorller {
 
 	@Operation(summary = "내가 가입한 펀드 중 종료된 펀드 목록 조회")
 	@GetMapping("/investing-closed-list")
-	public ResponseEntity<BaseResponse<List<FundRes>>> getClosedInvestingFunds(Long loginUserId) {
-		List<FundRes> fundResList = fundService.getClosedInvestingFunds(loginUserId);
+	public ResponseEntity<BaseResponse<List<FundRes>>> getClosedInvestingFunds(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		List<FundRes> fundResList = fundService.getClosedInvestingFunds(userDetails.getId());
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
 			fundResList
@@ -105,7 +107,7 @@ public class FundContorller {
 
 	@Operation(summary = "펀드 상세 조회")
 	@GetMapping("/fund-detail")
-	public ResponseEntity<BaseResponse<FundDetailRes>> getFundDetail(Long fundId) {
+	public ResponseEntity<BaseResponse<FundDetailRes>> getFundDetail(@NotNull @Valid @RequestParam Long fundId) {
 		FundDetailRes fundDetailRes = fundService.getFundDetail(fundId);
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
@@ -115,32 +117,30 @@ public class FundContorller {
 
 	@Operation(summary = "펀드 검색")
 	@GetMapping("/search")
-	public ResponseEntity<BaseResponse<String>> searchFund(@Valid @NotNull @RequestParam String fundName) {
-		fundService.searchFund(fundName);
+	public ResponseEntity<BaseResponse<List<FundRes>>> searchFund(@Valid @NotNull @RequestParam String fundName) {
+		List<FundRes> fundResList = fundService.searchFund(fundName);
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
-			"펀드 검색 성공"
+			fundResList
 		);
 	}
 
-	//TODO: loginUserId -> @AuthenticationPrincipal UserDetails userDetails
 	@Operation(summary = "펀드 개설")
 	@PostMapping("/open")
-	public ResponseEntity<BaseResponse<String>> createFund(Long loginUserId,
+	public ResponseEntity<BaseResponse<Long>> createFund(@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @NotNull @RequestBody FundCreateReq fundCreateReq) {
-		fundService.createFund(loginUserId, fundCreateReq);
+		Long createdFundId = fundService.createFund(userDetails.getId(), fundCreateReq);
 		return BaseResponse.success(
 			SuccessCode.CREATE_SUCCESS,
-			"펀드 개설 성공"
+			createdFundId
 		);
 	}
 
-	//TODO: loginUserId -> @AuthenticationPrincipal UserDetails userDetails
 	@Operation(summary = "펀드 종료")
 	@PutMapping("/close")
-	public ResponseEntity<BaseResponse<String>> closeFund(Long loginUserId,
+	public ResponseEntity<BaseResponse<String>> closeFund(@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @NotNull @RequestBody FundCloseReq fundCloseReq) {
-		fundAndMemberService.closeFund(loginUserId, fundCloseReq.fundId());
+		fundAndMemberService.closeFund(userDetails.getId(), fundCloseReq.fundId());
 		return BaseResponse.success(
 			SuccessCode.UPDATE_SUCCESS,
 			"펀드 종료 성공"
@@ -149,23 +149,23 @@ public class FundContorller {
 
 	@Operation(summary = "펀드 가입")
 	@PostMapping("/register")
-	public ResponseEntity<BaseResponse<String>> registerFund(Long loginUserId, @Valid @NotNull @RequestBody
+	public ResponseEntity<BaseResponse<Long>> registerFund(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @NotNull @RequestBody
 	FundRegisterReq fundRegisterReq) {
-		fundAndFundMemberService.registerFund(loginUserId, fundRegisterReq);
+		Long fundId = fundAndFundMemberService.registerFund(userDetails.getId(), fundRegisterReq);
 		return BaseResponse.success(
 			SuccessCode.UPDATE_SUCCESS,
-			"펀드 가입 성공"
+			fundId
 		);
 	}
 
 	@Operation(summary = "펀드 시작")
 	@PutMapping("/start")
-	public ResponseEntity<BaseResponse<String>> startFund(Long loginUserId, @Valid @NotNull @RequestBody
+	public ResponseEntity<BaseResponse<Long>> startFund(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @NotNull @RequestBody
 	FundStartReq fundStartReq) {
-		fundService.startFund(loginUserId, fundStartReq);
+		Long fundId = fundService.startFund(userDetails.getId(), fundStartReq);
 		return BaseResponse.success(
 			SuccessCode.UPDATE_SUCCESS,
-			"펀드 시작 성공"
+			fundId
 		);
 	}
 
