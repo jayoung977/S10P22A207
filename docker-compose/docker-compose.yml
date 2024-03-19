@@ -12,6 +12,8 @@ services:
     image: jayoung977/backend
     env_file:
       - .env
+    networks:
+      - zigeumnet
 
   react-app:
     container_name: react-app
@@ -23,3 +25,5 @@ services:
     image: jayoung977/frontend
     env_file:
       - .env
+    networks:
+      - zigeumnet
