@@ -37,4 +37,4 @@ volumes:
     driver: local
 networks:
   zigeumnet:
-    driver: bridge
+    driver: host
