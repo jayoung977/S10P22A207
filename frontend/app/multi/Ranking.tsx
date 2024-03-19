@@ -9,7 +9,7 @@ export default function Ranking(){
   const { toggleTab, setToggleTab } = multigameStore();
 
   return (
-      <div className="grid grid-rows-12 shadow-md shadow-gray-400 rounded-md">
+      <div className="grid grid-rows-10 shadow-md shadow-gray-400 rounded-md">
         <div className="row-span-1 grid grid-cols-3 justify-around text-sm font-medium text-center text-textColor-1">
         <label className="inline-flex items-center hover:cursor-pointer">
           <input
