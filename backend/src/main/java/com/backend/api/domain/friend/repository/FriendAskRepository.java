@@ -1,4 +1,4 @@
-package com.backend.api.domain.friend.dao;
+package com.backend.api.domain.friend.repository;
 
 import java.util.List;
 

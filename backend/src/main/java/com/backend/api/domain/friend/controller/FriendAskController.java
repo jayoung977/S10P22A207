@@ -1,8 +1,9 @@
-package com.backend.api.domain.friend.api;
+package com.backend.api.domain.friend.controller;
 
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.api.domain.friend.application.FriendAndFriendAskService;
-import com.backend.api.domain.friend.application.FriendAskService;
 import com.backend.api.domain.friend.dto.request.FriendReq;
 import com.backend.api.domain.friend.dto.response.FriendRes;
+import com.backend.api.domain.friend.service.FriendAndFriendAskService;
+import com.backend.api.domain.friend.service.FriendAskService;
 import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.SuccessCode;
 
@@ -28,6 +29,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RestController
 @RequestMapping("/api/friend-ask")
+@PreAuthorize("hasAnyRole('USER')")
 @RequiredArgsConstructor
 @Tag(name = "친구 요청", description = "친구 요청 관련 API")
 public class FriendAskController {

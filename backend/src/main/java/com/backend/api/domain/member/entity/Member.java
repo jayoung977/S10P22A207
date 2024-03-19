@@ -17,12 +17,16 @@ import com.backend.api.domain.multi.entity.MultiGamePlayer;
 import com.backend.api.domain.notice.entity.Notice;
 import com.backend.api.domain.single.entity.SingleGameLog;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -44,7 +48,6 @@ public class Member extends BaseEntity {
 	@Column(unique = true, length = 100)
 	private String email;
 
-	@NotNull
 	@Column(unique = true, length = 100)
 	private String nickname;
 
@@ -53,25 +56,18 @@ public class Member extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private GenderType gender;
 
-	@NotNull
 	private Long asset = 10_000_000L;
 
-	@NotNull
 	private Integer rankPoint = 0;
 
-	@NotNull
 	private Integer win = 0;
 
-	@NotNull
 	private Integer lose = 0;
 
-	@NotNull
 	private Integer singleGameChance = 5;
 
-	@NotNull
 	private Double singleAvgRoi = 0D;
 
-	@NotNull
 	private Double multiAvgRoi = 0D;
 
 	@OneToMany(mappedBy = "member")
@@ -116,11 +112,18 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "receiver")
 	private List<FriendAsk> friendAskReceiveList = new ArrayList<>();  // 나에게 온 친구 요청
 
+	@ElementCollection(fetch = FetchType.LAZY)
+	@Enumerated(EnumType.STRING)
+	@CollectionTable(name = "member_role",
+		joinColumns = @JoinColumn(name = "member_id",
+			referencedColumnName = "member_id"))
+	private List<Privilege> role = new ArrayList<>();
+
 	@Builder
 	public Member(String email, String nickname, Short birthYear, GenderType gender, Long asset, Integer rankPoint, Integer win, Integer lose, Integer singleGameChance, Double singleAvgRoi,
 		Double multiAvgRoi, List<Notice> notices, List<Friend> followers, List<FriendAsk> receivers, List<FriendAsk> senders, List<Fund> funds, List<FundMember> fundMembers,
 		List<Community> communities, List<SingleGameLog> singleGameLogs, List<MultiGamePlayer> multiGamePlayers, List<Fund> fundList, List<Friend> friendList,
-		List<FriendAsk> friendAskSendList, List<FriendAsk> friendAskReceiveList) {
+		List<FriendAsk> friendAskSendList, List<FriendAsk> friendAskReceiveList, List<Privilege> role) {
 		this.email = email;
 		this.nickname = nickname;
 		this.birthYear = birthYear;
@@ -145,6 +148,7 @@ public class Member extends BaseEntity {
 		this.friendList = friendList;
 		this.friendAskSendList = friendAskSendList;
 		this.friendAskReceiveList = friendAskReceiveList;
+		this.role = role;
 	}
 
 	public void updateMemberInfo(String nickname, Short birthYear, GenderType gender){
