@@ -29,7 +29,7 @@ public class Quiz extends BaseEntity {
     @Column(length = 20)
     private String answer;
 
-    @NotNull
+
     @Column(length = 255)
     private String explanation;
 
