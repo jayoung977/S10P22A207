@@ -1,4 +1,4 @@
-package com.backend.api.domain.friend.application;
+package com.backend.api.domain.friend.service;
 
 import java.util.List;
 
@@ -8,10 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.backend.api.domain.friend.dao.FriendRepository;
 import com.backend.api.domain.friend.dto.response.FriendCursorRes;
 import com.backend.api.domain.friend.dto.response.FriendRes;
 import com.backend.api.domain.friend.entity.Friend;
+import com.backend.api.domain.friend.repository.FriendRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

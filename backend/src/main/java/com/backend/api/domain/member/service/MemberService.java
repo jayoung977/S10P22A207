@@ -1,8 +1,13 @@
-package com.backend.api.domain.member.application;
+package com.backend.api.domain.member.service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +17,7 @@ import com.backend.api.domain.member.dto.response.MemberSearchRes;
 import com.backend.api.domain.member.dto.response.ProfileMultiGameLogRes;
 import com.backend.api.domain.member.dto.response.ProfileSingleGameLogRes;
 import com.backend.api.domain.member.entity.Member;
+import com.backend.api.domain.member.entity.Privilege;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.member.repository.MultiGamePlayerRepository;
 import com.backend.api.domain.multi.entity.MultiGamePlayer;
@@ -19,6 +25,9 @@ import com.backend.api.domain.single.entity.SingleGameLog;
 import com.backend.api.domain.single.repository.SingleGameLogRepository;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.exception.BaseExceptionHandler;
+import com.backend.api.global.jwt.dto.TokenDto;
+import com.backend.api.global.jwt.service.JwtService;
+import com.backend.api.global.security.userdetails.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -30,22 +39,24 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final SingleGameLogRepository singleGameLogRepository;
 	private final MultiGamePlayerRepository multiGamePlayerRepository;
+	private final JwtService jwtService;
 
 	public boolean existNickname(String nickname) {
 		return memberRepository.existsByNickname(nickname);
 	}
 
 	@Transactional
-	public void updateMemberInfo(Long loginUserId, MemberAdditionalInfoReq memberAdditionalInfoReq) {
-		Member member = memberRepository.findById(loginUserId)
+	public TokenDto updateMemberInfo(UserDetails userDetails, MemberAdditionalInfoReq memberAdditionalInfoReq) {
+		Member member = memberRepository.findMemberByEmail(userDetails.getUsername())
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+		TokenDto tokenDto = createNewToken(userDetails, member);
 		member.updateMemberInfo(
 			memberAdditionalInfoReq.nickname(),
 			Short.valueOf(memberAdditionalInfoReq.birth()),
 			memberAdditionalInfoReq.gender()
 		);
+		return tokenDto;
 	}
-
 	public MemberProfileRes getProfile(Long loginUserId) {
 		Member member = memberRepository.findById(loginUserId)
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
@@ -98,5 +109,48 @@ public class MemberService {
 			member.getAsset()
 		)).toList();
 		return memberSearchResList;
+	}
+
+	@Transactional(readOnly = true)
+	public List<Privilege> checkMemberPrivilege(String userEmail) {
+		Member member = memberRepository.findMemberByEmail(userEmail)
+			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+		return member.getRole();
+	}
+
+
+	private TokenDto createNewToken(UserDetails userDetails, Member member) {
+		// 멤버의 권한 수정 Anonymous 삭제하고 User 권한 부여
+		Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+		for (GrantedAuthority authority : authorities) {
+			if (authority.getAuthority().equals("ROLE_" + Privilege.ANONYMOUS)) {
+				member.getRole().remove(Privilege.ANONYMOUS);
+				if (!member.getRole().contains(Privilege.USER)) {
+					member.getRole().add(Privilege.USER);
+				}
+
+				if (userDetails instanceof CustomUserDetails) {
+					// ANONYMOUS 권한 제거
+					userDetails.getAuthorities().removeIf(auth ->
+						auth.getAuthority().equals("ROLE_" + Privilege.ANONYMOUS));
+
+					Collection<GrantedAuthority> newAuth = new ArrayList<>();
+					newAuth.add(new SimpleGrantedAuthority(Privilege.USER.name()));
+					// USER 권한 추가
+					CustomUserDetails user = CustomUserDetails.builder()
+						.id(((CustomUserDetails)userDetails).getId())
+						.email(userDetails.getUsername())
+						.nickname(((CustomUserDetails) userDetails).getNickname())
+						.authorities(newAuth)
+						.build();
+
+					return new TokenDto(
+						jwtService.createAccessToken(user),
+						jwtService.createRefreshToken(user)
+					);
+				}
+			}
+		}
+		return null;
 	}
 }
