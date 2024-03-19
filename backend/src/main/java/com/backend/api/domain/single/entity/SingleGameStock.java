@@ -41,7 +41,6 @@ public class SingleGameStock extends BaseEntity {
     @NotNull
     private Integer profit = 0;
 
-    // TODO : 평균단가 @Setter 써서 표현해야할듯!
     @NotNull
     @Setter
     private Integer averagePurchasePrice = 0;

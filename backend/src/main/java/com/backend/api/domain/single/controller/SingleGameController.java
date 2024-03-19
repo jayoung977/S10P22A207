@@ -27,8 +27,6 @@ public class SingleGameController {
     @GetMapping
     @Operation(summary = "싱글게임 불러오기", description = "싱글게임 모드를 선택하면 싱글 모드 게임을 가져옵니다.", tags = {"싱글게임"})
     public ResponseEntity<BaseResponse<SingleGameCreateResponseDto>> getSingleGame() {
-
-        //TODO: 게임 데이터를 불러와야 한다. 300일의 데이터를 가져오고, 지금 현재 어디에 있는지 알려줘야 한다.
         SingleGameCreateResponseDto responseDto = singleGameService.createGame();
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, responseDto);
     }
@@ -36,7 +34,6 @@ public class SingleGameController {
     @PostMapping("/sell")
     @Operation(summary = "싱글 - 매도", description = "싱글게임 내에서 매도 하면 해당 종목을 팝니다.", tags = {"싱글게임"})
     public ResponseEntity<BaseResponse<SingleTradeResponseDto>> sellStock(@RequestBody SingleTradeRequestDto dto) {
-
         return BaseResponse.success(SuccessCode.SELL_SUCCESS, singleGameService.sell(dto));
     }
 
@@ -52,5 +49,6 @@ public class SingleGameController {
 
         return BaseResponse.success(SuccessCode.CHECK_SUCCESS, singleGameService.getTomorrow(dto));
     }
+
 }
 

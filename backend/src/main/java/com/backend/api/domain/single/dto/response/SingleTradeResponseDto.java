@@ -1,7 +1,6 @@
 package com.backend.api.domain.single.dto.response;
 
 import com.backend.api.global.common.type.TradeType;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "싱글게임 매매 결과 response Dto", description = "싱글게임 관련 response Dto")
@@ -12,7 +11,7 @@ public record SingleTradeResponseDto(
 	ChangedStockResponseDto changedStockResponseDto,
 	@Schema(description = "매수 or 매도")
 	TradeType tradeType,
-	@Schema(description = "가격")
+	@Schema(description = "구매가격")
 	int price,
 	@Schema(description = "수량")
 	int amount,
