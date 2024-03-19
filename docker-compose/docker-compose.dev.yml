@@ -17,8 +17,7 @@ services:
       - --collation-server=utf8mb4_unicode_ci
     volumes:
       - mysql_data:/usr/share/mysql/data
-    networks:
-      - zigeumnet
+
   redis:
     image: redis:latest
     container_name: redis
@@ -27,14 +26,10 @@ services:
     command: redis-server --save 60 1000 --loglevel notice --requirepass ${REDIS_PASSWORD}
     volumes:
       - redis_data:/usr/share/redis/data
-    networks:
-      - zigeumnet
+
 
 volumes:
   redis_data:
     driver: local
   mysql_data:
     driver: local
-networks:
-  zigeumnet:
-    driver: host
