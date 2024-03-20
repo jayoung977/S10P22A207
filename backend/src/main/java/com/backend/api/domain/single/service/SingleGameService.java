@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -58,15 +59,15 @@ public class SingleGameService {
 	private final StockChartRepository stockChartRepository;
 	private final MemberRepository memberRepository;
 	private final HttpSession httpSession;
-	private ConcurrentHashMap<Long, Integer> stocks;
+	private HashMap<Long, Integer> stocks;
 	private List<StockChart> list;
 	private static final int MAX_CHANCES = 5;
 	private static final long RECHARGE_TIME = 10 * 60 * 1000; // 10분
 	private final Map<Long, ScheduledFuture<?>> timers = new ConcurrentHashMap<>();
-	public SingleGameCreateResponseDto createGame() {
-		// TODO: @AuthenticationPrincipal UserDetails userDetails
+	public SingleGameCreateResponseDto createGame(Long memberId) {
 		// 도전 기회가 있는지 확인한다.
-		Member me = memberRepository.findById(1L).get(); //TODO : 바꿔야함
+		Member me = memberRepository.findById(memberId)
+			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
 		if (me.getSingleGameChance() <= 0) {
 			throw new BaseExceptionHandler(ErrorCode.NOT_ENOUGH_CHANCE);
 		}
@@ -83,7 +84,7 @@ public class SingleGameService {
 		LocalDateTime randomDateTime = generateRandomDateTime(startDate, lastDate); // 이 날짜로 조회
 
 		// 10개의 Stock을 정한다. <StockId, idx>
-		stocks = new ConcurrentHashMap<>(); // key : stockId, value : idx
+		stocks = new HashMap<>(); // key : stockId, value : idx
 
 		// 각
 		list = new ArrayList<>();
@@ -133,7 +134,7 @@ public class SingleGameService {
 		Long gameLogId = null;
 		SingleGameLog singleGameLog
 			= SingleGameLog.builder()
-			.member(memberRepository.findById(1L).orElseThrow())
+			.member(memberRepository.findById(memberId)	.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)))
 			.startDate(randomDateTime)
 			.initialAsset(me.getAsset())
 			.finalProfit(0L)
@@ -178,8 +179,7 @@ public class SingleGameService {
 		return new SingleGameCreateResponseDto(gameLogId, me.getSingleGameChance(), stockChartDataList);
 	}
 
-	public SingleTradeResponseDto sell(SingleTradeRequestDto dto) {
-		//TODO: memberId -> @AuthenticationPrincipal
+	public SingleTradeResponseDto sell(SingleTradeRequestDto dto, Long memberId) {
 		SingleGameStock singleGameStock = singleGameStockRepository.findBySingleGameLog_IdAndStock_Id(dto.gameLogId(), dto.stockId())
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
 
@@ -257,8 +257,8 @@ public class SingleGameService {
 		);
 	}
 
-	public SingleTradeResponseDto buy(SingleTradeRequestDto dto) {
-		//TODO: memberId -> @AuthenticationPrincipal // SingleGameLog는 어디서 가져오지?
+	public SingleTradeResponseDto buy(SingleTradeRequestDto dto, Long memberId) {
+		
 		SingleGameStock singleGameStock = singleGameStockRepository.findBySingleGameLog_IdAndStock_Id(dto.gameLogId(),
 				dto.stockId())
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
@@ -343,7 +343,7 @@ public class SingleGameService {
 		);
 	}
 
-	public NextDayResponseDto getTomorrow(NextDayRequestDto dto) {
+	public NextDayResponseDto getTomorrow(NextDayRequestDto dto, Long memberId) {
 		SingleGame currentGame = this.getGame();
 		// 종목별 "오늘의 종가, 등락정도, 보유수량, 평가손익, 손익률"를 담아서 리턴. responseDto에 넣어야겠다.
 		List<NextDayInfoResponseDto> stockSummaries = new ArrayList<>();
@@ -397,7 +397,7 @@ public class SingleGameService {
 
 		if (dto.day() == 50) {
 			// 결과 저장.
-			singleGameResultSave(1.0 * resultProfit / currentGame.getInitial() * 100, totalAsset);
+			singleGameResultSave(memberId, 1.0 * resultProfit / currentGame.getInitial() * 100, totalAsset);
 
 			LocalDateTime startDate = null, endDate = null;
 			List<StockInfoDto> stockInfoDtoList = new ArrayList<>();
@@ -428,8 +428,9 @@ public class SingleGameService {
 			totalAsset, null);
 	}
 
-	private void singleGameResultSave(double avgRoi, long totalAsset) {
-		Member me = memberRepository.findById(1L).get(); // TODO: "나" 로 바꾸기!
+	private void singleGameResultSave(Long memberId, double avgRoi, long totalAsset) {
+		Member me = memberRepository.findById(memberId)
+			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
 
 		// 평균 수익률 바꾸기
 		me.updateSingleAvgRoi((me.getSingleAvgRoi() + avgRoi) / (me.getWin() + me.getLose() + 1));
