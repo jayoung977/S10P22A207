@@ -95,8 +95,19 @@ public class MemberController {
 	}
 
 	@PreAuthorize("hasAnyRole('USER')")
-	@Operation(summary = "내 싱글게임 기록 조회")
+	@Operation(summary = "유저 싱글게임 기록 조회")
 	@GetMapping("/single-game-log")
+	public ResponseEntity<BaseResponse<List<ProfileSingleGameLogRes>>> getSingleGameLog(@RequestParam Long memberId){
+		List<ProfileSingleGameLogRes> ProfileSingleGameLogResList = memberService.getSingleGameLogs(memberId);
+		return BaseResponse.success(
+			SuccessCode.SELECT_SUCCESS,
+			ProfileSingleGameLogResList
+		);
+	}
+
+	@PreAuthorize("hasAnyRole('USER')")
+	@Operation(summary = "내 싱글게임 기록 조회")
+	@GetMapping("/my-single-game-log")
 	public ResponseEntity<BaseResponse<List<ProfileSingleGameLogRes>>> getMySingleGameLog(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		List<ProfileSingleGameLogRes> ProfileSingleGameLogResList = memberService.getSingleGameLogs(userDetails.getId());
 		return BaseResponse.success(
@@ -107,9 +118,20 @@ public class MemberController {
 
 	@PreAuthorize("hasAnyRole('USER')")
 	@Operation(summary = "내 멀티게임 기록 조회")
-	@GetMapping("/multi-game-log")
+	@GetMapping("/my-multi-game-log")
 	public ResponseEntity<BaseResponse<List<ProfileMultiGameLogRes>>> getMyMultiGameLog(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		List<ProfileMultiGameLogRes> ProfileMultiGameLogResList = memberService.getMultiGameLogs(userDetails.getId());
+		return BaseResponse.success(
+			SuccessCode.SELECT_SUCCESS,
+			ProfileMultiGameLogResList
+		);
+	}
+
+	@PreAuthorize("hasAnyRole('USER')")
+	@Operation(summary = "유저 멀티게임 기록 조회")
+	@GetMapping("/multi-game-log")
+	public ResponseEntity<BaseResponse<List<ProfileMultiGameLogRes>>> getMultiGameLog(@Valid @NotNull @RequestParam Long memberId) {
+		List<ProfileMultiGameLogRes> ProfileMultiGameLogResList = memberService.getMultiGameLogs(memberId);
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
 			ProfileMultiGameLogResList
