@@ -5,7 +5,7 @@ import { ReactHTMLElement, useState } from "react";
 import axios from "axios";
 import { UseMutationResult, useMutation } from "react-query";
 import { AxiosError } from "axios";
-
+import Swal from "sweetalert2";
 
 interface NewFund {
   fundName: string,
@@ -19,7 +19,12 @@ interface NewFund {
 
 
 const createFund = async(fund: NewFund) => {
-  const { data } = await axios.post(`https://j10a207.p.ssafy.io/api/fund/open?loginUserId=1`,fund);
+  const token = sessionStorage.getItem('accessToken')
+  const { data } = await axios.post(`https://j10a207.p.ssafy.io/api/fund/open?loginUserId=1`,fund,{
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
   return data
 }
 
@@ -46,9 +51,6 @@ export default function MakeFundModal({isOpen, onClose}: any){
     }
   }
   
-  const { mutate, isLoading, isError, error, isSuccess }:UseMutationResult<NewFund, AxiosError, NewFund, unknown> = useMutation<NewFund, AxiosError, NewFund>(createFund);
-  
-  
   const submitForm = (data:NewFund) => {
     if (data != null) {
       const newForm = {
@@ -61,8 +63,38 @@ export default function MakeFundModal({isOpen, onClose}: any){
         feeType: data.feeType
       }
       mutate(newForm)
+      console.log('펀드등록 완료')
     }
   }
+
+  const { mutate } 
+  = useMutation(createFund
+    ,{
+      onSuccess: (response) => {
+        console.log(response)
+        let fundNumber = response.result
+        Swal.fire({
+          title: "펀드 개설에 성공하였습니다.",
+          text: "내 펀드로 이동하시겠습니까?",
+          icon: 'success',
+          showCancelButton: true,
+          confirmButtonText: "내 펀드로 이동",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = `recruiting/${fundNumber}`
+          } 
+        });
+        
+      },
+      onError: (error) => {
+        console.error('Error:', error)
+        Swal.fire({
+          title: "펀드 개설에 실패하였습니다.",
+          text: "펀드개설 조건에 문제가 있습니다.",
+          icon: "error"
+        });
+      }
+    });
 
 
 
@@ -72,17 +104,6 @@ export default function MakeFundModal({isOpen, onClose}: any){
   return(
     // Main modal
     <div id="authentication-modal" tabIndex={-1} aria-hidden="true" className="overflow-y-auto overflow-x-hidden z-50 fixed translate-x-1/3 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-      {
-        isLoading ? (
-          '펀드 생성 중...'
-        ) : (
-          <>
-            {isError && <p>error: {error.message}</p>}
-            
-            {isSuccess && <p>펀드 생성 성공!</p>}
-          </>
-        )
-      }
       <div className="relative p-4 w-full max-w-md max-h-full">
         {/* Modal content */}
         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -138,12 +159,7 @@ export default function MakeFundModal({isOpen, onClose}: any){
 
               <div className="flex justify-around">
                 <button onClick={()=>{onClose()}}  type="button" className="w-1/2 m-1 text-textColor-1 bg-button-2 hover:bg-gray-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">취소</button>
-                <button onClick={()=>{
-                  submitForm(fundForm)
-                  // onClose 
-                  // // fund number를 받아서 바로 router로 이동
-                  // router.push('./recruiting/1')
-                }}  
+                <button onClick={()=>{submitForm(fundForm)}}  
                 type="button" className="w-1/2 m-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">펀드 개설</button>
               </div>
             </div>

@@ -4,18 +4,30 @@ import { useRouter } from "next/navigation"
 import { useQuery, UseQueryResult } from "react-query";
 import type { FundResult } from "@/public/src/stores/fund/crud/FundCrudStore";
 import { FundInfo } from "@/public/src/stores/fund/crud/FundCrudStore";
+import { useState, useEffect } from "react";
 
 
 const fetchFundInfo = async() => {
-  const response = await fetch('https://j10a207.p.ssafy.io/api/fund/managing-list/1');
+  const token = sessionStorage.getItem('accessToken')
+  const response = await fetch('https://j10a207.p.ssafy.io/api/fund/managing-list',
+  {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
   return response.json();
 }
 
 
 export default function FundTable(){
-  const fundList = [1,2,3,4,5]
+  const [fundList, setFundList] = useState<FundResult[]>([])
   const router = useRouter();
   const { data, isLoading, error }: UseQueryResult<FundInfo,Error>  =  useQuery('FundInfo', fetchFundInfo );
+  useEffect(() => {
+    if (data?.result) {
+      setFundList(data.result);
+    }
+  }, [data]);
 
   if (isLoading) {
     return <div>Loading..</div>
@@ -25,12 +37,12 @@ export default function FundTable(){
     return <div>Error: {error.message}</div>
   }
 
-  const { result }: {result: FundResult | null} = data ? data: {result: null};
-  console.log(data)
+  const { result }: {result: FundResult[] | null} = data ? data: {result: null};
+  console.log(result)
   return (
-    <div className="overflow-x-auto shadow-md sm:rounded-lg">
+    <div className="overflow-auto shadow-md sm:rounded-lg" style={{height: 'calc(50vh)'}}>
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 uppercase bg-background-1">
                 <tr>
                     <th scope="col" className="px-6 py-3">
                         이름
@@ -51,28 +63,47 @@ export default function FundTable(){
             </thead>
             <tbody>
               {
-                fundList.map((fund: number, i:number)=> {
+                fundList.map((fund: FundResult, i:number)=> {
                   return (
                     <tr key={i}
                       onClick={()=> {
-                        // 펀드 status에 따라서 router를 다르게 할 예정
-                        router.push(`./in-progress/${i}`, )
-                    }} 
+                        if(fund.status == "RECRUITING"){
+                          router.push(`./recruiting/${fund.fundId}`)
+                        } else {
+                          router.push(`./in-progress/${fund.fundId}`, )
+                        }
+                      }} 
                       className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 hover:cursor-pointer">
                         <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            민규는 뭐든지 할 수 있어요 {i}
+                            {fund.fundName}
                         </th>
+                        {
+                          fund.status == "RUNNING" ? (
+                            <td className="px-6 py-4">
+                              {fund.startDate} ~ {fund.endDate} 
+                            </td>
+                          ) : (
+                            <td className="px-6 py-4">
+                              {fund.period} 일
+                            </td>
+                          )
+                        }
                         <td className="px-6 py-4">
-                            ~2024.03.21
+                            {fund.fundAsset.toLocaleString()} 원
                         </td>
+                        {
+                          fund.status == 'RECRUITING' ? (
+                            <td className="px-6 py-4">
+                             모집중
+                            </td>
+                          ) : (
+                            <td className="px-6 py-4">
+                             운영중
+                            </td>
+                          )
+                        }
                         <td className="px-6 py-4">
-                            50,000,000원
-                        </td>
-                        <td className="px-6 py-4">
-                            운영중
-                        </td>
-                        <td className="px-6 py-4">
-                            -37.91%
+                            {fund.roi} %
                         </td>
                     </tr>
                   )

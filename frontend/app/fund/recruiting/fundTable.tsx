@@ -4,18 +4,30 @@ import { useRouter } from "next/navigation"
 import { useQuery, UseQueryResult } from "react-query";
 import type { FundResult } from "@/public/src/stores/fund/crud/FundCrudStore";
 import { FundInfo } from "@/public/src/stores/fund/crud/FundCrudStore";
+import { useEffect, useState } from "react";
 
 
 const fetchFundInfo = async() => {
-  const response = await fetch('https://j10a207.p.ssafy.io/api/fund/fund-detail?fundId=1');
+  const token = sessionStorage.getItem('accessToken')
+  const response = await fetch('https://j10a207.p.ssafy.io/api/fund/recruiting-list',
+  {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
   return response.json();
 }
 
 
 export default function FundTable(){
-  const fundList = [1,2,3,4,5]
+  const [fundList, setFundList] = useState<FundResult[]>([])
   const router = useRouter();
   const { data, isLoading, error }: UseQueryResult<FundInfo,Error> = useQuery('FundInfo', fetchFundInfo );
+  useEffect(() => {
+    if (data?.result) {
+      setFundList(data.result);
+    }
+  }, [data]);
 
   if (isLoading) {
     return <div>Loading..</div>
@@ -25,13 +37,14 @@ export default function FundTable(){
     return <div>Error: {error.message}</div>
   }
 
-  const { result }: {result: FundResult | null} = data ? data: {result: null};
-  console.log(data)
+  const { result }: {result: FundResult[] | null} = data ? data: {result: null};
+  console.log(result)
+  
 
   return (
-    <div className="z-0 overflow-x-auto shadow-md sm:rounded-lg">
-      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+    <div className="overflow-auto shadow-md sm:rounded-lg" style={{height: 'calc(50vh)'}}>
+      <table className="overflow-y-auto w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" >
+        <thead className="text-xs text-gray-700 uppercase bg-background-1">
           <tr>
               <th scope="col" className="px-6 py-3">
                   이름
@@ -52,25 +65,25 @@ export default function FundTable(){
         </thead>
         <tbody>
         {
-          fundList.map((fund: number, i:number)=> {
+          fundList.map((fund: FundResult, i:number)=> {
           return (
               <tr key={i}
-              onClick={()=> {router.push(`./recruiting/${i}`, )}} 
+              onClick={()=> {router.push(`./recruiting/${fund.fundId}`, )}} 
               className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 hover:cursor-pointer">
                   <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      민규는 뭐든지 할 수 있어요 {i}
+                      {fund.fundName}
                   </th>
                   <td className="px-6 py-4">
-                      ~2024.03.21
+                      {fund.period}
                   </td>
                   <td className="px-6 py-4">
-                      50,000,000원
+                      {fund.minimumAmount.toLocaleString()} 원
                   </td>
                   <td className="px-6 py-4">
-                      10/20
+                      {fund.participantCount}/{fund.capacity}
                   </td>
                   <td className="px-6 py-4">
-                      반도체
+                      {fund.industry}
                   </td>
               </tr>
           )
