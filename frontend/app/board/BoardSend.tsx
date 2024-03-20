@@ -1,6 +1,55 @@
 import Image from "next/image";
 import penguin from "./../../public/src/assets/images/penguin.png";
+import { useMutation, useQueryClient } from "react-query";
+import axios, { AxiosResponse } from "axios";
+import { useState } from "react";
+import userStore from "@/public/src/stores/user/userStore";
+
+interface RequestType {
+  content: string;
+}
+
 export default function BoardSend() {
+  const { accessToken } = userStore();
+  const sendBoard = async (
+    request: RequestType
+  ): Promise<AxiosResponse<any>> => {
+    const response = await axios({
+      method: "post",
+      url: `https://j10a207.p.ssafy.io/api/community/write?loginUserId=${1}`,
+      data: request,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response;
+  };
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation<AxiosResponse<any>, Error, RequestType>(
+    sendBoard,
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("boards");
+      },
+      onError: (error: any) => {
+        console.error("에러 발생", error.response?.data || error.message);
+      },
+    }
+  );
+
+  const [content, setContent] = useState("");
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const request = { content };
+    mutation.mutate(request, {
+      onSettled: () => {
+        setContent("");
+      },
+    });
+  };
+
   return (
     <div className="flex justify-center items-center row-span-5 grid grid-cols-12 rounded-md ">
       <div className="col-start-4">
@@ -13,7 +62,7 @@ export default function BoardSend() {
         ></Image>
       </div>
       <div className="col-start-5 col-end-10 rounded-lg m-2">
-        <form>
+        <form onSubmit={handleSubmit}>
           <label htmlFor="chat" className="sr-only">
             Your message
           </label>
@@ -76,6 +125,8 @@ export default function BoardSend() {
               rows={5}
               className="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Your message..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
             ></textarea>
             <button
               type="submit"

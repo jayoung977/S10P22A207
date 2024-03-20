@@ -2,14 +2,47 @@
 import Image from "next/image";
 import penguin from "./../../public/src/assets/images/penguin.png";
 import Swal from "sweetalert2";
+import { useQuery, UseQueryResult } from "react-query";
+import userStore from "@/public/src/stores/user/userStore";
+import axios from "axios";
+interface ResultType {
+  id: number;
+  nickname: string;
+  content: string;
+}
+
+interface BoardInfo {
+  result: ResultType[];
+}
+
 export default function BoardReceive() {
-  const data = [
-    { name: "민구", content: "내용" },
-    { name: "원형", content: "내용" },
-    { name: "제현", content: "내용" },
-    { name: "창효", content: "내용" },
-    { name: "자앙", content: "내용" },
-  ];
+  const { accessToken } = userStore();
+  const fetchBoardInfo = async () => {
+    const response = await axios({
+      method: "get",
+      url: "https://j10a207.p.ssafy.io/api/community/all",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  };
+  const { data, isLoading, error }: UseQueryResult<BoardInfo, Error> = useQuery(
+    "boardInfo",
+    fetchBoardInfo
+  );
+  if (isLoading) {
+    return <div className="rainbow"></div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  const { result }: { result: ResultType[] | null } = data
+    ? data
+    : { result: null };
+
   const handleDelete = (): void => {
     Swal.fire({
       title: "정말로 삭제하시겠습니까?",
@@ -26,16 +59,19 @@ export default function BoardReceive() {
       }
     });
   };
+
   return (
     <div style={{ maxHeight: "40vh" }} className="overflow-auto">
-      {data.map((item, i) => {
+      {result?.map((item, i) => {
         return (
           <div key={i}>
             <div className=" grid grid-cols-12">
               <div className="col-start-4 col-end-9 min-h-40 rounded-md bg-small-14 m-2 w-200 h-100 shadow-lg hover:-translate-y-1 transition ease-in-out duration-500">
                 <div className="m-4 grid-rows-4">
                   <div className="flex justify-between">
-                    <div className="px-2 bg-white rounded-md">{item.name}</div>
+                    <div className="px-2 bg-white rounded-md">
+                      {item.nickname}
+                    </div>
                     <div
                       className="px-2 bg-white rounded-md hover:cursor-pointer"
                       onClick={() => handleDelete()}

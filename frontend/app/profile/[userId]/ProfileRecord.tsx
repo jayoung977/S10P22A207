@@ -4,6 +4,8 @@ import penguin from "../../../public/src/assets/images/penguin.png";
 import { useQuery, UseQueryResult } from "react-query";
 import { useParams } from "next/navigation";
 import profileStore from "@/public/src/stores/profile/profileStore";
+import userStore from "@/public/src/stores/user/userStore";
+import axios from "axios";
 
 interface resultType {
   memberID: number;
@@ -24,14 +26,19 @@ interface UserInfo {
 }
 
 export default function UserRecord() {
+  const { accessToken } = userStore();
   const { toggleButton } = profileStore();
   const params = useParams<{ userId?: string }>();
   const id: string | undefined = params.userId;
   const fetchUserInfo = async () => {
-    const response = await fetch(
-      `https://j10a207.p.ssafy.io/api/member?loginUserId=${id}`
-    ); // 실제 API 엔드포인트로 수정해야 합니다.
-    return response.json();
+    const response = await axios({
+      method: "get",
+      url: `https://j10a207.p.ssafy.io/api/member?loginUserId=${id}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
   };
 
   const { data, isLoading, error }: UseQueryResult<UserInfo, Error> = useQuery(
@@ -46,7 +53,9 @@ export default function UserRecord() {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  const { result }: { result: resultType | null } = data ? data : { result: null };
+  const { result }: { result: resultType | null } = data
+    ? data
+    : { result: null };
 
   return (
     <div className="m-4 bg-white rounded-md col-start-4 col-end-11 grid grid-rows-12 shadow-lg hover:-translate-y-1 transition ease-in-out duration-500">

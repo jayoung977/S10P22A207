@@ -63,7 +63,7 @@ export default function NavbarGameModal() {
     >
       <li>
         <a
-          className="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          className="shadow-sm cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           onClick={() => router.push("/multi")}
         >
           멀티 플레이
@@ -73,7 +73,7 @@ export default function NavbarGameModal() {
         <a
           data-modal-target="popup-modal"
           data-modal-toggle="popup-modal"
-          className="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          className="shadow-sm cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           onClick={() =>openSinglePlay()}
         >
           싱글 플레이
@@ -82,7 +82,7 @@ export default function NavbarGameModal() {
 
       <li>
         <a
-          className="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          className="shadow-sm cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           onClick={() => router.push("/quiz")}
         >
           퀴즈
