@@ -6,6 +6,8 @@ import bronze from "../../../public/src/assets/images/bronze.png";
 import profileStore from "@/public/src/stores/profile/profileStore";
 import { useQuery, UseQueryResult } from "react-query";
 import { useParams } from "next/navigation";
+import axios from "axios";
+import userStore from "@/public/src/stores/user/userStore";
 
 interface resultType {
   memberID: number;
@@ -26,14 +28,19 @@ interface UserInfo {
 }
 
 export default function UserInfo() {
+  const { accessToken } = userStore();
   const params = useParams<{ userId?: string }>();
   const id: string | undefined = params.userId;
 
   const fetchUserInfo = async () => {
-    const response = await fetch(
-      `https://j10a207.p.ssafy.io/api/member?loginUserId=${id}`
-    ); // 실제 API 엔드포인트로 수정해야 합니다.
-    return response.json();
+    const response = await axios({
+      method: "get",
+      url: `https://j10a207.p.ssafy.io/api/member`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
   };
 
   const { toggleButton, setToggleButton } = profileStore();

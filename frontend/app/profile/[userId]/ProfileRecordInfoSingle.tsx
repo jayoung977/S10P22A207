@@ -2,6 +2,8 @@
 
 import { useRouter, useParams } from "next/navigation";
 import { useQuery, UseQueryResult } from "react-query";
+import axios from "axios";
+import userStore from "@/public/src/stores/user/userStore";
 
 interface resultType {
   finalProfit: number;
@@ -16,16 +18,20 @@ interface SingleGameInfo {
 }
 
 export default function UserRecordInfoSingle() {
-
+  const { accessToken } = userStore();
   const router = useRouter();
   const params = useParams<{ userId?: string }>();
   const id: string | undefined = params.userId;
 
   const fetchUserSingleGame = async () => {
-    const response = await fetch(
-      `https://j10a207.p.ssafy.io/api/member/single-game-log?loginUserId=${id}`
-    );
-    return response.json();
+    const response = await axios({
+      method: "get",
+      url: `https://j10a207.p.ssafy.io/api/member/single-game-log?loginUserId=${id}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
   };
   const { data, isLoading, error }: UseQueryResult<SingleGameInfo, Error> =
     useQuery("userSingleGameInfo", fetchUserSingleGame);

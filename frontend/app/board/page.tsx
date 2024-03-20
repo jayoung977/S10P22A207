@@ -1,12 +1,19 @@
+"use client";
 import Navbar from "@/app/Navbar";
 import BoardList from "./BoardList";
 import PeacefulBgm from "@/public/src/components/PeacefulBgm";
-export default function Board() {
+import { useQuery, QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
+
+export default function page() {
   return (
-    <div className="grid grid-rows-12 h-screen">
-      <PeacefulBgm></PeacefulBgm>
-      <Navbar />
-      <BoardList />
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <div className="grid grid-rows-12 h-screen">
+        <PeacefulBgm></PeacefulBgm>
+        <Navbar />
+        <BoardList />
+      </div>
+    </QueryClientProvider>
   );
 }

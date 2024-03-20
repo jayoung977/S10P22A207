@@ -22,7 +22,7 @@ export default function Navbar() {
 
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [alarmOpen, setAlarmOpen] = useState(false)
+  const [alarmOpen, setAlarmOpen] = useState(false);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -30,7 +30,14 @@ export default function Navbar() {
 
   const toggleAlarm = () => {
     setAlarmOpen(!alarmOpen);
-  }
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("accessToken");
+    document.cookie =
+      "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    router.push("/");
+  };
 
   return (
     <nav className="row-span-1 opacity-90 bg-background-1 border-gray-200 dark:bg-gray-900 dark:border-gray-700">
@@ -113,11 +120,13 @@ export default function Navbar() {
               <p suppressHydrationWarning>{currentTime.toLocaleTimeString()}</p>
             </li> */}
             <li>
-              <button 
-                id="dropdownNotificationButton" 
-                data-dropdown-toggle="dropdownNotification" className="relative inline-flex items-center text-sm font-medium text-center text-gray-500 hover:text-gray-900 focus:outline-none dark:hover:text-white dark:text-gray-400" 
+              <button
+                id="dropdownNotificationButton"
+                data-dropdown-toggle="dropdownNotification"
+                className="relative inline-flex items-center text-sm font-medium text-center text-gray-500 hover:text-gray-900 focus:outline-none dark:hover:text-white dark:text-gray-400"
                 type="button"
-                onClick={toggleAlarm}>
+                onClick={toggleAlarm}
+              >
                 <svg
                   className="w-6 h-6 text-gray-800 dark:text-white hover:cursor-pointer"
                   aria-hidden="true"
@@ -142,15 +151,14 @@ export default function Navbar() {
                   alarmOpen ? "" : "hidden"
                 }`}
               >
-                <NavbarAlarmModal/>
+                <NavbarAlarmModal />
               </div>
-
             </li>
 
             <li>
               <a
                 className="cursor-pointer block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                onClick={() => router.push("/")}
+                onClick={() => handleLogout()}
               >
                 로그아웃
               </a>
