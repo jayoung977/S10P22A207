@@ -30,8 +30,9 @@ export default function FundTable(){
   }, [data]);
 
   if (isLoading) {
-    return <div>Loading..</div>
+    return <div className="rainbow"></div>
   }
+
 
   if (error) {
     return <div>Error: {error.message}</div>
