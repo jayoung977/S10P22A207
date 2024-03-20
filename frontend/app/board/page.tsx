@@ -1,7 +1,7 @@
 "use client";
 import Navbar from "@/app/Navbar";
 import BoardList from "./BoardList";
-import PeacefulBgm from "@/public/src/components/PeacefulBgm";
+import PeacefulBgm from "@/public/src/components/bgm/PeacefulBgm";
 import { useQuery, QueryClient, QueryClientProvider } from "react-query";
 
 const queryClient = new QueryClient();
