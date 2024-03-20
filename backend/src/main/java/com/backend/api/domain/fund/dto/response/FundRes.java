@@ -1,5 +1,7 @@
 package com.backend.api.domain.fund.dto.response;
 
+import java.time.LocalDate;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "펀드 response Dto", description = "펀드 관련 response Dto")
@@ -29,6 +31,10 @@ public record FundRes(
 	@Schema(description = "펀드 기간")
 	Short period,
 	@Schema(description = "펀드 수익률")
-	Double roi
+	Double roi,
+	@Schema(description = "펀드 시작일")
+	LocalDate startDate,
+	@Schema(description = "펀드 종료일")
+	LocalDate endDate
 ) {
 }
