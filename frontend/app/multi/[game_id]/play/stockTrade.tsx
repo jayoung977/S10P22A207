@@ -1,7 +1,4 @@
-import styles from '@/public/src/styles/multi/stockTrade.module.css'
-
-
-export default function StockTrade(){
+export default function StockTrade () {
   return (
     <div className="grid grid-cols-12 border text-sm">
       <div className="col-span-4">

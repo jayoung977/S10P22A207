@@ -33,7 +33,7 @@ export default function SingleGameEndModal ({ isOpen, onClose }:any) {
                             onClose();
                             router.push('/multi')
                             
-                            }} className="rounded-full text-white bg-gray-500">나가기</button>
+                            }} className="rounded-full px-2 mb-2 text-white bg-gray-500">나가기</button>
                     </div>
                 </div>
             </div>

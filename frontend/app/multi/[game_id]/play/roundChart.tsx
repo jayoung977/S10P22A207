@@ -3,8 +3,7 @@
 import { useEffect } from 'react';
 import anychart from 'anychart';
 
-
-export default function Chart ({ data } :any) {
+export default function RoundChart ({ data } :any) {
    
     useEffect(() => {
         const chart = anychart.stock();

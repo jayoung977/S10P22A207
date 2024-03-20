@@ -1,15 +1,15 @@
 'use client'
+import AllUserRankingList from './AllUserRankingList';
+import FriendUserRankingList from "./FriendUserRankingList";
+import SearchedUserRankingList from "./SearchedUserRankingList"
 
-import UserRanking from "./userRanking"
-import SearchBar from "./searchBar"
 import multigameStore from "@/public/src/stores/multi/MultiGameStore"
-
 
 export default function Ranking(){
   const { toggleTab, setToggleTab } = multigameStore();
 
   return (
-      <div className="grid grid-rows-12 shadow-md shadow-gray-400 rounded-md">
+      <div className="grid grid-rows-10 shadow-md shadow-gray-400 rounded-md">
         <div className="row-span-1 grid grid-cols-3 justify-around text-sm font-medium text-center text-textColor-1">
         <label className="inline-flex items-center hover:cursor-pointer">
           <input
@@ -67,27 +67,16 @@ export default function Ranking(){
         </label>
         </div>
           {
-            toggleTab == 'search' ?  (
-              <div className="row-span-2 border flex items-center justify-center">
-                <div><SearchBar/></div>
-              </div>
-            ) : toggleTab == 'all' ? (
-              <div className="text-center mt-1 text-lg">전체랭킹</div>
+            toggleTab == 'all' ? (
+              <AllUserRankingList />
+            ) : (
+              toggleTab == 'friend' ? (
+                <FriendUserRankingList />
               ) : (
-                <div className="text-center mt-1 text-lg">친구랭킹</div>
+                <SearchedUserRankingList />
+              )
             )
           }
-        <div className='row-span-9 overflow-auto border' style={{height: 'calc(42vh)'}}>
-          <UserRanking/>
-          <UserRanking/>
-          <UserRanking/>
-          <UserRanking/>
-          <UserRanking/>
-          <UserRanking/>
-          <UserRanking/>
-          <UserRanking/>
-          <UserRanking/>
-        </div>
       </div>
   )
 }

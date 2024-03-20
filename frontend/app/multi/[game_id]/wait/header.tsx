@@ -1,5 +1,4 @@
 'use client'
-
 import { useRouter } from "next/navigation"
 import Image from "next/image";
 import penguin from '@/public/src/assets/images/penguin.png'
@@ -7,7 +6,7 @@ import penguin from '@/public/src/assets/images/penguin.png'
 export default function Header(){
   const router = useRouter();
 
-  const handleGameStart = () => {
+  function handleGameStart () {
     router.push('/multi/1/play')
   }
   return( 
@@ -30,9 +29,9 @@ export default function Header(){
       <div>이겨보시던지</div>
     </div>
     <div className="col-span-2 flex justify-center gap-4">
-    <button
-     className="border p-2 rounded-md bg-red-500 text-white hover:bg-red-400"
-     onClick={handleGameStart}>시작하기</button>
+      <button
+        className="border p-2 rounded-md bg-red-500 text-white hover:bg-red-400"
+        onClick={() => {handleGameStart()}}>시작하기</button>
       <button onClick={()=>{router.back()}} className="border p-2 rounded-md border-red-500 hover:bg-red-100 hover:border-2">나가기</button>
     </div>
   </header>

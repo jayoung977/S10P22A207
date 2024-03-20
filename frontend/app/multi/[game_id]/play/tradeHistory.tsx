@@ -1,8 +1,6 @@
-import styles from '@/public/src/styles/multi/tradeHistory.module.css'
-import StockTrade from './stockTrade'
+import StockTrade from "./stockTrade"
 
-
-export default function TradeHistory(){
+export default function TradeHistory () {
   return(
     <div className="row-span-5 border text-sm">
       <div className="grid grid-cols-12 items-center text-sm shadow-md">

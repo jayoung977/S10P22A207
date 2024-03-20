@@ -1,13 +1,12 @@
 'use client'
-
-import RoundChart from './roundChart' 
+import RoundChart from './roundChart'
 import RoundUser from './roundUser'
 import { useEffect, useState } from 'react'
-import type { dataType } from './multigame'
+import type { dataType } from './MultiPlay'
 import Penguin from '@/public/src/assets/images/profile-person-image.png'
 import Image from 'next/image'
 
-export default function RoundResult({isOpen, onClose}: any){
+export default function RoundResult ({ isOpen, onClose }: any) {
   if (!isOpen) return null;
 
   const [RoundData, setData] = useState<dataType[]>([]);

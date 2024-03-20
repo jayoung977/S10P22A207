@@ -1,8 +1,4 @@
-import styles from '@/public/src/styles/multi/user.module.css'
-import Image from 'next/image'
-import ProfileImage from '@/app/multi/profileImage'
-
-export default function User(){
+export default function User () {
   return (
     <div className="border gap-1 row-span-1">
       <div className='grid grid-cols-12 text-center items-center'>

@@ -1,6 +1,3 @@
-import styles from '@/public/src/styles/multi/gameRule.module.css'
-
-
 export default function GameRule(){
   return (
     <div className="border row-span-2">

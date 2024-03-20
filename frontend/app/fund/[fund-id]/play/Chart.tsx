@@ -7,8 +7,8 @@ function calculateMovingAverage(data :any, period :any) {
     const result = [];
     for (let i = period - 1; i < data.length; i++) {
         const sum = data.slice(i - period + 1, i + 1).reduce((acc :any, curr:any) => acc + curr.close, 0);
-        const average = sum / period;
-        result.push([data[i].date, average]);
+        const average = (sum / period).toFixed(2);
+        result.push([data[i].date, parseFloat(average)]);
     }
     return result;
   }
@@ -29,7 +29,8 @@ export default function Chart ({ data } :any) {
         const lineSeries = plot1.line(data?.map((item :any) => ([item.date, item.close])))
         lineSeries.name('주가');
         lineSeries.hovered().markers().enabled(true).type('circle').size(4);
-        
+        lineSeries.stroke("#86BF15", 1);
+
         // candlestick 그래프 생성
         const candlestickSeries = plot1.candlestick(data?.map((item :any) => ([item.date, item.open, item.high, item.low, item.close])))
         candlestickSeries.name('OHLC');
@@ -52,14 +53,20 @@ export default function Chart ({ data } :any) {
         candlestickSeries.fallingStroke("#0597FF", 1);
 
         // 이동평균선 그래프 생성(sma)
-        const sma10Series = plot1.line(calculateMovingAverage(data, 10));
-        sma10Series.name('10일 이동평균선');
+        const sma5Series = plot1.line(calculateMovingAverage(data, 5));
+        sma5Series.name('5');
         const sma20Series = plot1.line(calculateMovingAverage(data, 20));
-        sma20Series.name('20일 이동평균선');
+        sma20Series.name('20');
+        const sma60Series = plot1.line(calculateMovingAverage(data, 60));
+        sma60Series.name('60');
+        const sma120Series = plot1.line(calculateMovingAverage(data, 120));
+        sma120Series.name('120');
 
         // 이동평균선 그래프 색상 지정
-        sma10Series.stroke('pink');
-        sma20Series.stroke('purple');
+        sma5Series.stroke('purple');
+        sma20Series.stroke('yello');
+        sma60Series.stroke('green');
+        sma120Series.stroke('blue');
 
         // 첫 번째 plot 속성 설정
         plot1.legend().title().useHtml(true);

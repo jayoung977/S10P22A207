@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-export default function FundSettlementModal(){
+export default function FundSettlementModal({isOpen, onClose}:any){
 
   type Member = {
     nickname : string
@@ -24,7 +24,7 @@ export default function FundSettlementModal(){
   ]
 
   let fundMoney = 0
-
+  if(!isOpen) return null;
 
   return(
         <div className='fixed z-50 left-1/2 -translate-x-1/2 top-0 bg-big-1 w-[800px] h-[600px] shadow-lg shadow-gray-400 rounded-md row-span-11 grid grid-rows-12 gap-2 mx-auto '>
@@ -110,7 +110,7 @@ export default function FundSettlementModal(){
 
           </div>
           <div className="row-span-1 m-2">
-              <button className="w-full border rounded-md bg-small-3 hover:bg-red-400 py-2 text-textColor-2 text-center">종료하기</button>
+              <button onClick={()=>{onClose()}} className="w-full border rounded-md bg-small-3 hover:bg-red-400 py-2 text-textColor-2 text-center">종료하기</button>
           </div>
         </div>
   )

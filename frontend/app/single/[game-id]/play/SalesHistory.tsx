@@ -35,6 +35,27 @@ export default function SalesHistory () {
             quantity: 4000,
             contractAmount: 160000000,
         },
+        {
+            stock: '종목5',
+            saleType: '매도',
+            price: 40000,
+            quantity: 4000,
+            contractAmount: 160000000,
+        },
+        {
+            stock: '종목6',
+            saleType: '매도',
+            price: 40000,
+            quantity: 4000,
+            contractAmount: 160000000,
+        },
+        {
+            stock: '종목7',
+            saleType: '매도',
+            price: 40000,
+            quantity: 4000,
+            contractAmount: 160000000,
+        },
 
     ])
     return (
@@ -42,7 +63,7 @@ export default function SalesHistory () {
             <div className="row-span-1 flex items-center justify-between pl-2">
                 <div className="rounded-t-lg bg-small-5 text-textColor-2"><span className="mx-1">매매 내역</span></div>
             </div>
-            <table className="row-span-5 table-fixed overflow-y-auto block">
+            <table className="row-span-5 table-fixed rounded-md overflow-y-auto block">
                 <thead className="grid grid-cols-6 items-center m-1">
                     <tr className="col-span-6 grid grid-cols-6 items-center">
                         <th className="col-span-1 text-center mr-3">종목</th>

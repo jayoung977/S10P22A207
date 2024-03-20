@@ -1,5 +1,4 @@
 'use client'
-
 import Image from "next/image"
 import ProfileImage from '@/public/src/assets/images/profile-person-image.png'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -9,7 +8,7 @@ import { useRouter } from "next/navigation"
 import RoundResult from "./roundResult"
 import { useState } from "react"
 
-export default function FinalResult({isOpen, isClose}: any){
+export default function FinalResult({ isOpen, onClose }: any){
   const router = useRouter();
   const [isRound, setIsRound] = useState(false)
 

@@ -1,12 +1,34 @@
 'use client'
 
 import { useRouter } from "next/navigation"
+import { useQuery, UseQueryResult } from "react-query";
+import type { FundResult } from "@/public/src/stores/fund/crud/FundCrudStore";
+import { FundInfo } from "@/public/src/stores/fund/crud/FundCrudStore";
+
+
+const fetchFundInfo = async() => {
+  const response = await fetch('https://j10a207.p.ssafy.io/api/fund/managing-list/1');
+  return response.json();
+}
+
 
 export default function FundTable(){
   const fundList = [1,2,3,4,5]
   const router = useRouter();
+  const { data, isLoading, error }: UseQueryResult<FundInfo,Error>  =  useQuery('FundInfo', fetchFundInfo );
+
+  if (isLoading) {
+    return <div>Loading..</div>
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>
+  }
+
+  const { result }: {result: FundResult | null} = data ? data: {result: null};
+  console.log(data)
   return (
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div className="overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>

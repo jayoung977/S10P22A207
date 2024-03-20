@@ -1,7 +1,4 @@
-import styles from '@/public/src/styles/multi/joinRoomModal.module.css'
-
-
-export default function JoinRoomModal(){
+export default function JoinRoomModal () {
   return (
       <div id="joinroom-modal" tabIndex={0} aria-hidden="true" className="fixed -translate-x-1/2 translate-y-1/4 inset-0 left-1/2 justify-center items-center hidden">
         <div className="relative p-4 w-full max-h-full">

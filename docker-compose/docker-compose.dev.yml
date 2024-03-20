@@ -17,6 +17,7 @@ services:
       - --collation-server=utf8mb4_unicode_ci
     volumes:
       - mysql_data:/usr/share/mysql/data
+
   redis:
     image: redis:latest
     container_name: redis
@@ -25,6 +26,7 @@ services:
     command: redis-server --save 60 1000 --loglevel notice --requirepass ${REDIS_PASSWORD}
     volumes:
       - redis_data:/usr/share/redis/data
+
 
 volumes:
   redis_data:

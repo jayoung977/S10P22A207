@@ -14,7 +14,6 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
                      <span className="text-small-1">매도</span> 
                  ) : (
                       <span className="text-small-10">공매도</span> 
-
                  )
               }
               주문
@@ -55,7 +54,6 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
                           <label htmlFor="number-input" className="mb-2 font-medium text-small-1 dark:text-textColor-2">매도 수량:</label>
                       ) : (
                           <label htmlFor="number-input" className="mb-2 font-medium text-small-10 dark:text-textColor-2">공매도 수량:</label>
-
                       )
                   }
               </div>

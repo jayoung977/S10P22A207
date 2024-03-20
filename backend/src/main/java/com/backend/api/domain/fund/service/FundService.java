@@ -103,8 +103,8 @@ public class FundService {
 			.map(fund -> new FundRes(
 				fund.getId(),
 				fund.getFundName(),
-				fund.getIndustry(),
 				fund.getManager().getNickname(),
+				fund.getIndustry(),
 				fund.getMinimumAmount(),
 				fund.getTargetAmount(),
 				fund.getFundAsset(),
@@ -127,8 +127,8 @@ public class FundService {
 			.map(fund -> new FundRes(
 				fund.getId(),
 				fund.getFundName(),
-				fund.getIndustry(),
 				fund.getManager().getNickname(),
+				fund.getIndustry(),
 				fund.getMinimumAmount(),
 				fund.getTargetAmount(),
 				fund.getFundAsset(),
@@ -147,8 +147,8 @@ public class FundService {
 		List<FundRes> fundResList = fundList.stream().map(fund -> new FundRes(
 			fund.getId(),
 			fund.getFundName(),
-			fund.getIndustry(),
 			fund.getManager().getNickname(),
+			fund.getIndustry(),
 			fund.getMinimumAmount(),
 			fund.getTargetAmount(),
 			fund.getFundAsset(),
@@ -168,7 +168,7 @@ public class FundService {
 	}
 
 	@Transactional
-	public void createFund(Long loginUserId, FundCreateReq fundCreateReq) {
+	public Long createFund(Long loginUserId, FundCreateReq fundCreateReq) {
 		Member manager = memberRepository.findById(loginUserId)
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
 		Fund fund = Fund.builder()
@@ -186,10 +186,11 @@ public class FundService {
 			.industry(fundCreateReq.industry())
 			.build();
 		fundRepository.save(fund);
+		return fund.getId();
 	}
 
 	@Transactional
-	public void startFund(Long loginUserId, FundStartReq fundStartReq){
+	public Long startFund(Long loginUserId, FundStartReq fundStartReq){
 		Fund fund = fundRepository.findById(fundStartReq.fundId())
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_FUND));
 		/* 예외 처리 */
@@ -205,6 +206,7 @@ public class FundService {
 		fund.updateFundStatus(FundStatus.RUNNING);
 		fund.updateFundStart();
 		fundRepository.save(fund);
+		return fund.getId();
 	}
 
 }
