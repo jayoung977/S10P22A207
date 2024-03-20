@@ -45,6 +45,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 			.email(email)
 			.asset(100_00_000L) // 시작시 초기 자금
 			.role(List.of(Privilege.ANONYMOUS))
+			.singleGameChance(5)
+			.rankPoint(0)
+			.win(0)
+			.lose(0)
+			.singleAvgRoi(0D)
+			.multiAvgRoi(0D)
 			.build());
 	}
 
