@@ -1,5 +1,6 @@
 package com.backend.api.domain.fund.dto.response;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,6 +36,11 @@ public record FundDetailRes(
 	@Schema(description = "펀드 투자 종목")
 	List<FundStockRes> fundStocks,
 	@Schema(description = "펀드 매매 내역")
-	List<FundTradeRes> fundTrades
+	List<FundTradeRes> fundTrades,
+	@Schema(description = "펀드 시작일")
+	LocalDate startDate,
+	@Schema(description = "펀드 종료일")
+	LocalDate endDate
+
 	) {
 }

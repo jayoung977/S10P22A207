@@ -1,5 +1,6 @@
 package com.backend.api.domain.fund.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -92,7 +93,9 @@ public class FundService {
 				fundTrade.getTradeDate().toString(),
 				0.0,//TODO: 수익률 계산
 				0L//TODO: 수익금 계산
-			)).toList()
+			)).toList(),
+			fund.getStartDate() != null ? LocalDate.from(fund.getStartDate()) : null,
+			fund.getStartDate() != null ? LocalDate.from(fund.getStartDate().plusDays(fund.getPeriod())) : null
 		);
 	}
 
@@ -100,31 +103,72 @@ public class FundService {
 		List<FundRes> fundResList = fundMemberRepository.findAllByMember_Id(loginUserId).stream()
 			.filter(fundMember -> fundMember.getFund().getStatus() != FundStatus.CLOSED)
 			.map(FundMember::getFund)
-			.map(fund -> new FundRes(
-				fund.getId(),
-				fund.getFundName(),
-				fund.getManager().getNickname(),
-				fund.getIndustry(),
-				fund.getMinimumAmount(),
-				fund.getTargetAmount(),
-				fund.getFundAsset(),
-				fund.getFundMemberList().size(),
-				fund.getCapacity(),
-				fund.getStatus().toString(),
-				fund.getFeeType().toString(),
-				fund.getPeriod(),
-				0.0//TODO: 수익률 계산
-			))
+			.map(fund -> {
+				LocalDate startDate = fund.getStartDate() != null ? LocalDate.from(fund.getStartDate()) : null;
+				LocalDate endDate = fund.getStartDate() != null ? LocalDate.from(fund.getStartDate().plusDays(fund.getPeriod())) : null;
+
+				return new FundRes(
+					fund.getId(),
+					fund.getFundName(),
+					fund.getManager().getNickname(),
+					fund.getIndustry(),
+					fund.getMinimumAmount(),
+					fund.getTargetAmount(),
+					fund.getFundAsset(),
+					fund.getFundMemberList().size(),
+					fund.getCapacity(),
+					fund.getStatus().toString(),
+					fund.getFeeType().toString(),
+					fund.getPeriod(),
+					0.0, //TODO: Calculate yield
+					startDate,
+					endDate
+				);
+			})
 			.toList();
+
 		return fundResList;
 	}
 
+
 	public List<FundRes> getClosedInvestingFunds(Long loginUserId) {
-		// fund status 가 closed 인 것만 가져오기
 		List<FundRes> fundResList = fundMemberRepository.findAllByMember_Id(loginUserId).stream()
 			.filter(fundMember -> fundMember.getFund().getStatus() == FundStatus.CLOSED)
 			.map(FundMember::getFund)
-			.map(fund -> new FundRes(
+			.map(fund -> {
+				LocalDate startDate = fund.getStartDate() != null ? LocalDate.from(fund.getStartDate()) : null;
+				LocalDate endDate = fund.getStartDate() != null ? LocalDate.from(fund.getStartDate().plusDays(fund.getPeriod())) : null;
+
+				return new FundRes(
+					fund.getId(),
+					fund.getFundName(),
+					fund.getManager().getNickname(),
+					fund.getIndustry(),
+					fund.getMinimumAmount(),
+					fund.getTargetAmount(),
+					fund.getFundAsset(),
+					fund.getFundMemberList().size(),
+					fund.getCapacity(),
+					fund.getStatus().toString(),
+					fund.getFeeType().toString(),
+					fund.getPeriod(),
+					0.0, //TODO: Calculate yield
+					startDate,
+					endDate
+				);
+			})
+			.toList();
+
+		return fundResList;
+	}
+
+
+	private List<FundRes> getFundRes(List<Fund> fundList) {
+		List<FundRes> fundResList = fundList.stream().map(fund -> {
+			LocalDate startDate = fund.getStartDate() != null ? LocalDate.from(fund.getStartDate()) : null;
+			LocalDate endDate = fund.getStartDate() != null ? LocalDate.from(fund.getStartDate().plusDays(fund.getPeriod())) : null;
+
+			return new FundRes(
 				fund.getId(),
 				fund.getFundName(),
 				fund.getManager().getNickname(),
@@ -137,30 +181,14 @@ public class FundService {
 				fund.getStatus().toString(),
 				fund.getFeeType().toString(),
 				fund.getPeriod(),
-				0.0//TODO: 수익률 계산
-			))
-			.toList();
+				0.0, //TODO: 수익률 계산
+				startDate,
+				endDate
+			);
+		}).toList();
 		return fundResList;
 	}
 
-	private List<FundRes> getFundRes(List<Fund> fundList) {
-		List<FundRes> fundResList = fundList.stream().map(fund -> new FundRes(
-			fund.getId(),
-			fund.getFundName(),
-			fund.getManager().getNickname(),
-			fund.getIndustry(),
-			fund.getMinimumAmount(),
-			fund.getTargetAmount(),
-			fund.getFundAsset(),
-			fund.getFundMemberList().size(),
-			fund.getCapacity(),
-			fund.getStatus().toString(),
-			fund.getFeeType().toString(),
-			fund.getPeriod(),
-			0.0//TODO: 수익률 계산
-		)).toList();
-		return fundResList;
-	}
 
 	public List<FundRes> searchFund(String fundName) {
 		List<Fund> fundList = fundRepository.findAllByFundNameContaining(fundName);
