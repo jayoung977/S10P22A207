@@ -59,4 +59,12 @@ public class SingleGameLog extends BaseEntity {
         this.finalRoi = finalRoi;
         this.finalProfit = finalProfit;
     }
+
+    public void updateFinalProfit(long resultProfit) {
+        this.finalProfit = resultProfit;
+    }
+
+    public void updateFinalRoi(double resultRoi) {
+        this.finalRoi = resultRoi;
+    }
 }
