@@ -3,7 +3,7 @@ package com.backend.api.domain.single.entity;
 
 import static lombok.AccessLevel.PROTECTED;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 public class SingleGame {
     private String id;
-    private ConcurrentHashMap<Long, Integer> stocks;
+    private HashMap<Long, Integer> stocks;
     private int[] stockAmount;
     private int[] averagePrice;
     private long cash;
@@ -22,7 +22,7 @@ public class SingleGame {
     private long[] stockPurchaseAmount; // 각 종목별 매수 금액 총량
 
     @Builder
-    public SingleGame(String id, ConcurrentHashMap<Long, Integer> stocks, int[] stockAmount, int[] averagePrice, long cash, long initial, long totalPurchaseAmount, int[] profits,
+    public SingleGame(String id, HashMap<Long, Integer> stocks, int[] stockAmount, int[] averagePrice, long cash, long initial, long totalPurchaseAmount, int[] profits,
         long[] stockPurchaseAmount) {
         this.id = id;
         this.stocks = stocks;
