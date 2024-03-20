@@ -4,7 +4,6 @@ import penguin from "../../../public/src/assets/images/penguin.png";
 import { useQuery, UseQueryResult } from "react-query";
 import { useParams } from "next/navigation";
 import profileStore from "@/public/src/stores/profile/profileStore";
-import userStore from "@/public/src/stores/user/userStore";
 import axios from "axios";
 
 interface resultType {
@@ -26,16 +25,15 @@ interface UserInfo {
 }
 
 export default function UserRecord() {
-  const { accessToken } = userStore();
   const { toggleButton } = profileStore();
   const params = useParams<{ userId?: string }>();
   const id: string | undefined = params.userId;
   const fetchUserInfo = async () => {
     const response = await axios({
       method: "get",
-      url: `https://j10a207.p.ssafy.io/api/member?loginUserId=${id}`,
+      url: `https://j10a207.p.ssafy.io/api/member/profile?memberId=${id}`,
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     });
     return response.data;
@@ -87,7 +85,7 @@ export default function UserRecord() {
               <div className="text-center font-extrabold text-xl text-red-500">
                 {result &&
                   (result.win + result.lose == 0
-                    ? `X`
+                    ? `0%`
                     : `${(result.win / (result.win + result.lose)) * 100}%`)}
               </div>
               <div className="text-center text-textColor-1">승률</div>
@@ -95,8 +93,10 @@ export default function UserRecord() {
             <div className="flex-col justify-center items-center col-span-1">
               <div className="text-center font-extrabold text-xl text-red-500">
                 {toggleButton == "single"
-                  ? result && `${result.singleAvgRoi}%`
-                  : result && `${result.multiAvgRoi}%`}
+                  ? result &&
+                    `${result.singleAvgRoi !== null ? result.singleAvgRoi : 0}%`
+                  : result &&
+                    `${result.multiAvgRoi !== null ? result.multiAvgRoi : 0}%`}
               </div>
               <div className="text-center text-textColor-1">평균 수익률</div>
             </div>

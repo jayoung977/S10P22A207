@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import axios, { AxiosResponse } from "axios";
 import { useRouter } from "next/navigation";
-
 interface RequestType {
   nickname: string;
   birth: string;
@@ -11,8 +10,6 @@ interface RequestType {
 }
 
 export default function SignUp() {
-  if (typeof window !== "undefined" && window.sessionStorage) {
-  }
   const signup = async (request: RequestType): Promise<AxiosResponse<any>> => {
     const response = await axios({
       method: "put",
@@ -43,7 +40,6 @@ export default function SignUp() {
       console.error("에러발생", error.response?.data || error.message);
     },
   });
-  const router = useRouter();
   const [gender, setGender] = useState("MAN");
   const [nickname, setNickname] = useState("");
   const [birth, setBirth] = useState("2024");

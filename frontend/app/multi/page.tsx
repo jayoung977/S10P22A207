@@ -1,30 +1,33 @@
-'use client'
+"use client";
 import Navbar from "../Navbar";
 import Profile from "./profile";
 import Ranking from "./Ranking";
 import GameRoomSetting from "./gameroomSetting";
 import GameRoom from "./gameroom";
 import Pagination from "./pagination";
-import PeacefulBgm from "@/public/src/components/PeacefulBgm";
+import PeacefulBgm from "@/public/src/components/bgm/PeacefulBgm";
 import { QueryClient, QueryClientProvider } from "react-query";
+import userStore from "@/public/src/stores/user/userStore";
+import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 
 const queryClient = new QueryClient();
 
 interface userType {
-  memberId : number;
-  email : string;
-  nickname : string;
-  birthYear : number;
+  memberId: number;
+  email: string;
+  nickname: string;
+  birthYear: number;
   gender: string;
-  asset : number;
-  rankPoint : number;
-  win : number;
-  lose : number;
-  singleAvgRoi : number,
-  multiAvgRoi : number
+  asset: number;
+  rankPoint: number;
+  win: number;
+  lose: number;
+  singleAvgRoi: number;
+  multiAvgRoi: number;
 }
 
 export default function Multi() {
+  useFetchUserInfo();
   const rooms: string[] = [
     "게임방",
     "게임방",
@@ -43,20 +46,7 @@ export default function Multi() {
     5: "bg-small-8",
   };
 
-  // 이후 세션에서 받아올 로그인 사용자 데이터
-  const user :userType = {
-    memberId : 1,
-    email : "yongsoo@gmail.com",
-    nickname : "YONGSOO",
-    birthYear : 1995,
-    gender : "MAN",
-    asset : 10000000,
-    rankPoint : 18,
-    win : 18,
-    lose : 18,
-    singleAvgRoi : 18.18,
-    multiAvgRoi : 18
-  }
+  // 이후 세션에서 받아올 로그인 사용자 데이터 이거 userStore에 담아놨어~~~~~~~~~~~~~~
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -67,7 +57,7 @@ export default function Multi() {
           <div className="bg-big-1 rounded-md row-span-11 grid grid-rows-12 mx-auto xl:max-w-screen-xl">
             {/* 상단 */}
             <div className="grid grid-cols-12 gap-4 row-span-4">
-              <Profile user={user}/>
+              <Profile/>
             </div>
             {/* 하단 */}
             <div className="grid grid-cols-12 gap-4 row-span-8 mt-4 px-2">

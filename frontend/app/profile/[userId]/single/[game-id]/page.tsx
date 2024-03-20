@@ -5,7 +5,7 @@ import SingleTradeHistory from "./ReviewSingleTradeHistory";
 import SingleChart from "./ReviewSingleChart";
 import SingleStockTicker from "./ReviewSingleStockTicker";
 import SingleRanking from "./ReviewSingleRanking";
-import PeacefulBgm from "@/public/src/components/PeacefulBgm";
+import PeacefulBgm from "@/public/src/components/bgm/PeacefulBgm";
 export default function page() {
   return (
     <div className=" grid grid-rows-12 h-screen">

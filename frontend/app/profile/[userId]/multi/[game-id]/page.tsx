@@ -4,7 +4,7 @@ import Navbar from "@/app/Navbar";
 import MultiTradeHistroy from "./ReviewMultiTradeHistory";
 import MultiRanking from "./ReviewMultiRanking";
 import MultiChart from "./ReviewMultiChart";
-import PeacefulBgm from "@/public/src/components/PeacefulBgm";
+import PeacefulBgm from "@/public/src/components/bgm/PeacefulBgm";
 export default function page() {
   return (
     <div className=" grid grid-rows-12 h-screen">

@@ -3,7 +3,6 @@
 import { useRouter, useParams } from "next/navigation";
 import { useQuery, UseQueryResult } from "react-query";
 import axios from "axios";
-import userStore from "@/public/src/stores/user/userStore";
 
 interface resultType {
   finalProfit: number;
@@ -18,7 +17,6 @@ interface SingleGameInfo {
 }
 
 export default function UserRecordInfoSingle() {
-  const { accessToken } = userStore();
   const router = useRouter();
   const params = useParams<{ userId?: string }>();
   const id: string | undefined = params.userId;
@@ -26,9 +24,9 @@ export default function UserRecordInfoSingle() {
   const fetchUserSingleGame = async () => {
     const response = await axios({
       method: "get",
-      url: `https://j10a207.p.ssafy.io/api/member/single-game-log?loginUserId=${id}`,
+      url: `https://j10a207.p.ssafy.io/api/member/single-game-log?memberId=${id}`,
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     });
     return response.data;
@@ -72,7 +70,7 @@ export default function UserRecordInfoSingle() {
               <tr
                 className="cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                 onClick={() => {
-                  router.push(`${1}/single/${item.singleGameLogId}`);
+                  router.push(`${id}/single/${item.singleGameLogId}`);
                 }}
                 key={i}
               >

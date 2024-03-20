@@ -1,8 +1,6 @@
 "use client";
 import axios from "axios";
 import { useQuery, UseQueryResult } from "react-query";
-import { useRouter } from "next/navigation";
-import userStore from "@/public/src/stores/user/userStore";
 interface IsSignUpInfo {
   result: [string];
 }
@@ -22,7 +20,7 @@ export default function IsSignUpInfo() {
       method: "get",
       url: `https://j10a207.p.ssafy.io/api/member/privilege/check`,
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     });
     return response.data;
@@ -39,8 +37,9 @@ export default function IsSignUpInfo() {
   const { result }: { result: [string] | null } = data
     ? data
     : { result: null };
+
   if (result && result[0] === "USER") {
-    window.location.href = "/multi";
+    window.location.href = `/multi`;
     // router.push("/multi");
   } else {
     window.location.href = "login/signup";
