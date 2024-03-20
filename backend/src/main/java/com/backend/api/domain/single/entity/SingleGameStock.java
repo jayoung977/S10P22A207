@@ -16,7 +16,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
@@ -41,9 +40,7 @@ public class SingleGameStock extends BaseEntity {
     @NotNull
     private Integer profit = 0;
 
-    // TODO : 평균단가 @Setter 써서 표현해야할듯!
     @NotNull
-    @Setter
     private Integer averagePurchasePrice = 0;
 
     @Builder
@@ -53,5 +50,17 @@ public class SingleGameStock extends BaseEntity {
         this.roi = roi;
         this.profit = profit;
         this.averagePurchasePrice = averagePurchasePrice;
+    }
+
+    public void updateAveragePurchasePrice(int averagePurchasePrice) {
+        this.averagePurchasePrice = averagePurchasePrice;
+    }
+
+    public void updateRoi(double roi) {
+        this.roi = roi;
+    }
+
+    public void updateProfit(int profit) {
+        this.profit = profit;
     }
 }
