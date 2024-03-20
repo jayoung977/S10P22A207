@@ -1,10 +1,8 @@
 package com.backend.api.domain.stock.entity;
 
-import static jakarta.persistence.FetchType.*;
-import static jakarta.persistence.GenerationType.*;
-import static lombok.AccessLevel.*;
-
-import java.time.LocalDateTime;
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +31,7 @@ import lombok.NoArgsConstructor;
 	}
 )
 public class StockChart {
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "stock_chart_id")
@@ -55,9 +55,9 @@ public class StockChart {
 	private LocalDateTime date;
 	private Double changeRate;
 
+
 	@Builder
-	public StockChart(Stock stock, Integer marketPrice, Integer highPrice, Integer lowPrice, Integer endPrice,
-		Integer tradingVolume, LocalDateTime date, Double changeRate) {
+	public StockChart(Stock stock, Integer marketPrice, Integer highPrice, Integer lowPrice, Integer endPrice, Integer tradingVolume, LocalDateTime date, Double changeRate) {
 		this.stock = stock;
 		this.marketPrice = marketPrice;
 		this.highPrice = highPrice;

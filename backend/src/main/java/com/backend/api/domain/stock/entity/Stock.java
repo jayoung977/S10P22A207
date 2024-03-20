@@ -1,27 +1,27 @@
 package com.backend.api.domain.stock.entity;
 
-import static jakarta.persistence.GenerationType.*;
-import static lombok.AccessLevel.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
 import com.backend.api.domain.fund.entity.FundStock;
 import com.backend.api.domain.fund.entity.FundTrade;
 import com.backend.api.domain.single.entity.SingleGameStock;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Getter
+@ToString
 @NoArgsConstructor(access = PROTECTED)
 public class Stock {
 
