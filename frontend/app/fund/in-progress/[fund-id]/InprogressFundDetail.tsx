@@ -34,7 +34,7 @@ export default function InprogressFundDetail() {
   }, [data]);
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <div className="rainbow"></div>
   }
 
   if (error) {

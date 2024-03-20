@@ -1,4 +1,4 @@
-export default function UserRecordInfoFund() {
+export default function UserRecordInfoManagerFund() {
   return (
     <div className="shadow row-span-5 overflow-auto max-h-96 p-4">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -27,7 +27,7 @@ export default function UserRecordInfoFund() {
               scope="row"
               className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-              원영 펀드
+              운영 펀드
             </th>
             <td className="px-6 py-4">모집중</td>
             <td className="px-6 py-4">1,000,000,000</td>
