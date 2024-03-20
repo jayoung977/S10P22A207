@@ -103,8 +103,8 @@ public class FundService {
 			.map(fund -> new FundRes(
 				fund.getId(),
 				fund.getFundName(),
-				fund.getIndustry(),
 				fund.getManager().getNickname(),
+				fund.getIndustry(),
 				fund.getMinimumAmount(),
 				fund.getTargetAmount(),
 				fund.getFundAsset(),
@@ -127,8 +127,8 @@ public class FundService {
 			.map(fund -> new FundRes(
 				fund.getId(),
 				fund.getFundName(),
-				fund.getIndustry(),
 				fund.getManager().getNickname(),
+				fund.getIndustry(),
 				fund.getMinimumAmount(),
 				fund.getTargetAmount(),
 				fund.getFundAsset(),
@@ -147,8 +147,8 @@ public class FundService {
 		List<FundRes> fundResList = fundList.stream().map(fund -> new FundRes(
 			fund.getId(),
 			fund.getFundName(),
-			fund.getIndustry(),
 			fund.getManager().getNickname(),
+			fund.getIndustry(),
 			fund.getMinimumAmount(),
 			fund.getTargetAmount(),
 			fund.getFundAsset(),
