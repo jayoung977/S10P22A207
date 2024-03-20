@@ -18,7 +18,9 @@ export interface FundResult {
   status: string,
   feeType: string,
   period: number,
-  roi: number
+  roi: number,
+  startDate: string,
+  endDate: string,
 }
 
 export interface FundStocks {
@@ -52,13 +54,13 @@ export interface FundDetail {
 }
 
 export interface FundInfo {
-  result: FundResult
+  result: FundResult[]
 }
 
 export interface FundDetail extends Omit<FundResult,'participantCount'> {
-  fundMembers: FundMembers,
-  fundStocks: FundStocks,
-  fundTrades: FundTrades,
+  fundMembers: FundMembers[],
+  fundStocks: FundStocks[],
+  fundTrades: FundTrades[],
 }
 
 
