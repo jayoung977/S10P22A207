@@ -29,9 +29,15 @@ interface RoomInfo {
 export default function NavbarGameModal() {
   const router = useRouter();
     const openSinglePlay = () => {
-    axios.get('https://j10a207.p.ssafy.io/api/single')
+    const token = sessionStorage.getItem('accessToken')
+    axios.get('https://j10a207.p.ssafy.io/api/single', 
+    { 
+      headers: {
+      'Authorization': `Bearer ${token}`
+    }
+    })
     .then((res) => {
-      console.log(res)
+      console.table(res)
     })
     .catch((error)=>{
       console.error(error)

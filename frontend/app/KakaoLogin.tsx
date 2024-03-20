@@ -7,10 +7,9 @@ import { useRouter } from "next/navigation";
 
 export default function KakaoLogin() {
   const router = useRouter();
-  // 로그인 기능 구현중입니당 ~~~~~~
   const loginHandler = () => {
     if (typeof window !== "undefined") {
-      // const frontendUrl = `${window.location.protocol}//${window.location.host}`;
+      const frontendUrl = `${window.location.protocol}//${window.location.host}`;
       const API_URL = "https://j10a207.p.ssafy.io";
       const KAKAO_AUTH_URL = `${API_URL}/oauth2/authorization/kakao`;
       window.location.href = KAKAO_AUTH_URL;
@@ -20,7 +19,6 @@ export default function KakaoLogin() {
     <div className="flex justify-center items-center h-screen">
       <button
         onClick={() => {
-          // router.push("/multi");
           loginHandler();
         }}
         type="button"

@@ -2,7 +2,6 @@
 import { useRouter, useParams } from "next/navigation";
 import { useQuery, UseQueryResult } from "react-query";
 import axios from "axios";
-import userStore from "@/public/src/stores/user/userStore";
 
 interface resultType {
   players: number;
@@ -17,7 +16,6 @@ interface MultiGameInfo {
 }
 
 export default function UserRecordInfoMulti() {
-  const { accessToken } = userStore();
   const router = useRouter();
   const params = useParams<{ userId?: string }>();
   const id: string | undefined = params.userId;
@@ -25,9 +23,9 @@ export default function UserRecordInfoMulti() {
   const fetchUserMultiGame = async () => {
     const response = await axios({
       method: "get",
-      url: `https://j10a207.p.ssafy.io/api/member/multi-game-log?loginUserId=${id}`,
+      url: `https://j10a207.p.ssafy.io/api/member/multi-game-log/?memberId=${id}`,
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     });
     return response.data;

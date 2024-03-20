@@ -75,8 +75,10 @@ public class MemberService {
 		);
 	}
 
-	public List<ProfileSingleGameLogRes> getSingleGameLogs(Long loginUserId) {
-		List<SingleGameLog> singleGameLogList = singleGameLogRepository.findAllByMember_Id(loginUserId);
+	public List<ProfileSingleGameLogRes> getSingleGameLogs(Long userId) {
+		Member findMember = memberRepository.findById(userId)
+			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+		List<SingleGameLog> singleGameLogList = singleGameLogRepository.findAllByMember_Id(findMember.getId());
 		return singleGameLogList.stream().map(singleGameLog ->
 			new ProfileSingleGameLogRes(
 				singleGameLog.getId(),
@@ -88,8 +90,10 @@ public class MemberService {
 		).toList();
 	}
 
-	public List<ProfileMultiGameLogRes> getMultiGameLogs(Long loginUserId) {
-		List<MultiGamePlayer> multiGamePlayerList = multiGamePlayerRepository.findAllByMember_Id(loginUserId);
+	public List<ProfileMultiGameLogRes> getMultiGameLogs(Long userId) {
+		Member findMember = memberRepository.findById(userId)
+			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+		List<MultiGamePlayer> multiGamePlayerList = multiGamePlayerRepository.findAllByMember_Id(findMember.getId());
 		return multiGamePlayerList.stream().map(multiGamePlayer ->
 			new ProfileMultiGameLogRes(
 				multiGamePlayer.getMultiGameLog().getId(),

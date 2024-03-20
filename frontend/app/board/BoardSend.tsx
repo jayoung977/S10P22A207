@@ -4,22 +4,25 @@ import { useMutation, useQueryClient } from "react-query";
 import axios, { AxiosResponse } from "axios";
 import { useState } from "react";
 import userStore from "@/public/src/stores/user/userStore";
+import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
+import Swal from "sweetalert2";
 
 interface RequestType {
   content: string;
 }
 
 export default function BoardSend() {
-  const { accessToken } = userStore();
+  useFetchUserInfo();
+  const { memberId } = userStore();
   const sendBoard = async (
     request: RequestType
   ): Promise<AxiosResponse<any>> => {
     const response = await axios({
       method: "post",
-      url: `https://j10a207.p.ssafy.io/api/community/write?loginUserId=${1}`,
+      url: `https://j10a207.p.ssafy.io/api/community/write?loginUserId=${memberId}`,
       data: request,
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     });
     return response;
@@ -31,9 +34,13 @@ export default function BoardSend() {
     {
       onSuccess: () => {
         queryClient.invalidateQueries("boards");
+        Swal.fire("성공!", "게시물이 성공적으로 작성되었습니다.", "success");
       },
       onError: (error: any) => {
-        console.error("에러 발생", error.response?.data || error.message);
+        console.error("에러발생", error.response?.data || error.message);
+      },
+      onSettled: () => {
+        setContent("");
       },
     }
   );
@@ -43,11 +50,7 @@ export default function BoardSend() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const request = { content };
-    mutation.mutate(request, {
-      onSettled: () => {
-        setContent("");
-      },
-    });
+    mutation.mutate(request);
   };
 
   return (

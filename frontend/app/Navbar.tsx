@@ -6,8 +6,11 @@ import penguin from "../public/src/assets/images/penguin.png";
 import logo from "../public/src/assets/images/logo.png";
 import NavbarGameModal from "./NavbarGameModal";
 import NavbarAlarmModal from "./NavbarAlarmModal";
+import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
+import userStore from "@/public/src/stores/user/userStore";
 
 export default function Navbar() {
+  const { memberId } = userStore();
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
   useLayoutEffect(() => {
@@ -110,7 +113,7 @@ export default function Navbar() {
             <li>
               <a
                 className="cursor-pointer block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray -700 dark:hover:text-white md:dark:hover:bg-transparent"
-                onClick={() => router.push("/profile/1")}
+                onClick={() => router.push(`/profile/${memberId}`)}
               >
                 프로필
               </a>
