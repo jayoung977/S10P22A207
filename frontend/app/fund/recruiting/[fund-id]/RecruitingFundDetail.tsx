@@ -37,9 +37,13 @@ export default function RecruitingFundDetail() {
   const [fundManager, setFundManager] = useState(true);
   const [fundDetail, setFundDetail] = useState<FundDetail | null>(null);
   const [investmoney, setInvestmoney] = useState("");
-  
+
   const params = useParams();
   const fundId = params["fund-id"] as string;
+  let totalFundAsset = 0;
+  fundDetail?.fundMembers.forEach((fundmember: FundMembers)=> {
+    totalFundAsset += fundmember.investmentAmount
+  })  
 
   const {
     data,
@@ -57,7 +61,7 @@ export default function RecruitingFundDetail() {
     useEffect(() => {
       if (data?.result) {
         setFundDetail(data.result);
-      }
+      }      
     }, [data]);
   
   const RegisterFund = async (
@@ -214,10 +218,10 @@ export default function RecruitingFundDetail() {
       <div className="row-span-3 grid grid-rows-2 gap-4">
         <div className="row-span-1 bg-background-1 rounded-md grid grid-cols-2">
           <div className="col-span-1 text-lg mt-2 ms-10">
-            {fundDetail?.fundMembers.length}/20
+            {fundDetail?.fundMembers.length} / {fundDetail?.capacity} 명
           </div>
           <div className="col-span-1 ms-4 text-lg mt-2">
-            {/* {fundMoney.toLocaleString()} 원 */}
+            {totalFundAsset.toLocaleString()} 원
           </div>
         </div>
         {fundManager ? (

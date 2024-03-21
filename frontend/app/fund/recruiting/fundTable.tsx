@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation"
 import { useQuery, UseQueryResult } from "react-query";
 import type { FundResult } from "@/public/src/stores/fund/crud/FundCrudStore";
-import { FundInfo } from "@/public/src/stores/fund/crud/FundCrudStore";
+import fundCrudStore, { FundInfo } from "@/public/src/stores/fund/crud/FundCrudStore";
 import { useEffect, useState } from "react";
 
 
@@ -21,8 +21,17 @@ const fetchFundInfo = async() => {
 
 export default function FundTable(){
   const [fundList, setFundList] = useState<FundResult[]>([])
-  const router = useRouter();
   const { data, isLoading, error }: UseQueryResult<FundInfo,Error> = useQuery('FundInfo', fetchFundInfo );
+  const { searchQuery } = fundCrudStore();
+  const [filteredFunds, setFilteredFunds] = useState<FundResult[]>([])
+  const router = useRouter();
+  
+  useEffect(() => {
+    // Filter fundList based on searchQuery when searchQuery changes
+    const filtered: FundResult[] = fundList.filter((fund) => fund.fundName.includes(searchQuery));
+    setFilteredFunds(filtered);
+  }, [searchQuery, fundList]); 
+  
   useEffect(() => {
     if (data?.result) {
       setFundList(data.result);
@@ -51,10 +60,13 @@ export default function FundTable(){
                   이름
               </th>
               <th scope="col" className="px-6 py-3">
+                  펀드매니저
+              </th>
+              <th scope="col" className="px-6 py-3">
                   기간
               </th>
               <th scope="col" className="px-6 py-3">
-                  최소 금액
+                  인당 최소금액
               </th>
               <th scope="col" className="px-6 py-3">
                   인원
@@ -66,7 +78,7 @@ export default function FundTable(){
         </thead>
         <tbody>
         {
-          fundList.map((fund: FundResult, i:number)=> {
+          filteredFunds.map((fund: FundResult, i:number)=> {
           return (
               <tr key={i}
               onClick={()=> {router.push(`./recruiting/${fund.fundId}`, )}} 
@@ -74,8 +86,11 @@ export default function FundTable(){
                   <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       {fund.fundName}
                   </th>
+                  <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {fund.managerNickname}
+                  </th>
                   <td className="px-6 py-4">
-                      {fund.period}
+                      {fund.period} 일
                   </td>
                   <td className="px-6 py-4">
                       {fund.minimumAmount.toLocaleString()} 원

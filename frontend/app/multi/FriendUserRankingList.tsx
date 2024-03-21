@@ -36,10 +36,10 @@ export default function FriendUserRankingList() {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  console.log(data);
   const { result }: { result: userType[] | null } = data
-    ? data
-    : { result: null };
+  ? data
+  : { result: null };
+  console.log(data);
   return (
     <>
       <div

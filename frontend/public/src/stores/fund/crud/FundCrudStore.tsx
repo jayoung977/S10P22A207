@@ -1,9 +1,5 @@
 import { create } from "zustand";
 
-type Store = {
-  toggleButton: string;
-  setToggleButton: (value: string) => void;
-}
 
 export interface FundResult {
   fundId: number,
@@ -63,12 +59,19 @@ export interface FundDetail extends Omit<FundResult,'participantCount'> {
   fundTrades: FundTrades[],
 }
 
+type Store = {
+  toggleButton: string;
+  setToggleButton: (value: string) => void;
+  searchQuery: string,
+  setSearchQuery: (query:string) => void;
+}
 
 
 const fundCrudStore = create<Store>((set: any) => ({
   toggleButton: 'recruiting',
-  setToggleButton: (value) => 
-  set({toggleButton: value})
+  setToggleButton: (value) =>set({toggleButton: value}),
+  searchQuery: '',
+  setSearchQuery: (query) => set({searchQuery: query}),
 }));
 
 export default fundCrudStore;
