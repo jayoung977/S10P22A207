@@ -108,7 +108,7 @@ export default function RecruitingFundDetail() {
   };
 
 
-  if (isQueryLoading) { return <div>Loading...</div>; }
+  if (isQueryLoading) { return <div className="rainbow"></div>; }
   if (queryError) { return <div>Error: {queryError.message}</div>; }
 
   const { result }: { result: FundDetail | null } = data ? data : { result: null };

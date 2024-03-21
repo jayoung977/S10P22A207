@@ -1,49 +1,58 @@
-'use client'
-import UserRanking from './userRanking';
-import { useQuery, UseQueryResult } from 'react-query';
-
+"use client";
+import UserRanking from "./userRanking";
+import { useQuery, UseQueryResult } from "react-query";
+import axios from "axios";
 interface userType {
-    memberId: number;
-    nickname: string;
-    assets: number;
+  memberId: number;
+  nickname: string;
+  assets: number;
 }
 
 interface userInfo {
-    result : userType[];
+  result: userType[];
 }
 
-export default function AllUserRankingList () {
-    const fetchAllUserRankingInfo :any = async () => {
-        // 전체 랭킹 불러오는 api 개발 전
-        // 우선 친구 랭킹 불러오는 api 사용
-        const response = await fetch(`https://j10a207.p.ssafy.io/api/friend/list?followerId=1`)
-        return response.json()
-    }    
-    const { data, isLoading, error } :UseQueryResult<userInfo, Error> = useQuery(
-        'allUserRankingInfo', 
-        fetchAllUserRankingInfo
-    )
-    
-    if (isLoading) {
-        return <div className='rainbow'></div>
-    }
+export default function AllUserRankingList() {
+  const fetchAllUserRankingInfo: any = async () => {
+    // 전체 랭킹 불러오는 api 개발 전
+    // 우선 친구 랭킹 불러오는 api 사용
+    const response = await axios({
+      url: `https://j10a207.p.ssafy.io/api/friend/list`,
+      method: "get",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+    });
 
-    if (error) {
-        return <div>Error: {error.message}</div>
-    }
+    return response;
+  };
+  const { data, isLoading, error }: UseQueryResult<userInfo, Error> = useQuery(
+    "allUserRankingInfo",
+    fetchAllUserRankingInfo
+  );
 
-    const {result} : {result: userType[] | null} = data ? data : {result : null}
+  if (isLoading) {
+    return <div className="rainbow"></div>;
+  }
 
-    return (
-        <>
-        <div className='row-span-9 overflow-auto border' style={{ height: 'calc(42vh)'}}>
-            {
-                result?.map((x, index) => (
-                    <UserRanking key={x.memberId} user={x}/>
-                    )
-                )
-            }
-        </div>
-        </>
-    )
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+  console.log(data)
+  const { result }: { result: userType[] | null } = data
+    ? data
+    : { result: null };
+  
+  return (
+    <>
+      <div
+        className="row-span-9 overflow-auto border"
+        style={{ height: "calc(42vh)" }}
+      >
+        {result?.map((x, index) => (
+          <UserRanking key={x.memberId} user={x} />
+        ))}
+      </div>
+    </>
+  );
 }

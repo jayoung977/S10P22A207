@@ -65,7 +65,8 @@ export default function UserInfo() {
         <div
           className={`${toggleButton === "single" && `bg-small-6`} ${
             toggleButton === "multi" && `bg-small-4`
-          } ${toggleButton === "fund" && `bg-small-10`} ${
+          } ${toggleButton === "managerFund" && `bg-small-10`}
+           ${toggleButton === "memberFund" && `bg-small-1`} ${
             toggleButton === "board" && `bg-small-5`
           } rounded-md row-start-1 row-end-5 flex justify-center items-center relative`}
         >
