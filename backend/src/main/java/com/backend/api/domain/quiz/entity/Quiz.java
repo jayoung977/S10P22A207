@@ -26,8 +26,7 @@ public class Quiz extends BaseEntity {
     private String content;
 
     @NotNull
-    @Column(length = 20)
-    private String answer;
+    private Integer answer;
 
 
     @Column(length = 255)
@@ -53,7 +52,7 @@ public class Quiz extends BaseEntity {
     private String option4;
 
     @Builder
-    public Quiz(Long id, String content, String answer, String explanation, QuizType type, String option1, String option2, String option3, String option4) {
+    public Quiz(Long id, String content, Integer answer, String explanation, QuizType type, String option1, String option2, String option3, String option4) {
         this.id = id;
         this.content = content;
         this.answer = answer;
