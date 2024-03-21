@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -72,6 +73,69 @@ public class SingleGameService {
 		// 도전 기회가 있는지 확인한다.
 		Member me = memberRepository.findById(memberId)
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+
+		// 진행중인 게임이 있으면 불러오기
+		String pattern = "singleGame:" + memberId + ":*";
+		Set<String> keys = redisTemplate.keys(pattern);
+		log.info("memberId - {} 에게 저장된 게임수 : {} ", memberId, keys.size());
+		if (keys != null && !keys.isEmpty()) {
+			long maxNumber = -1L;
+
+			// 모든 키에 대해 반복하여 가장 큰 숫자를 찾음 -> 오류가 나서 게임이 하나 불러오지 않더라도 최근 게임을 불러오도록
+			for (String key : keys) {
+				String[] parts = key.split(":");
+				if (parts.length > 0) {
+					String lastPart = parts[parts.length - 1];
+					try {
+						long number = Long.parseLong(lastPart);
+						if (number > maxNumber) {
+							maxNumber = number;
+						}
+					} catch (NumberFormatException e) {
+
+					}
+				}
+			}
+			SingleGame currentGame = null;
+			try {
+				String jsonStr = objectMapper.writeValueAsString(redisTemplate.opsForValue().get("singleGame:" + memberId + ":" + maxNumber));
+				currentGame = objectMapper.readValue(jsonStr, SingleGame.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			List<StockChartDataDto> stockChartDataList = new ArrayList<>();
+			// 350치 차트는 새로 그려서 보내주기
+			stocks = currentGame.getStocks();
+			int cnt = 0;
+			for(long stockId : stocks.keySet()){
+				StockChart stockChart = stockChartRepository.findById(currentGame.getFirstDayChartList().get(cnt++)).orElseThrow(
+					() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR)
+				);
+
+				// 350일치 차트
+				List<StockChart> stockChartList = stockChartRepository.findByIdBetween(stockChart.getId(), stockChart.getId() + 349);
+
+				// 각 날짜에 대해 StockChartDto 생성 후 넣어주기
+				List<StockChartDto> stockChartDtoList = new ArrayList<>();
+				// 4. 350번 가져온다.
+				stockChartList.forEach((stockChart1) -> {
+					StockChartDto stockChartDto = new StockChartDto(
+
+						stockChart1.getMarketPrice(),
+						stockChart1.getHighPrice(),
+						stockChart1.getLowPrice(),
+						stockChart1.getEndPrice(),
+						stockChart1.getTradingVolume(),
+						stockChart1.getDate()
+					);
+					stockChartDtoList.add(stockChartDto);
+				});
+				StockChartDataDto stockChartDataDto = new StockChartDataDto(stockChart.getStock().getId(), stockChartDtoList);
+				stockChartDataList.add(stockChartDataDto);
+			}
+
+			return new SingleGameCreateResponseDto(currentGame.getSingleGameLogId(), maxNumber, currentGame.getDay(), me.getSingleGameChance(), stockChartDataList);
+		}
 
 		if (me.getSingleGameChance() <= 0) {
 			throw new BaseExceptionHandler(ErrorCode.NOT_ENOUGH_CHANCE);
@@ -197,7 +261,7 @@ public class SingleGameService {
 			stockChartDataList.add(stockChartDataDto);
 		}
 
-		return new SingleGameCreateResponseDto(gameLogId, nextId, me.getSingleGameChance(), stockChartDataList);
+		return new SingleGameCreateResponseDto(gameLogId, nextId, 0, me.getSingleGameChance(), stockChartDataList);
 	}
 
 	public SingleTradeResponseDto sell(SingleTradeRequestDto dto, Long memberId) {
@@ -213,7 +277,7 @@ public class SingleGameService {
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
 		StockChart todayChart = stockChartRepository.findById(firstDayChart.getId() + dto.day()).orElseThrow(
 			() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
-		);;
+		);
 
 		// 현재 수량보다 많으면 에러.
 		if (dto.amount() > currentGame.getStockAmount()[stockIdx]) {
@@ -418,6 +482,9 @@ public class SingleGameService {
 		// 총 profit 계산
 		long resultProfit = totalAsset - currentGame.getInitial();
 		double resultRoi = 100.0 *(totalAsset - currentGame.getInitial()) / currentGame.getInitial();
+
+		currentGame.updateDay(dto.day());
+		redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.redisGameIdx(), currentGame);
 
 		if (dto.day() == 50) {
 			// 결과 저장.
