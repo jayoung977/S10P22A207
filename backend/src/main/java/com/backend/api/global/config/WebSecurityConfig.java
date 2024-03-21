@@ -1,11 +1,8 @@
 package com.backend.api.global.config;
 
-import com.backend.api.global.jwt.JwtAuthenticateFilter;
-import com.backend.api.global.jwt.service.JwtService;
-import com.backend.api.global.security.handler.CustomOAuth2FailHandler;
-import com.backend.api.global.security.handler.CustomOAuth2SuccessHandler;
-import com.backend.api.global.security.oauth2.service.CustomOAuth2UserService;
-import lombok.RequiredArgsConstructor;
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -18,8 +15,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import java.util.Collections;
-import java.util.List;
+import com.backend.api.global.jwt.JwtAuthenticateFilter;
+import com.backend.api.global.jwt.service.JwtService;
+import com.backend.api.global.security.handler.CustomOAuth2FailHandler;
+import com.backend.api.global.security.handler.CustomOAuth2SuccessHandler;
+import com.backend.api.global.security.oauth2.service.CustomOAuth2UserService;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
@@ -28,7 +30,7 @@ import java.util.List;
 public class WebSecurityConfig {
 
 	private static final String[] URL_WHITE_LIST = {
-		"/actuator","/actuator/**","/error", "/login", "/favicon.ico",
+		"/error", "/login", "/favicon.ico",
 		"/health", "/api-docs/**", "/swagger-ui/**",
 		"/swagger-resources/**", "/swagger-ui.html", "/api/token/**",
 		"/ws/**", "/api/sub/**", "/api/pub/**"
@@ -55,7 +57,6 @@ public class WebSecurityConfig {
 
 		return http.build();
 	}
-
 
 	@Bean
 	public JwtAuthenticateFilter jwtAuthenticateFilter() {
