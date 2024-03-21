@@ -13,8 +13,12 @@ public record StockChartDto(
     Integer lowPrice,
     @Schema(description = "종가")
     Integer endPrice,
+    @Schema(description = "거래량")
+    Integer tradingVolume,
+
     @Schema(description = "날짜")
     LocalDateTime date
+
 ) {
 
 }

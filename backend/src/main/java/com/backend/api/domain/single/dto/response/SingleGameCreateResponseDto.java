@@ -9,8 +9,11 @@ public record SingleGameCreateResponseDto(
     Long gameLogId,
     @Schema(description = "레디스 게임 Id")
     Long redisGameIdx,
+    @Schema(description = "게임 일차. 기본값은 0이지만 불러오기라면 0이 아니다.")
+    Integer day,
     @Schema(description = "게임 가능 횟수")
     Integer singleGameChance,
+
 
     @Schema(description = "종목별 차트(350개)를 담아준 리스트")
     List<StockChartDataDto> stockChartDataList
