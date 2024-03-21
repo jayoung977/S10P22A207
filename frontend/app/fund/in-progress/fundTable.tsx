@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useQuery, UseQueryResult } from "react-query";
 import type { FundResult } from "@/public/src/stores/fund/crud/FundCrudStore";
 import { FundInfo } from "@/public/src/stores/fund/crud/FundCrudStore";
-import { headers } from "next/headers";
+import fundCrudStore from "@/public/src/stores/fund/crud/FundCrudStore";
 import { useState, useEffect } from "react";
 
 const fetchFundInfo = async () => {
@@ -22,7 +22,15 @@ const fetchFundInfo = async () => {
 
 export default function FundTable() {
   const [fundList, setFundList] = useState<FundResult[]>([]);
+  const { searchQuery } = fundCrudStore();
+  const [filteredFunds, setFilteredFunds] = useState<FundResult[]>([])
   const router = useRouter();
+  useEffect(() => {
+    // Filter fundList based on searchQuery when searchQuery changes
+    const filtered: FundResult[] = fundList.filter((fund) => fund.fundName.includes(searchQuery));
+    setFilteredFunds(filtered);
+  }, [searchQuery, fundList]); 
+
   const { data, isLoading, error }: UseQueryResult<FundInfo, Error> = useQuery(
     "FundInfo",
     fetchFundInfo
@@ -58,7 +66,10 @@ export default function FundTable() {
               이름
             </th>
             <th scope="col" className="px-6 py-3">
-              기간
+              시작일자
+            </th>
+            <th scope="col" className="px-6 py-3">
+              종료일자
             </th>
             <th scope="col" className="px-6 py-3">
               자금
@@ -72,7 +83,7 @@ export default function FundTable() {
           </tr>
         </thead>
         <tbody>
-          {fundList.map((fund: FundResult, i: number) => {
+          {filteredFunds.map((fund: FundResult, i: number) => {
             return (
               <tr
                 key={i}
@@ -87,7 +98,8 @@ export default function FundTable() {
                 >
                   {fund.fundName}
                 </th>
-                <td className="px-6 py-4">몰라용</td>
+                <td className="px-6 py-4">{fund.startDate}</td>
+                <td className="px-6 py-4">{fund.endDate}</td>
                 <td className="px-6 py-4">
                   {fund.fundAsset.toLocaleString()}원
                 </td>
