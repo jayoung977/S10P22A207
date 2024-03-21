@@ -3,7 +3,7 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import UserInfo from "./ProfileInfo";
 import Navbar from "@/app/Navbar";
-import { BackgroundBoxesDemo } from "@/app/Background-Boxes";
+import { BackgroundBoxesDemo } from "@/app/LandingPage";
 import PeacefulBgm from "@/public/src/components/bgm/PeacefulBgm";
 import profileStore from "@/public/src/stores/profile/profileStore";
 import { useQuery, QueryClient, QueryClientProvider } from "react-query";
