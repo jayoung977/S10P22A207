@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 public class SingleGame {
-    private String id;
+    private Long singleGameLogId;
     private HashMap<Long, Integer> stocks;
     private List<Long> firstDayChartList;
     private int[] stockAmount;
@@ -24,9 +24,9 @@ public class SingleGame {
     private long[] stockPurchaseAmount; // 각 종목별 매수 금액 총량
 
     @Builder
-    public SingleGame(String id, HashMap<Long, Integer> stocks, List<Long> firstDayChartList, int[] stockAmount, int[] averagePrice, long cash, long initial, long totalPurchaseAmount,
+    public SingleGame(Long singleGameLogId, HashMap<Long, Integer> stocks, List<Long> firstDayChartList, int[] stockAmount, int[] averagePrice, long cash, long initial, long totalPurchaseAmount,
         int[] profits, long[] stockPurchaseAmount) {
-        this.id = id;
+        this.singleGameLogId = singleGameLogId;
         this.stocks = stocks;
         this.firstDayChartList = firstDayChartList;
         this.stockAmount = stockAmount;
@@ -37,6 +37,8 @@ public class SingleGame {
         this.profits = profits;
         this.stockPurchaseAmount = stockPurchaseAmount;
     }
+
+
 
 
 
