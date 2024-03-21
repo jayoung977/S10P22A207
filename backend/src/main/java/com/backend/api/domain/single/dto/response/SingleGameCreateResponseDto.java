@@ -7,8 +7,11 @@ import java.util.List;
 public record SingleGameCreateResponseDto(
     @Schema(description = "게임 로그 Id")
     Long gameLogId,
+    @Schema(description = "레디스 게임 Id")
+    Long redisGameIdx,
     @Schema(description = "게임 가능 횟수")
     Integer singleGameChance,
+
     @Schema(description = "종목별 차트(350개)를 담아준 리스트")
     List<StockChartDataDto> stockChartDataList
 ) {

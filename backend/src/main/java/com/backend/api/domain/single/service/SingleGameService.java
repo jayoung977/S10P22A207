@@ -25,7 +25,7 @@ import com.backend.api.domain.stock.repository.StockChartRepository;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.common.type.TradeType;
 import com.backend.api.global.exception.BaseExceptionHandler;
-import jakarta.servlet.http.HttpSession;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -44,6 +43,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,16 +58,19 @@ public class SingleGameService {
 	private final SingleTradeRepository singleTradeRepository;
 	private final StockChartRepository stockChartRepository;
 	private final MemberRepository memberRepository;
-	private final HttpSession httpSession;
+	private final RedisTemplate<String, Object> redisTemplate;
+	private final ObjectMapper objectMapper;
+
 	private HashMap<Long, Integer> stocks;
-	private List<StockChart> list;
+	private List<Long> list;
 	private static final int MAX_CHANCES = 5;
 	private static final long RECHARGE_TIME = 10 * 60 * 1000; // 10분
-	private final Map<Long, ScheduledFuture<?>> timers = new ConcurrentHashMap<>();
+	private final Map<Long, ScheduledFuture<?>> timers = new HashMap<>();
 	public SingleGameCreateResponseDto createGame(Long memberId) {
 		// 도전 기회가 있는지 확인한다.
 		Member me = memberRepository.findById(memberId)
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+
 		if (me.getSingleGameChance() <= 0) {
 			throw new BaseExceptionHandler(ErrorCode.NOT_ENOUGH_CHANCE);
 		}
@@ -85,8 +88,6 @@ public class SingleGameService {
 
 		// 10개의 Stock을 정한다. <StockId, idx>
 		stocks = new HashMap<>(); // key : stockId, value : idx
-
-		// 각
 		list = new ArrayList<>();
 
 		// 10개 안채워지면 반복해야함.
@@ -107,34 +108,45 @@ public class SingleGameService {
                 StockChart stockChart350 = stockChartRepository.findById(stockChart.getId() + 349)
                     .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
 
-                if (!Objects.equals(stockChart.getStock().getId(), stockChart350.getStock().getId())) {
-                    continue;
-                }
+				if (!Objects.equals(stockChart.getStock().getId(), stockChart350.getStock().getId())) {
+					System.out.println("350일 뒤랑 달라요");
+					randomDateTime = randomDateTime.minusDays(50);
+					break;
+				}
 
 				// 350일간의 차트가 있으면 추가.
                 stocks.put(stockChart.getStock().getId(), stocks.size());
-				list.add(stockChart);
+				list.add(stockChart.getId());
             }
 		}
 
-		httpSession.setAttribute("singleGame", SingleGame.builder()
+		SingleGame singleGame = SingleGame.builder()
 			.id(UUID.randomUUID().toString())
 			.stocks(stocks)
+			.firstDayChartList(list)
 			.stockAmount(new int[10])
 			.averagePrice(new int[10])
 			.cash(me.getAsset())
 			.initial(me.getAsset())
 			.totalPurchaseAmount(0L)
 			.profits(new int[10])
-			.stockPurchaseAmount(new long[10]).build()
-		);
+			.stockPurchaseAmount(new long[10]).build();
+
+		Long nextId = redisTemplate.opsForValue().increment("nextId", 1); // Redis에서 Atomic한 증가
+		if (nextId == null || nextId == 1) { // 키가 존재하지 않거나 초기값이 1인 경우
+			nextId = 1L; // 초기값 설정
+			redisTemplate.opsForValue().set("nextId", nextId); // Redis에 첫 번째 id 설정
+		}
+		String key = "singleGame:" + memberId + ":" + nextId; // Redis에 저장할 키
+		redisTemplate.opsForValue().set(key, singleGame);
+
 
 		List<StockChartDataDto> stockChartDataList = new ArrayList<>();
 
 		Long gameLogId = null;
 		SingleGameLog singleGameLog
 			= SingleGameLog.builder()
-			.member(memberRepository.findById(memberId)	.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)))
+			.member(memberRepository.findById(memberId).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)))
 			.startDate(randomDateTime)
 			.initialAsset(me.getAsset())
 			.finalProfit(0L)
@@ -144,7 +156,9 @@ public class SingleGameService {
 
 		int cnt = 0;
 		for(long stockId : stocks.keySet()){
-			StockChart stockChart = list.get(cnt++);
+			StockChart stockChart = stockChartRepository.findById(list.get(cnt++)).orElseThrow(
+				() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR)
+			);
 
 			// 350일치 차트
 			List<StockChart> stockChartList = stockChartRepository.findByIdBetween(stockChart.getId(), stockChart.getId() + 349);
@@ -176,7 +190,7 @@ public class SingleGameService {
 			stockChartDataList.add(stockChartDataDto);
 		}
 
-		return new SingleGameCreateResponseDto(gameLogId, me.getSingleGameChance(), stockChartDataList);
+		return new SingleGameCreateResponseDto(gameLogId, nextId, me.getSingleGameChance(), stockChartDataList);
 	}
 
 	public SingleTradeResponseDto sell(SingleTradeRequestDto dto, Long memberId) {
@@ -184,11 +198,12 @@ public class SingleGameService {
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
 
 		// 세션에 저장된 게임을 가져온다.
-		SingleGame currentGame = this.getGame();
+		SingleGame currentGame = this.getGame(memberId, dto.redisGameIdx());
 		Integer stockIdx = currentGame.getStocks().get(dto.stockId()); // Map으로 저장한 stockId에 대한 index값을 가져온다.
 
 		// 차트에서 오늘 날짜의 종가를 가져온다.
-		StockChart firstDayChart = list.get(stockIdx);
+		StockChart firstDayChart = stockChartRepository.findById(currentGame.getFirstDayChartList().get(stockIdx))
+			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
 		StockChart todayChart = stockChartRepository.findById(firstDayChart.getId() + dto.day()).orElseThrow(
 			() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
 		);;
@@ -243,7 +258,7 @@ public class SingleGameService {
 				100.0 * (todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx])
 					/ currentGame.getAveragePrice()[stockIdx]// 수익률
 			);
-
+		redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.redisGameIdx(), currentGame);
 		// 보유현금, 보유자산 변동, 매매내역
 		return new SingleTradeResponseDto(
 			currentGame.getCash(),
@@ -264,11 +279,11 @@ public class SingleGameService {
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
 
 		// 쓰레드에 저장된 게임 가져옴.
-		SingleGame currentGame = this.getGame();
-
-		Integer stockIdx = stocks.get(dto.stockId());
+		SingleGame currentGame = this.getGame(memberId, dto.redisGameIdx());
+		Integer stockIdx = currentGame.getStocks().get(dto.stockId());
 		// 차트에서 첫 날짜, 오늘 날짜의 종가를 가져온다.
-		StockChart firstDayChart = list.get(stockIdx);
+		StockChart firstDayChart = stockChartRepository.findById(currentGame.getFirstDayChartList().get(stockIdx))
+			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
 		StockChart todayChart = stockChartRepository.findById(firstDayChart.getId() + dto.day()).orElseThrow(
 			() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
 		);
@@ -329,7 +344,7 @@ public class SingleGameService {
 				100.0 * (todayChart.getEndPrice() - averagePrice)
 					/ averagePrice// 수익률
 			);
-
+		redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.redisGameIdx(), currentGame);
 		// 보유현금, 보유자산 변동, 매매내역
 		return new SingleTradeResponseDto(
 			currentGame.getCash(),
@@ -344,17 +359,17 @@ public class SingleGameService {
 	}
 
 	public NextDayResponseDto getTomorrow(NextDayRequestDto dto, Long memberId) {
-		SingleGame currentGame = this.getGame();
+		SingleGame currentGame = this.getGame(memberId, dto.redisGameIdx());
 		// 종목별 "오늘의 종가, 등락정도, 보유수량, 평가손익, 손익률"를 담아서 리턴. responseDto에 넣어야겠다.
 		List<NextDayInfoResponseDto> stockSummaries = new ArrayList<>();
 
 		long totalAsset = currentGame.getCash();
 
-		for (StockChart startDateChart : list) {
-			StockChart todayChart = stockChartRepository.findById(startDateChart.getId() + dto.day()).orElseThrow();
-			StockChart yesterdayChart = stockChartRepository.findById(startDateChart.getId() + dto.day() - 1).orElseThrow();
+		for (Long firstDayStockChartId : list) {
+			StockChart todayChart = stockChartRepository.findById(firstDayStockChartId + dto.day()).orElseThrow();
+			StockChart yesterdayChart = stockChartRepository.findById(firstDayStockChartId + dto.day() - 1).orElseThrow();
 
-			Long startDateChartStockId = startDateChart.getStock().getId();
+			Long startDateChartStockId = todayChart.getStock().getId();
 			// 종목별 정보 담아주기
 			Integer stockIdx = currentGame.getStocks().get(startDateChartStockId);
 			int amount = currentGame.getStockAmount()[stockIdx];
@@ -363,7 +378,7 @@ public class SingleGameService {
 
 			stockSummaries.add(
 				new NextDayInfoResponseDto(
-					startDateChart.getStock().getId(), // 종목 Id
+					todayChart.getStock().getId(), // 종목 Id
 					todayChart.getEndPrice(), // 오늘의 종가
 					todayChart.getEndPrice() - yesterdayChart.getEndPrice(), // 등락정도
 					currentGame.getStockAmount()[stockIdx], // 보유수량
@@ -378,10 +393,10 @@ public class SingleGameService {
 			if (dto.day() == 50) {
 				// SingleGameStock 에 저장 - 종목별
 				SingleGameStock singleGameStock = singleGameStockRepository.findBySingleGameLog_IdAndStock_Id(
-						dto.gameLogId(), startDateChart.getStock().getId())
+						dto.gameLogId(), todayChart.getStock().getId())
 					.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
 
-				Long stockId = startDateChart.getStock().getId();
+				Long stockId = todayChart.getStock().getId();
 				Integer index = currentGame.getStocks().get(stockId);
 
 				// 현재 저장된것 + 아직 매도 안한거
@@ -402,7 +417,9 @@ public class SingleGameService {
 			LocalDateTime startDate = null, endDate = null;
 			List<StockInfoDto> stockInfoDtoList = new ArrayList<>();
 			for (int i = 0; i < list.size(); i++) {
-				StockChart startStockChart = list.get(i);
+				StockChart startStockChart = stockChartRepository.findById(list.get(i)).orElseThrow(
+					() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR)
+				);
 				if (i == 0) {
 					// 한번만 실행 -> 날짜 받아오기
 					startDate = startStockChart.getDate();
@@ -455,10 +472,16 @@ public class SingleGameService {
 		return LocalDateTime.of(randomLocalDate, randomLocalTime);
 	}
 
-	public SingleGame getGame() {
-		// 현재 사용자의 세션에서 게임 상태를 가져옴
-		return (SingleGame)httpSession.getAttribute("singleGame");
+	public SingleGame getGame(long memberId, long gameIdx) {
+		try {
+			String jsonStr = objectMapper.writeValueAsString(redisTemplate.opsForValue().get("singleGame:" + memberId + ":" + gameIdx));
+			return objectMapper.readValue(jsonStr, SingleGame.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
+
 
 	public void startRechargeTimer(Member member) {
 		if (!timers.containsKey(member.getId())) {
