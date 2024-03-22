@@ -10,13 +10,13 @@ FROM gradle:8.5-jdk AS build
 COPY src ./src
 COPY build.gradle settings.gradle  ./
 
-RUN gradle clean build
+RUN gradle clean build -x test
 
 FROM amazoncorretto:17 AS run
 
 RUN adduser --system --group app-user
 
-COPY --from=build --chown=app-user:app-user /build/libs/app-*.jar app.jar
+COPY --from=build --chown=app-user:app-user /build/libs/backend-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 USER app-user
