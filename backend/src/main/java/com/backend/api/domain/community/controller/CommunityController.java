@@ -25,7 +25,6 @@ import java.util.List;
 public class CommunityController {
     private final CommunityService communityService;
 
-
     @Operation(summary = "커뮤니티 글 등록")
     @PostMapping("/write")
     public ResponseEntity<BaseResponse<String>> createCommunity(Long loginUserId,
