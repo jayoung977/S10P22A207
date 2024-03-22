@@ -8,7 +8,9 @@ import com.backend.api.domain.fund.entity.Fund;
 import com.backend.api.domain.fund.entity.type.FundStatus;
 
 public interface FundRepository extends JpaRepository<Fund, Long> {
-	List<Fund> findALLByStatus(FundStatus status);
-	List<Fund> findAllByManager_Id(Long managerId);
-	List<Fund> findAllByFundNameContaining(String fundName);
+	List<Fund> findALLByStatusOrderByIdDesc(FundStatus status);
+	List<Fund> findAllByManager_IdOrderByIdDesc(Long managerId);
+	List<Fund> findAllByFundNameContainingOrderByIdDesc(String fundName);
+
+	boolean existsByFundName(String fundName);
 }

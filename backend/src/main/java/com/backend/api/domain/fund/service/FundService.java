@@ -1,6 +1,7 @@
 package com.backend.api.domain.fund.service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -41,17 +42,17 @@ public class FundService {
 	}
 
 	public List<FundRes> getRunningFunds() {
-		List<Fund> fundList = fundRepository.findALLByStatus(FundStatus.RUNNING);
+		List<Fund> fundList = fundRepository.findALLByStatusOrderByIdDesc(FundStatus.RUNNING);
 		return getFundRes(fundList);
 	}
 
 	public List<FundRes> getRecruitingFunds() {
-		List<Fund> fundList = fundRepository.findALLByStatus(FundStatus.RECRUITING);
+		List<Fund> fundList = fundRepository.findALLByStatusOrderByIdDesc(FundStatus.RECRUITING);
 		return getFundRes(fundList);
 	}
 
 	public List<FundRes> getManagingFunds(Long managerId) {
-		List<Fund> fundList = fundRepository.findAllByManager_Id(managerId);
+		List<Fund> fundList = fundRepository.findAllByManager_IdOrderByIdDesc(managerId);
 		return getFundRes(fundList);
 	}
 
@@ -103,6 +104,7 @@ public class FundService {
 		List<FundRes> fundResList = fundMemberRepository.findAllByMember_Id(loginUserId).stream()
 			.filter(fundMember -> fundMember.getFund().getStatus() != FundStatus.CLOSED)
 			.map(FundMember::getFund)
+			.sorted(Comparator.comparing(Fund::getId).reversed())
 			.map(fund -> {
 				LocalDate startDate = fund.getStartDate() != null ? LocalDate.from(fund.getStartDate()) : null;
 				LocalDate endDate = fund.getStartDate() != null ? LocalDate.from(fund.getStartDate().plusDays(fund.getPeriod())) : null;
@@ -135,6 +137,7 @@ public class FundService {
 		List<FundRes> fundResList = fundMemberRepository.findAllByMember_Id(loginUserId).stream()
 			.filter(fundMember -> fundMember.getFund().getStatus() == FundStatus.CLOSED)
 			.map(FundMember::getFund)
+			.sorted(Comparator.comparing(Fund::getId).reversed())
 			.map(fund -> {
 				LocalDate startDate = fund.getStartDate() != null ? LocalDate.from(fund.getStartDate()) : null;
 				LocalDate endDate = fund.getStartDate() != null ? LocalDate.from(fund.getStartDate().plusDays(fund.getPeriod())) : null;
@@ -191,7 +194,7 @@ public class FundService {
 
 
 	public List<FundRes> searchFund(String fundName) {
-		List<Fund> fundList = fundRepository.findAllByFundNameContaining(fundName);
+		List<Fund> fundList = fundRepository.findAllByFundNameContainingOrderByIdDesc(fundName);
 		return getFundRes(fundList);
 	}
 
@@ -237,4 +240,7 @@ public class FundService {
 		return fund.getId();
 	}
 
+	public boolean existsFundname(String fundName) {
+		return fundRepository.existsByFundName(fundName);
+	}
 }
