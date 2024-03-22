@@ -148,7 +148,9 @@ public class SingleGameService {
 			List<AssetListDto> list = new ArrayList<>();
 			for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
 				AssetListDto dto = new AssetListDto(
-					currentGame.getFirstDayChartList().get(i),
+					stockChartRepository.findById(currentGame.getFirstDayChartList().get(i)).orElseThrow(
+						() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR)
+					).getStock().getId(),
 					currentGame.getProfits()[i],
 					currentGame.getAveragePrice()[i],
 					100.0 * currentGame.getProfits()[i] / currentGame.getStockPurchaseAmount()[i]
@@ -242,8 +244,8 @@ public class SingleGameService {
 		String key = "singleGame:" + memberId + ":" + nextId; // Redis에 저장할 키
 		redisTemplate.opsForValue().set(key, singleGame);
 
-		List<StockChartDataDto> stockChartDataList = new ArrayList<>();
 
+		List<StockChartDataDto> stockChartDataList = new ArrayList<>();
 
 
 		int cnt = 0;
@@ -400,10 +402,10 @@ public class SingleGameService {
 			+ dto.amount() * todayChart.getEndPrice()) / (currentGame.getStockAmount()[stockIdx] + dto.amount());
 		// 샀으니 game 바꿔주기
 		currentGame.getStockAmount()[stockIdx] += dto.amount();
-		currentGame.updateCash(currentGame.getCash() - (long) (dto.amount() * todayChart.getEndPrice() * 1.0015));
+		currentGame.updateCash(currentGame.getCash() - (long) (dto.amount() * todayChart.getEndPrice() * 1.00015));
 		currentGame.getAveragePrice()[stockIdx] = averagePrice;
 		currentGame.getStockPurchaseAmount()[stockIdx] += (long)dto.amount() * todayChart.getEndPrice();
-		currentGame.getProfits()[stockIdx] -= (int) (dto.amount() * todayChart.getEndPrice() * 1.0015);
+		currentGame.getProfits()[stockIdx] -= (int) (dto.amount() * todayChart.getEndPrice() * 0.00015);
 
 		// 총 roi 계산
 		long totalAsset = currentGame.getCash();
@@ -439,7 +441,7 @@ public class SingleGameService {
 			new SingleTradeListDto(dto.day(),
 				singleTrade.getTradeType(),
 				singleTrade.getAmount(),
-				singleTrade.getAmount(),
+				singleTrade.getPrice(),
 				singleTrade.getProfit())
 		);
 
