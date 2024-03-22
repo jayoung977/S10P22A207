@@ -2,7 +2,6 @@ package com.backend.api.domain.fund.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -77,8 +76,18 @@ public class FundController {
 
 	@Operation(summary = "내가 운영중인 펀드 목록 조회")
 	@GetMapping("/managing-list")
-	public ResponseEntity<BaseResponse<List<FundRes>>> getManagingFunds(@AuthenticationPrincipal CustomUserDetails userDetails) {
+	public ResponseEntity<BaseResponse<List<FundRes>>> getMyManagingFunds(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		List<FundRes> fundResList = fundService.getManagingFunds(userDetails.getId());
+		return BaseResponse.success(
+			SuccessCode.SELECT_SUCCESS,
+			fundResList
+		);
+	}
+
+	@Operation(summary = "다른사람 운영중인 펀드 목록 조회")
+	@GetMapping("/other-managing-list")
+	public ResponseEntity<BaseResponse<List<FundRes>>> getManagingFunds(@RequestParam Long managerId) {
+		List<FundRes> fundResList = fundService.getManagingFunds(managerId);
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
 			fundResList
@@ -87,8 +96,18 @@ public class FundController {
 
 	@Operation(summary = "내가 가입한 펀드 목록 조회")
 	@GetMapping("/investing-list")
-	public ResponseEntity<BaseResponse<List<FundRes>>> getInvestingFunds(@AuthenticationPrincipal CustomUserDetails userDetails) {
+	public ResponseEntity<BaseResponse<List<FundRes>>> getMyInvestingFunds(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		List<FundRes> fundResList = fundService.getInvestingFunds(userDetails.getId());
+		return BaseResponse.success(
+			SuccessCode.SELECT_SUCCESS,
+			fundResList
+		);
+	}
+
+	@Operation(summary = "다른사람 가입한 펀드 목록 조회")
+	@GetMapping("/other-investing-list")
+	public ResponseEntity<BaseResponse<List<FundRes>>> getInvestingFunds(@RequestParam Long memberId){
+		List<FundRes> fundResList = fundService.getInvestingFunds(memberId);
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
 			fundResList
@@ -97,8 +116,18 @@ public class FundController {
 
 	@Operation(summary = "내가 가입한 펀드 중 종료된 펀드 목록 조회")
 	@GetMapping("/investing-closed-list")
-	public ResponseEntity<BaseResponse<List<FundRes>>> getClosedInvestingFunds(@AuthenticationPrincipal CustomUserDetails userDetails) {
+	public ResponseEntity<BaseResponse<List<FundRes>>> getMyClosedInvestingFunds(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		List<FundRes> fundResList = fundService.getClosedInvestingFunds(userDetails.getId());
+		return BaseResponse.success(
+			SuccessCode.SELECT_SUCCESS,
+			fundResList
+		);
+	}
+
+	@Operation(summary = "다른사람 가입한 펀드 중 종료된 펀드 목록 조회")
+	@GetMapping("/other-investing-closed-list")
+	public ResponseEntity<BaseResponse<List<FundRes>>> getClosedInvestingFunds(@RequestParam Long memberId) {
+		List<FundRes> fundResList = fundService.getClosedInvestingFunds(memberId);
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
 			fundResList
@@ -169,5 +198,18 @@ public class FundController {
 		);
 	}
 
-
+	@Operation(
+		summary = "펀드 이름 중복 체크",
+		description = "펀드 이름이 중복될 때 true반환, " +
+			"펀드 이름 중복되지 않을 때 false 반환"
+	)
+	@GetMapping("/fundname/check")
+	public ResponseEntity<BaseResponse<Boolean>> checkFundNameDuplicate(
+		@Valid @NotNull @RequestParam(name = "fundName") String fundName) {
+		var result = fundService.existsFundname(fundName);
+		return BaseResponse.success(
+			SuccessCode.CHECK_SUCCESS,
+			result
+		);
+	}
 }
