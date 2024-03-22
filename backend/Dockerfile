@@ -15,8 +15,9 @@ RUN gradle clean build -x test
 FROM amazoncorretto:17 AS run
 
 
-RUN addgroup --system --gid 1001 app-user
-RUN adduser --system --uid 1001 app-user
+
+RUN groupadd -r -g 1001 app-user
+RUN useradd -r -g app-user -s /sbin/nologin app-user
 COPY --from=build --chown=app-user:app-user /build/libs/backend-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
