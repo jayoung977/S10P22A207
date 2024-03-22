@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useRef, useEffect, useState } from "react";
 import bgm from "../../../../static/sounds/PeacefulBgm.mp3";
 
