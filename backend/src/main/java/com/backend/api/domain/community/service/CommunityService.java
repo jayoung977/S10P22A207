@@ -41,7 +41,7 @@ public class CommunityService {
 
 
     public List<CommunityRes> getAllCommunities() {
-        return communityRepository.findAll().stream()
+        return communityRepository.findAllByOrderByIdDesc().stream()
                 .filter(community -> !community.getIsDelete())
                 .map(community -> new CommunityRes(
                         community.getId(),
@@ -54,7 +54,7 @@ public class CommunityService {
 
 
     public List<CommunityRes> getMyCommunities(Long loginUserId) {
-        return communityRepository.findAllByMember_Id(loginUserId).stream()
+        return communityRepository.findAllByMember_IdOrderByIdDesc(loginUserId).stream()
                 .filter(community -> !community.getIsDelete())
                 .map(community -> new CommunityRes(
                         community.getId(),

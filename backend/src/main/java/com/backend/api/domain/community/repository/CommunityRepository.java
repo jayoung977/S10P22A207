@@ -8,8 +8,9 @@ import java.util.Optional;
 
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
-    List<Community> findAllByMember_Id(Long loginUserId);
-
-
     Optional<Community> findByIdAndIsDelete(Long communityId, boolean b);
+
+    List<Community> findAllByOrderByIdDesc();
+
+    List<Community> findAllByMember_IdOrderByIdDesc(Long loginUserId);
 }
