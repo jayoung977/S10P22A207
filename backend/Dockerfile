@@ -11,7 +11,7 @@ COPY build.gradle settings.gradle  ./
 RUN gradle clean build -x test
 
 FROM amazoncorretto:17 AS run
-COPY --from=build /build/libs/*.jar app.jar
+COPY --from=build /home/gradle/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
