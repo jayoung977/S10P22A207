@@ -16,11 +16,9 @@ FROM amazoncorretto:17 AS run
 
 
 
-RUN groupadd -r -g 1001 app-user
-RUN useradd -r -g app-user -s /sbin/nologin app-user
-COPY --from=build --chown=app-user:app-user /build/libs/backend-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /build/libs/backend-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
-USER app-user
+
 
 CMD ["java", "-jar", "app.jar"]
