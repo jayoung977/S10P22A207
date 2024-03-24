@@ -1,7 +1,12 @@
-'use client'
+"use client";
 
 import React, { useRef, useEffect, useState } from "react";
-import bgm from "../../../../static/sounds/PeacefulBgm.mp3";
+import bgm from "../../../../static/sounds/purple.mp3";
+// ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+// Prod. 브금공방
+// Back in my days -   
+// https://www.youtube.com/watch?v=x-5DfH0yxLw
+// ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 
 export default function PeacefulBgm() {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -26,7 +31,11 @@ export default function PeacefulBgm() {
         <source src={bgm} type="audio/mpeg" />
       </audio>
       {/* 음소거 버튼 추가 */}
-      <button className="fixed right-4 top-4 z-10" onClick={toggleMute}>
+      <button
+        className="fixed right-4 top-4"
+        onClick={toggleMute}
+        style={{ zIndex: "9999" }}
+      >
         {!isMuted ? (
           <svg
             className="w-6 h-6 text-gray-800 dark:text-white"
