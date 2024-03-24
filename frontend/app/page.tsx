@@ -2,9 +2,11 @@
 import KakaoLogin from "./KakaoLogin";
 import { LandingPage } from "./LandingPage";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 export default function Home() {
   const [progress, setProgress] = useState(0);
-
+  const router = useRouter();
   const updateProgressBar = () => {
     // 전체 문서의 높이
     const totalHeight =
@@ -20,11 +22,18 @@ export default function Home() {
     window.addEventListener("scroll", updateProgressBar);
     return () => window.removeEventListener("scroll", updateProgressBar);
   }, []);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("isLogin") == "true") {
+      router.push("/multi");
+    }
+  }, []);
+
   return (
     <div className="bg-background-1">
       <div
         id="progressBar"
-        className="fixed top-0 left-0 h-1 bg-gradient-to-r animate-[rainbow_5s_linear_infinite] z-10"
+        className="fixed top-0 left-0 h-1 bg-small-1 z-10"
         style={{ width: `${progress}%` }}
       ></div>
       <LandingPage></LandingPage>

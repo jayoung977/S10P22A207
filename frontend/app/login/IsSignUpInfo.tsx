@@ -1,6 +1,7 @@
 "use client";
 import axios from "axios";
 import { useQuery, UseQueryResult } from "react-query";
+import { useRouter } from "next/navigation";
 interface IsSignUpInfo {
   result: [string];
 }
@@ -38,11 +39,12 @@ export default function IsSignUpInfo() {
     ? data
     : { result: null };
 
+  const router = useRouter();
+
   if (result && result[0] === "USER") {
-    window.location.href = `/multi`;
-    // router.push("/multi");
+    router.push("/multi");
   } else {
-    window.location.href = "login/signup";
-    // router.push("login/signup");
+    router.push("login/signup");
   }
+  return <div className="rainbow"></div>;
 }

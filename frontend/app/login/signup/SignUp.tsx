@@ -2,8 +2,9 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import axios, { AxiosResponse } from "axios";
-import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
+
 interface RequestType {
   nickname: string;
   birth: string;
@@ -14,14 +15,14 @@ export default function SignUp() {
   const [gender, setGender] = useState("MAN");
   const [nickname, setNickname] = useState("");
   const [birth, setBirth] = useState("2024");
-  const [isOkay, setIsOkay] = useState(false);
+  const [isOkay, setIsOkay] = useState(true);
   const data: number[] = [];
+  const router = useRouter();
 
   for (let i = 1900; i <= 2024; i++) {
     data.push(i);
   }
   data.reverse();
-
   const signup = async (request: RequestType): Promise<AxiosResponse<any>> => {
     const response = await axios({
       method: "put",
@@ -45,7 +46,7 @@ export default function SignUp() {
   const mutation = useMutation<AxiosResponse<any>, Error, RequestType>(signup, {
     onSuccess: (response) => {
       queryClient.invalidateQueries("signups");
-      window.location.href = "/multi";
+      router.push("/multi");
     },
     onError: (error: any) => {
       console.error(
@@ -61,7 +62,10 @@ export default function SignUp() {
     if (!isOkay) {
       mutation.mutate(request);
     } else {
-      Swal.fire("이미있는 아이디입니다.");
+      Swal.fire({
+        icon: "error",
+        text: "입력하신 닉네임은 이미 사용 중입니다.",
+      });
     }
   };
 
@@ -102,10 +106,10 @@ export default function SignUp() {
             }}
           />
         </div>
-        {isOkay ? (
-          <div className="text-small-3">불가능한 아이디입니다.</div>
+        {isOkay || nickname.length == 0 ? (
+          <div className="text-small-3">불가능한 닉네임입니다.</div>
         ) : (
-          <div className="text-small-1">가능한 아이디입니다.</div>
+          <div className="text-small-1">가능한 닉네임입니다.</div>
         )}
         <div className="flex justify-between">
           <div className="flex items-center mb-4">

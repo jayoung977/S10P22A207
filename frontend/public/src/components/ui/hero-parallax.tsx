@@ -9,6 +9,7 @@ import {
 } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import kakaoLoginImg from "../../assets/images/kakao.svg";
 
 export const HeroParallax = ({
   products,
@@ -57,7 +58,7 @@ export const HeroParallax = ({
   return (
     <div
       ref={ref}
-      className="h-[300vh] py-40 overflow-hidden  antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]"
+      className="h-[250vh] py-40 overflow-hidden  antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]"
     >
       <Header />
       <motion.div
@@ -102,16 +103,33 @@ export const HeroParallax = ({
 };
 
 export const Header = () => {
+  const loginHandler = () => {
+    if (typeof window !== "undefined") {
+      const API_URL = "https://j10a207.p.ssafy.io";
+      const KAKAO_AUTH_URL = `${API_URL}/oauth2/authorization/kakao`;
+      window.location.href = KAKAO_AUTH_URL;
+    }
+  };
   return (
-    <div className="max-w-7xl relative mx-auto py-20 md:py-40 px-4 w-full  left-0 top-0">
-      <h1 className="text-2xl md:text-7xl font-bold bg-gradient-to-r animate-[rainbow_5s_linear_infinite] bg-clip-text text-transparent">
-        Big Data Stock Trading Game
+    <div className="max-w-7xl relative mx-auto py-20 md:py-40 px-4 w-full  left-0 top-0 z-20">
+      <h1 className="text-2xl md:text-7xl font-bold text-small-1">
+        지금이니 : 빅 데이터 분산 프로젝트
       </h1>
       <p className="max-w-2xl text-base md:text-2xl mt-8 dark:text-neutral-200">
-        이 게임은 과거 시장 데이터로 당신의 투자 전략을 테스트하며, 역사 속
+        이 게임은 과거 주식 시장 데이터로 당신의 투자 전략을 테스트하며, 역사 속
         차트의 파도를 타는 독특한 경험을 제공합니다. 시간을 초월한 투자 여행으로
         당신을 초대합니다.
       </p>
+      <button
+        onClick={() => {
+          loginHandler();
+        }}
+        type="button"
+        className="text-black bg-[#FEE500]/70 hover:bg-[#FEE500] focus:ring-4 focus:outline-none focus:ring-[#FEE500]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#FEE500]/55 me-2 mb-2 opacity-85 mt-4"
+      >
+        <Image className="mr-2" src={kakaoLoginImg} alt="" width={20}></Image>
+        카카오톡으로 시작하기
+      </button>
     </div>
   );
 };

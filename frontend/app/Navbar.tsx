@@ -43,7 +43,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="row-span-1 opacity-90 bg-background-1 border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+    <nav className="row-span-1 opacity-90 bg-background-1 border-gray-200 dark:bg-gray-900 dark:border-gray-700 z-50">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image
@@ -87,7 +87,7 @@ export default function Navbar() {
               </button>
               <div
                 id="dropdownNavbar"
-                className={`absolute font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 ${
+                className={`fixed font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 ${
                   dropdownOpen ? "" : "hidden"
                 }`}
               >

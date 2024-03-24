@@ -4,21 +4,64 @@ import quizStore from "@/public/src/stores/quiz/quizStore";
 import Router from "next/router";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import axios from "axios";
+import { useQuery, UseQueryResult } from "react-query";
+
+interface resultType {
+  id: number;
+  title: string;
+  selections: string[];
+  answer: number;
+}
+
+interface QuizInfo {
+  result: resultType[];
+}
 
 export default function QuizProblem() {
   const router = useRouter();
-  const { page, setPage, data, setSuccess, success } = quizStore();
+
+  const { page, setPage, setSuccess, success } = quizStore();
   useEffect(() => {
     setPage(0);
     setSuccess(0);
   }, []);
 
+  const fetchQuizData = async () => {
+    const response = await axios({
+      method: "get",
+      url: "https://j10a207.p.ssafy.io/api/quiz",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+    });
+    console.log(response.data.result);
+    return response.data;
+  };
+
+  const { data, isLoading, error }: UseQueryResult<QuizInfo, Error> = useQuery(
+    "quizInfo",
+    fetchQuizData
+  );
+
+  if (isLoading) {
+    return <div className="rainbow"></div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  const { result }: { result: resultType[] | null } = data
+    ? data
+    : { result: null };
+
   function handleClickProblem(num: number): any {
     if (page < 4) {
-      if (num == data[page].answer) {
+      if (result != null && num == result[page].answer) {
         Swal.fire({
           title: "정답입니다!",
-          text: `${data[page].selections[num]}(은/는) 정답입니다.`,
+          text: `${result[page].selections[num-1]}(은/는) 정답입니다.`,
           icon: "success",
           confirmButtonText: "확인",
         }).then((result) => {
@@ -30,7 +73,9 @@ export default function QuizProblem() {
       } else {
         Swal.fire({
           title: "오답입니다!",
-          text: `${data[page].selections[num]}(은/는) 정답이 아닙니다.`,
+          text: `${
+            result != null && result[page].selections[num-1]
+          }(은/는) 정답이 아닙니다.`,
           icon: "error",
           confirmButtonText: "확인",
         }).then((result) => {
@@ -40,7 +85,7 @@ export default function QuizProblem() {
         });
       }
     } else {
-      if (num == data[page].answer) {
+      if (result != null && num == result[page].answer) {
         setSuccess(success + 1);
         if (success >= 2) {
           Swal.fire({
@@ -97,24 +142,16 @@ export default function QuizProblem() {
       <div className="row-span-12 grid grid-cols-12 ">
         <div className="col-start-4 col-end-10 grid grid-rows-12 bg-white shadow">
           <div className="row-start-1 row-end-3 flex items-center m-2 justify-center text-xl p-4 text-center">
-            Q. {data[page].title}
+            {page+1}. {result && result[page].title}
           </div>
           <div className="row-start-3 row-end-12 grid grid-row-12 items-center m-2 ">
-            <div
-              className="row-span-3 hover:cursor-pointer flex justify-center hover:scale-105 ease-in-out duration-500 text-xl"
-              onClick={() => {
-                handleClickProblem(0);
-              }}
-            >
-              1. {data[page].selections[0]}
-            </div>
             <div
               className="row-span-3 hover:cursor-pointer flex justify-center hover:scale-105 ease-in-out duration-500 text-xl"
               onClick={() => {
                 handleClickProblem(1);
               }}
             >
-              2. {data[page].selections[1]}
+              1. {result != null && result[page].selections[0]}
             </div>
             <div
               className="row-span-3 hover:cursor-pointer flex justify-center hover:scale-105 ease-in-out duration-500 text-xl"
@@ -122,7 +159,7 @@ export default function QuizProblem() {
                 handleClickProblem(2);
               }}
             >
-              3. {data[page].selections[2]}
+              2. {result != null && result[page].selections[1]}
             </div>
             <div
               className="row-span-3 hover:cursor-pointer flex justify-center hover:scale-105 ease-in-out duration-500 text-xl"
@@ -130,7 +167,15 @@ export default function QuizProblem() {
                 handleClickProblem(3);
               }}
             >
-              4. {data[page].selections[3]}
+              3. {result != null && result[page].selections[2]}
+            </div>
+            <div
+              className="row-span-3 hover:cursor-pointer flex justify-center hover:scale-105 ease-in-out duration-500 text-xl"
+              onClick={() => {
+                handleClickProblem(4);
+              }}
+            >
+              4. {result != null && result[page].selections[3]}
             </div>
           </div>
         </div>
