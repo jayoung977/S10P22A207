@@ -1,7 +1,7 @@
 export default function RoomInfo() {
   return (
     <div className="border row-span-1 grid grid-rows-3">
-      <div className='row-span-1 text-lg font-bold'>게임규칙</div>
+      <div className='row-span-1 bg-small-11 text-textColor-2 text-lg font-bold'>게임규칙</div>
       <div className='row-span-1 grid grid-cols-12 items-center'>
         <div className='col-span-3'>라운드: </div>
         <div className='col-span-3'>

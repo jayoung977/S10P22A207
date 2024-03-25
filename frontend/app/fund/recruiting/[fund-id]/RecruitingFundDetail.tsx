@@ -13,6 +13,10 @@ import type {
 } from "@/public/src/stores/fund/crud/FundCrudStore";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import userStore from "@/public/src/stores/user/userStore";
+import Swal from "sweetalert2";
+import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
+
 
 type FundRegister = {
   fundId: number;
@@ -33,13 +37,16 @@ const fetchFundDetail = async (fundId: string, token: string|null) => {
 
 
 export default function RecruitingFundDetail() {
+  useFetchUserInfo();
+  const { nickname, asset } = userStore();
   const token = typeof window !== 'undefined' ? sessionStorage.getItem('accessToken') : null;
-  const [fundManager, setFundManager] = useState(true);
   const [fundDetail, setFundDetail] = useState<FundDetail | null>(null);
   const [investmoney, setInvestmoney] = useState("");
-
+  const [isMember, setIsMember] = useState(false)
   const params = useParams();
   const fundId = params["fund-id"] as string;
+
+      
   let totalFundAsset = 0;
   fundDetail?.fundMembers.forEach((fundmember: FundMembers)=> {
     totalFundAsset += fundmember.investmentAmount
@@ -57,23 +64,48 @@ export default function RecruitingFundDetail() {
       onError: (error) => {console.error(error);},
     }
     );
+  
+
+  useEffect(() => {
+    if (data?.result) {
+      setFundDetail(data.result);
+    }
+    const fundData = data?.result
+    fundData?.fundMembers.forEach((fundmember)=> {
+      if (fundmember.nickname === nickname){
+        setIsMember(true)
+      }
+    })
     
-    useEffect(() => {
-      if (data?.result) {
-        setFundDetail(data.result);
-      }      
-    }, [data]);
+  }, [data]);
   
   const RegisterFund = async (
     fundId: string,
     investmoney: string,
   ) => {
+    const minmoney = data?.result.minimumAmount
+    if(minmoney && Number(investmoney) < minmoney ){
+      Swal.fire({
+        text: '설정된 1인당 최소투자금액보다 적습니다.',
+        icon: 'error'
+      })
+      return;
+    }
+
+    if(asset && Number(investmoney) > asset){
+      Swal.fire({
+        text: '본인 자산을 넘어설 수 없습니다.',
+        icon: 'error'
+      })
+      return;
+    }
+
     const registerForm = {
       fundId: Number(fundId),
       investmentAmount: Number(investmoney),
     };
     await axios.post(
-      "https://j10a207.p.ssafy.io/api/fund/register?loginUserId=1",
+      "https://j10a207.p.ssafy.io/api/fund/register",
       registerForm,
       {
         headers: {
@@ -83,6 +115,11 @@ export default function RecruitingFundDetail() {
     )
     .then((response)=> {
       console.log(response.data)
+      Swal.fire({
+        title: '펀드 가입에 성공하셨습니다',
+        icon: 'success'
+      })
+      window.location.replace("/fund/recruiting");
     })
     .catch((error)=> {
       console.error(error)
@@ -119,7 +156,6 @@ export default function RecruitingFundDetail() {
 
   const fundName = result?.fundName as string;
 
-  // 1. 펀드 매니저가 아닌 경우
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInvestmoney(e.target.value);
   };
@@ -128,47 +164,51 @@ export default function RecruitingFundDetail() {
   return (
     <div className="bg-big-1 p-2 rounded-md row-span-11 grid grid-rows-12 gap-2 mx-auto xl:max-w-screen-xl">
       {/* 펀드 소개 */}
-      <div className="row-span-3 p-4 bg-small-1 rounded-lg text-textColor-2 border grid grid-rows-4">
+      <div className="row-span-4 p-4 bg-small-1 rounded-lg text-textColor-2 border grid grid-rows-4">
         <div className="row-span-1 items-center text-center">
           <div className="text-xl font-bold">{fundDetail?.fundName}</div>
         </div>
-        <div className="row-span-3 grid grid-cols-6 gap-4 mt-4">
-          <div className="col-span-2 grid grid-rows-3">
-            <div className="row-span-1 text-lg">펀드매니저</div>
-            <div className="row-span-2 grid grid-cols-4 items-center">
-              <div className="col-span-1">
-                <Image
-                  src={ProfileImage}
-                  alt="profile-image"
-                  width={40}
-                  height={40}
-                  style={{
-                    borderRadius: "50%",
-                  }}
-                />
-              </div>
-              <div className="col-span-3">
+        <div className="row-span-3 grid grid-cols-6 items-center">
+          <div className="col-span-3 grid grid-rows-3 items-center">
+            <div className="row-span-1 grid grid-cols-3 items-center">
+              <div className="col-span-1 text-lg">펀드매니저:</div>
+              <div className="col-span-2 flex items-center">
+                <div className="me-2">
+                  <Image
+                    src={ProfileImage}
+                    alt="profile-image"
+                    width={40}
+                    height={40}
+                    style={{
+                      borderRadius: "50%",
+                    }}
+                  />
+                </div>
                 <div>{fundDetail?.managerNickname}</div>
-              </div>
+            </div>
+            </div>
+            <div className="row-span-2 grid grid-cols-3">
+              <div className="col-span-1 text-lg">기간:</div>
+              <div className="col-span-2">{fundDetail?.period} 일</div>
+              <div className="col-span-1 text-lg">종목:</div>
+              <div className="colp-span-2">{fundDetail?.industry}</div>
             </div>
           </div>
-          <div className="col-span-2 grid grid-rows-3">
-            <div className="row-span-1 text-lg">기간</div>
-            <div>{fundDetail?.period} 일</div>
-          </div>
-          <div className="col-span-1 grid grid-rows-3">
-            <div className="row-span-1 text-lg">종목</div>
-            <div>{fundDetail?.industry}</div>
-          </div>
-          <div className="col-span-1 grid grid-rows-3">
-            <div className="row-span-1 text-lg">목표금액</div>
-            <div>{fundDetail?.targetAmount.toLocaleString()}원</div>
+          <div className="col-span-3 gap-4 grid grid-rows-3">
+            <div className="grid grid-cols-3 gap-8">
+              <div className="col-span-1 text-lg">목표금액:</div>
+              <div className="col-span-2">{fundDetail?.targetAmount.toLocaleString()}원</div>
+            </div>
+            <div className="grid grid-cols-3 gap-8">
+              <div className="col-span-1 text-lg">최소투자금액:</div>
+              <div className="col-span-2">{fundDetail?.minimumAmount.toLocaleString()}원</div>
+            </div>
           </div>
         </div>
       </div>
       {/* 가입자 */}
       <div
-        className="row-span-7 border rounded-md overflow-y-auto"
+        className="row-span-6 border rounded-md overflow-y-auto"
         style={{ height: "calc(50vh)" }}
       >
         <table className="w-full  text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -224,7 +264,7 @@ export default function RecruitingFundDetail() {
             {totalFundAsset.toLocaleString()} 원
           </div>
         </div>
-        {fundManager ? (
+        {nickname && fundDetail?.managerNickname === nickname ? (
           <div className="row-span-1 rounded-md">
             <button
               onClick={() => {
@@ -236,27 +276,34 @@ export default function RecruitingFundDetail() {
             </button>
           </div>
         ) : (
-          <div className="row-span-1 rounded-md gap-4 grid grid-cols-2">
-            <div className="col-span-1">
-              <input
-                type="text"
-                id="invest-money"
-                value={investmoney}
-                onChange={handleInputChange}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="투자 금액을 입력하세요. (,없이 원 단위)"
-                required
-              />
-            </div>
-            <button
-              onClick={() => {
-                RegisterFund(fundId, investmoney);
-              }}
-              className="col-span-1 text-textColor-2 text-xl bg-button-1 rounded-md items-center"
-            >
-              가입신청
-            </button>
-          </div>
+            isMember ? (
+                <div className="row-span-1 rounded-md text-center">
+                  이미 펀드 회원입니다.
+                </div>
+              ) : (
+              <div className="row-span-1 rounded-md gap-4 grid grid-cols-2">
+                <div className="col-span-1">
+                  <input
+                    type="text"
+                    id="invest-money"
+                    value={investmoney}
+                    onChange={handleInputChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-2.5 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="투자 금액을 입력하세요. (,없이 원 단위)"
+                    required
+                  />
+                </div>
+                <button
+                  onClick={() => {
+                    RegisterFund(fundId, investmoney);
+                  }}
+                  className="col-span-1 text-textColor-2 text-xl bg-button-1 rounded-md items-center"
+                >
+                  가입신청
+                </button>
+              </div>
+              )
+            
         )}
       </div>
     </div>
