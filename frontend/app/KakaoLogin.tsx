@@ -3,7 +3,7 @@ import Image from "next/image";
 import kakaoLoginImg from "./../public/src/assets/images/kakao.svg";
 import { TypewriterEffectSmooth } from "../public/src/components/ui/typewriter-effect";
 import backgroundVideo from "./../static/videos/bg.mp4";
-// https://www.pexels.com/ko-kr/video/5726497/
+//https://www.pixilart.com/terms
 
 export default function KakaoLogin() {
   const words = [
