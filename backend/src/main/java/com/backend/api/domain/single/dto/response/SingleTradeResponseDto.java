@@ -2,6 +2,7 @@ package com.backend.api.domain.single.dto.response;
 
 import com.backend.api.global.common.type.TradeType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 
 @Schema(name = "싱글게임 매매 결과 response Dto", description = "싱글게임 관련 response Dto")
 public record SingleTradeResponseDto(
@@ -18,7 +19,10 @@ public record SingleTradeResponseDto(
 	@Schema(description = "수수료")
 	int fee,
 	@Schema(description = "실현 손익")
-	long realizedProfit
+	long realizedProfit,
+
+	@Schema(description = "그간 매매 내역")
+	List<SingleTradeListDto> tradeList
 ) {
 
 }

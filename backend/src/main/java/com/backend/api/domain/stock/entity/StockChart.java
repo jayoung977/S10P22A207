@@ -50,14 +50,14 @@ public class StockChart {
 	@NotNull
 	private Integer endPrice;
 	@NotNull
-	private Integer tradingVolume;
+	private Long tradingVolume;
 	@NotNull
 	private LocalDateTime date;
 	private Double changeRate;
 
 
 	@Builder
-	public StockChart(Stock stock, Integer marketPrice, Integer highPrice, Integer lowPrice, Integer endPrice, Integer tradingVolume, LocalDateTime date, Double changeRate) {
+	public StockChart(Stock stock, Integer marketPrice, Integer highPrice, Integer lowPrice, Integer endPrice, Long tradingVolume, LocalDateTime date, Double changeRate) {
 		this.stock = stock;
 		this.marketPrice = marketPrice;
 		this.highPrice = highPrice;
