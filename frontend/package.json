@@ -14,6 +14,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@stomp/stompjs": "^7.0.0",
     "anychart": "^8.12.0",
     "anychart-react": "^1.4.1",
     "axios": "^1.6.8",
@@ -25,6 +26,7 @@
     "react-hook-form": "^7.51.1",
     "react-query": "^3.39.3",
     "sharp": "^0.33.2",
+    "sockjs-client": "^1.6.1",
     "sweetalert2": "^11.10.6",
     "tailwind-merge": "^2.2.2",
     "zustand": "^4.5.2"
@@ -33,6 +35,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/sockjs-client": "^1.5.4",
     "autoprefixer": "^10.4.18",
     "file-loader": "^6.2.0",
     "postcss": "^8.4.35",
