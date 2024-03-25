@@ -8,6 +8,7 @@ import { useQuery, UseQueryResult } from "react-query";
 import { useParams } from "next/navigation";
 import axios from "axios";
 import userStore from "@/public/src/stores/user/userStore";
+import Swal from "sweetalert2";
 
 interface resultType {
   memberID: number;
@@ -59,6 +60,19 @@ export default function UserInfo() {
     ? data
     : { result: null };
 
+  const sendFriendRequest = async () => {
+    axios({
+      method: "post",
+      url: "https://j10a207.p.ssafy.io/api/friend-ask",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+    });
+  };
+  const handleFriendRequest = () => {
+    Swal.fire("친구요청을 보냈어요!");
+  };
+
   return (
     <div className="row-start-2 row-end-13 grid grid-cols-10 bg-background-1 ">
       <aside className="m-4 bg-white rounded-md col-start-1 col-end-4 grid grid-rows-12 shadow-lg hover:-translate-y-1 transition ease-in-out duration-500">
@@ -75,6 +89,9 @@ export default function UserInfo() {
             <button
               type="button"
               className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 absolute bottom-2 "
+              onClick={() => {
+                handleFriendRequest();
+              }}
             >
               팔로우
             </button>
