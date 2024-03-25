@@ -2,7 +2,8 @@
 import Image from "next/image";
 import penguin from "./../../public/src/assets/images/penguin.png";
 import Swal from "sweetalert2";
-import { useQuery, UseQueryResult } from "react-query";
+import { useQuery, UseQueryResult, useQueryClient } from "react-query";
+import { useMutation } from "react-query";
 import axios, { AxiosResponse } from "axios";
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 import userStore from "@/public/src/stores/user/userStore";
@@ -24,36 +25,43 @@ interface DeleteBoardResponse {
 const deleteBoard = async (
   boardId: number
 ): Promise<AxiosResponse<DeleteBoardResponse>> => {
-  try {
-    const response = await axios({
-      method: "delete",
-      url: `https://j10a207.p.ssafy.io/api/community?communityId=${boardId}`,
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-      },
-    });
-    Swal.fire("삭제됨!", "성공적으로 삭제되었습니다.", "success");
-    return response;
-  } catch (error) {
-    console.error("삭제 실패:", error);
-    Swal.fire("실패!", "삭제에 실패했습니다.", "error");
-    throw error; // 에러를 다시 throw 하여 호출 측에서 처리할 수 있도록 함
-  }
+  const response = await axios({
+    method: "delete",
+    url: `https://j10a207.p.ssafy.io/api/community?communityId=${boardId}`,
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+    },
+  });
+  return response;
 };
+
+const fetchBoardInfo = async () => {
+  const response = await axios({
+    method: "get",
+    url: "https://j10a207.p.ssafy.io/api/community/all",
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+    },
+  });
+  return response.data;
+};
+
 export default function BoardReceive() {
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(deleteBoard, {
+    onSuccess: () => {
+      Swal.fire("삭제됨!", "성공적으로 삭제되었습니다.", "success");
+      queryClient.invalidateQueries("boardInfo");
+    },
+    onError: (error) => {
+      console.error("삭제 실패:", error);
+      Swal.fire("실패!", "삭제에 실패했습니다.", "error");
+    },
+  });
+
   useFetchUserInfo();
   const { nickname, memberId } = userStore();
 
-  const fetchBoardInfo = async () => {
-    const response = await axios({
-      method: "get",
-      url: "https://j10a207.p.ssafy.io/api/community/all",
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-      },
-    });
-    return response.data;
-  };
   const { data, isLoading, error }: UseQueryResult<BoardInfo, Error> = useQuery(
     "boardInfo",
     fetchBoardInfo
@@ -82,7 +90,7 @@ export default function BoardReceive() {
       cancelButtonText: "삭제안하기",
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteBoard(boardId);
+        mutate(boardId);
       }
     });
   };
