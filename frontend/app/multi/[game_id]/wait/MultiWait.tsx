@@ -6,6 +6,7 @@ import RoomInfo from "./roomInfo";
 import FriendSearch from "./friendSearch";
 import GameRule from "./gameRule";
 import Header from "./header";
+import GameMembers from "./GameMembers";
 
 export default function MultiWait() {
   return (
@@ -26,14 +27,7 @@ export default function MultiWait() {
             <div className='col-span-2 text-white text-center'></div>
           </div>
         </main>
-        <aside className="col-span-3 border-s grid grid-rows-6">
-          <GameUser/>
-          <GameUser/>
-          <GameUser/>
-          <GameUser/>
-          <GameUser/>
-          <GameUser/>
-        </aside>
+        <GameMembers/>
       </div>
     </div>
   );

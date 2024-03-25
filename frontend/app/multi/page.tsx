@@ -1,10 +1,10 @@
 "use client";
+
+
 import Navbar from "../Navbar";
 import Profile from "./profile";
 import Ranking from "./Ranking";
 import GameRoomSetting from "./gameroomSetting";
-import GameRoom from "./gameroom";
-import Pagination from "./pagination";
 import PeacefulBgm from "@/public/src/components/bgm/PeacefulBgm";
 import { QueryClient, QueryClientProvider } from "react-query";
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
@@ -47,6 +47,8 @@ export default function Multi() {
     5: "bg-small-8",
   };
 
+  // 이후 세션에서 받아올 로그인 사용자 데이터 이거 userStore에 담아놨어~~~~~~~~~~~~~~
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className="relative bg-background-1">
@@ -76,20 +78,7 @@ export default function Multi() {
               <aside className="col-span-4 mt-2">
                 <Ranking />
               </aside>
-              <article className="col-span-8 grid grid-rows-12 p-2">
-                <GameRoomSetting />
-                {/* 게임방 목록 */}
-                <div className="bg-background-1 row-span-8 rounded-md grid grid-cols-12 shadow-md gap-1">
-                  {rooms.map((room: string, i: number) => (
-                    <div className="col-span-6 p-1 m-1 rounded-md" key={i}>
-                      <GameRoom color={RoomColor[i]} />
-                    </div>
-                  ))}
-                </div>
-                <section className="row-span-2 flex justify-center">
-                  <Pagination />
-                </section>
-              </article>
+              <GameRoomSetting />
             </div>
           </div>
         </div>

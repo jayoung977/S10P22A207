@@ -36,7 +36,7 @@ export default function MakeFundModal({isOpen, onClose}: any){
     register,
     formState: { errors },
     handleSubmit,
-    setError
+    reset
   } = useForm<NewFund>({mode: 'onChange'});
 
 
@@ -216,7 +216,12 @@ export default function MakeFundModal({isOpen, onClose}: any){
               </div>
 
               <div className="flex justify-around">
-                <button onClick={()=>{onClose()}}  type="button" className="w-1/2 m-1 text-textColor-1 bg-button-2 hover:bg-gray-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">취소</button>
+                <button 
+                  onClick={()=>{
+                    reset()
+                    onClose()
+                    }}
+                  type="button" className="w-1/2 m-1 text-textColor-1 bg-button-2 hover:bg-gray-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">취소</button>
                 <button type="submit" className="w-1/2 m-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">펀드 개설</button>
               </div>
             </div>
