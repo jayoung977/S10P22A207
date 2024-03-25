@@ -2,11 +2,11 @@
 
 import Header from "./header";
 import GameStatus from "./gameStatus";
-import Chat from "../chat";
+import Chat from "../../../chat";
 import Chart from "@/app/single/[game-id]/play/Chart";
 import TradeHistory from "./tradeHistory";
 import { useState, useEffect } from "react";
-import TradeButtons from "../tradeButton";
+import TradeButtons from "../../../tradeButton";
 import GameMembers from "./GameMembers";
 
 export type dataType = {
