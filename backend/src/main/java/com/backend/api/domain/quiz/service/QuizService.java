@@ -25,6 +25,7 @@ public class QuizService {
         Random random = new Random();
         int[] indices = IntStream.range(0, quizList.size()).toArray();
         List<Quiz> randomList = new ArrayList<>();
+
         int limit = 5;
         for (int i = 0; i < limit; ++i) {
             int randomIndex = random.nextInt(quizList.size() - i);
