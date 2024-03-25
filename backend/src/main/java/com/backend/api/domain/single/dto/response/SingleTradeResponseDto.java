@@ -21,6 +21,12 @@ public record SingleTradeResponseDto(
 	@Schema(description = "실현 손익")
 	long realizedProfit,
 
+	@Schema(description = "총 평가 자산")
+	TotalAssetDto totalAsset,
+
+	@Schema(description = "보유 자산")
+	List<AssetListDto> assetList,
+
 	@Schema(description = "그간 매매 내역")
 	List<SingleTradeListDto> tradeList
 ) {
