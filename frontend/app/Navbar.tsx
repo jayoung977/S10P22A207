@@ -11,6 +11,7 @@ import userStore from "@/public/src/stores/user/userStore";
 import fundCrudStore from "@/public/src/stores/fund/crud/FundCrudStore";
 
 export default function Navbar() {
+  useFetchUserInfo();
   const { setToggleButton } = fundCrudStore();
   const { memberId } = userStore();
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
