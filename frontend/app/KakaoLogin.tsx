@@ -13,23 +13,23 @@ export default function KakaoLogin() {
     },
     {
       text: "금",
-      className: "text-small-1",
+      className: "text-small-2",
     },
     {
       text: "이",
-      className: "text-small-1",
+      className: "text-small-3",
     },
     {
       text: "니",
-      className: "text-small-1",
+      className: "text-small-4",
     },
     {
       text: "?",
-      className: "text-small-1",
+      className: "text-small-5",
     },
     {
       text: "!",
-      className: "text-small-1",
+      className: "text-small-6",
     },
   ];
   const loginHandler = () => {
