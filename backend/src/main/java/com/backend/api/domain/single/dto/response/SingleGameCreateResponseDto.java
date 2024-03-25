@@ -19,7 +19,10 @@ public record SingleGameCreateResponseDto(
     TotalAssetDto totalAsset,
 
     @Schema(description = "보유 자산")
-    List<AssetListDto> assetList
+    List<AssetListDto> assetList,
+
+    @Schema(description = "그간 매매 내역")
+    List<SingleTradeListDto> tradeList
 ) {
 
 }
