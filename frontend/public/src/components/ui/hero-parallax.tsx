@@ -58,7 +58,7 @@ export const HeroParallax = ({
   return (
     <div
       ref={ref}
-      className="h-[250vh] py-40 overflow-hidden  antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]"
+      className="h-[300vh] py-40 overflow-hidden  antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]"
     >
       <Header />
       <motion.div
@@ -113,7 +113,7 @@ export const Header = () => {
   return (
     <div className="max-w-7xl relative mx-auto py-20 md:py-40 px-4 w-full  left-0 top-0 z-20">
       <h1 className="text-2xl md:text-7xl font-bold text-small-1">
-        지금이니 : 빅 데이터 분산 프로젝트
+        지금이니 : 차트 게임
       </h1>
       <p className="max-w-2xl text-base md:text-2xl mt-8 dark:text-neutral-200">
         이 게임은 과거 주식 시장 데이터로 당신의 투자 전략을 테스트하며, 역사 속

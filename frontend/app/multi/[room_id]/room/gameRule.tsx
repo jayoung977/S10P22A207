@@ -1,7 +1,7 @@
 export default function GameRule(){
   return (
     <div className="border row-span-2">
-      <div className='border'>룰 설명</div>
+      <div className='border text-white bg-small-9'>룰 설명</div>
       <div className='flex-col text-start m-2'>
         <div>1. 라운드당 50턴으로 진행된다.</div>
         <div>2. 1라운드당 150초의 시간이 주어진다.</div>

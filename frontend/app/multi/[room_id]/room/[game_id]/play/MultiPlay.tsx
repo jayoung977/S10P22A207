@@ -2,12 +2,12 @@
 
 import Header from "./header";
 import GameStatus from "./gameStatus";
-import Chat from "../chat";
+import Chat from "../../../chat";
 import Chart from "@/app/single/[game-id]/play/Chart";
 import TradeHistory from "./tradeHistory";
-import User from "./user";
 import { useState, useEffect } from "react";
-import TradeButtons from "../tradeButton";
+import TradeButtons from "../../../tradeButton";
+import GameMembers from "./GameMembers";
 
 export type dataType = {
   date: string;
@@ -1034,14 +1034,7 @@ export default function MultiPlay () {
               <TradeButtons />
             </div>
           </main>
-          <aside className="col-span-2 grid grid-rows-6 text-sm">
-            <User />
-            <User />
-            <User />
-            <User />
-            <User />
-            <User />
-          </aside>
+          <GameMembers/>
         </div>
       </div>
     </div>

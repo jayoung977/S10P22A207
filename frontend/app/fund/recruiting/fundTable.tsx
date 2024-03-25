@@ -27,7 +27,7 @@ export default function FundTable(){
   const router = useRouter();
   
   useEffect(() => {
-    // Filter fundList based on searchQuery when searchQuery changes
+    // searchQuery 기반으로 FundList filtering
     const filtered: FundResult[] = fundList.filter((fund) => fund.fundName.includes(searchQuery));
     setFilteredFunds(filtered);
   }, [searchQuery, fundList]); 

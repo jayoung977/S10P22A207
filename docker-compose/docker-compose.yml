@@ -1,9 +1,38 @@
 version: '3'
 services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql_data:/usr/share/mysql/data
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    hostname: redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1000 --loglevel notice --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/usr/share/redis/data
+
   spring-app:
     container_name: spring-app
     ports:
       - "4000:8080"
+    depends_on:
+      - mysql
+      - redis
     environment:
       MYSQL_HOST : mysql
       MYSQL_USER : root
@@ -12,7 +41,6 @@ services:
     image: jayoung977/backend
     env_file:
       - .env
-
 
   react-app:
     container_name: react-app
@@ -26,4 +54,8 @@ services:
       - .env
 
 
-
+volumes:
+  redis_data:
+    driver: local
+  mysql_data:
+    driver: local

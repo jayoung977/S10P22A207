@@ -6,7 +6,6 @@ import FundTabs from "../fundTabs";
 import FundTable from "./fundTable";
 import { QueryClient, QueryClientProvider } from "react-query";
 
-
 const queryClient = new QueryClient();
 
 

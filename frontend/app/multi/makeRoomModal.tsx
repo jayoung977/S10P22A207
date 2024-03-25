@@ -23,8 +23,8 @@ export default function MakeRoomModal ({ isOpen, onClose } : any) {
     console.log(password);
   }
   return (
-      <div id="gameroom-modal" tabIndex={-1} aria-hidden="true" className="fixed -translate-x-1/2 translate-y-1/4 inset-0 left-1/2 justify-center items-center">
-        <div className="relative p-4 w-full max-h-full">
+      <div id="gameroom-modal" tabIndex={-1} aria-hidden="true" className="fixed -translate-x-1/4 -translate-y-1/2 inset-0 left-1/2 top-1/2 justify-center items-center">
+        <div className="relative p-4 w-[500px] max-h-full">
             {/* <!-- Modal content --> */}
             <div className="relative bg-white rounded-lg border shadow dark:bg-gray-700">
                 {/* <!-- Modal body --> */}
@@ -34,12 +34,12 @@ export default function MakeRoomModal ({ isOpen, onClose } : any) {
                         <div className='col-span-2'>
                             <label  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">방제목</label>
                         </div>
-                        <div className='col-span-6'>
+                        <div className='col-span-9'>
                             <input type="name" id="name" value={title} placeholder="방의 제목을 입력해 주세요." onChange={(e) => {setTitle(e.target.value)}} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"  />
                         </div>
                         <div className='col-span-12'>라운드</div>
                         <div className="col-span-12">
-                          <div className="grid grid-cols-6 gap-2">
+                          <div className="grid grid-cols-3 gap-2">
                             <div className='col-span-1 flex items-center h-5'>
                               <input id="3round" type="checkbox" value="" checked={round==3} onChange={() => setRound(3)} className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"  />
                               <label htmlFor="3round" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">3라운드</label>
@@ -68,10 +68,10 @@ export default function MakeRoomModal ({ isOpen, onClose } : any) {
 
                           </div>
                         </div>
-                        <div className='col-span-4'>
+                        <div className='col-span-2'>
                             <label  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">비밀번호</label>
                         </div>
-                        <div className='col-span-4'>
+                        <div className='col-span-6'>
                             <input type="password" id="password" value={password} placeholder="••••••••" disabled={isRevealed==false} onChange={(e) => setPassword(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"  />
                         </div>
                       </div>
