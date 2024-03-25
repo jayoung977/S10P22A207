@@ -19,7 +19,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 		endpointRegistry.addEndpoint("/ws")
 			.setAllowedOriginPatterns(
 				"https://j10a207.p.ssafy.io",
-				"http://localhost:5173"
+				"http://localhost:5173",
+				"http://localhost:3000"
 			)
 			.withSockJS();
 	}
