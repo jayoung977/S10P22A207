@@ -7,8 +7,9 @@ import GameRoom from "./gameroom";
 import Pagination from "./pagination";
 import PeacefulBgm from "@/public/src/components/bgm/PeacefulBgm";
 import { QueryClient, QueryClientProvider } from "react-query";
-import userStore from "@/public/src/stores/user/userStore";
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
+import { Boxes } from "../../public/src/components/ui/background-boxes";
+import { cn } from "../../public/src/utils/cn";
 
 const queryClient = new QueryClient();
 
@@ -46,8 +47,6 @@ export default function Multi() {
     5: "bg-small-8",
   };
 
-  // 이후 세션에서 받아올 로그인 사용자 데이터 이거 userStore에 담아놨어~~~~~~~~~~~~~~
-
   return (
     <QueryClientProvider client={queryClient}>
       <div className="relative bg-background-1">
@@ -56,9 +55,22 @@ export default function Multi() {
           <Navbar />
           <div className="bg-big-1 rounded-md row-span-11 grid grid-rows-12 mx-auto xl:max-w-screen-xl">
             {/* 상단 */}
-            <div className="grid grid-cols-12 gap-4 row-span-4">
-              <Profile/>
+            <div className="grid grid-cols-12 gap-4 row-span-4 z-10">
+              <Profile />
+              <div className="col-span-8 relative w-full overflow-hidden bg-small-1 flex flex-col items-center justify-center rounded-lg ">
+                <div className="absolute inset-0 w-full bg-small-1 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none" />
+                <Boxes />
+                <h1
+                  className={cn("md:text-4xl text-xl text-white relative z-20")}
+                >
+                  멀티 플레이 기반 주식 차트 게임
+                </h1>
+                <p className="text-center mt-2 text-white relative z-20">
+                  Expanding Investment Capabilities with Multi-Play
+                </p>
+              </div>
             </div>
+
             {/* 하단 */}
             <div className="grid grid-cols-12 gap-4 row-span-8 mt-4 px-2">
               <aside className="col-span-4 mt-2">

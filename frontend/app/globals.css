@@ -24,12 +24,11 @@
   border-radius: 30px;
 }
 
+
 * {
   padding: 0;
   margin: 0;
   font-family: DungGeunMo;
-  /* cursor: url("./../public/src/assets/images/cursor.cur"), auto;  */
-  /* 커서 변경 할까? 말까? */
 }
 
 @font-face {

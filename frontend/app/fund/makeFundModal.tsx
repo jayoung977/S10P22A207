@@ -1,11 +1,12 @@
 'use client'
 
 import { useRouter } from "next/navigation"
-import { ReactHTMLElement, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { UseMutationResult, useMutation } from "react-query";
-import { AxiosError } from "axios";
 import Swal from "sweetalert2";
+import { useForm } from "react-hook-form";
+
 
 interface NewFund {
   fundName: string,
@@ -29,43 +30,21 @@ const createFund = async(fund: NewFund) => {
 }
 
 
-
 export default function MakeFundModal({isOpen, onClose}: any){
-
   const router = useRouter();
-  const [fundForm, setFundForm] = useState<NewFund>({
-    fundName: '',
-    industry: '',
-    period: 0,
-    capacity: 0,
-    targetAmount: 0,
-    minimumAmount: 0,
-    feeType: "POST"
-  })
+  const { 
+    register,
+    formState: { errors },
+    handleSubmit,
+    setError
+  } = useForm<NewFund>({mode: 'onChange'});
 
 
-  const handleInputChange = <T extends HTMLInputElement | HTMLSelectElement>(e: React.ChangeEvent<T>) => {
-    if (e.target.name) {
-      const { name, value } = e.target;
-      setFundForm({ ...fundForm, [name]: value });
-    }
-  }
-  
-  const submitForm = (data:NewFund) => {
-    if (data != null) {
-      const newForm = {
-        fundName: data.fundName,
-        industry: data.industry,
-        period: Number(data.period),
-        capacity: Number(data.capacity),
-        targetAmount: Number(data.targetAmount),
-        minimumAmount: Number(data.minimumAmount),
-        feeType: data.feeType
-      }
-      mutate(newForm)
-      console.log('펀드등록 완료')
-    }
-  }
+  const onSubmit = (data: NewFund) => {
+    console.log(data);
+    // 여기에 폼 데이터를 처리하는 로직을 작성할 수 있습니다.
+    mutate(data)
+  };
 
   const { mutate } 
   = useMutation(createFund
@@ -100,13 +79,12 @@ export default function MakeFundModal({isOpen, onClose}: any){
 
   if(!isOpen) return null;
 
-
   return(
     // Main modal
     <div id="authentication-modal" tabIndex={-1} aria-hidden="true" className="overflow-y-auto overflow-x-hidden z-50 fixed translate-x-1/3 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
       <div className="relative p-4 w-full max-w-md max-h-full">
         {/* Modal content */}
-        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+        <div className="relative border bg-white rounded-lg shadow dark:bg-gray-700">
             {/* Modal header */}
           <div className="p-4 text-center md:p-5 border-b rounded-t dark:border-gray-600">
               <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
@@ -114,34 +92,89 @@ export default function MakeFundModal({isOpen, onClose}: any){
               </h3>
           </div>
           {/* Modal body */}
-          <div className="p-4 md:p-5">
-            <div className="space-y-4" >
+          <form onSubmit={handleSubmit(onSubmit)}  className="p-4 md:p-5">
+            <div className="space-y-2" >
               <div>
                   <label  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">이름</label>
-                  <input type="text"  name="fundName" id="fund-name" value={fundForm.fundName} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="최대 30자" />
+                  <input
+                     type="text"
+                     id="fund-name"
+                     {...register('fundName', {
+                      required: '펀드이름은 2자에서 최대 30자입니다.',
+                      minLength: {
+                        value: 2,
+                        message: '2글자 이상 입력해주세요.'
+                      },
+                      maxLength: {
+                        value: 30,
+                        message: '30자 이상 작성할 수 없습니다.'
+                      }
+                     })}
+                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="펀드 이름을 입력해주세요." />
+                     <p className="text-xs text-small-3 p-1">{errors.fundName?.message}</p>
               </div>
               <div>
                   <label  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">산업군</label>
-                  <input type="text" name="industry"  id="fund-industry" value={fundForm.industry} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="투자하려는 산업 분야" />
+                  <input 
+                    type="text"
+                    id="fund-industry"
+                    {...register('industry', {
+                      required: '투자하려는 산업 분야를 하나 이상 작성하세요.'
+                    })}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="투자하려는 산업 분야" />
+                    <p className="text-xs text-small-3 p-1">{errors.industry?.message}</p>
               </div>
               <div>
-                  <label  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">기간</label>
+                  <label  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">기간(일)</label>
                   <div className="flex items-center justify-around">
-                    <input type="number" name="period" value={fundForm.period} onChange={handleInputChange} id="fund-period"  className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="2~" /> 
+                    <input 
+                      type="number"
+                      id="fund-period"
+                      {...register('period',{
+                        required: '1~7일 사이로 기간을 정해주세요.',
+                        min: {
+                          value: 1,
+                          message: '1일 이상으로 설정해주세요.'
+                        },
+                        max: {
+                          value: 7,
+                          message: '7일 이하로 설정해주세요.'
+                        },
+                        valueAsNumber: true
+                      })}
+                      className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="펀드 운영 기간을 설정해주세요." />
                   </div>
+                  <p className="text-xs text-small-3 p-1">{errors.period?.message}</p>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div className="col-span-1">
                   <label  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">인원</label>
-                  <input type="text" name="capacity" id="fund-members" value={fundForm.capacity} onChange={handleInputChange}  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="2 ~ 100명" />
+                  <input 
+                    type="number"
+                    id="fund-members"
+                    {...register('capacity',{
+                      required: '원하는 펀드 멤버 수를 정해주세요.',
+                      min: {
+                        value: 2,
+                        message: '펀드 멤버 수는 최소 2명 이상이어야 합니다.'
+                      },
+                      max: {
+                        value: 100,
+                        message: '펀드 멤버 수는 최대 100명까지 가능합니다.'
+                      },
+                      valueAsNumber: true,
+                    })}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="펀드 인원"/>
+                    <p className="text-xs text-small-3 p-1">{errors.capacity?.message}</p>
+
                 </div>
                 <div className="col-span-1">
                   <label  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">펀드수수료 정산</label>
                   <select 
                    id="fund-fee"
-                   name="feeType"
-                   value={fundForm.feeType}
-                   onChange={handleInputChange}
+                   {...register('feeType',{
+                      required: '펀드수수료 지급 방식을 설정해 주세요.'
+                   })}
                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" >
                     <option value="PRE">펀드수수료 선지급</option>
                     <option value="POST">펀드수수료 후정산</option>
@@ -150,20 +183,44 @@ export default function MakeFundModal({isOpen, onClose}: any){
               </div>
               <div>
                   <label  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">자금</label>
-                  <input type="text" name="targetAmount" id="fund-target-money" value={fundForm.targetAmount} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="최소 100,000,000원" />
+                  <input
+                    type="text"
+                    id="fund-target-money"
+                    {...register('targetAmount',{
+                      required: '운영하려는 자금 액수를 설정해주세요.',
+                      min: {
+                        value: 10000000,
+                        message: '최소 10,000,000원 이상으로 설정해 주세요.'
+                      },
+                      valueAsNumber: true,
+                    })}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="최소 10,000,000원" />
+                    <p className="text-xs text-small-3 p-1">{errors.targetAmount?.message}</p>
+
               </div>
               <div>
                   <label  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">1인당 투자금액</label>
-                  <input type="text" name="minimumAmount" id="fund-minimum-money" value={fundForm.minimumAmount} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="1,000,000원 ~ 최대" />
+                  <input 
+                   type="number"
+                   id="fund-minimum-money"
+                   {...register('minimumAmount',{
+                    required: '멤버 별 투자금액을 설정해주세요.',
+                    min: {
+                      value: 1000000,
+                      message: '최소 1,000,000원 이상으로 설정해 주세요.'
+                    },
+                    valueAsNumber: true,
+                   })}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="1,000,000원 ~ 최대" />
+                  <p className="text-xs text-small-3 p-1">{errors.minimumAmount?.message}</p>
               </div>
 
               <div className="flex justify-around">
                 <button onClick={()=>{onClose()}}  type="button" className="w-1/2 m-1 text-textColor-1 bg-button-2 hover:bg-gray-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">취소</button>
-                <button onClick={()=>{submitForm(fundForm)}}  
-                type="button" className="w-1/2 m-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">펀드 개설</button>
+                <button type="submit" className="w-1/2 m-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">펀드 개설</button>
               </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div> 

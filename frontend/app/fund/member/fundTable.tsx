@@ -5,7 +5,7 @@ import { useQuery, UseQueryResult } from "react-query";
 import type { FundResult } from "@/public/src/stores/fund/crud/FundCrudStore";
 import { FundInfo } from "@/public/src/stores/fund/crud/FundCrudStore";
 import { useState, useEffect } from "react";
-
+import fundCrudStore from "@/public/src/stores/fund/crud/FundCrudStore";
 
 const fetchFundInfo = async() => {
     const token = sessionStorage.getItem('accessToken')
@@ -20,9 +20,18 @@ const fetchFundInfo = async() => {
   
 
 export default function FundTable(){
+  const { searchQuery } = fundCrudStore();
+  const [filteredFunds, setFilteredFunds] = useState<FundResult[]>([])
   const [fundList, setFundList] = useState<FundResult[]>([])
   const router = useRouter();
   const { data, isLoading, error }: UseQueryResult<FundInfo,Error>  =  useQuery('FundInfo', fetchFundInfo );
+  
+  useEffect(() => {
+    const filtered: FundResult[] = fundList.filter((fund) => fund.fundName.includes(searchQuery));
+    setFilteredFunds(filtered);
+  }, [searchQuery, fundList]); 
+  
+  
   useEffect(() => {
     if (data?.result) {
       setFundList(data.result);
@@ -66,7 +75,7 @@ export default function FundTable(){
             </thead>
             <tbody>
               {
-                fundList.map((fund: FundResult, i:number)=> {
+                filteredFunds.map((fund: FundResult, i:number)=> {
                   return (
                     <tr key={i}
                       onClick={()=> {

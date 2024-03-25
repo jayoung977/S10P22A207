@@ -6,7 +6,7 @@ export default function GameRoomInfos () {
 
     return (
         <div>
-
+            
         </div>
     )
 }

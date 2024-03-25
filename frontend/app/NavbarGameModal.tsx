@@ -1,65 +1,60 @@
-'use client'
+"use client";
 
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import axios from 'axios'
-
+import axios from "axios";
 
 type stockChartData = {
-  marketPrice: number
-  highPrice: number
-  lowPrice: number
-  endPrice: number
-  date: Date
-}
+  marketPrice: number;
+  highPrice: number;
+  lowPrice: number;
+  endPrice: number;
+  date: Date;
+};
 
 interface result {
-  gameLogId: number,
-  singleGameChance: number,
-  stockChartDataList: [stockChartData],
+  gameLogId: number;
+  singleGameChance: number;
+  stockChartDataList: [stockChartData];
 }
-
 
 interface RoomInfo {
-  result: result
+  result: result;
 }
-
-
 
 export default function NavbarGameModal() {
   const router = useRouter();
-    const openSinglePlay = () => {
-    const token = sessionStorage.getItem('accessToken')
-    axios.get('https://j10a207.p.ssafy.io/api/single', 
-    { 
-      headers: {
-      'Authorization': `Bearer ${token}`
-    }
-    })
-    .then((res) => {
-      console.table(res)
-    })
-    .catch((error)=>{
-      console.error(error)
-    })
-    Swal.fire({
-        title: "기존 기록이 없습니다",
-        text: '플레이 하시겠습니까?',
-        showCancelButton: true,
-        confirmButtonText: "플레이",
-        confirmButtonColor: "#1454FF",
-        cancelButtonText: "취소",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // 플레이 버튼을 클릭한 경우
-          console.log("플레이 버튼을 클릭했습니다.");
-          router.push("/single/1/play");
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          // 취소 버튼을 클릭한 경우
-          console.log("취소 버튼을 클릭했습니다.");
-        }
+  const openSinglePlay = () => {
+    const token = sessionStorage.getItem("accessToken");
+    axios
+      .get("https://j10a207.p.ssafy.io/api/single", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.table(res);
+      })
+      .catch((error) => {
+        console.error(error);
       });
-
+    Swal.fire({
+      title: "기존 기록이 없습니다",
+      text: "플레이 하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: "플레이",
+      confirmButtonColor: "#1454FF",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // 플레이 버튼을 클릭한 경우
+        console.log("플레이 버튼을 클릭했습니다.");
+        router.push("/single/1/play");
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // 취소 버튼을 클릭한 경우
+        console.log("취소 버튼을 클릭했습니다.");
+      }
+    });
   };
 
   return (
@@ -80,7 +75,7 @@ export default function NavbarGameModal() {
           data-modal-target="popup-modal"
           data-modal-toggle="popup-modal"
           className="shadow-sm cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          onClick={() =>openSinglePlay()}
+          onClick={() => openSinglePlay()}
         >
           싱글 플레이
         </a>
