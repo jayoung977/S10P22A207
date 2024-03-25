@@ -3,7 +3,7 @@ import Image from "next/image";
 import kakaoLoginImg from "./../public/src/assets/images/kakao.svg";
 import { TypewriterEffectSmooth } from "../public/src/components/ui/typewriter-effect";
 import backgroundVideo from "./../static/videos/bg.mp4";
-//https://www.pixilart.com/terms
+// https://www.pixilart.com/art/blue-line-97f3322f9f26af9
 
 export default function KakaoLogin() {
   const words = [
