@@ -1,11 +1,13 @@
 package com.backend.api.domain.multi.controller;
 
+import com.backend.api.domain.multi.dto.MultiGameRoomsResponseDto;
 import com.backend.api.domain.multi.service.MultiGameService;
 import com.backend.api.domain.single.dto.request.SingleTradeRequestDto;
 import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.SuccessCode;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,10 +28,8 @@ public class MultiGameController {
 
     @GetMapping("")
     @Operation(summary = "멀티게임 대기실 불러오기", description = "멀티게임 모드를 선택하면 현재 생성되어있는 방 리스트를 불러옵니다.", tags = { "멀티게임" })
-    public ResponseEntity<BaseResponse<String>> getMultiGameRooms(@RequestParam int pageNumber, @RequestParam int pageSize){
-        multiGameService.getMultiGameRooms(pageNumber, pageSize);
-        //TODO: 페이징 해서 가져와야 하나?
-        return BaseResponse.success(SuccessCode.SELECT_SUCCESS,"보냈어용");
+    public ResponseEntity<BaseResponse<List<MultiGameRoomsResponseDto>>> getMultiGameRooms(@RequestParam int pageNumber, @RequestParam int pageSize){
+        return BaseResponse.success(SuccessCode.SELECT_SUCCESS,multiGameService.getMultiGameRooms(pageNumber, pageSize));
     }
     @GetMapping("/{roomId}")
     @Operation(summary = "멀티게임 입장하기", description = "특정 멀티게임방 입장을 요청하면 해당 방으로 들어갑니다.", tags = { "멀티게임" })

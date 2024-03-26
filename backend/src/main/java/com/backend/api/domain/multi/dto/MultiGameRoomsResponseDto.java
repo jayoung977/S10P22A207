@@ -3,7 +3,7 @@ package com.backend.api.domain.multi.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
-public record multiGameRoomsResponseDto(
+public record MultiGameRoomsResponseDto(
 
     @Schema(description = "방 번호")
     Long roomNumber,
