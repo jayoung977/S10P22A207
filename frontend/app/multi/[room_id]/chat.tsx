@@ -30,6 +30,9 @@ export default function Chat() {
           onChange={(e) => {
             messageHandler(e.target.value);
           }}
+          onKeyDown={(e) => {
+            e.key == "Enter" && sendHandler(nickname);
+          }}
         />
         <button
           className="bg-green-500 hover:bg-green-400 rounded-md py-1 px-2 text-white m-1"

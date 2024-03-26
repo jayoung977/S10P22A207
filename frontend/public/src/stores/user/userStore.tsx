@@ -30,7 +30,7 @@ const userStore = create<Store>((set: any) => ({
   setMemberId: (value) => set({ memberId: value }),
   email: null,
   setEmail: (value) => set({ email: value }),
-  nickname: "null",
+  nickname: null,
   setNickname: (value) => set({ nickname: value }),
   birthYear: null,
   setBirthYear: (value) => set({ birthYear: value }),

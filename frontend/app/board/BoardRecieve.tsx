@@ -61,22 +61,6 @@ export default function BoardReceive() {
 
   useFetchUserInfo();
   const { nickname, memberId } = userStore();
-<<<<<<< HEAD
-
-=======
-  
-  const fetchBoardInfo = async () => {
-    const response = await axios({
-      method: "get",
-      url: "https://j10a207.p.ssafy.io/api/community/all",
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-      },
-    });
-    return response.data;
-  };
-  
->>>>>>> 242d5abf467275d79a35d1d58789d37b8e52b405
   const { data, isLoading, error }: UseQueryResult<BoardInfo, Error> = useQuery(
     "boardInfo",
     fetchBoardInfo
