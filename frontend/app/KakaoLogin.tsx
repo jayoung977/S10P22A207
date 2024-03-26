@@ -53,7 +53,7 @@ export default function KakaoLogin() {
 
       {/* 컨텐츠 */}
       <div className="absolute inset-0 flex flex-col items-center justify-center ">
-        <p className="dark:text-neutral-200 text-xs sm:text-base text-white">
+        <p className="dark:text-neutral-200 text-xs sm:text-base text-black">
           Big Data Stock Trading Game
         </p>
         <TypewriterEffectSmooth words={words} />
