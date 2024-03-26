@@ -53,7 +53,7 @@ public class SingleGameController {
         return BaseResponse.success(SuccessCode.BUY_SUCCESS, singleGameService.buy(dto, userDetails.getId()));
     }
 
-    @GetMapping("/tomorrow")
+    @PostMapping("/tomorrow")
     @Operation(summary = "싱글 - 하루 경과", description = "싱글게임 내에서 하루가 지나면 경과를 보여줍니다.", tags = {"싱글게임"})
     public ResponseEntity<BaseResponse<NextDayResponseDto>> getTomorrow(@RequestBody NextDayRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
