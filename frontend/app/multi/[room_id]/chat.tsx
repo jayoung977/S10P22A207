@@ -31,32 +31,30 @@ export default function Chat() {
 
     client.current.connect({}, () => {
       console.log("웹소켓 연결됨");
-      client.current.subscribe(
-        `/multi/${room_id}/chat/subscribe`,
-        (message) => {
-          const parsedMessage = JSON.parse(message.body);
-          setReceiveMessage((prevMessages: Message[]): any => [
-            ...prevMessages,
-            parsedMessage,
-          ]);
-        }
-      );
+      client.current.subscribe(`/api/sub/${room_id}`, (message) => {
+        console.log(message);
+        const parsedMessage = JSON.parse(message.body);
+        setReceiveMessage((prevMessages: Message[]): any => [
+          ...prevMessages,
+          parsedMessage,
+        ]);
+      });
     });
   }, []);
 
   const sendHandler = () => {
     client.current.send(
-      `/multi/${room_id}/chat/publish`,
+      `/api/pub/websocket/message`,
       {},
       JSON.stringify({
-        type: "chat",
+        type: "MESSAGE",
+        dmRoomId: room_id,
         sender: nickname,
-        content: sendMessage,
+        message: sendMessage,
       })
     );
     setSendMessage("");
   };
-
   return (
     <div className="col-span-10 border relative">
       <div className="h-[calc(25vh)] overflow-auto gap p-2">
