@@ -25,36 +25,56 @@ interface RoomInfo {
 export default function NavbarGameModal() {
   const router = useRouter();
   const openSinglePlay = () => {
-    const token = sessionStorage.getItem("accessToken");
-    axios
-      .get("https://j10a207.p.ssafy.io/api/single", {
+    // openSinglePlay 호출 시, 해당 사용자의 기존 싱글 게임 기록 유무 확인 api 요청(지금 경로 X)
+    // api 요청으로 넘어오는 데이터 : 이어하기 유무(true/false), 게임 방 번호
+    // 확인 후 res.data.result 값이 true일 경우, Swal.fire 오픈
+    axios.get("https://j10a207.p.ssafy.io/api/single/is-existing-single-game", {
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        console.table(res);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    Swal.fire({
-      title: "기존 기록이 없습니다",
-      text: "플레이 하시겠습니까?",
-      showCancelButton: true,
-      confirmButtonText: "플레이",
-      confirmButtonColor: "#1454FF",
-      cancelButtonText: "취소",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // 플레이 버튼을 클릭한 경우
-        console.log("플레이 버튼을 클릭했습니다.");
-        router.push("/single/1/play");
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        // 취소 버튼을 클릭한 경우
-        console.log("취소 버튼을 클릭했습니다.");
-      }
-    });
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        }
+      }).then((res) => {
+          console.table("res : ", res.data);
+          // 여기서 singleGameChance도 같이 보내야 하지 않나?
+          if (res.data.result == true) {
+            Swal.fire({
+              title: "기존 기록이 있습니다",
+              text: "이이서 하시겠습니까?",
+              showCancelButton: true,
+              confirmButtonText: "이어하기",
+              confirmButtonColor: "#1454FF",
+              cancelButtonText: "취소",
+            }).then((result) => {
+            if (result.isConfirmed) {
+              // 이어하기 버튼을 클릭한 경우
+              console.log("이어하기 버튼을 클릭했습니다.");
+              router.push("/single/play");
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+              // 취소 버튼을 클릭한 경우
+              console.log("취소 버튼을 클릭했습니다.");
+            }
+          });
+          } else {
+            Swal.fire({
+              title: "기존 기록이 없습니다",
+              text: "플레이 하시겠습니까?",
+              showCancelButton: true,
+              confirmButtonText: "플레이",
+              confirmButtonColor: "#1454FF",
+              cancelButtonText: "취소",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // 플레이 버튼을 클릭한 경우
+                console.log("플레이 버튼을 클릭했습니다.");
+                router.push("/single/play");
+              } else if (result.dismiss === Swal.DismissReason.cancel) {
+                // 취소 버튼을 클릭한 경우
+                console.log("취소 버튼을 클릭했습니다.");
+              }
+          });
+        }
+      }).catch((error) => {
+          console.error(error);
+        });
   };
 
   return (

@@ -1,10 +1,11 @@
 'use client'
 // 사용자의 매매 내역 (left side bar - 3)
-import { useState } from 'react';
-
+import { useState, useEffect } from 'react';
+import SingleGameStore from '@/public/src/stores/single/SingleGameStore';
 import SaleHistory from "./SaleHistory";
 
 export default function SalesHistory () {
+    const { tradeListData } = SingleGameStore();
 
     const [saleData, setSaleData] = useState([
         {
@@ -73,7 +74,7 @@ export default function SalesHistory () {
                 </thead>
                 <tbody className="overflow-y-auto block" style={{ height: 'calc(20vh)' }}>
                     {
-                        saleData.map((x, index) => (
+                        tradeListData?.map((x :any, index :number) => (
                             <SaleHistory key={index} data={x}/>
                         ))
                     }

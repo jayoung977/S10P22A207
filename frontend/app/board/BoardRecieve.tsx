@@ -43,7 +43,7 @@ const deleteBoard = async (
 export default function BoardReceive() {
   useFetchUserInfo();
   const { nickname, memberId } = userStore();
-
+  
   const fetchBoardInfo = async () => {
     const response = await axios({
       method: "get",
@@ -54,6 +54,7 @@ export default function BoardReceive() {
     });
     return response.data;
   };
+  
   const { data, isLoading, error }: UseQueryResult<BoardInfo, Error> = useQuery(
     "boardInfo",
     fetchBoardInfo

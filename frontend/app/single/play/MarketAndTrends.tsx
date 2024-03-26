@@ -9,7 +9,6 @@ export default function MarketAndTrends() {
     const [isMarketOn, setIsMarketOn] = useState(true); // 시장정보 버튼 상태
     const [isTrendOn, setIsTrendOn] = useState(false); // 트렌드 버튼 상태
 
-    
     return (
         <div className="row-start-5 row-end-7 grid grid-rows-6">
             <div className="row-start-1 row-end-2 grid grid-cols-9 justify-between center">

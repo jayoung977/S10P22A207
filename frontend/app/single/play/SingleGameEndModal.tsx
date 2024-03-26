@@ -1,7 +1,16 @@
 'use client'
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'
-export default function SingleGameEndModal ({ isOpen, onClose }:any) {
+import SingleGameStore from '@/public/src/stores/single/SingleGameStore';
+export default function SingleGameEndModal ({ isOpen, onClose, data }:any) {
+    const [startMoney, setStartMoney] = useState<number>(0);
+    const [endMoney, setEndMoney] = useState<number>(0);
+
     const router = useRouter();
+    // api 요청
+    // useEffect(() => {
+
+    // }, [])
     if (!isOpen) return null;
     
     return (
@@ -11,19 +20,35 @@ export default function SingleGameEndModal ({ isOpen, onClose }:any) {
                 <div className="row-start-3 row-end-11 m-3">
                     <div className="flex justify-between mt-2 mb-1">
                         <div>시작 금액</div>
+                        {/* <div>{startMoney}</div> */}
                         <div>7,000,000</div>
                     </div>
                     <div className="flex justify-between mt-1 mb-2">
                         <div>종료 금액</div>
+                        {/* <div>{endMoney}</div> */}
                         <div>9,000,000</div>
                     </div>
                     <hr></hr>
                     <div className="flex justify-between mt-2 mb-1">
                         <div>순이익</div>
+                        {/* {
+                            endMoney - startMoney > 0 ? (
+                                <div>+{endMoney - startMoney}원</div>
+                            ) : (
+                                <div>-{startMoney - endMoney}원</div>
+                            )
+                        } */}
                         <div>+ 2,000,000원</div>
                     </div>
                     <div className="flex justify-between mt-1 mb-2">
                         <div>수익률</div>
+                        {/* {
+                            endMoney - startMoney > 0 ? (
+                                <div>+{(((endMoney-startMoney)%startMoney) * 100).toFixed(1)}%</div>
+                            ) : (
+                                <div>{(((endMoney-startMoney)%startMoney) * 100).toFixed(1)}%</div>
+                            )
+                        } */}
                         <div>+ 28.6 %</div>
                     </div>
                 </div>
