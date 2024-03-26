@@ -1,4 +1,6 @@
-export default function TurnNow ({ turn } :{ turn : number}) {
+import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
+export default function TurnNow () {
+    const { turn } = SingleGameStore();
     const percentage = (turn / 50) * 100; // 턴 수에 따른 비율 계산
     return (
         <div>

@@ -5,6 +5,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public record SingleTradeListDto(
 
+    @Schema(description = "주식 Id")
+    long stockId,
+
     @Schema(description = "매매 턴")
     int day,
 

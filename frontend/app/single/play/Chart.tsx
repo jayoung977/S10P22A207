@@ -2,12 +2,14 @@
 // 현재 턴/종목에 대한 차트 정보 (main - 1)
 import { useEffect } from "react";
 import anychart from "anychart";
+import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
+
 
 // 이동평균선 데이터 생성 함수
 function calculateMovingAverage(data :any, period :any) {
     const result = [];
-    for (let i = period-1; i < data.length; i++) {
-        const sum = data.slice(i - period + 1, i + 1).reduce((acc :any, curr:any) => acc + curr.close, 0);
+    for (let i = period-1; i < data?.length; i++) {
+        const sum = data.slice(i - period + 1, i + 1).reduce((acc :any, curr:any) => acc + curr.endPrice, 0);
         const average = (sum / period).toFixed(2);
         result.push([data[i].date, parseFloat(average)]);
     }
@@ -15,6 +17,7 @@ function calculateMovingAverage(data :any, period :any) {
   }
 
 export default function Chart({ data }: any) {
+  const { selectedStockIndex } = SingleGameStore();
   useEffect(() => {
     // 차트 생성
     const chart = anychart.stock();
@@ -33,7 +36,7 @@ export default function Chart({ data }: any) {
 
     // line series 생성
     const lineSeries = plot1.line(
-      data?.map((item: any) => [item.date, item.close])
+      data?.map((item: any) => [item.date, item.endPrice])
     );
     // line series 속성 설정
     lineSeries.name("주가");
@@ -41,7 +44,7 @@ export default function Chart({ data }: any) {
     lineSeries.stroke("#86BF15", 1);
 
     // candlestick series 생성
-    const candlestickSeries = plot1.candlestick(data?.map((item: any) => [item.date, item.open, item.high, item.low, item.close]));
+    const candlestickSeries = plot1.candlestick(data?.map((item: any) => [item.date, item.marketPrice, item.highPrice, item.lowPrice, item.endPrice]));
     // candlestick series 속성 설정
     candlestickSeries.name("OHLC");
     candlestickSeries.legendItem().iconType("risingfalling");
@@ -49,10 +52,10 @@ export default function Chart({ data }: any) {
     candlestickSeries.tooltip().format(function (this: any) {
       const series = this.series;
       return (
-        "시가 : " + this.open + "\n" +
-        "고가 : " + this.high + "\n" +
-        "저가 : " + this.low + "\n" +
-        "종가 : " + this.close + "\n"
+        "시가 : " + this.marketPrice + "\n" +
+        "고가 : " + this.highPrice + "\n" +
+        "저가 : " + this.lowPrice + "\n" +
+        "종가 : " + this.endPrice + "\n"
       );
     });
     // candlestick series 색상 지정
@@ -77,14 +80,6 @@ export default function Chart({ data }: any) {
     sma20Series.stroke('yello');
     sma60Series.stroke('green');
     sma120Series.stroke('blue');
-
-
-
-   // 이동평균선 그래프 색상 지정
-   sma5Series.stroke('purple');
-   sma20Series.stroke('yello');
-   sma60Series.stroke('green');
-   sma120Series.stroke('blue');
    
     // 첫 번째 plot 속성 설정
     plot1.legend().title().useHtml(true);
@@ -105,13 +100,13 @@ export default function Chart({ data }: any) {
           "<span style='color:#455a64;font-weight:600'>" +
           series.name() +
           ":</span>" +
-          this.open +
+          this.marketPrice +
           " | " +
-          this.high +
+          this.highPrice +
           " | " +
-          this.low +
+          this.lowPrice +
           " | " +
-          this.close
+          this.endPrice
         );
       }
     });
@@ -119,7 +114,7 @@ export default function Chart({ data }: any) {
     plot2.legend().title().useHtml(true);
     plot2.legend().titleFormat(<span></span>);
     const columnSeries = plot2.column(
-      data?.map((item: any) => [item.date, item.volume])
+      data?.map((item: any) => [item.date, item.tradingVolume])
     );
     columnSeries.name("거래량");
     columnSeries.risingFill("#F65742", 1);
@@ -148,9 +143,12 @@ export default function Chart({ data }: any) {
     };
   }, [data]);
   return (
-    <div
-      id="chart-container"
-      className="row-start-2 row-end-13 flex items-center justify-center"
-    ></div>
+    <div className="row-start-1 row-end-12 grid grid-rows-12">
+      <div className="row-start-1 row-end-2 flex items-center p-2">
+        종목 {selectedStockIndex+1}
+      </div>
+      <div id="chart-container" className="row-start-2 row-end-13 flex items-center justify-center"></div>
+    </div>
+
   );
 }

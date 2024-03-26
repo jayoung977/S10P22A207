@@ -28,8 +28,14 @@ public class SingleGameController {
 
     private final SingleGameService singleGameService;
 
+    @GetMapping("/is-existing-single-game")
+    @Operation(summary = "진행중인 싱글게임 존재 확인", description = "싱글게임 모드를 선택하면 진행 중인 게임이 있는지 알려줍니다.", tags = {"싱글게임"})
+    public ResponseEntity<BaseResponse<Boolean>> isExistingSingleGame(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return BaseResponse.success(SuccessCode.SELECT_SUCCESS, singleGameService.existSingleGame(userDetails.getId()));
+    }
+
     @GetMapping
-    @Operation(summary = "싱글게임 불러오기", description = "싱글게임 모드를 선택하면 싱글 모드 게임을 가져옵니다.", tags = {"싱글게임"})
+    @Operation(summary = "싱글게임 생성 or 불러오기", description = "싱글게임 모드를 선택하면 싱글 모드 게임을 가져옵니다.", tags = {"싱글게임"})
     public ResponseEntity<BaseResponse<SingleGameCreateResponseDto>> getSingleGame(@AuthenticationPrincipal CustomUserDetails userDetails) {
         SingleGameCreateResponseDto responseDto = singleGameService.createGame(userDetails.getId());
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, responseDto);
@@ -47,7 +53,7 @@ public class SingleGameController {
         return BaseResponse.success(SuccessCode.BUY_SUCCESS, singleGameService.buy(dto, userDetails.getId()));
     }
 
-    @GetMapping("/tomorrow")
+    @PostMapping("/tomorrow")
     @Operation(summary = "싱글 - 하루 경과", description = "싱글게임 내에서 하루가 지나면 경과를 보여줍니다.", tags = {"싱글게임"})
     public ResponseEntity<BaseResponse<NextDayResponseDto>> getTomorrow(@RequestBody NextDayRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
 

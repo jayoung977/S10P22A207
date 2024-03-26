@@ -13,7 +13,19 @@ public record SingleGameResultDto(
     @Schema(description = "시작 날짜")
     LocalDateTime StartDate,
     @Schema(description = "끝 날짜")
-    LocalDateTime endDate
+    LocalDateTime endDate,
+
+    @Schema(description = "시작 금액")
+    Long initialAsset,
+
+    @Schema(description = "종료 금액")
+    Long finalAsset,
+
+    @Schema(description = "순이익")
+    Long netProfit,
+
+    @Schema(description = "수익률")
+    Double profitMargin
 ) {
 
 }
