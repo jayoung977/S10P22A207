@@ -1,13 +1,20 @@
 package com.backend.api.domain.multi.controller;
 
 import com.backend.api.domain.multi.service.MultiGameService;
+import com.backend.api.domain.single.dto.request.SingleTradeRequestDto;
 import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.SuccessCode;
+import com.backend.api.global.security.userdetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -17,10 +24,43 @@ public class MultiGameController {
 
     private final MultiGameService multiGameService;
 
-    @GetMapping
-    @Operation(summary = "멀티게임 불러오기", description = "멀티게임 모드를 선택하면 현재 생성되어있는 방을 가져옵니다.", tags = { "멀티게임" })
-    public ResponseEntity<BaseResponse<String>> getMultiGameRooms(){
-        //TODO: 웹소켓에서 가져오기
+    @GetMapping("")
+    @Operation(summary = "멀티게임 대기실 불러오기", description = "멀티게임 모드를 선택하면 현재 생성되어있는 방 리스트를 불러옵니다.", tags = { "멀티게임" })
+    public ResponseEntity<BaseResponse<String>> getMultiGameRooms(@RequestParam int pageNumber, @RequestParam int pageSize){
+        multiGameService.getMultiGameRooms(pageNumber, pageSize);
+        //TODO: 페이징 해서 가져와야 하나?
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS,"보냈어용");
+    }
+    @GetMapping("/{roomId}")
+    @Operation(summary = "멀티게임 입장하기", description = "특정 멀티게임방 입장을 요청하면 해당 방으로 들어갑니다.", tags = { "멀티게임" })
+    public ResponseEntity<BaseResponse<String>> enterMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable String roomId){
+        multiGameService.enterMultiGameRoom(userDetails.getId(), roomId);
+        return BaseResponse.success(SuccessCode.SELECT_SUCCESS,"보냈어용");
+    }
+
+    @GetMapping("/create-room")
+    @Operation(summary = "멀티게임 만들기", description = "멀티게임 방을 만듭니다.", tags = { "멀티게임" })
+    public ResponseEntity<BaseResponse<String>> createMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails){
+        multiGameService.createMultiGameRoom(userDetails.getId());
+        return BaseResponse.success(SuccessCode.SELECT_SUCCESS,"보냈어용");
+    }
+
+    @PostMapping("/sell")
+    @Operation(summary = "멀티 - 매도", description = "멀티게임 내에서 매도 하면 해당 종목을 팝니다.", tags = {"싱글게임"})
+    public ResponseEntity<BaseResponse<MultiTradeResponseDto>> sellStock(@RequestBody SingleTradeRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return BaseResponse.success(SuccessCode.SELL_SUCCESS, multiGameService.sell(dto, userDetails.getId()));
+    }
+
+    @PostMapping("/buy")
+    @Operation(summary = "멀티 - 매수", description = "멀티게임 내에서 매수 하면 해당 종목을 삽니다.", tags = {"싱글게임"})
+    public ResponseEntity<BaseResponse<MultiTradeResponseDto>> buyStock(@RequestBody MultiTradeRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return BaseResponse.success(SuccessCode.BUY_SUCCESS, multiGameService.buy(dto, userDetails.getId()));
+    }
+
+    @PostMapping("/tomorrow")
+    @Operation(summary = "멀티 - 하루 경과", description = "멀티게임 내에서 하루가 지나면 경과를 보여줍니다.", tags = {"싱글게임"})
+    public ResponseEntity<BaseResponse<MultiDayResponseDto>> getTomorrow(@RequestBody MultiNextDayRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.getTomorrow(dto, userDetails.getId()));
     }
 }
