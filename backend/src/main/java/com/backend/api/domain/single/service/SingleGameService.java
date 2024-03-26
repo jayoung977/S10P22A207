@@ -156,6 +156,10 @@ public class SingleGameService {
 
             // 보유자산
             List<AssetListDto> assetList = new ArrayList<>();
+
+            // 해당 일의
+            List<NextDayInfoResponseDto> stockSummaries = new ArrayList<>();
+
             for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
                 AssetListDto dto = new AssetListDto(
                     stockChartRepository.findById(currentGame.getFirstDayChartList().get(i)).orElseThrow(
@@ -167,8 +171,33 @@ public class SingleGameService {
                     100.0 * currentGame.getProfits()[i] / currentGame.getStockPurchaseAmount()[i]
                 );
                 assetList.add(dto);
+
+                StockChart todayChart = stockChartRepository.findById(currentGame.getFirstDayChartList().get(i) + currentGame.getDay()).orElseThrow();
+                StockChart yesterdayChart = stockChartRepository.findById(currentGame.getFirstDayChartList().get(i)+ currentGame.getDay() - 1).orElseThrow();
+
+                Long startDateChartStockId = todayChart.getStock().getId();
+                // 종목별 정보 담아주기
+                Integer stockIdx = currentGame.getStocks().get(startDateChartStockId);
+
+                stockSummaries.add(
+                    new NextDayInfoResponseDto(
+                        todayChart.getStock().getId(), // 종목 Id
+                        todayChart.getEndPrice(), // 오늘의 종가
+                        todayChart.getEndPrice() - yesterdayChart.getEndPrice(), // 등락정도
+                        currentGame.getStockAmount()[stockIdx], // 보유수량
+                        (long) currentGame.getStockAmount()[stockIdx] * (todayChart.getEndPrice()
+                            - currentGame.getAveragePrice()[stockIdx]), // 평가손익
+                        currentGame.getAveragePrice()[stockIdx] == 0 ? 0 :
+                            1.0 * ((todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]) * 100)
+                                / currentGame.getAveragePrice()[stockIdx]// 손익률
+                    )
+                );
             }
-            return new SingleGameCreateResponseDto(maxNumber, currentGame.getDay(), me.getSingleGameChance(), stockChartDataList, totalAssetDto, assetList, currentGame.getTradeList());
+
+
+
+
+            return new SingleGameCreateResponseDto(maxNumber, currentGame.getDay(), me.getSingleGameChance(), stockChartDataList, totalAssetDto, assetList, currentGame.getTradeList(), stockSummaries);
         }
 
         if (me.getSingleGameChance() <= 0) {
@@ -299,8 +328,22 @@ public class SingleGameService {
             StockChartDataDto stockChartDataDto = new StockChartDataDto(singleGameStock.getStock().getId(), stockChartDtoList);
             stockChartDataList.add(stockChartDataDto);
         }
+        List<NextDayInfoResponseDto> stockSummaries = new ArrayList<>();
+        for (Long firstDayStockChartId : singleGame.getFirstDayChartList()) {
+            StockChart todayChart = stockChartRepository.findById(firstDayStockChartId).orElseThrow();
+            StockChart yesterdayChart = stockChartRepository.findById(firstDayStockChartId - 1).orElseThrow();
 
-        return new SingleGameCreateResponseDto(nextId, 1, me.getSingleGameChance(), stockChartDataList, null, null, null);
+            stockSummaries.add(
+                new NextDayInfoResponseDto(
+                    todayChart.getStock().getId(), // 종목 Id
+                    todayChart.getEndPrice(), // 오늘의 종가
+                    todayChart.getEndPrice() - yesterdayChart.getEndPrice(), // 등락정도
+                    0,0,0
+                )
+            );
+        }
+
+        return new SingleGameCreateResponseDto(nextId, 1, me.getSingleGameChance(), stockChartDataList, null, null, null, stockSummaries);
     }
 
     public SingleTradeResponseDto sell(SingleTradeRequestDto dto, Long memberId) {
@@ -566,7 +609,7 @@ public class SingleGameService {
                 )
             );
 
-            if (dto.day() == 50) {
+            if (dto.day() == 51) {
                 // SingleGameStock 에 저장 - 종목별
                 SingleGameStock singleGameStock = singleGameStockRepository.findBySingleGameLog_IdAndStock_Id(currentGame.getSingleGameLogId(), todayChart.getStock().getId())
                     .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
@@ -596,7 +639,7 @@ public class SingleGameService {
         currentGame.updateTotalAsset(totalAsset);
         redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.gameIdx(), currentGame);
 
-        if (dto.day() == 50) {
+        if (dto.day() == 51) {
             // 결과 저장.
             singleGameResultSave(memberId, 1.0 * resultProfit / currentGame.getInitial() * 100, totalAsset);
 
@@ -617,7 +660,15 @@ public class SingleGameService {
             }
 
             // 게임 로그 저장하기
-            SingleGameResultDto singleGameResultDto = new SingleGameResultDto(stockInfoDtoList, startDate, endDate);
+            SingleGameResultDto singleGameResultDto = new SingleGameResultDto(
+                stockInfoDtoList,
+                startDate,
+                endDate,
+                currentGame.getInitial(),
+                currentGame.getTotalAsset(),
+                currentGame.getTotalAsset() - currentGame.getInitial(),
+                100.0 * (currentGame.getTotalAsset() - currentGame.getInitial()) / currentGame.getInitial()
+            );
 
             SingleGameLog singleGameLog = singleGameLogRepository.findById(currentGame.getSingleGameLogId()).orElseThrow(
                 () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_LOG)
