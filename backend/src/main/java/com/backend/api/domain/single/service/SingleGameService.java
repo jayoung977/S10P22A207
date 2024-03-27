@@ -406,7 +406,7 @@ public class SingleGameService {
                 dto.day(),
                 singleTrade.getTradeType(),
                 singleTrade.getAmount(),
-                singleTrade.getAmount(),
+                singleTrade.getPrice(),
                 singleTrade.getProfit())
         );
 
@@ -579,7 +579,6 @@ public class SingleGameService {
 
     public NextDayResponseDto getTomorrow(NextDayRequestDto dto, Long memberId) {
         SingleGame currentGame = this.getGame(memberId, dto.gameIdx());
-
 
         currentGame.updateDay(dto.day());
         // 종목별 "오늘의 종가, 등락정도, 보유수량, 평가손익, 손익률"를 담아서 리턴. responseDto에 넣어야겠다.
