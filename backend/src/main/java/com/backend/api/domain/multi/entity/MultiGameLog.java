@@ -1,14 +1,9 @@
 package com.backend.api.domain.multi.entity;
 
-import static jakarta.persistence.GenerationType.*;
-import static lombok.AccessLevel.*;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
 import com.backend.api.domain.BaseEntity;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +11,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +33,7 @@ public class MultiGameLog extends BaseEntity {
 	private List<MultiTrade> multiTrade = new ArrayList<>();
 
 	@NotNull
-	private String gameLogId;
+	private Long stockId;
 
 	@NotNull
 	private LocalDateTime startDate;
@@ -44,10 +42,10 @@ public class MultiGameLog extends BaseEntity {
 	List<MultiGamePlayer> multiGamePlayers = new ArrayList<>();
 
 	@Builder
-	public MultiGameLog(List<MultiTrade> multiTrade, String gameLogId, LocalDateTime startDate,
+	public MultiGameLog(List<MultiTrade> multiTrade, Long stockId, LocalDateTime startDate,
 		List<MultiGamePlayer> multiGamePlayers) {
 		this.multiTrade = multiTrade;
-		this.gameLogId = gameLogId;
+		this.stockId = stockId;
 		this.startDate = startDate;
 		this.multiGamePlayers = multiGamePlayers;
 	}
