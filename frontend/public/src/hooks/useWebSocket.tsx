@@ -1,5 +1,5 @@
 // useWebSocket.ts
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { CompatClient, Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { useParams } from "next/navigation";
@@ -10,7 +10,8 @@ export const useWebSocket = () => {
   const params = useParams<{ room_id: string }>();
   const client = useRef<CompatClient>({} as CompatClient);
   const room_id: string = params.room_id;
-  const { setReceiveMessage, sendMessage, setSendMessage } = multigameStore();
+  const { sendMessage, setSendMessage, receiveMessage, setReceiveMessage } =
+    multigameStore();
 
   useEffect(() => {
     client.current = Stomp.over(() => {
@@ -19,13 +20,13 @@ export const useWebSocket = () => {
     });
 
     client.current.connect({}, () => {
-      console.log("웹소켓 연결됨");
+      // console.log("웹소켓 연결됨");
       client.current.subscribe(`/api/sub/${room_id}`, (message) => {
         const parsedMessage = JSON.parse(message.body);
-        setReceiveMessage((prevMessages: any) => [
-          ...prevMessages,
-          parsedMessage,
-        ]);
+        const copy = [...receiveMessage];
+        copy.push(parsedMessage);
+        setReceiveMessage(copy);
+        console.log(receiveMessage);
       });
     });
 
@@ -35,7 +36,7 @@ export const useWebSocket = () => {
         // Swal.fire("웹소켓 연결안됨");
       }
     };
-  }, []);
+  }, [receiveMessage]);
 
   const sendHandler = (nickname: any) => {
     client.current.send(
@@ -43,7 +44,7 @@ export const useWebSocket = () => {
       {},
       JSON.stringify({
         type: "MESSAGE",
-        dmRoomId: room_id,
+        roomId: room_id,
         sender: nickname,
         message: sendMessage,
       })
