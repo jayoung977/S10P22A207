@@ -1,5 +1,26 @@
 import { create } from "zustand";
 
+
+export interface UserInfo {
+  result: UserProfile
+}
+
+
+export interface UserProfile {
+  memberId: number
+  email: string
+  nickname: string
+  birthYear: number
+  gender: string
+  asset: number
+  rankPoint: number
+  win: number
+  lose: number
+  singleAvgRoi: number
+  multiAvgRoi: number
+}
+
+
 type Store = {
   memberId: number | null;
   setMemberId: (value: number | null) => void;

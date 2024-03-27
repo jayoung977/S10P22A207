@@ -6,8 +6,8 @@ import penguin from "@/public/src/assets/images/penguin.png";
 export default function Header() {
   const router = useRouter();
 
-  function handleGameStart() {
-    router.push("/multi/1/room/1/play");
+  function handleGameStart () {
+    router.push('/multi/1/play')
   }
   return (
     <header className="row-span-1 grid grid-cols-12 border items-center gap-2">
