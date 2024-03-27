@@ -9,6 +9,8 @@ type Store = {
   setReceiveMessage: (value: any) => void;
   sendMessage: string;
   setSendMessage: (value: string) => void;
+  lobbyModal: string;
+  setLobbyModal: (value: string) => void;
 };
 
 export interface MultiRoom {
@@ -30,6 +32,8 @@ const multigameStore = create<Store>((set: any) => ({
   setReceiveMessage: (value) => set({ receiveMessage: value }),
   sendMessage: "",
   setSendMessage: (value) => set({ sendMessage: value }),
+  lobbyModal: "true",
+  setLobbyModal: (value) => set({ lobbyModal: value }),
 }));
 
 export default multigameStore;
