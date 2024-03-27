@@ -1,5 +1,6 @@
 package com.backend.api.domain.multi.service;
 
+import com.backend.api.domain.multi.dto.MultiGameRoomCreateResponseDto;
 import com.backend.api.domain.multi.dto.MultiGameRoomsResponseDto;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +21,7 @@ public class MultiGameService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     /*
-     * 멀티게임 key : MultiGame:참가자Id:방번호:게임번호
+     * 멀티게임 key : MultiGame:참가자Id:방번호(소켓):라운드번호
      */
     public List<MultiGameRoomsResponseDto>getMultiGameRooms(int pageNumber, int pageSize) {
         Set<String> multiGameRooms = redisTemplate.keys("multiGame:*");
@@ -64,10 +65,23 @@ public class MultiGameService {
     public void enterMultiGameRoom(Long memberId, String roomId) {
         // TODO: 구독 하게 해야함.
         // TODO: game round 수가 0이 아니라면 못들어가게 해야함
-        redisTemplate.opsForValue().set("multiGame:" + memberId + ":" + roomId + ":0", );
+        // 웹소켓에 연결시키는 과정
+//        redisTemplate.opsForValue().set("multiGame:" + memberId + ":" + roomId + ":0", );
 
         // 플레이어를 게임 방의 구독자로 추가
         String channel = "multiGameRoom:" + roomId;
         redisTemplate.opsForSet().add(channel, memberId.toString());
+    }
+
+    public MultiGameRoomCreateResponseDto createMultiGameRoom(Long memberId) {
+        Long nextId = null;
+
+        nextId = redisTemplate.opsForValue().increment("nextId", 1); // Redis에서 Atomic한 증가
+        if (nextId == null || nextId == 1) {
+            nextId = 1L; // 초기값 설정
+            redisTemplate.opsForValue().set("nextId", nextId); // Redis에 첫 번째 id 설정
+        }
+        String key = "singleGame:" + memberId + ":" + nextId; // Redis에 저장할 키
+        redisTemplate.opsForValue().set(key, multiGame);
     }
 }

@@ -2,7 +2,6 @@ package com.backend.api.domain.multi.controller;
 
 import com.backend.api.domain.multi.dto.MultiGameRoomsResponseDto;
 import com.backend.api.domain.multi.service.MultiGameService;
-import com.backend.api.domain.single.dto.request.SingleTradeRequestDto;
 import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.SuccessCode;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
@@ -40,25 +39,32 @@ public class MultiGameController {
 
     @GetMapping("/create-room")
     @Operation(summary = "멀티게임 만들기", description = "멀티게임 방을 만듭니다.", tags = { "멀티게임" })
-    public ResponseEntity<BaseResponse<String>> createMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails){
-        multiGameService.createMultiGameRoom(userDetails.getId());
+    public ResponseEntity<BaseResponse<MultiGameRoomCreateResponseDto>> createMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails){
+        MultiGameRoomCreateResponseDto multiGameRoom = multiGameService.createMultiGameRoom(userDetails.getId());
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS,"보냈어용");
     }
 
     @PostMapping("/sell")
-    @Operation(summary = "멀티 - 매도", description = "멀티게임 내에서 매도 하면 해당 종목을 팝니다.", tags = {"싱글게임"})
-    public ResponseEntity<BaseResponse<MultiTradeResponseDto>> sellStock(@RequestBody SingleTradeRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    @Operation(summary = "멀티 - 매도", description = "멀티게임 내에서 매도 하면 해당 종목을 팝니다.", tags = {"멀티게임"})
+    public ResponseEntity<BaseResponse<MultiTradeResponseDto>> sellStock(@RequestBody MultiTradeRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         return BaseResponse.success(SuccessCode.SELL_SUCCESS, multiGameService.sell(dto, userDetails.getId()));
     }
 
     @PostMapping("/buy")
-    @Operation(summary = "멀티 - 매수", description = "멀티게임 내에서 매수 하면 해당 종목을 삽니다.", tags = {"싱글게임"})
+    @Operation(summary = "멀티 - 매수", description = "멀티게임 내에서 매수 하면 해당 종목을 삽니다.", tags = {"멀티게임"})
     public ResponseEntity<BaseResponse<MultiTradeResponseDto>> buyStock(@RequestBody MultiTradeRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         return BaseResponse.success(SuccessCode.BUY_SUCCESS, multiGameService.buy(dto, userDetails.getId()));
     }
 
+    @PostMapping("/short-selling")
+    @Operation(summary = "멀티 - 공매도", description = "멀티게임 내에서 공매도 하면 해당 종목을 갖고 있다고 표현합니다.", tags = {"멀티게임"})
+    public ResponseEntity<BaseResponse<MultiTradeResponseDto>> shortStock(@RequestBody MultiTradeRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return BaseResponse.success(SuccessCode.BUY_SUCCESS, multiGameService.shortSelling(dto, userDetails.getId()));
+    }
+
+
     @PostMapping("/tomorrow")
-    @Operation(summary = "멀티 - 하루 경과", description = "멀티게임 내에서 하루가 지나면 경과를 보여줍니다.", tags = {"싱글게임"})
+    @Operation(summary = "멀티 - 하루 경과", description = "멀티게임 내에서 하루가 지나면 경과를 보여줍니다.", tags = {"멀티게임"})
     public ResponseEntity<BaseResponse<MultiDayResponseDto>> getTomorrow(@RequestBody MultiNextDayRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.getTomorrow(dto, userDetails.getId()));
