@@ -6,63 +6,58 @@ import { useState } from "react";
 import userStore from "@/public/src/stores/user/userStore";
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 import Swal from "sweetalert2";
-import BoardPicture from "./BoardPicture";
-
-interface CommunityCreateReq {
-  content: string;
-}
-
-interface RequestType {
-  multipartFile: string[];
-  communityCreateReq: CommunityCreateReq;
-}
 
 export default function BoardSend() {
   useFetchUserInfo();
   const { memberId } = userStore();
-  const sendBoard = async (
-    request: RequestType
-  ): Promise<AxiosResponse<any>> => {
+
+  const sendBoard = async (formData: FormData): Promise<AxiosResponse<any>> => {
     const response = await axios({
       method: "post",
       url: `https://j10a207.p.ssafy.io/api/community/write-multi?loginUserId=${memberId}`,
-      data: request,
+      data: formData,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         "Content-Type": "multipart/form-data",
       },
     });
+    console.log(response);
     return response;
   };
 
   const queryClient = useQueryClient();
-  const mutation = useMutation<AxiosResponse<any>, Error, RequestType>(
-    sendBoard,
-    {
-      onSuccess: () => {
-        Swal.fire("성공!", "게시물이 성공적으로 작성되었습니다.", "success");
-        queryClient.invalidateQueries("boardInfo");
-      },
-      onError: (error: any) => {
-        console.error("에러발생", error.response?.data || error.message);
-      },
-      onSettled: () => {
-        setContent("");
-      },
-    }
-  );
+  const mutation = useMutation<AxiosResponse<any>, Error, FormData>(sendBoard, {
+    onSuccess: () => {
+      Swal.fire("성공!", "게시물이 성공적으로 작성되었습니다.", "success");
+      queryClient.invalidateQueries("boardInfo");
+    },
+    onError: (error: any) => {
+      console.error("에러발생", error.response?.data || error.message);
+    },
+    onSettled: () => {
+      setContent("");
+      setImage([]);
+    },
+  });
 
   const [content, setContent] = useState("");
   const [image, setImage] = useState<{ name: string; base64: string }[]>([]);
 
   const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const multipartFile = image?.map((file) => file.base64);
-    const request = {
-      multipartFile: multipartFile,
-      communityCreateReq: { content: content },
-    };
-    mutation.mutate(request);
+
+    const formData = new FormData();
+    // 파일 추가
+    image.forEach((file) => {
+      formData.append("multipartFile", file.base64);
+    });
+    // 다른 필드 데이터 추가
+    formData.append(
+      "communityCreateReq",
+      new Blob([JSON.stringify({ content })], { type: "application/json" })
+    );
+
+    mutation.mutate(formData);
   };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,12 +94,16 @@ export default function BoardSend() {
       };
     });
 
+  const deletePhoto = (num: number) => {
+    const filteredImage = image.filter((item, i) => i !== num);
+    setImage(filteredImage);
+  };
+
   return (
     <div className="flex justify-center items-center row-span-5 grid grid-cols-12 rounded-md ">
-      {image && <BoardPicture image={image}></BoardPicture>}
       <div className="col-start-4">
         <Image
-          className="w-24 h-24 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500"
+          className="w-24 h-24 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500 relative"
           src={penguin}
           alt="Extra large avatar"
           width={100}
@@ -157,6 +156,7 @@ export default function BoardSend() {
                 onChange={handleImageChange}
               />
             </label>
+
             <textarea
               id="chat"
               rows={5}
@@ -164,7 +164,8 @@ export default function BoardSend() {
               placeholder="Your message..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
-            ></textarea>
+            />
+
             <button
               onClick={handleSubmit}
               className="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"
@@ -180,6 +181,41 @@ export default function BoardSend() {
               </svg>
               <span className="sr-only">Send message</span>
             </button>
+            {image.length > 0 &&
+              image.map((file, index) => (
+                <div className="relative" key={index}>
+                  <img
+                    className="p-1 shadow m-1"
+                    src={file.base64}
+                    alt={file.name}
+                    width={100}
+                  />
+                  <div
+                    className="absolute -top-1 -right-3 rounded-full bg-white shadow hover:cursor-pointer"
+                    onClick={() => {
+                      deletePhoto(index);
+                    }}
+                  >
+                    <svg
+                      className="w-6 h-6 text-black dark:text-white"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="1"
+                        d="M6 18 17.94 6M18 18 6.06 6"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              ))}
           </div>
         </form>
       </div>
