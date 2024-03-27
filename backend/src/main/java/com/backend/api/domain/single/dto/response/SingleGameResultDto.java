@@ -25,7 +25,10 @@ public record SingleGameResultDto(
     Long netProfit,
 
     @Schema(description = "수익률")
-    Double profitMargin
+    Double profitMargin,
+
+    @Schema(description = "남은 게임 가능 횟수")
+    Integer singleGameChance
 ) {
 
 }
