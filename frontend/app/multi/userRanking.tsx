@@ -1,26 +1,30 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import ProfileModal from './profileModal';
+import ProfileModal from "./profileModal";
+import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 
 interface userType {
-  memberId: number,
-  nickname: string,
-  assets: number
+  memberId: number;
+  nickname: string;
+  asset: number;
 }
 
-export default function UserRanking({ user } :{ user :userType }){
-  const [isOpen, setIsOpen] = useState(false)
+export default function UserRanking({ user }: { user: userType }) {
+  const { lobbyModal, setLobbyModal } = multigameStore();
 
-  const handleCloseModal = () => {
-    setIsOpen(false);
-  };
-
-  return(
-    <div onClick={()=>{setIsOpen(true)}} className="grid grid-cols-12 border rounded-md p-2 hover:cursor-pointer">
-      <div  className="col-span-7 test-left">{user.nickname}</div>
-      <div className="col-span-5 text-right">{user.assets}원</div>
-      <ProfileModal isOpen={isOpen} onClose={handleCloseModal} memberId={user.memberId}/>
+  return (
+    <div
+      className={`grid grid-cols-12 border rounded-md p-2 hover:cursor-pointer`}
+    >
+      <div
+        className="col-span-7 test-left"
+        onClick={() => {
+          setLobbyModal("false");
+        }}
+      >
+        <span>{user.nickname}</span>
+      </div>
+      <ProfileModal />
     </div>
-  )
+  );
 }

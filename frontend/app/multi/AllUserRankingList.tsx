@@ -5,7 +5,7 @@ import axios from "axios";
 interface userType {
   memberId: number;
   nickname: string;
-  assets: number;
+  asset: number;
 }
 
 interface userInfo {
@@ -39,10 +39,10 @@ export default function AllUserRankingList() {
     return <div>Error: {error.message}</div>;
   }
   const { result }: { result: userType[] | null } = data
-  ? data
-  : { result: null };
-  
-  console.log(data)
+    ? data
+    : { result: null };
+
+  console.log(data);
   return (
     <>
       <div
