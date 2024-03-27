@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,9 +28,20 @@ public class CommunityController {
 
     @Operation(summary = "커뮤니티 글 등록")
     @PostMapping("/write")
-    public ResponseEntity<BaseResponse<String>> createCommunity(Long loginUserId,
+    public ResponseEntity<BaseResponse<String>> createCommunity(@RequestParam(name = "loginUserId") Long loginUserId,
                                                            @Valid @NotNull @RequestBody CommunityCreateReq communityCreateReq) {
         communityService.createCommunity(loginUserId, communityCreateReq);
+        return BaseResponse.success(
+                SuccessCode.CREATE_SUCCESS,
+                "커뮤니티 글 등록 성공"
+        );
+    }
+    @Operation(summary = "커뮤니티 사진 + 글 등록")
+    @PostMapping("/write-multi")
+    public ResponseEntity<BaseResponse<String>> createMultiCommunity(@RequestParam(name = "loginUserId") Long loginUserId,
+                                                                     @RequestPart(name = "multipartFile",required = false) List<MultipartFile> multipartFile,
+                                                                     @Valid @NotNull @RequestPart(name = "communityCreateReq") CommunityCreateReq communityCreateReq) {
+        communityService.createMultiCommunity(loginUserId, multipartFile, communityCreateReq);
         return BaseResponse.success(
                 SuccessCode.CREATE_SUCCESS,
                 "커뮤니티 글 등록 성공"
@@ -48,7 +60,7 @@ public class CommunityController {
 
     @Operation(summary = "내가 쓴 글 목록 조회")
     @GetMapping("/mylist")
-    public ResponseEntity<BaseResponse<List<CommunityRes>>> getMyCommunities(Long loginUserId) {
+    public ResponseEntity<BaseResponse<List<CommunityRes>>> getMyCommunities(@RequestParam(name = "loginUserId") Long loginUserId) {
         List<CommunityRes> CommunityResList = communityService.getMyCommunities(loginUserId);
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
@@ -58,7 +70,7 @@ public class CommunityController {
 
     @Operation(summary = "글 상세 조회")
     @GetMapping
-    public ResponseEntity<BaseResponse<CommunityDetailRes>> getCommunityDetail(Long communityId) {
+    public ResponseEntity<BaseResponse<CommunityDetailRes>> getCommunityDetail(@RequestParam(name = "communityId") Long communityId) {
         CommunityDetailRes communityDetailRes = communityService.getCommunityDetail(communityId);
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
@@ -68,7 +80,7 @@ public class CommunityController {
 
     @Operation(summary = "글 삭제")
     @DeleteMapping
-    public ResponseEntity<BaseResponse<String>> deleteCommunity(Long communityId) {
+    public ResponseEntity<BaseResponse<String>> deleteCommunity(@RequestParam(name = "communityId") Long communityId) {
         communityService.deleteCommunity(communityId);
         return BaseResponse.success(
                 SuccessCode.DELETE_SUCCESS,
