@@ -1,7 +1,7 @@
 // Chat.tsx
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 import userStore from "@/public/src/stores/user/userStore";
-
+import { useRef, useEffect } from "react";
 import { useWebSocket } from "@/public/src/hooks/useWebSocket";
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 export default function Chat() {
@@ -14,11 +14,31 @@ export default function Chat() {
     setSendMessage(message);
   };
 
+  const messageContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const scrollToBottom = () => {
+      const messagesContainer = messageContainerRef.current;
+      if (messagesContainer !== null) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+    };
+
+    scrollToBottom();
+  }, [receiveMessage]);
+
   return (
     <div className="col-span-10 border relative">
-      <div className="h-[calc(25vh)] overflow-auto gap p-2">
+      <div
+        className="h-[calc(25vh)] overflow-auto gap p-2"
+        ref={messageContainerRef}
+      >
         {receiveMessage.map((item: any, i: any) => {
-          return <div key={i}>{item}</div>;
+          return (
+            <div key={i}>
+              {item.result.sender} : {item.result.message}
+            </div>
+          );
         })}
       </div>
       <div className="mt-2 w-full border bg-gray-200 flex justify-between">
