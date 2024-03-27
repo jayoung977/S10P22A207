@@ -32,7 +32,7 @@ export default function FundTable() {
   }, [searchQuery, fundList]); 
 
   const { data, isLoading, error }: UseQueryResult<FundInfo, Error> = useQuery(
-    "FundInfo",
+    "InprogressFundInfo",
     fetchFundInfo
   );
   useEffect(() => {
