@@ -6,9 +6,15 @@ import { useState } from "react";
 import userStore from "@/public/src/stores/user/userStore";
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 import Swal from "sweetalert2";
+import BoardPicture from "./BoardPicture";
+
+interface CommunityCreateReq {
+  content: string;
+}
 
 interface RequestType {
-  content: string;
+  multipartFile: string[];
+  communityCreateReq: CommunityCreateReq;
 }
 
 export default function BoardSend() {
@@ -19,10 +25,11 @@ export default function BoardSend() {
   ): Promise<AxiosResponse<any>> => {
     const response = await axios({
       method: "post",
-      url: `https://j10a207.p.ssafy.io/api/community/write?loginUserId=${memberId}`,
+      url: `https://j10a207.p.ssafy.io/api/community/write-multi?loginUserId=${memberId}`,
       data: request,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        "Content-Type": "multipart/form-data",
       },
     });
     return response;
@@ -46,15 +53,55 @@ export default function BoardSend() {
   );
 
   const [content, setContent] = useState("");
+  const [image, setImage] = useState<{ name: string; base64: string }[]>([]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const request = { content };
+    const multipartFile = image?.map((file) => file.base64);
+    const request = {
+      multipartFile: multipartFile,
+      communityCreateReq: { content: content },
+    };
     mutation.mutate(request);
   };
 
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      // 모든 파일을 Base64로 변환하기 위한 Promise 배열 생성
+      const base64Promises = Array.from(files).map((file) =>
+        convertToBase64(file)
+      );
+
+      // 모든 Promise가 완료될 때까지 기다림
+      const base64Files = await Promise.all(base64Promises);
+      // 모든 파일이 Base64로 변환된 후 setImage 함수 호출
+      const copy = [...image];
+      copy.push(...base64Files);
+      setImage(copy);
+    }
+  };
+
+  const convertToBase64 = (
+    file: File
+  ): Promise<{ name: string; base64: string }> =>
+    new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        // fileReader.result가 null이 아님을 보장한 후, string으로 캐스팅
+        if (fileReader.result) {
+          resolve({ name: file.name, base64: fileReader.result as string });
+        }
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+
   return (
     <div className="flex justify-center items-center row-span-5 grid grid-cols-12 rounded-md ">
+      {image && <BoardPicture image={image}></BoardPicture>}
       <div className="col-start-4">
         <Image
           className="w-24 h-24 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500"
@@ -65,13 +112,13 @@ export default function BoardSend() {
         ></Image>
       </div>
       <div className="col-start-5 col-end-10 rounded-lg m-2">
-        <form onSubmit={handleSubmit}>
+        <form>
           <label htmlFor="chat" className="sr-only">
             Your message
           </label>
           <div className="flex items-center p-4 rounded-lg shadow dark:bg-gray-700">
-            <button
-              type="button"
+            <label
+              htmlFor="file-input"
               className="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
             >
               <svg
@@ -99,30 +146,17 @@ export default function BoardSend() {
                   strokeWidth="2"
                   d="M13 5.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0ZM7.565 7.423 4.5 14h11.518l-2.516-3.71L11 13 7.565 7.423Z"
                 />
+                사진
               </svg>
-              <span className="sr-only">Upload image</span>
-            </button>
-            <button
-              type="button"
-              className="p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
-            >
-              <svg
-                className="w-5 h-5"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13.408 7.5h.01m-6.876 0h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM4.6 11a5.5 5.5 0 0 0 10.81 0H4.6Z"
-                />
-              </svg>
-              <span className="sr-only">Add emoji</span>
-            </button>
+              <input
+                id="file-input"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                multiple
+                onChange={handleImageChange}
+              />
+            </label>
             <textarea
               id="chat"
               rows={5}
@@ -132,7 +166,7 @@ export default function BoardSend() {
               onChange={(e) => setContent(e.target.value)}
             ></textarea>
             <button
-              type="submit"
+              onClick={handleSubmit}
               className="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"
             >
               <svg

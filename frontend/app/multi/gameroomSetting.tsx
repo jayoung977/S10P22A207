@@ -9,15 +9,20 @@ import {
   MultiRoomInfo,
   MultiRoom,
 } from "@/public/src/stores/multi/MultiGameStore";
+import axios from "axios";
+import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 
 const fetchMultiRoomInfo = async () => {
+  const { pagenation } = multigameStore();
   const token = sessionStorage.getItem("accessToken");
-  const response = await fetch("https://j10a207.p.ssafy.io/api/multi", {
+  const response = await axios({
+    method: "get",
+    url: `https://j10a207.p.ssafy.io/api/multi?pageNumber`,
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.json();
+  return response.data();
 };
 
 export default function GameRoomSetting() {
@@ -54,6 +59,7 @@ export default function GameRoomSetting() {
     ? data
     : { result: null };
   console.log(result);
+
   return (
     <div className="col-span-8 grid grid-rows-12 p-2">
       <div className="row-span-2 grid grid-cols-12 border items-center bg-background-1 rounded-lg shadow m-2 p-2 dark:bg-gray-800">

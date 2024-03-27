@@ -20,6 +20,7 @@ export default function UserRanking({ user }: { user: userType }) {
         className="col-span-7 test-left"
         onClick={() => {
           setLobbyModal("false");
+          
         }}
       >
         <span>{user.nickname}</span>

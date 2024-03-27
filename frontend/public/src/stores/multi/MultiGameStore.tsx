@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
 type Store = {
+  pagenation: number;
+  setPagenation: (value: number) => void;
   toggleTab: string;
   setToggleTab: (value: string) => void;
   searchFriend: string;
@@ -34,6 +36,8 @@ const multigameStore = create<Store>((set: any) => ({
   setSendMessage: (value) => set({ sendMessage: value }),
   lobbyModal: "true",
   setLobbyModal: (value) => set({ lobbyModal: value }),
+  pagenation: 1,
+  setPagenation: (value) => set({ pagenation: value }),
 }));
 
 export default multigameStore;
