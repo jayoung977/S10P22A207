@@ -6,6 +6,7 @@ import com.backend.api.domain.single.dto.request.NextDayRequestDto;
 import com.backend.api.domain.single.dto.request.SingleTradeRequestDto;
 import com.backend.api.domain.single.dto.response.AssetListDto;
 import com.backend.api.domain.single.dto.response.ChangedStockResponseDto;
+import com.backend.api.domain.single.dto.response.ExistingSingleGameResponseDto;
 import com.backend.api.domain.single.dto.response.NextDayInfoResponseDto;
 import com.backend.api.domain.single.dto.response.NextDayResponseDto;
 import com.backend.api.domain.single.dto.response.SingleGameCreateResponseDto;
@@ -70,14 +71,18 @@ public class SingleGameService {
     private static final long RECHARGE_TIME = 10 * 60 * 1000; // 10분
     private final Map<Long, ScheduledFuture<?>> timers = new HashMap<>();
 
-    public boolean existSingleGame(Long memberId) {
-        memberRepository.findById(memberId)
+    public ExistingSingleGameResponseDto existSingleGame(Long memberId) {
+        Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
 
         String pattern = "singleGame:" + memberId + ":*";
         Set<String> keys = redisTemplate.keys(pattern);
 
-        return keys != null && !keys.isEmpty();
+        if(keys != null && !keys.isEmpty()){
+            return new ExistingSingleGameResponseDto(true, member.getSingleGameChance());
+        } else {
+            return new ExistingSingleGameResponseDto(false, member.getSingleGameChance());
+        }
 
     }
 
@@ -658,7 +663,8 @@ public class SingleGameService {
                 }
                 stockInfoDtoList.add(new StockInfoDto(startStockChart.getStock().getId(), startStockChart.getStock().getStockName()));
             }
-
+            Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
             // 게임 로그 저장하기
             SingleGameResultDto singleGameResultDto = new SingleGameResultDto(
                 stockInfoDtoList,
@@ -667,7 +673,8 @@ public class SingleGameService {
                 currentGame.getInitial(),
                 currentGame.getTotalAsset(),
                 currentGame.getTotalAsset() - currentGame.getInitial(),
-                100.0 * (currentGame.getTotalAsset() - currentGame.getInitial()) / currentGame.getInitial()
+                100.0 * (currentGame.getTotalAsset() - currentGame.getInitial()) / currentGame.getInitial(),
+                member.getSingleGameChance()
             );
 
             SingleGameLog singleGameLog = singleGameLogRepository.findById(currentGame.getSingleGameLogId()).orElseThrow(
