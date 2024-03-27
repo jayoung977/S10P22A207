@@ -2,7 +2,7 @@ package com.backend.api.domain.single.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(name = "매수, 매도 RequestDto", description = "싱글게임 관련 response Dto")
+@Schema(name = "매수, 매도 RequestDto", description = "싱글게임 관련 request Dto")
 public record SingleTradeRequestDto(
     @Schema(description = "레디스에 저장된 Index")
     Long gameIdx,
