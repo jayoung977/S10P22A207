@@ -32,7 +32,7 @@ export const useWebSocket = () => {
     return () => {
       if (client.current) {
         client.current.disconnect();
-        Swal.fire("웹소켓 연결안됨");
+        // Swal.fire("웹소켓 연결안됨");
       }
     };
   }, []);

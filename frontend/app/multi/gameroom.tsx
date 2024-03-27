@@ -1,7 +1,9 @@
 "use client";
 import JoinRoomModal from "./joinRoomModal";
+import { useRouter } from "next/navigation";
 
 export default function GameRoom(props: { color: string }) {
+  const router = useRouter();
   const { color } = props;
   return (
     <div

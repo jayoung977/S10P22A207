@@ -8,11 +8,11 @@ import backgroundVideo from "./../static/videos/bg.mp4";
 export default function KakaoLogin() {
   const words = [
     {
-      text: "지",
+      text: "가",
       className: "text-small-1",
     },
     {
-      text: "금",
+      text: "자",
       className: "text-small-2",
     },
     {
