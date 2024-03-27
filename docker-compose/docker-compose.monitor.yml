@@ -10,6 +10,7 @@ services:
     ports:
       - 9090:9090
     restart: always
+
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -21,5 +22,6 @@ services:
       - /home/monitor/grafana:/var/lib/grafana
       - /home/monitor/grafana/provisioning:/etc/grafana/provisioning
     ports:
-      - 5000:5000
+      - 3000:3000
     restart: always
+    user: root
