@@ -468,7 +468,6 @@ public class SingleGameService {
                 dto.stockId())
             .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
 
-        // 쓰레드에 저장된 게임 가져옴.
         Integer stockIdx = currentGame.getStocks().get(dto.stockId());
         // 차트에서 첫 날짜, 오늘 날짜의 종가를 가져온다.
         StockChart firstDayChart = stockChartRepository.findById(currentGame.getFirstDayChartList().get(stockIdx))

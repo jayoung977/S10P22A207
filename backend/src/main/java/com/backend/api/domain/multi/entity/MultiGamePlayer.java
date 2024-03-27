@@ -6,7 +6,6 @@ import static lombok.AccessLevel.PROTECTED;
 
 import com.backend.api.domain.BaseEntity;
 import com.backend.api.domain.member.entity.Member;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,7 +37,7 @@ public class MultiGamePlayer extends BaseEntity {
     private Member member;
 
     @NotNull
-    private Integer ranking = 0;
+    private Integer ranking = 1;
 
     @NotNull
     private Double finalRoi;
