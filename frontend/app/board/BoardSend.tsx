@@ -33,8 +33,8 @@ export default function BoardSend() {
     sendBoard,
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("boards");
         Swal.fire("성공!", "게시물이 성공적으로 작성되었습니다.", "success");
+        queryClient.invalidateQueries("boardInfo");
       },
       onError: (error: any) => {
         console.error("에러발생", error.response?.data || error.message);

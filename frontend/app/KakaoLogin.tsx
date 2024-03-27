@@ -3,33 +3,33 @@ import Image from "next/image";
 import kakaoLoginImg from "./../public/src/assets/images/kakao.svg";
 import { TypewriterEffectSmooth } from "../public/src/components/ui/typewriter-effect";
 import backgroundVideo from "./../static/videos/bg.mp4";
-// https://www.pexels.com/ko-kr/video/5726497/
+// https://www.pixilart.com/art/blue-line-97f3322f9f26af9
 
 export default function KakaoLogin() {
   const words = [
     {
-      text: "지",
+      text: "가",
       className: "text-small-1",
     },
     {
-      text: "금",
-      className: "text-small-1",
+      text: "자",
+      className: "text-small-2",
     },
     {
       text: "이",
-      className: "text-small-1",
+      className: "text-small-3",
     },
     {
       text: "니",
-      className: "text-small-1",
+      className: "text-small-4",
     },
     {
       text: "?",
-      className: "text-small-1",
+      className: "text-small-5",
     },
     {
       text: "!",
-      className: "text-small-1",
+      className: "text-small-6",
     },
   ];
   const loginHandler = () => {
@@ -53,7 +53,7 @@ export default function KakaoLogin() {
 
       {/* 컨텐츠 */}
       <div className="absolute inset-0 flex flex-col items-center justify-center ">
-        <p className="dark:text-neutral-200 text-xs sm:text-base text-white">
+        <p className="dark:text-neutral-200 text-xs sm:text-base text-black">
           Big Data Stock Trading Game
         </p>
         <TypewriterEffectSmooth words={words} />

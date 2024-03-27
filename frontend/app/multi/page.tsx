@@ -65,7 +65,7 @@ export default function Multi() {
                 <h1
                   className={cn("md:text-4xl text-xl text-white relative z-20")}
                 >
-                  멀티 플레이 기반 주식 차트 게임
+                  함께할 때 우리는 더 강해진다.
                 </h1>
                 <p className="text-center mt-2 text-white relative z-20">
                   Expanding Investment Capabilities with Multi-Play
