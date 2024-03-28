@@ -70,6 +70,7 @@ public class SseEmitters {
                 ObjectMapper objectMapper = new ObjectMapper();
                 String jsonData = objectMapper.writeValueAsString(data);
                 log.info("noti 요청 왔어요");
+
                 emitter.send(
                     SseEmitter.event()
                         .name(eventName)
