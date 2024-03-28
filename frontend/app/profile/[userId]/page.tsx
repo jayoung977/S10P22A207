@@ -8,6 +8,7 @@ import profileStore from "@/public/src/stores/profile/profileStore";
 import { useQuery, QueryClient, QueryClientProvider } from "react-query";
 import userStore from "@/public/src/stores/user/userStore";
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
+import ProfileFriendRequest from "./ProfileFriendRequest";
 const queryClient = new QueryClient();
 
 export default function page() {
@@ -17,6 +18,7 @@ export default function page() {
       <div className="grid grid-rows-12 h-screen">
         <PeacefulBgm></PeacefulBgm>
         <Navbar></Navbar>
+        <ProfileFriendRequest></ProfileFriendRequest>
         <UserInfo></UserInfo>
       </div>
     </QueryClientProvider>
