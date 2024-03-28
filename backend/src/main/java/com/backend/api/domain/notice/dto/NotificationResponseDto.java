@@ -1,6 +1,6 @@
 package com.backend.api.domain.notice.dto;
 
-import com.backend.api.domain.notice.entity.Notification;
+import com.backend.api.domain.notice.entity.Notice;
 import com.backend.api.domain.notice.type.AlarmType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -19,12 +19,12 @@ public record NotificationResponseDto(
     String content
 ) {
 
-    public static NotificationResponseDto to(Notification notification){
+    public static NotificationResponseDto to(Notice notice){
         return new NotificationResponseDto(
-            notification.getAlarmType(),
-            Long.valueOf(notification.getContent()),
-            notification.getSender(),
-            notification.getContent())
+            notice.getAlarmType(),
+            Long.valueOf(notice.getContent()),
+            notice.getSender(),
+            notice.getContent())
             ;
     }
 

@@ -14,6 +14,7 @@ public class RedisPubService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisMessageListenerContainer container;
     private final RedisSubService subscriber;
+    private static final int TTL = 60 * 1000; // 10분 -> 10 * 60 * 1000
 
     // 채널 구독
     public void subscribe(String channel) {
@@ -34,13 +35,13 @@ public class RedisPubService {
 
     // 로그인 상태를 관리하기 위해 TTL을 도입(10분)
     public void setLoginStatus(Long memberId) {
-        redisTemplate.opsForValue().set("loginMember:" + memberId, "true", 15000, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set("loginMember:" + memberId, "true", TTL, TimeUnit.MILLISECONDS);
     }
 
     // 로그인 상태 확인
-    public boolean isUserLoggedIn(String userId) {
+    public boolean isUserLoggedIn(Long memberId) {
         // 로그인 상태를 확인하고 없으면 false 반환
-        return Boolean.TRUE.equals(redisTemplate.hasKey("login:" + userId));
+        return Boolean.TRUE.equals(redisTemplate.hasKey("loginMember:" + memberId));
     }
 
 }

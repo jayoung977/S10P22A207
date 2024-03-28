@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "notification")
 @NoArgsConstructor(access = PROTECTED)
-public class Notification extends BaseEntity {
+public class Notice extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -49,7 +49,7 @@ public class Notification extends BaseEntity {
     private AlarmType alarmType; // 알림의 종류 (예: "게임초대", "공지사항" 등)
 
     @Builder
-    public Notification(Member member, String sender, String content, boolean isRead, AlarmType alarmType) {
+    public Notice(Member member, String sender, String content, boolean isRead, AlarmType alarmType) {
         this.member = member;
         this.sender = sender;
         this.content = content;

@@ -28,7 +28,7 @@ public class AlarmController {
     private final NotificationService notificationService;
 
     @Operation(summary = "로그인시 자동 채널 구독", description = "로그인 후 본인 채널과 공지채널을 구독합니다.", tags = {"알림"})
-    @GetMapping
+    @GetMapping("/login")
     public ResponseEntity<BaseResponse<String>> initialAutoSubScribe(@AuthenticationPrincipal CustomUserDetails userDetails) {
         redisPubService.subscribe("alarm:toAllUser");
         redisPubService.subscribe("alarm:member:" + userDetails.getId());

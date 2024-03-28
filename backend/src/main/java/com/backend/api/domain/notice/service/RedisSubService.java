@@ -3,7 +3,7 @@ package com.backend.api.domain.notice.service;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.notice.dto.NotificationRequestDto;
-import com.backend.api.domain.notice.entity.Notification;
+import com.backend.api.domain.notice.entity.Notice;
 import com.backend.api.domain.notice.entity.SseEmitters;
 import com.backend.api.domain.notice.repository.NotificationRepository;
 import com.backend.api.domain.notice.type.AlarmType;
@@ -41,13 +41,13 @@ public class RedisSubService implements MessageListener {
 
             // Notice Repository에 저장
             switch (dto.alarmType()){
-                case NOTICE -> {
-                    sendNoticeToAllMembers(dto.content());
-                    sseEmitters.noti("alarm:toAllUser", "newAlarmAdded");
-                }
+//                case NOTICE -> {
+//                    sendNoticeToAllMembers(dto.content());
+//                    sseEmitters.noti("alarm:toAllUser", "newAlarmAdded");
+//                }
                 case INVITATION -> {
                     sendInviteToMember(dto);
-                    sseEmitters.noti("alarm:member:" + dto.channelName(), "newAlarmAdded");
+                    sseEmitters.noti("alarm", dto.channelName() + ":INVITATION", dto);
                 }
             }
 
@@ -62,7 +62,7 @@ public class RedisSubService implements MessageListener {
         );
 
         //TODO: roomId를 그냥 content 에 담아주었는데 나중에는 변경해야할수도
-        Notification invitation = Notification.builder()
+        Notice invitation = Notice.builder()
             .member(receiver)
             .sender(dto.sender())
             .content(String.valueOf(dto.roomId()))
@@ -79,20 +79,20 @@ public class RedisSubService implements MessageListener {
         // 모든 유저 정보 조회
         List<Member> allMembers = memberRepository.findAll();
 
-        // 모든 유저에 대한 Notification 객체 생성
-        List<Notification> notifications = new ArrayList<>();
+        // 모든 유저에 대한 Notice 객체 생성
+        List<Notice> notices = new ArrayList<>();
         for (Member member : allMembers) {
-            Notification notification = Notification.builder()
+            Notice notice = Notice.builder()
                 .member(member)
                 .sender("운영자")
                 .content(content)
                 .isRead(false)
                 .alarmType(AlarmType.NOTICE)
                 .build();
-            notifications.add(notification);
+            notices.add(notice);
         }
 
         // 생성된 Notice 일괄적으로 데이터베이스에 저장
-        notificationRepository.saveAll(notifications);
+        notificationRepository.saveAll(notices);
     }
 }
