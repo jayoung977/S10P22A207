@@ -27,6 +27,11 @@ export default function NavbarAlarmModal() {
       console.log(data);
     });
 
+    sse.addEventListener(`connect`, (event: any) => {
+      console.log("data Connect!")
+      console.log(event.data);
+    });
+
     sse.onerror = (error) => {
       //에러 발생시 할 동작
       console.error(error);
