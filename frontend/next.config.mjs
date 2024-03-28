@@ -32,7 +32,7 @@ const nextConfig = {
     return config;
   },
   images: {
-    domains: ["aceternity.com", "flowbite.s3.amazonaws.com"],
+    domains: ["aceternity.com", "zigeumbucket.s3.ap-northeast-2.amazonaws.com"],
   },
   output: "standalone",
 };

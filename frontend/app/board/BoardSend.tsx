@@ -41,16 +41,23 @@ export default function BoardSend() {
   });
 
   const [content, setContent] = useState("");
-  const [image, setImage] = useState<{ name: string; base64: string }[]>([]);
+  const [image, setImage] = useState<(FileList | File)[]>([]);
 
   const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     const formData = new FormData();
     // 파일 추가
-    image.forEach((file) => {
-      formData.append("multipartFile", file.base64);
+    image.forEach((fileOrFileList) => {
+      if (fileOrFileList instanceof FileList) {
+        for (let i = 0; i < fileOrFileList.length; i++) {
+          formData.append("multipartFile", fileOrFileList.item(i)!);
+        }
+      } else {
+        formData.append("multipartFile", fileOrFileList);
+      }
     });
+
     // 다른 필드 데이터 추가
     formData.append(
       "communityCreateReq",
@@ -63,36 +70,9 @@ export default function BoardSend() {
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      // 모든 파일을 Base64로 변환하기 위한 Promise 배열 생성
-      const base64Promises = Array.from(files).map((file) =>
-        convertToBase64(file)
-      );
-
-      // 모든 Promise가 완료될 때까지 기다림
-      const base64Files = await Promise.all(base64Promises);
-      // 모든 파일이 Base64로 변환된 후 setImage 함수 호출
-      const copy = [...image];
-      copy.push(...base64Files);
-      setImage(copy);
+      setImage([...image, ...Array.from(files)]);
     }
   };
-
-  const convertToBase64 = (
-    file: File
-  ): Promise<{ name: string; base64: string }> =>
-    new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
-      fileReader.onload = () => {
-        // fileReader.result가 null이 아님을 보장한 후, string으로 캐스팅
-        if (fileReader.result) {
-          resolve({ name: file.name, base64: fileReader.result as string });
-        }
-      };
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
 
   const deletePhoto = (num: number) => {
     const filteredImage = image.filter((item, i) => i !== num);
@@ -182,40 +162,79 @@ export default function BoardSend() {
               <span className="sr-only">Send message</span>
             </button>
             {image.length > 0 &&
-              image.map((file, index) => (
-                <div className="relative" key={index}>
-                  <img
-                    className="p-1 shadow m-1"
-                    src={file.base64}
-                    alt={file.name}
-                    width={100}
-                  />
-                  <div
-                    className="absolute -top-1 -right-3 rounded-full bg-white shadow hover:cursor-pointer"
-                    onClick={() => {
-                      deletePhoto(index);
-                    }}
-                  >
-                    <svg
-                      className="w-6 h-6 text-black dark:text-white"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1"
-                        d="M6 18 17.94 6M18 18 6.06 6"
+              image.map((fileOrFileList, index) => {
+                if (fileOrFileList instanceof FileList) {
+                  return Array.from(fileOrFileList).map((file, fileIndex) => (
+                    <div className="relative" key={`${index}-${fileIndex}`}>
+                      <img
+                        className="p-1 shadow m-1"
+                        width={100}
+                        src={URL.createObjectURL(file)}
+                        alt={`${index}번째 사진`}
                       />
-                    </svg>
-                  </div>
-                </div>
-              ))}
+                      <div
+                        className="absolute -top-1 -right-3 rounded-full bg-white shadow hover:cursor-pointer"
+                        onClick={() => {
+                          deletePhoto(index);
+                        }}
+                      >
+                        <svg
+                          className="w-6 h-6 text-black dark:text-white"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="1"
+                            d="M6 18 17.94 6M18 18 6.06 6"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  ));
+                } else {
+                  return (
+                    <div className="relative" key={index}>
+                      <img
+                        className="p-1 shadow m-1"
+                        width={100}
+                        src={URL.createObjectURL(fileOrFileList)}
+                        alt={`${index}번째 사진`}
+                      />
+                      <div
+                        className="absolute -top-1 -right-3 rounded-full bg-white shadow hover:cursor-pointer"
+                        onClick={() => {
+                          deletePhoto(index);
+                        }}
+                      >
+                        <svg
+                          className="w-6 h-6 text-black dark:text-white"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="1"
+                            d="M6 18 17.94 6M18 18 6.06 6"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  );
+                }
+              })}
           </div>
         </form>
       </div>
