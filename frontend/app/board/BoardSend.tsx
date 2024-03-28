@@ -167,7 +167,7 @@ export default function BoardSend() {
                   return Array.from(fileOrFileList).map((file, fileIndex) => (
                     <div className="relative" key={`${index}-${fileIndex}`}>
                       <img
-                        className="p-1 shadow m-1"
+                        className="p-1 m-1 shadow"
                         width={100}
                         src={URL.createObjectURL(file)}
                         alt={`${index}번째 사진`}
@@ -202,8 +202,7 @@ export default function BoardSend() {
                   return (
                     <div className="relative" key={index}>
                       <img
-                        className="p-1 shadow m-1"
-                        width={100}
+                        className="p-1 m-1 shadow"
                         src={URL.createObjectURL(fileOrFileList)}
                         alt={`${index}번째 사진`}
                       />
