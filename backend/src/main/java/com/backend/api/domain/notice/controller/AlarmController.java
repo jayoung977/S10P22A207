@@ -51,7 +51,7 @@ public class AlarmController {
     @Operation(summary = "게임 초대 보내기", description = "특정 유저에게 게임 초대를 보내면 해당 유저에게 알림이 갑니다.", tags = {"알림"})
     @PostMapping("/invitation")
     public ResponseEntity<BaseResponse<String>> sendInviteGameAlarm(@RequestBody NotificationRequestDto dto) {
-
+        log.info("게임 초대 요청 - controller");
         redisPubService.sendMessage(dto);
         return BaseResponse.success(SuccessCode.CREATE_SUCCESS, "게임초대 알림을 보냈습니다.");
     }
