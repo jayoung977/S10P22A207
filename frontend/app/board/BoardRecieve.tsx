@@ -12,6 +12,7 @@ interface ResultType {
   id: number;
   nickname: string;
   content: string;
+  communityFileList: string[];
 }
 
 interface BoardInfo {
@@ -76,7 +77,7 @@ export default function BoardReceive() {
   const { result }: { result: ResultType[] | null } = data
     ? data
     : { result: null };
-
+  console.log(result);
   const handleDelete = (boardId: number): void => {
     Swal.fire({
       title: "정말로 삭제하시겠습니까?",
@@ -118,7 +119,12 @@ export default function BoardReceive() {
                     )}
                   </div>
                   <div className="my-2 py-2 min-h-40 bg-white rounded-md">
-                    <div className="m-4">{item.content}</div>
+                    <div className="p-4 m-4">
+                      {item.content}{" "}
+                      {item.communityFileList.map((photo, i) => {
+                        return <img src={photo} alt={`${i}번째사진`}></img>;
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
