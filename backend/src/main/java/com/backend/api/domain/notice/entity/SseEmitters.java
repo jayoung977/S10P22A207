@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.stereotype.Component;
@@ -61,16 +62,20 @@ public class SseEmitters {
     }
 
     public void noti(String channelName, String eventName, NotificationRequestDto data) {
-        log.info("메시지 noti -> SseEmitters {}, {}, {}", channelName,eventName,data.roomId());
+
+        log.info("메시지 noti at SseEmitters -> channelName: {}, eventName: {}, roomId : {}", channelName, eventName, data.roomId());
+        AtomicInteger i = new AtomicInteger();
         emitters.get(channelName).forEach(emitter -> {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 String jsonData = objectMapper.writeValueAsString(data);
+                log.info("emitter 각각의 요청 - {}", i.incrementAndGet());
                 emitter.send(
                     SseEmitter.event()
                         .name(eventName)
                         .data(jsonData)
                 );
+                log.info("emitter.send 완료 at SseEmitters");
             } catch (ClientAbortException e) {
 
             } catch (IOException e) {
