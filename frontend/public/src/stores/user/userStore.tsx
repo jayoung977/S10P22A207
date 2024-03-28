@@ -1,6 +1,17 @@
 import { create } from "zustand";
 
 
+export interface FriendInfo {
+  result: Friend[]
+}
+
+export interface Friend {
+  memberId: number
+  nickname: string
+  assets: number
+  isLogin: boolean
+}
+
 export interface UserInfo {
   result: UserProfile
 }

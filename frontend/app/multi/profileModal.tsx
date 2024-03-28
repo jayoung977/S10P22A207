@@ -58,7 +58,7 @@ export default function ProfileModal() {
   }
 
   const { result }: {result: UserProfile | null} = data ? data: {result: null};
-  console.table(result)
+  // console.table(result)
 
   return (
     <div
