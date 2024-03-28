@@ -144,6 +144,7 @@ export default function Chart({ data }: any) {
   const { selectedStockIndex, turn } = SingleGameStore();
 
   useEffect(() => {
+    
     const purifiedData = filteringLowPriceZero(data);
     // 차트 생성
     const chart = anychart.stock();

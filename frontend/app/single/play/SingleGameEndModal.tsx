@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation'
 import SingleGameStore from '@/public/src/stores/single/SingleGameStore';
 export default function SingleGameEndModal ({ isOpen, onClose } :any) {
-    const { singleGameEndInfoData } = SingleGameStore();
+    const { singleGameEndInfoData, setSelectedStockIndex } = SingleGameStore();
     const router = useRouter();
     
     const singleGameAgainHandler = () => {
@@ -41,6 +41,7 @@ export default function SingleGameEndModal ({ isOpen, onClose } :any) {
                     <div className="row-span-1 text-center mb-2">현재 남은 기회 : {singleGameEndInfoData?.singleGameChance}</div>
                     <div className="row-span-3 grid grid-cols-6">
                         <button onClick={() => {
+                            setSelectedStockIndex(0);
                             onClose();
                             router.push('/multi')
                             
@@ -50,6 +51,7 @@ export default function SingleGameEndModal ({ isOpen, onClose } :any) {
                         </button>
                         <button 
                             onClick={() => {
+                                setSelectedStockIndex(0);
                                 singleGameAgainHandler();
                             }} 
                             disabled={singleGameEndInfoData?.singleGameChance == 0}
