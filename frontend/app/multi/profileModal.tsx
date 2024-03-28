@@ -1,7 +1,7 @@
 "use client";
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 import ProfileImage from "@/public/src/assets/images/penguin.png";
-import TierImage from "@/public/src/assets/images/bronze.png";
+import TierImage from "@/public/src/assets/images/Tier/challenger.png";
 import Image from "next/image";
 import { UseQueryResult, useQuery } from "react-query";
 import { UserInfo, UserProfile } from "@/public/src/stores/user/userStore";
