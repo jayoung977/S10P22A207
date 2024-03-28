@@ -43,7 +43,7 @@ public class MultiGameController {
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS,"보냈어용");
     }
 
-    @GetMapping("/create-room")
+    @PostMapping("/create-room")
     @Operation(summary = "멀티게임 만들기", description = "멀티게임 방을 만듭니다.", tags = { "멀티게임" })
     public ResponseEntity<BaseResponse<MultiGameRoomCreateResponseDto>> createMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails){
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS,multiGameService.createMultiGameRoom(userDetails.getId()));
@@ -51,7 +51,7 @@ public class MultiGameController {
 
     @PostMapping("/start-game")
     @Operation(summary = "멀티게임 시작하기", description = "멀티게임을 시작합니다.", tags = { "멀티게임" })
-    public ResponseEntity<BaseResponse<MultiGameStartResponseDto>> startMultiGame(@AuthenticationPrincipal CustomUserDetails userDetails, MultiGameStartRequestDto dto){
+    public ResponseEntity<BaseResponse<MultiGameStartResponseDto>> startMultiGame(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameStartRequestDto dto){
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.startMultiGame(userDetails.getId(), dto));
     }
 

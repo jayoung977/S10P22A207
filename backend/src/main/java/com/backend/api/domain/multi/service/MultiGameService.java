@@ -33,12 +33,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,12 +74,9 @@ public class MultiGameService {
             return null;
         }
 
-        // 방 번호를 기준으로 정렬
-        TreeSet<String> sortedRooms = new TreeSet<>(multiGameRooms);
-
         // 방번호와 게임번호를 기준으로 그룹화
         Map<String, List<Long>> roomGroups = new HashMap<>();
-        for (String key : sortedRooms) {
+        for (String key : multiGameRooms) {
             String[] parts = key.split(":");
             if (parts.length == 4) {
                 String roomNumber = parts[1];
@@ -89,6 +86,7 @@ public class MultiGameService {
                 roomGroups.computeIfAbsent(groupKey, k -> new ArrayList<>()).add(Long.valueOf(participantId));
             }
         }
+
 
         // MultiGameRoomsResponseDto 객체로 변환하여 리스트에 추가
         List<MultiGameRoomInfo> resultList = new ArrayList<>();
@@ -101,6 +99,9 @@ public class MultiGameService {
                 resultList.add(new MultiGameRoomInfo(roomNumber, roundNumber, participantsIds));
             }
         }
+        // 방 번호를 기준으로 정렬
+        resultList.sort(Comparator.comparing(MultiGameRoomInfo::roomNumber));
+
         // 페이징 - 6으로 하드코딩 한 부분이 pageSize
         int fromIndex = (pageNumber - 1) * 6;
         int toIndex = Math.min(fromIndex + 6, resultList.size());
@@ -131,8 +132,7 @@ public class MultiGameService {
         return new MultiGameRoomCreateResponseDto(multiGameId);
     }
 
-    public MultiGameStartResponseDto startMultiGame(
-        Long memberId, MultiGameStartRequestDto dto) {
+    public MultiGameStartResponseDto startMultiGame(Long memberId, MultiGameStartRequestDto dto) {
 
         LocalDateTime lastDate = LocalDateTime.of(2024, 3, 10, 0, 0); // 위험할수도
         LocalDateTime startDate = LocalDateTime.of(1996, 5, 10, 0, 0);
@@ -180,19 +180,15 @@ public class MultiGameService {
 
         gameLogId = multiGameLogRepository.save(multiGameLog).getId();
 
-
-        Long multiGameId = null;
-        multiGameId = redisTemplate.opsForValue().increment("multiGameId", 1); // Redis에서 Atomic한 증가
-        if (multiGameId == null || multiGameId == 1) {
-            multiGameId = 1L; // 초기값 설정
-            redisTemplate.opsForValue().set("multiGameId", multiGameId); // Redis에 첫 번째 id 설정
-        }
-
+        log.info("dto.playerIds.size() - {}", dto.playerIds().size());
         for (Long playerId : dto.playerIds()) {
             Member member = memberRepository.findById(playerId).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
             MultiGamePlayer multiGamePlayer = MultiGamePlayer.builder()
                 .multiGameLog(multiGameLog)
                 .member(member)
+                .finalProfit(0)
+                .finalRoi(0.0)
+                .ranking(1)
                 .build();
             multiGamePlayerRepository.save(multiGamePlayer);
         }
@@ -209,25 +205,17 @@ public class MultiGameService {
                 .round(1)
                 .build();
 
-
-            String key = "multiGame:" + multiGameId + ":" + playerId + ":" + 1; // Redis에 저장할 키
+            String deleteKey = "multiGame:" + dto.multiGameId() + ":" + playerId + ":" + 0; //없앨 키
+            redisTemplate.delete(deleteKey);
+            String key = "multiGame:" + dto.multiGameId() + ":" + playerId + ":" + 1; // Redis에 저장할 키
             redisTemplate.opsForValue().set(key, multiGame);
         }
         return new MultiGameStartResponseDto();
     }
 
 
-    public static LocalDateTime generateRandomDateTime(LocalDateTime start, LocalDateTime end) {
-        long startEpochDay = start.toLocalDate().toEpochDay();
-        long endEpochDay = end.toLocalDate().toEpochDay();
-        long randomDay = ThreadLocalRandom.current().nextLong(startEpochDay, endEpochDay + 1);
-
-        LocalDate randomLocalDate = LocalDate.ofEpochDay(randomDay);
-        LocalTime randomLocalTime = LocalTime.ofSecondOfDay(ThreadLocalRandom.current().nextLong(0, 24 * 60 * 60));
-        return LocalDateTime.of(randomLocalDate, randomLocalTime);
-    }
-
-    public MultiTradeResponseDto sell(MultiTradeRequestDto dto, Long memberId) {
+    // 공매도 청산
+    public MultiTradeResponseDto closeShortPosition(MultiTradeRequestDto dto, Long memberId) {
         MultiGame currentGame = this.getGame(memberId, dto.multiGameId());
 
         // 차트에서 오늘의 종가를 가져온다.
@@ -238,17 +226,17 @@ public class MultiGameService {
         Long stockId = todayChart.getStock().getId();
 
         // 현재 수량보다 많으면 에러.
-        if (dto.amount() > currentGame.getStockAmount()) {
+        if (dto.amount() > currentGame.getShortStockAmount()) {
             throw new BaseExceptionHandler(ErrorCode.NOT_ENOUGH_STOCK_AMOUNT);
         }
+        // 현재 총 자산 -> 현금 + 현재가 * (주식 + 공매도) //수수료제외
+        long totalAsset = currentGame.getCash()
+            + (long)((currentGame.getStockAmount() + currentGame.getShortStockAmount()) * todayChart.getEndPrice() * 0.975);
 
-        long totalAsset = currentGame.getCash() + ((long) currentGame.getStockAmount() * todayChart.getEndPrice());
-
-        // 팔았으니 currentGame 바꿔주기
-        currentGame.decreaseStockAmount(dto.amount());
+        // 공매도 처분 - currentGame 바꿔주기
+        currentGame.decreaseShortStockAmount(dto.amount());
         currentGame.updateCash(currentGame.getCash() + (long) (dto.amount() * todayChart.getEndPrice() * 0.975));
-        currentGame.addProfit(dto.amount() * (currentGame.getAveragePrice() - todayChart.getEndPrice()) -
-            dto.amount() * todayChart.getEndPrice() * 0.025);
+        currentGame.addProfit(dto.amount() * (currentGame.getShortAveragePrice() - todayChart.getEndPrice() * 1.025)); // 수수료 고려
         currentGame.updateTotalAsset(totalAsset);
 
         double resultRoi = 100.0 * currentGame.getProfit() / currentGame.getTotalPurchaseAmount();
@@ -303,9 +291,6 @@ public class MultiGameService {
             throw new BaseExceptionHandler(ErrorCode.NOT_ENOUGH_MONEY);
         }
 
-        // TODO : 공매도양이 5개, 매수 수량이 10개라면 결과가 5개 여야한다.
-
-
         // 샀으니 currentGame 바꿔주기
         currentGame.increaseStockAmount(dto.amount());
         currentGame.updateCash(currentGame.getCash() - (long) (dto.amount() * todayChart.getEndPrice() * 1.0015));
@@ -349,7 +334,6 @@ public class MultiGameService {
             currentGame.getTotalAsset(),
             currentGame.getTradeList()
         );
-
     }
 
     public MultiTradeResponseDto shortSelling(MultiTradeRequestDto dto, Long memberId) {
@@ -363,7 +347,9 @@ public class MultiGameService {
 
         Long stockId = todayChart.getStock().getId();
 
-       // TODO: exception 뭐로 바꿔줄건지
+        if(currentGame.getCash() < (long) todayChart.getEndPrice() * dto.amount()){
+            throw new BaseExceptionHandler(ErrorCode.NOT_ENOUGH_MONEY);
+        }
 
         // 공매도 -> currentGame 바꿔주기
         currentGame.increaseShortStockAmount(dto.amount());
@@ -410,6 +396,66 @@ public class MultiGameService {
         );
     }
 
+    public MultiTradeResponseDto sell(MultiTradeRequestDto dto, Long memberId) {
+        MultiGame currentGame = this.getGame(memberId, dto.multiGameId());
+
+        // 차트에서 오늘의 종가를 가져온다.
+        StockChart todayChart = stockChartRepository.findById(currentGame.getFirstDayStockChartId()+ 300 + dto.day()).orElseThrow(
+            () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
+        );
+
+        Long stockId = todayChart.getStock().getId();
+
+        // 현재 수량보다 많으면 에러.
+        if (dto.amount() > currentGame.getStockAmount()) {
+            throw new BaseExceptionHandler(ErrorCode.NOT_ENOUGH_STOCK_AMOUNT);
+        }
+
+        long totalAsset = currentGame.getCash() + ((long) currentGame.getStockAmount() * todayChart.getEndPrice());
+
+        // 팔았으니 currentGame 바꿔주기
+        currentGame.decreaseStockAmount(dto.amount());
+        currentGame.updateCash(currentGame.getCash() + (long) (dto.amount() * todayChart.getEndPrice() * 0.975));
+        currentGame.addProfit(dto.amount() * (0.975 * todayChart.getEndPrice() - currentGame.getAveragePrice())); // 수수료 고려
+        currentGame.updateTotalAsset(totalAsset);
+
+        double resultRoi = 100.0 * currentGame.getProfit() / currentGame.getTotalPurchaseAmount();
+
+        MultiTrade multiTrade = MultiTrade.builder()
+            .tradeType(TradeType.SELL)
+            .amount(dto.amount())
+            .date(todayChart.getDate())
+            .price(todayChart.getEndPrice())
+            .amount(currentGame.getStockAmount())
+            .roi(resultRoi)
+            .round(dto.round())
+            .build();
+
+        multiTradeRepository.save(multiTrade);
+        currentGame.getTradeList().add(
+            new MultiTradeListDto(
+                stockId,
+                multiTrade.getRound(),
+                multiTrade.getDate(),
+                multiTrade.getTradeType(),
+                multiTrade.getAmount(),
+                multiTrade.getPrice(),
+                (long) currentGame.getProfit()
+            )
+        );
+        redisTemplate.opsForValue().set("multiGame:" + dto.multiGameId() + ":" + memberId, currentGame);
+        return new MultiTradeResponseDto(
+            currentGame.getCash(),
+            TradeType.SELL,
+            multiTrade.getPrice(),
+            multiTrade.getAmount(),
+            (int) (todayChart.getEndPrice() * dto.amount() * 0.025),
+            (long) (0.975 * todayChart.getEndPrice() - currentGame.getAveragePrice()) * dto.amount(),
+            currentGame.getTotalAsset(),
+            currentGame.getTradeList()
+        );
+    }
+
     public MultiNextDayResponseDto getTomorrow(MultiNextDayRequestDto dto, Long memberId) {
         MultiGame currentGame = this.getGame(memberId, dto.multiGameId());
 
@@ -419,8 +465,8 @@ public class MultiGameService {
         StockChart yesterdayChart = stockChartRepository.findById(currentGame.getFirstDayStockChartId() + 300 + dto.day() - 1).orElseThrow();
 
         // 어제에 비해서 얼마나 바뀌었는지. 매수 수량은 더해주고
-        // 공매도는 빼준다.
-        currentGame.addProfit((currentGame.getStockAmount()- currentGame.getShortStockAmount()) * (todayChart.getEndPrice() - yesterdayChart.getEndPrice()));
+        // 공매도는 반대.
+        currentGame.addProfit((currentGame.getStockAmount() - currentGame.getShortStockAmount()) * (todayChart.getEndPrice() - yesterdayChart.getEndPrice()));
 
         MultiNextDayInfoResponseDto multiNextDayInfoResponseDto =
             new MultiNextDayInfoResponseDto(
@@ -461,6 +507,16 @@ public class MultiGameService {
         }
 
         return new MultiNextDayResponseDto(multiNextDayInfoResponseDto, null);
+    }
+
+    public static LocalDateTime generateRandomDateTime(LocalDateTime start, LocalDateTime end) {
+        long startEpochDay = start.toLocalDate().toEpochDay();
+        long endEpochDay = end.toLocalDate().toEpochDay();
+        long randomDay = ThreadLocalRandom.current().nextLong(startEpochDay, endEpochDay + 1);
+
+        LocalDate randomLocalDate = LocalDate.ofEpochDay(randomDay);
+        LocalTime randomLocalTime = LocalTime.ofSecondOfDay(ThreadLocalRandom.current().nextLong(0, 24 * 60 * 60));
+        return LocalDateTime.of(randomLocalDate, randomLocalTime);
     }
 
 
