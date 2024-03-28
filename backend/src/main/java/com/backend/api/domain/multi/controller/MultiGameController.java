@@ -1,6 +1,13 @@
 package com.backend.api.domain.multi.controller;
 
+import com.backend.api.domain.multi.dto.MultiGameRoomCreateResponseDto;
 import com.backend.api.domain.multi.dto.MultiGameRoomsResponseDto;
+import com.backend.api.domain.multi.dto.MultiGameStartRequestDto;
+import com.backend.api.domain.multi.dto.MultiGameStartResponseDto;
+import com.backend.api.domain.multi.dto.MultiNextDayRequestDto;
+import com.backend.api.domain.multi.dto.MultiNextDayResponseDto;
+import com.backend.api.domain.multi.dto.MultiTradeRequestDto;
+import com.backend.api.domain.multi.dto.MultiTradeResponseDto;
 import com.backend.api.domain.multi.service.MultiGameService;
 import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.SuccessCode;
@@ -40,8 +47,13 @@ public class MultiGameController {
     @GetMapping("/create-room")
     @Operation(summary = "멀티게임 만들기", description = "멀티게임 방을 만듭니다.", tags = { "멀티게임" })
     public ResponseEntity<BaseResponse<MultiGameRoomCreateResponseDto>> createMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails){
-        MultiGameRoomCreateResponseDto multiGameRoom = multiGameService.createMultiGameRoom(userDetails.getId());
-        return BaseResponse.success(SuccessCode.SELECT_SUCCESS,"보냈어용");
+        return BaseResponse.success(SuccessCode.SELECT_SUCCESS,multiGameService.createMultiGameRoom(userDetails.getId()));
+    }
+
+    @PostMapping("/start-game")
+    @Operation(summary = "멀티게임 시작하기", description = "멀티게임을 시작합니다.", tags = { "멀티게임" })
+    public ResponseEntity<BaseResponse<MultiGameStartResponseDto>> startMultiGame(@AuthenticationPrincipal CustomUserDetails userDetails, MultiGameStartRequestDto dto){
+        return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.startMultiGame(userDetails.getId(), dto));
     }
 
     @PostMapping("/sell")
@@ -65,8 +77,7 @@ public class MultiGameController {
 
     @PostMapping("/tomorrow")
     @Operation(summary = "멀티 - 하루 경과", description = "멀티게임 내에서 하루가 지나면 경과를 보여줍니다.", tags = {"멀티게임"})
-    public ResponseEntity<BaseResponse<MultiDayResponseDto>> getTomorrow(@RequestBody MultiNextDayRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
-
+    public ResponseEntity<BaseResponse<MultiNextDayResponseDto>> getTomorrow(@RequestBody MultiNextDayRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.getTomorrow(dto, userDetails.getId()));
     }
 }

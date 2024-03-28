@@ -45,7 +45,7 @@ export default function Profile() {
           <div>평균수익률</div>
         </div>
         <div className="col-span-4">
-          <div>{asset}원</div>
+          <div>{asset?.toLocaleString()}원</div>
           <div>+{multiAvgRoi != null ? multiAvgRoi : 0}%</div>
         </div>
       </div>
