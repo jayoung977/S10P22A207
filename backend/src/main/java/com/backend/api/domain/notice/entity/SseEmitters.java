@@ -61,6 +61,7 @@ public class SseEmitters {
     }
 
     public void noti(String channelName, String eventName, NotificationRequestDto data) {
+        log.info("메시지 noti -> SseEmitters {}, {}, {}", channelName,eventName,data.roomId());
         emitters.get(channelName).forEach(emitter -> {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();

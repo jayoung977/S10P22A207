@@ -34,6 +34,8 @@ public class RedisSubService implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
+
+            log.info("메시지 도착 -> RedisSubService");
             // 수신된 메시지를 문자열로 변환
             String jsonMessage = new String(message.getBody());
             //JSON 문자열을 Dto 객체로 변환

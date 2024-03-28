@@ -3,12 +3,14 @@ package com.backend.api.domain.notice.service;
 import com.backend.api.domain.notice.dto.NotificationRequestDto;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class RedisPubService {
     private final RedisTemplate<String, Object> redisTemplate;
@@ -29,7 +31,11 @@ public class RedisPubService {
     public void sendMessage(NotificationRequestDto dto) {
         switch (dto.alarmType()){
             case NOTICE -> redisTemplate.convertAndSend("alarm:toAllUser", dto);
-            case INVITATION -> redisTemplate.convertAndSend("alarm:member:" + dto.channelName(), dto);
+            case INVITATION -> {
+                String str = "alarm:member:" + dto.channelName();
+                log.info("게임 초대 요청 - pubService {}", str);
+                redisTemplate.convertAndSend("alarm:member:" + dto.channelName(), dto);
+            }
         }
     }
 
