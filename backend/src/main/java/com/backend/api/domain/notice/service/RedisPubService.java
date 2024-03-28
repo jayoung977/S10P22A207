@@ -20,6 +20,7 @@ public class RedisPubService {
 
     // 채널 구독
     public void subscribe(String channel) {
+        log.info("구독! at RedisPubService : {}", channel);
         container.addMessageListener(subscriber, ChannelTopic.of(channel));
     }
 
