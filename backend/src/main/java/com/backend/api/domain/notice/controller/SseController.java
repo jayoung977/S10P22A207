@@ -27,6 +27,7 @@ public class SseController {
         try {
 
             log.info("emitter.send 요청 전 : {} ", channelName);
+
             emitter.send(SseEmitter.event()
                 .name("connect")
                 .data("connected!")
