@@ -3,9 +3,9 @@ package com.backend.api.domain.notice.entity;
 import com.backend.api.domain.notice.dto.NotificationRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Component
 @Slf4j
 public class SseEmitters {
-    private final HashMap<String, List<SseEmitter>> emitters = new HashMap<>();
+    private final Map<String, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter add(String channelName, SseEmitter emitter) {
         if (!emitters.containsKey(channelName)) {
@@ -25,7 +25,6 @@ public class SseEmitters {
         emitters.get(channelName).add(emitter);
         // 클라이언트 연결이 끊겨도 리스트에서 emitter를 제거하지 않습니다.
         emitter.onCompletion(() -> {
-            //TODO: 실제로 할때는 열어줘야함
              emitters.get(channelName).remove(emitter); // 연결이 끊기거나 .complete() 호출시 사용.
         });
         emitter.onTimeout(() -> {
