@@ -2,7 +2,6 @@ package com.backend.api.domain.notice.dto;
 
 import com.backend.api.domain.notice.type.AlarmType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDateTime;
 
 public record NotificationRequestDto(
 
@@ -17,10 +16,7 @@ public record NotificationRequestDto(
     String sender,
     
     @Schema(description = "방 ID")
-    Long roomId,
-
-    @Schema(description = "알림 보낸 시간")
-    LocalDateTime time
+    Long roomId
 
 ) {
 }
