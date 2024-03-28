@@ -1,8 +1,6 @@
 'use client'
 // 사용자가 받은 10개의 랜덤한 주식 종목 목록 (right side bar - 2)
-import { useState } from 'react'
-import SingleGameStore from '@/public/src/stores/single/SingleGameStore';
-
+import SingleGameStore from '@/public/src/stores/single/SingleGameStore'
 import Stock from "./Stock"
 
 export default function StockList () {

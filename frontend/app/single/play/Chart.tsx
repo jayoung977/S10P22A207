@@ -1,6 +1,6 @@
 "use client";
 // 현재 턴/종목에 대한 차트 정보 (main - 1)
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import anychart from "anychart";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
 
@@ -17,22 +17,50 @@ function calculateMovingAverage(data :any, period :any) {
   }
 
 export default function Chart({ data }: any) {
-  const { selectedStockIndex } = SingleGameStore();
+  const { selectedStockIndex, turn } = SingleGameStore();
   useEffect(() => {
     // 차트 생성
     const chart = anychart.stock();
     // 차트를 담을 컨테이너 생성
     const container = chart.container("chart-container")
+    // chart.scroller().thumbs(false);
     chart.scroller().xAxis(false);
+    chart.scroller().selectedFill({
+      src: 'https://static.anychart.com/images/beach.png',
+      mode: 'stretch',
+      opacity: 0.5
+    });
+    chart.width("95%");
     chart.contextMenu(false);
     
     // 툴 팁 내용 수정
     const tooltip = chart.tooltip();
-    tooltip.titleFormat("");
+    tooltip.titleFormat("Info");
 
     // 첫 번재 plot 생성(line, OHLC, 이동평균선)
     const plot1 = chart.plot(0);
-    plot1.title("일 별 주가 & OHLC, 이동평균선");
+    plot1.title("주가, OHLC, 이동평균선")
+    plot1.yAxis().orientation("right");
+    plot1.yAxis().labels().fontSize(20)
+
+    const lineMarker = plot1.lineMarker();
+    lineMarker.value(data[299+turn]?.endPrice);
+    lineMarker.stroke({
+      thickness: 2,
+      color: "pink",
+      dash: "5 5",
+    });    
+    
+    const textMarker = plot1.textMarker();
+    textMarker.value(data[299+turn]?.endPrice);
+    textMarker.text(data[299+turn]?.endPrice)
+    textMarker.fontColor("pink");
+    textMarker.background().enabled(true);
+    textMarker.background().stroke("2 pink");
+    textMarker.padding(3);
+    textMarker.align("right");
+    textMarker.offsetX(-50);
+    textMarker.fontSize(20);
 
     // line series 생성
     const lineSeries = plot1.line(
@@ -52,10 +80,10 @@ export default function Chart({ data }: any) {
     candlestickSeries.tooltip().format(function (this: any) {
       const series = this.series;
       return (
-        "시가 : " + this.marketPrice + "\n" +
-        "고가 : " + this.highPrice + "\n" +
-        "저가 : " + this.lowPrice + "\n" +
-        "종가 : " + this.endPrice + "\n"
+        "시가 : " + this.open + "\n" +
+        "고가 : " + this.high + "\n" +
+        "저가 : " + this.low + "\n" +
+        "종가 : " + this.close + "\n"
       );
     });
     // candlestick series 색상 지정
@@ -63,7 +91,6 @@ export default function Chart({ data }: any) {
     candlestickSeries.risingStroke("#F65742", 1);
     candlestickSeries.fallingFill("#0597FF", 1);
     candlestickSeries.fallingStroke("#0597FF", 1);
-
 
     // 이동평균선 그래프 생성(sma)
     const sma5Series = plot1.line(calculateMovingAverage(data, 5));
@@ -75,7 +102,7 @@ export default function Chart({ data }: any) {
     const sma120Series = plot1.line(calculateMovingAverage(data, 120));
     sma120Series.name('120');
 
-    // 이동평균선 그래프 색상 지정
+    // // 이동평균선 그래프 색상 지정
     sma5Series.stroke('purple');
     sma20Series.stroke('yello');
     sma60Series.stroke('green');
@@ -100,17 +127,22 @@ export default function Chart({ data }: any) {
           "<span style='color:#455a64;font-weight:600'>" +
           series.name() +
           ":</span>" +
-          this.marketPrice +
+          this.open +
           " | " +
-          this.highPrice +
+          this.high +
           " | " +
-          this.lowPrice +
+          this.low +
           " | " +
-          this.endPrice
+          this.close
         );
       }
     });
+
     const plot2 = chart.plot(1);
+    plot2.title("거래량")
+    plot2.yAxis().orientation("right");
+    plot2.yAxis().labels().fontSize(15)
+
     plot2.legend().title().useHtml(true);
     plot2.legend().titleFormat(<span></span>);
     const columnSeries = plot2.column(
@@ -134,20 +166,29 @@ export default function Chart({ data }: any) {
         );
       }
     });
-    plot1.height("70%");
+
+    const plot3 = chart.plot(2);
+    plot3.title("RSI");
+    plot3.yAxis().orientation("right");
+
+    plot1.height("40%");
     plot2.height("30%");
+    plot3.height("30%");
+    chart.scroller().height("20%")
+
     chart.draw();
+    chart.selectRange(data[249+turn].date.split('T')[0], data[299+turn].date.split('T')[0]);
 
     return () => {
       chart.dispose();
     };
   }, [data]);
   return (
-    <div className="row-start-1 row-end-12 grid grid-rows-12">
-      <div className="row-start-1 row-end-2 flex items-center p-2">
-        종목 {selectedStockIndex+1}
+    <div className="row-span-11 grid grid-rows-12">
+      <div className="row-span-1 flex items-center">
+          종목 {selectedStockIndex+1}  
       </div>
-      <div id="chart-container" className="row-start-2 row-end-13 flex items-center justify-center"></div>
+      <div id="chart-container" className="row-span-12 flex items-center justify-center"></div>
     </div>
 
   );

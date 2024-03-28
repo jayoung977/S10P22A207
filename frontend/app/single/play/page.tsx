@@ -31,9 +31,18 @@ export default function SinglePlay() {
     turn, setTurn, setGameIdx, setSingleGameChance,
     setTotalAssetData, setAssetListData, setTradeListData,
     stockListData, setStockListData, setStockMarketListData, 
-    setTrendListData, setMarketInfoListData,
-    selectedStockIndex
+    setTrendListData, setMarketInfoListData, setTodayStockInfoListData,
+    selectedStockIndex, setSelectedStockIndex, isBuySellModalOpen, setIsBuySellModalOpen
   } = SingleGameStore();
+
+
+  const handleSelectStockIndex = (e :KeyboardEvent) => {
+    const key = e.key;
+    if ("1" <= key && key <= "9" && !isBuySellModalOpen) {
+      setSelectedStockIndex(parseInt(key) - 1);
+      
+    }
+  }
 
   const fetchSingleGameData = async () => {
     await axios({
@@ -68,6 +77,7 @@ export default function SinglePlay() {
         // 트렌드, 시장 데이터
         setTrendListData(response.data.result.trendList);
         setMarketInfoListData(response.data.result.marketInfo);
+        setTodayStockInfoListData(response.data.result.nextDayInfos);
 
         setIsLoading(false)
     }).catch((error) => {
@@ -77,9 +87,22 @@ export default function SinglePlay() {
   };
 
   useEffect(() => {
-    fetchSingleGameData()
+    fetchSingleGameData();
+
   }, []);
 
+  useEffect(() => {
+    if (isBuySellModalOpen) {
+      window.removeEventListener("keypress", handleSelectStockIndex);
+    } else {
+      window.addEventListener("keypress", handleSelectStockIndex);
+    }
+
+    return () => {
+      window.removeEventListener("keypress", handleSelectStockIndex);
+    }
+  }, [isBuySellModalOpen]);
+  
   if (isLoading) {
     return <div className="rainbow"></div>;
   }

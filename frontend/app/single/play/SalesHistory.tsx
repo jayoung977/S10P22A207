@@ -1,64 +1,11 @@
 'use client'
 // 사용자의 매매 내역 (left side bar - 3)
-import { useState, useEffect } from 'react';
 import SingleGameStore from '@/public/src/stores/single/SingleGameStore';
 import SaleHistory from "./SaleHistory";
 
 export default function SalesHistory () {
     const { tradeListData } = SingleGameStore();
 
-    const [saleData, setSaleData] = useState([
-        {
-            stock: '종목1',
-            saleType: '매수',
-            price: 10000,
-            quantity: 1000,
-            contractAmount: 10000000,
-        },
-        {
-            stock: '종목2',
-            saleType: '매도',
-            price: 20000,
-            quantity: 2000,
-            contractAmount: 40000000,
-        },
-        {
-            stock: '종목3',
-            saleType: '매수',
-            price: 30000,
-            quantity: 3000,
-            contractAmount: 90000000,
-        },
-        {
-            stock: '종목4',
-            saleType: '매도',
-            price: 40000,
-            quantity: 4000,
-            contractAmount: 160000000,
-        },
-        {
-            stock: '종목5',
-            saleType: '매도',
-            price: 40000,
-            quantity: 4000,
-            contractAmount: 160000000,
-        },
-        {
-            stock: '종목6',
-            saleType: '매도',
-            price: 40000,
-            quantity: 4000,
-            contractAmount: 160000000,
-        },
-        {
-            stock: '종목7',
-            saleType: '매도',
-            price: 40000,
-            quantity: 4000,
-            contractAmount: 160000000,
-        },
-
-    ])
     return (
         <div className="row-span-1 grid grid-rows-6">
             <div className="row-span-1 flex items-center justify-between pl-2">
