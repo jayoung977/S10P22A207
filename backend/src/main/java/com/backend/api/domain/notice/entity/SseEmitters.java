@@ -24,6 +24,8 @@ public class SseEmitters {
         emitters.get(channelName).add(emitter);
         // 클라이언트 연결이 끊겨도 리스트에서 emitter를 제거하지 않습니다.
         emitter.onCompletion(() -> {
+            //TODO: 실제로 할때는 열어줘야함
+             emitters.get(channelName).remove(emitter); // 연결이 끊기거나 .complete() 호출시 사용.
         });
         emitter.onTimeout(() -> {
             // 타임아웃 발생 시 완료 처리 대신에 다시 연결을 시도.
