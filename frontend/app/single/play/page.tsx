@@ -31,9 +31,18 @@ export default function SinglePlay() {
     turn, setTurn, setGameIdx, setSingleGameChance,
     setTotalAssetData, setAssetListData, setTradeListData,
     stockListData, setStockListData, setStockMarketListData, 
-    setTrendListData, setMarketInfoListData,
-    selectedStockIndex
+    setTrendListData, setMarketInfoListData, setTodayStockInfoListData,
+    selectedStockIndex, setSelectedStockIndex, isBuySellModalOpen, setIsBuySellModalOpen
   } = SingleGameStore();
+
+
+  const handleSelectStockIndex = (e :KeyboardEvent) => {
+    const key = e.key;
+    if ("1" <= key && key <= "9" && !isBuySellModalOpen) {
+      setSelectedStockIndex(parseInt(key) - 1);
+      
+    }
+  }
 
   const fetchSingleGameData = async () => {
     await axios({
@@ -42,7 +51,7 @@ export default function SinglePlay() {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       }
-    }).then((response) => {
+    }).then((response :any) => {
         console.log("useEffect axios 요청 데이터 결과")
         console.log(response.data.result);
 
@@ -68,18 +77,32 @@ export default function SinglePlay() {
         // 트렌드, 시장 데이터
         setTrendListData(response.data.result.trendList);
         setMarketInfoListData(response.data.result.marketInfo);
+        setTodayStockInfoListData(response.data.result.nextDayInfos);
 
         setIsLoading(false)
-    }).catch((error) => {
+    }).catch((error :any) => {
       console.log(error)
       setIsError(true);
     });
   };
 
   useEffect(() => {
-    fetchSingleGameData()
+    fetchSingleGameData();
+
   }, []);
 
+  useEffect(() => {
+    if (isBuySellModalOpen) {
+      window.removeEventListener("keypress", handleSelectStockIndex);
+    } else {
+      window.addEventListener("keypress", handleSelectStockIndex);
+    }
+
+    return () => {
+      window.removeEventListener("keypress", handleSelectStockIndex);
+    }
+  }, [isBuySellModalOpen]);
+  
   if (isLoading) {
     return <div className="rainbow"></div>;
   }
@@ -104,7 +127,7 @@ export default function SinglePlay() {
           {/* main */}
           <main className="col-span-7 grid grid-rows-12">
             <Chart data={stockListData[selectedStockIndex]?.stockChartList.slice(0, 300+turn)}/>
-            <StockMarket />
+            {/* <StockMarket /> */}
           </main>
           {/* right aside */}
           <aside className="col-span-2 grid grid-rows-6">

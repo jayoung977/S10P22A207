@@ -75,6 +75,27 @@ type marketInfoDataType = {
 }
 type marketInfoListDataType = marketInfoDataType[];
 
+// 게임 종료 시 데이터
+// 실제 주식 종목
+type stockInfoDtoDataType = {
+    stockId :number,
+    stockName :string,
+};
+type stockInfoDtoListDataType = stockInfoDtoDataType[];
+
+type singleGameEndInfoDataType = {
+    initialAsset :number,
+    finalAsset :number,
+    netProfit :number,
+    profitMargin :number,
+
+    startDate :string,
+    endDate :string,
+
+    stockInfoDtoList :stockInfoDtoListDataType,
+    singleGameChance :number,
+}
+
 
 type Store = {
     // 해당 게임 log id
@@ -122,6 +143,12 @@ type Store = {
     // 현재 선택한 주식 종목 index 상태관리 변수
     selectedStockIndex :number;
     setSelectedStockIndex :(value :number) => void;
+
+    singleGameEndInfoData :singleGameEndInfoDataType | any;
+    setSingleGameEndInfoData :(value :singleGameEndInfoDataType) => void;
+
+    isBuySellModalOpen :boolean;
+    setIsBuySellModalOpen :(value :boolean) => void;
 };
 
 
@@ -172,6 +199,12 @@ const SingleGameStore = create<Store>((set: any) => ({
     // 현재 선택한 주식 종목 index 상태관리 변수
     selectedStockIndex: 0,
     setSelectedStockIndex: (value) => set({ selectedStockIndex : value }),
+
+    singleGameEndInfoData: [],
+    setSingleGameEndInfoData: (value) => set({ singleGameEndInfoData : value }),
+
+    isBuySellModalOpen :false,
+    setIsBuySellModalOpen :(value) => set({ isBuySellModalOpen : value }),
 }));
 
 export default SingleGameStore;

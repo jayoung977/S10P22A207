@@ -7,43 +7,28 @@ import BuySellModal from './BuySellModal';
 import SingleGameEndModal from './SingleGameEndModal';
 import axios from 'axios';
 
-
 export default function TurnInfo () {
      // 현재 턴
-     const { turn, setTurn, gameIdx, setTotalAssetData, setTodayStockInfoListData } = SingleGameStore();
-     // 매수 / 매도 모달창 open 여부
-     const [isOpenSaleModal, setIsOpenSaleModal] = useState<boolean>(false);
+     const { turn, setTurn, gameIdx, setTotalAssetData, setAssetListData, setTodayStockInfoListData, setSingleGameEndInfoData, isBuySellModalOpen, setIsBuySellModalOpen } = SingleGameStore();
      // 매수 or 매도 선택 (true면 매수)
      const [isBuy, setIsBuy] = useState<boolean>(true);
      // 싱글 게임 종료 모달창 open 여부
      const [isOpenEndModal, setIsOpenEndModal] = useState<boolean>(false);
-     const [gameEndData, setGameEndData] = useState<any>([]);
  
      // 매수버튼 클릭
      const handleSelectBuy = () => {
          setIsBuy(true);
-         setIsOpenSaleModal(true);
+        setIsBuySellModalOpen(true);
      }
  
      // 매도버튼 클릭
      const handleSelectSell = () => {
-         setIsBuy(false);
-         setIsOpenSaleModal(true);
+        setIsBuy(false);
+        setIsBuySellModalOpen(true);
      }
- 
-     // 키보드 입력 처리
-     const handleBuySellNext = (e: KeyboardEvent) => {
-         if (e.key === "q") {
-             handleSelectBuy();
-         } else if (e.key === "w") {
-             handleSelectSell();
-         } else if (e.key == "e") {
-            handleClickTurn();
-         }
-     }
- 
-     // 다음 턴으로 넘어가기
-     const handleClickTurn = async () => {
+     
+    // 다음 턴으로 넘어가기
+    const handleClickTurn = async () => {
         const response = await axios(
             {
                 method: "post",
@@ -56,11 +41,26 @@ export default function TurnInfo () {
                     Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`
                 }
             })
+
         if (turn == 50) {
-            console.log("single game end data : ", response.data.result);
-        
+            console.log(response.data.result);
+            const stockInfoDtoList = response.data.result.stockInfoDtoList;
+            setSingleGameEndInfoData({
+                initialAsset :stockInfoDtoList.initialAsset,
+                finalAsset :stockInfoDtoList.finalAsset,
+                netProfit :stockInfoDtoList.netProfit,
+                profitMargin :stockInfoDtoList.profitMargin,
+            
+                startDate :stockInfoDtoList.StartDate,
+                endDate :stockInfoDtoList.endDate,
+            
+                stockInfoDtoList :stockInfoDtoList.stockInfoDtoList,
+                singleGameChance :stockInfoDtoList.singleGameChance,
+            })
+            setIsOpenEndModal(true);
+
         } else {
-            console.log("single game next turn data : ", response.data.result);
+            setTurn(turn+1);
             setTotalAssetData({
                 cash :response.data.result.cash,
                 resultProfit :response.data.result.resultProfit,
@@ -68,24 +68,34 @@ export default function TurnInfo () {
                 totalPurchaseAmount :response.data.result.totalPurchaseAmount,
                 totalAsset :response.data.result.totalAsset,
             });
-            setTodayStockInfoListData(response.data.result.NextDayInfo);
-            setTurn(turn+1);
+            if (response.data.result.assetList) {
+                setAssetListData(response.data.result.assetList);
+            }
+            if (response.data.result.NextDayInfo) {
+                setTodayStockInfoListData(response.data.result.NextDayInfo);
+            }
+            
             }
         }
- 
-     useEffect(() => {
-         // 전역 키 이벤트 리스너 설정
-         const handleKeyPress = (e :KeyboardEvent) => {
-            handleBuySellNext(e);
-         };
- 
-         window.addEventListener('keydown', handleKeyPress);
- 
-         // 컴포넌트 언마운트 시 리스너 제거
-         return () => {
-             window.removeEventListener('keydown', handleKeyPress);
-         };
-     }, [turn]); // 의존성 배열에 turn을 추가하여 턴이 변경될 때마다 이벤트 리스너가 최신 상태를 참조하도록 함
+    
+    // 키보드 입력 처리 - 매수(q), 매도(w)
+    const handleBuySell = (e :KeyboardEvent) => {
+        console.log(e.key)
+        if (e.key === "q") {
+            handleSelectBuy();
+        } else if (e.key === "w") {
+            handleSelectSell();
+        }
+    }
+
+    useEffect (() => {
+        window.addEventListener('keydown', handleBuySell);
+    
+        return () => {
+            window.removeEventListener("keydown", handleBuySell);
+        }
+    }, [])
+    
     return (
         <div className="row-start-1 row-end-2 grid grid-rows-2">
             <div className="row-span-1">
@@ -109,12 +119,11 @@ export default function TurnInfo () {
                     onClick={handleClickTurn} 
                     className="col-span-1 rounded-md scale-95 text-textColor-1 bg-textColor-2 border border-textColor-1 m-2 hover:text-textColor-2 hover:bg-textColor-1 hover:scale-105 shadow-md shadow-textColor-1"
                 >
-                    다음(E)
+                    다음
                 </button>
-            
             </div>
-            <BuySellModal isBuy={isBuy} isOpen={isOpenSaleModal} onClose={() => setIsOpenSaleModal(false) }/>
-            <SingleGameEndModal isOpen={isOpenEndModal} onClose={() => setIsOpenEndModal(false)} data={gameEndData}/>
+            <BuySellModal isBuy={isBuy}/>
+            <SingleGameEndModal isOpen={isOpenEndModal} onClose={() => setIsOpenEndModal(false)} />
         </div>
     )
 }
