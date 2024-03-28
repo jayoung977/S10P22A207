@@ -1,7 +1,5 @@
 package com.backend.api.domain.notice.entity;
 
-import com.backend.api.domain.notice.dto.NotificationRequestDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -61,20 +59,19 @@ public class SseEmitters {
         });
     }
 
-    public void noti(String channelName, String eventName, NotificationRequestDto data) {
+    public void noti(String channelName, String eventName, String data) {
 
 
         emitters.get(channelName).forEach(emitter -> {
             try {
-                log.info("메시지 noti at SseEmitters -> channelName: {}, eventName: {}, roomId : {}", channelName, eventName, data.roomId());
-                ObjectMapper objectMapper = new ObjectMapper();
-                String jsonData = objectMapper.writeValueAsString(data);
+                log.info("메시지 noti at SseEmitters -> channelName: {}, eventName: {}, roomId : {}", channelName, eventName, data);
+//                ObjectMapper objectMapper = new ObjectMapper();
+//                String jsonData = objectMapper.writeValueAsString(data);
                 log.info("noti 요청 왔어요");
-
                 emitter.send(
                     SseEmitter.event()
                         .name(eventName)
-                        .data(jsonData)
+                        .data(data)
                 );
                 log.info("emitter 정보 :{}", emitter.toString());
                 log.info("emitter.send 완료 at SseEmitters");
