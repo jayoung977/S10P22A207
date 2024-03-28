@@ -21,7 +21,7 @@ public class SseController {
 
     @GetMapping(value = "/connect/{channelName}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> connect(@PathVariable String channelName) {
-        SseEmitter emitter = new SseEmitter(300_000L);
+        SseEmitter emitter = new SseEmitter(30_000L);
         log.info("구독 요청 - SseController {}", channelName);
         sseEmitters.add(channelName, emitter);
         try {
