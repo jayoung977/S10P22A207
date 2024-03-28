@@ -49,7 +49,7 @@ public class RedisSubService implements MessageListener {
 //                }
                 case INVITATION -> {
                     sendInviteToMember(dto);
-                    sseEmitters.noti("alarm", dto.channelName() + ":INVITATION", dto);
+                    sseEmitters.noti("alarm", dto.channelName() + ":INVITATION", "메시지 도착!");
                 }
             }
 
