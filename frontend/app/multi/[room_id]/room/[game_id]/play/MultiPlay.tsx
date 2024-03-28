@@ -1028,7 +1028,8 @@ export default function MultiPlay() {
             <TradeHistory />
           </aside>
           <main className="col-span-8 grid grid-rows-16">
-            <Chart data={data}/>
+            <div className="row-span-12"></div>
+            {/* <Chart data={data}/> */}
             <div className="border grid grid-cols-12 row-span-4">
               <Chat />
               <TradeButtons />
