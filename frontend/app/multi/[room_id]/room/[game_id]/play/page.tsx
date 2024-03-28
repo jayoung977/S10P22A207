@@ -1,4 +1,7 @@
-import MultiPlay from "./MultiPlay";
+import dynamic from "next/dynamic";
+
+const MultiPlay = dynamic(import('./MultiPlay'))
+// import MultiPlay from "./MultiPlay";
 
 
 export async function generateStaticParams(){
