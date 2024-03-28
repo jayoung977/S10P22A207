@@ -1,20 +1,18 @@
 package com.backend.api.domain.friend.service;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.backend.api.domain.friend.dto.response.FriendRes;
 import com.backend.api.domain.friend.entity.FriendAsk;
 import com.backend.api.domain.friend.repository.FriendAskRepository;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
+import com.backend.api.domain.notice.service.RedisPubService;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.exception.BaseExceptionHandler;
-
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Log4j2
 @Service
@@ -22,6 +20,7 @@ import lombok.extern.log4j.Log4j2;
 public class FriendAskService {
 	private final FriendAskRepository friendAskRepository;
 	private final MemberRepository memberRepository;
+	private final RedisPubService redisPubService;
 
 	public List<FriendRes> getSendFriendAskList(Long followerId) {
 		List<FriendAsk> friendAskList = friendAskRepository.findBySender_Id(followerId);
@@ -30,8 +29,9 @@ public class FriendAskService {
 				new FriendRes(
 					friendAsk.getReceiver().getId(),
 					friendAsk.getReceiver().getNickname(),
-					friendAsk.getReceiver().getAsset())
-			)
+					friendAsk.getReceiver().getAsset(),
+					redisPubService.isUserLoggedIn(friendAsk.getReceiver().getId()))
+				)
 			.toList();
 	}
 
@@ -42,7 +42,8 @@ public class FriendAskService {
 				new FriendRes(
 					friendAsk.getSender().getId(),
 					friendAsk.getSender().getNickname(),
-					friendAsk.getSender().getAsset())
+					friendAsk.getReceiver().getAsset(),
+					redisPubService.isUserLoggedIn(friendAsk.getReceiver().getId()))
 			)
 			.toList();
 	}
