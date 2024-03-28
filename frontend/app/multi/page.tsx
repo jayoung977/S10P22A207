@@ -1,6 +1,5 @@
 "use client";
 
-
 import Navbar from "../Navbar";
 import Profile from "./profile";
 import Ranking from "./Ranking";
@@ -11,7 +10,7 @@ import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 import { Boxes } from "../../public/src/components/ui/background-boxes";
 import { cn } from "../../public/src/utils/cn";
 import userStore from "@/public/src/stores/user/userStore";
-
+import axios from "axios";
 const queryClient = new QueryClient();
 
 interface userType {

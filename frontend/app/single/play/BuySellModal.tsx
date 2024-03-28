@@ -94,7 +94,6 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
         }
     } 
     if (!isBuySellModalOpen) return null;
-    
     return (
       <div className="fixed inset-0 flex items-center justify-center z-50">
         <div className="text-center bg-big-1 rounded shadow-lg grid grid-rows-12" style={{ width: '500px', height: '300px' }}>
@@ -132,9 +131,9 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                     <div className="text-textColor-1">주문 가능 수량</div>
                     {
                         isBuy ? (
-                            <div className="text-textColor-1">{Math.floor(totalAssetData.cash/stockListData[selectedStockIndex].stockChartList[300+turn].endPrice)}주</div>
+                            <div className="text-textColor-1">{Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[300+turn].endPrice)}주</div>
                         ) : (
-                            <div className="text-textColor-1">{}</div>
+                            <div className="text-textColor-1">{assetListData[selectedStockIndex]?.stockAmount}</div>
                         )
                     }
                 </div>

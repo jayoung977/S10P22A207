@@ -73,7 +73,7 @@ export default function GameRoomSetting() {
   const { result }: { result: MultiRoom[] | null } = data
     ? data
     : { result: null };
-  // console.log(result);
+  console.log(result);
 
 
 
