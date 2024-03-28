@@ -10,7 +10,7 @@ import axios from "axios";
 import userStore from "@/public/src/stores/user/userStore";
 import Swal from "sweetalert2";
 import { useState } from "react";
-// import ProfileFriendRequest from "./ProfileFriendRequest";
+import ProfileFriendRequest from "./ProfileFriendRequest";
 
 interface resultType {
   memberID: number;
@@ -34,6 +34,8 @@ export default function UserInfo() {
   const params = useParams<{ userId?: string }>();
   const id: string | undefined = params.userId;
   const { memberId } = userStore();
+  const { isOpen, setIsOpen, setFriendRequests, friendRequests } =
+    profileStore();
   const fetchUserInfo = async () => {
     const response = await axios({
       method: "get",
@@ -81,28 +83,25 @@ export default function UserInfo() {
     Swal.fire("친구요청을 보냈어요!");
   };
 
-  // const [isOpen, setIsOpen] = useState(false);
-  // const [friendRequests, setFriendRequests] = useState([]);
-
-  // const fetchFriendRequests = async () => {
-  //   try {
-  //     const response = await axios({
-  //       url: "https://j10a207.p.ssafy.io/api/friend-ask/receive-list",
-  //       method: "get",
-  //       headers: {
-  //         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-  //       },
-  //     });
-  //     if (response.data.status === 200) {
-  //       setFriendRequests(response.data.result);
-  //       setIsOpen(!isOpen); // 모달 열기
-  //     } else {
-  //       console.error("친구 요청 목록을 가져오는 데 실패했습니다.");
-  //     }
-  //   } catch (error) {
-  //     console.error("친구 요청 목록을 가져오는 중 오류 발생:", error);
-  //   }
-  // };
+  const fetchFriendRequests = async () => {
+    try {
+      const response = await axios({
+        url: "https://j10a207.p.ssafy.io/api/friend-ask/receive-list",
+        method: "get",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
+      if (response.data.status === 200) {
+        setFriendRequests(response.data.result);
+        setIsOpen(!isOpen); // 모달 열기
+      } else {
+        console.error("친구 요청 목록을 가져오는 데 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("친구 요청 목록을 가져오는 중 오류 발생:", error);
+    }
+  };
 
   return (
     <div className="row-start-2 row-end-13 grid grid-cols-10 bg-background-1 ">
@@ -131,10 +130,10 @@ export default function UserInfo() {
               type="button"
               className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 absolute bottom-2 "
               onClick={() => {
-                // fetchFriendRequests();
+                fetchFriendRequests();
               }}
             >
-              친구요청확인
+              친구 요청 목록
             </button>
           )}
           {/* 만약 팔로우가 되어있을때는 언팔로우를 보여주기 반대는 반대 */}
