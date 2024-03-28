@@ -75,6 +75,7 @@ public class SseEmitters {
                         .name(eventName)
                         .data(jsonData)
                 );
+                log.info("emitter 정보 :{}", emitter.toString());
                 log.info("emitter.send 완료 at SseEmitters");
             } catch (ClientAbortException e) {
 
