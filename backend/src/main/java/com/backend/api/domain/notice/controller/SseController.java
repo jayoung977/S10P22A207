@@ -28,8 +28,10 @@ public class SseController {
             emitter.send(SseEmitter.event()
                 .name("connect")
                 .data("connected!"));
+            log.info("emitter.send(SseEmitter.event() - {}", channelName);
 
         } catch (IOException e) {
+
             throw new RuntimeException(e);
         }
         return ResponseEntity.ok(emitter);
