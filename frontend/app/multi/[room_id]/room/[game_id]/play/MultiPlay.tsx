@@ -2,8 +2,8 @@
 
 import Header from "./header";
 import GameStatus from "./gameStatus";
+import Chart from "@/app/single/play/Chart";
 import Chat from "../../../chat";
-import Chart from "@/app/single/[game-id]/play/Chart";
 import TradeHistory from "./tradeHistory";
 import { useState, useEffect } from "react";
 import TradeButtons from "../../../tradeButton";
@@ -18,7 +18,7 @@ export type dataType = {
   volume: number;
 };
 
-export default function MultiPlay () {
+export default function MultiPlay() {
   const [data, setData] = useState<dataType[]>([]);
   useEffect(() => {
     setData([
@@ -1028,13 +1028,13 @@ export default function MultiPlay () {
             <TradeHistory />
           </aside>
           <main className="col-span-8 grid grid-rows-16">
-            <Chart data={data} />
+            <Chart data={data}/>
             <div className="border grid grid-cols-12 row-span-4">
               <Chat />
               <TradeButtons />
             </div>
           </main>
-          <GameMembers/>
+          <GameMembers />
         </div>
       </div>
     </div>

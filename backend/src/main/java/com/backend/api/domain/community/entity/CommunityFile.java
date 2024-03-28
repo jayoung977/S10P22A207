@@ -39,4 +39,7 @@ public class CommunityFile extends BaseEntity {
         this.url = url;
         this.isDelete = isDelete;
     }
+    public void updateCommunityFileDeleteStatus() {
+        this.isDelete = true;
+    }
 }

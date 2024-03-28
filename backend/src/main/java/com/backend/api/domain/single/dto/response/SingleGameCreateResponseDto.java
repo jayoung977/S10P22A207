@@ -22,7 +22,12 @@ public record SingleGameCreateResponseDto(
     List<AssetListDto> assetList,
 
     @Schema(description = "그간 매매 내역")
-    List<SingleTradeListDto> tradeList
+    List<SingleTradeListDto> tradeList,
+
+    @Schema(description = "전날 대비 변화량")
+    List<NextDayInfoResponseDto> nextDayInfos
+
+
 ) {
 
 }

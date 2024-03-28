@@ -2,6 +2,7 @@ package com.backend.api.domain.single.controller;
 
 import com.backend.api.domain.single.dto.request.NextDayRequestDto;
 import com.backend.api.domain.single.dto.request.SingleTradeRequestDto;
+import com.backend.api.domain.single.dto.response.ExistingSingleGameResponseDto;
 import com.backend.api.domain.single.dto.response.NextDayResponseDto;
 import com.backend.api.domain.single.dto.response.SingleGameCreateResponseDto;
 import com.backend.api.domain.single.dto.response.SingleTradeResponseDto;
@@ -30,7 +31,7 @@ public class SingleGameController {
 
     @GetMapping("/is-existing-single-game")
     @Operation(summary = "진행중인 싱글게임 존재 확인", description = "싱글게임 모드를 선택하면 진행 중인 게임이 있는지 알려줍니다.", tags = {"싱글게임"})
-    public ResponseEntity<BaseResponse<Boolean>> isExistingSingleGame(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<BaseResponse<ExistingSingleGameResponseDto>> isExistingSingleGame(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, singleGameService.existSingleGame(userDetails.getId()));
     }
 

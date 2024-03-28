@@ -18,8 +18,13 @@ public record NextDayResponseDto(
     @Schema(description = "총 평가 금액")
     long totalAsset,
 
-    @Schema(description = "마지막날(50일) 종목 이름과 시작날, 끝나는 날 표시하기 위한 Dto")
+    @Schema(description = "보유 자산")
+    List<AssetListDto> assetList,
+
+    @Schema(description = "마지막날(51일) 종목 이름과 시작날, 끝나는 날 표시하기 위한 Dto")
     SingleGameResultDto stockInfoDtoList
+
+
 
 ) {
 
