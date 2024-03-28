@@ -122,7 +122,7 @@ export default function BoardReceive() {
                     <div className="p-4 m-4">
                       {item.content}{" "}
                       {item.communityFileList.map((photo, i) => {
-                        return <img src={photo} alt={`${i}번째사진`}></img>;
+                        return <img className="w-full" src={photo} alt={`${i}번째사진`}></img>;
                       })}
                     </div>
                   </div>
