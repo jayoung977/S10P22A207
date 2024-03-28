@@ -21,13 +21,16 @@ public class SseController {
 
     @GetMapping(value = "/connect/{channelName}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> connect(@PathVariable String channelName) {
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(300_000L);
         log.info("구독 요청 - SseController {}", channelName);
         sseEmitters.add(channelName, emitter);
         try {
             emitter.send(SseEmitter.event()
                 .name("connect")
-                .data("connected!"));
+                .data("connected!")
+                .reconnectTime(30_000L)
+
+            );
             log.info("emitter.send(SseEmitter.event() - {}", channelName);
 
         } catch (IOException e) {
