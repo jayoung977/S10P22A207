@@ -2,7 +2,7 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import UserRecord from "./ProfileRecord";
-import bronze from "../../../public/src/assets/images/bronze.png";
+import bronze from "../../../public/src/assets/images/Tier/diamond.png";
 import profileStore from "@/public/src/stores/profile/profileStore";
 import { useQuery, UseQueryResult } from "react-query";
 import { useParams } from "next/navigation";

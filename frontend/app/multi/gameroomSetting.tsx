@@ -9,6 +9,7 @@ import multigameStore, {
   MultiRoomInfo,
   MultiRoom,
 } from "@/public/src/stores/multi/MultiGameStore";
+import axios from "axios";
 
 const fetchMultiRoomInfo = async (pageNumber: number) => {
   const token = sessionStorage.getItem("accessToken");
@@ -66,6 +67,7 @@ export default function GameRoomSetting() {
     ? data
     : { result: null };
   console.log(result);
+
 
 
   return (
