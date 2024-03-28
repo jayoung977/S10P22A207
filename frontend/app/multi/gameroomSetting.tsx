@@ -9,7 +9,7 @@ import multigameStore, {
   MultiRoomInfo,
   MultiRoom,
 } from "@/public/src/stores/multi/MultiGameStore";
-import axios from "axios";
+
 
 const fetchMultiRoomInfo = async (pageNumber: number) => {
   const token = sessionStorage.getItem("accessToken");
@@ -35,6 +35,13 @@ export default function GameRoomSetting() {
     3: "bg-small-3",
     4: "bg-small-6",
     5: "bg-small-8",
+    6: "bg-small-13",
+    7: "bg-small-2",
+    8: "bg-small-5",
+    9: "bg-small-7",
+    10: "bg-small-9",
+    11: "bg-small-11",
+    12: "bg-small-12",
   };
 
   const router = useRouter();
@@ -66,7 +73,7 @@ export default function GameRoomSetting() {
   const { result }: { result: MultiRoom[] | null } = data
     ? data
     : { result: null };
-  console.log(result);
+  // console.log(result);
 
 
 
@@ -183,8 +190,9 @@ export default function GameRoomSetting() {
       {/* 게임방 목록 */}
       <div className="bg-background-1 row-span-8 rounded-md grid grid-cols-12 grid-rows-3 shadow-md gap-1">
         {rooms.map((room: MultiRoom, i: number) => (
+
           <div className="col-span-6 row-span-1 p-1 m-1 rounded-md" key={i}>
-            <GameRoom color={RoomColor[i]} room={room} />
+            <GameRoom color={RoomColor[(pageNumber - 1 + i) % 13]} room={room} />
           </div>
         ))}
       </div>
