@@ -1,39 +1,168 @@
 "use client";
 // 현재 턴/종목에 대한 차트 정보 (main - 1)
-import { useState, useEffect } from "react";
+import { useEffect, useRef } from "react";
 import anychart from "anychart";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
-
+// 주어진 데이터 정제
+function filteringLowPriceZero(data :any) {
+  const newData = data.map((item :any) => {
+    if (item.lowPrice == 0) {
+      return {
+        ...item,
+        lowPrice: item.endPrice,
+        marketPrice: item.endPrice,
+        highPrice: item.endPrice,
+      };
+    }
+    return item;
+  });
+  return newData;
+}
 
 // 이동평균선 데이터 생성 함수
 function calculateMovingAverage(data :any, period :any) {
     const result = [];
-    for (let i = period-1; i < data?.length; i++) {
-        const sum = data.slice(i - period + 1, i + 1).reduce((acc :any, curr:any) => acc + curr.endPrice, 0);
-        const average = (sum / period).toFixed(2);
-        result.push([data[i].date, parseFloat(average)]);
+    for (let i = 0; i < data?.length; i++) {
+        if (i > period) {
+          const sum = data.slice(i - period + 1, i + 1).reduce((acc :any, curr:any) => acc + curr.endPrice, 0);
+          const average = (sum / period).toFixed(2);
+          result.push([data[i].date, parseFloat(average)]);
+
+        } else {
+          // result.push([data[i].date, 0]);
+        }
+
     }
     return result;
+}
+
+
+// rsi 데이터 생성 함수
+function calculateRSI(data :any, period :number) {
+  const result = [];
+  for (let i = 0; i < data.length; i++) {
+    if (i >= period) {
+      let avgGain = 0;
+      let avgLoss = 0;
+  
+      for (let j = i - period; j < i; j++) {
+        let change;
+        if (j > 0) {
+          change = data[j].endPrice - data[j - 1].endPrice;
+          if (change > 0) {
+            avgGain += change;
+          } else {
+            avgLoss -= change;
+          }
+        }
+      }
+      avgGain /= period;
+      avgLoss /= period;
+      let rs;
+      if (avgLoss === 0) {
+        rs = 1; // avgLoss가 0인 경우에 대비하여 rs를 1로 설정
+      } else {
+        rs = avgGain / avgLoss;
+      }
+      let rsi = parseFloat((100 - (100 / (1 + rs))).toFixed(2));
+      result.push([data[i].date, rsi]);
+    } else {
+      // result.push([data[i].date, 0]);
+    }
   }
+  return result;
+}
+
+
+function calculateEMA(data :any, period :number) {
+  const emaValues = [];
+  let sum = 0;
+
+  // 초기 EMA 값은 첫 번째 날짜의 종가로 설정
+  let initialEMA = data[0].endPrice;
+  emaValues.push([data[0].date, parseFloat(initialEMA.toFixed(2))]);
+
+  // 첫 번째 EMA를 제외한 나머지 EMA 값을 계산
+  for (let i = 1; i < period; i++) {
+    let k = 2 / (i + 1);
+    let ema :any = data[i].endPrice * k + emaValues[i-1][1] * (1 - k);
+    emaValues.push([data[i].date, parseFloat(ema.toFixed(2))]);
+    sum += data[i].endPrice;
+  }
+
+  // 나먨지 날짜에 대한 EMA 값을 계산
+  for (let i = period; i < data.length; i++) {
+    let k = 2 / (period + 1);
+    let ema :any = (data[i].endPrice - emaValues[i-1][1]) * k + emaValues[i-1][1];
+    emaValues.push([data[i].date, parseFloat(ema.toFixed(2))]);
+  }
+
+  return emaValues;
+}
+
+function calculateMACD(data :any, shortPeriod :number, longPeriod :number) {
+  const shortEMA = calculateEMA(data, shortPeriod);
+  const longEMA = calculateEMA(data, longPeriod);
+
+  const result = []
+  for (let i = 0; i < data.length; i++) {
+    result.push([data[i].date, shortEMA[i][1] - longEMA[i][1]])
+  }
+
+  return result;
+}
+
+
+function calculateSignal(macdData :any, signalPeriod :number) {
+  const result = [];
+  for (let i = 0; i < signalPeriod - 1; i++) {
+    result.push([macdData[i][0], NaN]);
+  }
+  for (let i = signalPeriod - 1; i < macdData.length; i++) {
+    const slice = macdData.slice(i - signalPeriod + 1, i + 1);
+    let sum = 0;
+    for (let j = 0; j < slice.length; j++) {
+      sum += slice[j][1]; // shortEMA - longEMA 값들의 합
+    }
+    const signalEMA = sum / signalPeriod; // 9일간의 EMA 계산
+    result.push([macdData[i][0], parseFloat(signalEMA.toFixed(2))]); // 해당 날짜의 EMA 값을 Signal 데이터에 추가
+  }
+
+  return result;
+}
+
+function calculateHist(macdData :any, signalData :any) {
+  const result = [];
+  for (let i = 0; i < macdData.length; i++) {
+    result.push([macdData[i][0], macdData[i][1] - signalData[i][1]]);
+  }
+  return result;
+}
+
 
 export default function Chart({ data }: any) {
   const { selectedStockIndex, turn } = SingleGameStore();
+
   useEffect(() => {
+    
+    const purifiedData = filteringLowPriceZero(data);
     // 차트 생성
     const chart = anychart.stock();
+    // chart?.current?.container(container.current)
     // 차트를 담을 컨테이너 생성
     const container = chart.container("chart-container")
-    // chart.scroller().thumbs(false);
-    chart.scroller().xAxis(false);
-    chart.scroller().selectedFill({
+    chart.contextMenu(false);
+    chart.width("90%");
+    // 스크롤러
+    const scroller = chart.scroller();
+    scroller.xAxis(false);
+    scroller.selectedFill({
       src: 'https://static.anychart.com/images/beach.png',
       mode: 'stretch',
       opacity: 0.5
     });
-    chart.width("95%");
-    chart.contextMenu(false);
     
-    // 툴 팁 내용 수정
+    // 툴 팁
     const tooltip = chart.tooltip();
     tooltip.titleFormat("Info");
 
@@ -43,42 +172,48 @@ export default function Chart({ data }: any) {
     plot1.yAxis().orientation("right");
     plot1.yAxis().labels().fontSize(20)
 
-    const lineMarker = plot1.lineMarker();
-    lineMarker.value(data[299+turn]?.endPrice);
-    lineMarker.stroke({
+    // 가장 최근 종가 Line
+    const todayEndPriceLineMarker = plot1.lineMarker();
+    todayEndPriceLineMarker.value(purifiedData[299+turn]?.endPrice);
+    todayEndPriceLineMarker.stroke({
       thickness: 2,
       color: "pink",
       dash: "5 5",
     });    
-    
-    const textMarker = plot1.textMarker();
-    textMarker.value(data[299+turn]?.endPrice);
-    textMarker.text(data[299+turn]?.endPrice)
-    textMarker.fontColor("pink");
-    textMarker.background().enabled(true);
-    textMarker.background().stroke("2 pink");
-    textMarker.padding(3);
-    textMarker.align("right");
-    textMarker.offsetX(-50);
-    textMarker.fontSize(20);
+    // 가장 최근 종가 가격 Text
+    const todayEndPriceTextMarker = plot1.textMarker();
+    todayEndPriceTextMarker.value(purifiedData[299+turn]?.endPrice);
+    todayEndPriceTextMarker.text(purifiedData[299+turn]?.endPrice)
+    todayEndPriceTextMarker.fontColor("pink");
+    todayEndPriceTextMarker.background().enabled(true);
+    todayEndPriceTextMarker.background().stroke("2 pink");
+    todayEndPriceTextMarker.padding(3);
+    todayEndPriceTextMarker.align("right");
+    todayEndPriceTextMarker.offsetX(-50);
+    todayEndPriceTextMarker.fontSize(20);
 
     // line series 생성
     const lineSeries = plot1.line(
-      data?.map((item: any) => [item.date, item.endPrice])
+      purifiedData?.map((item: any) => [item.date, item.endPrice])
     );
     // line series 속성 설정
     lineSeries.name("주가");
-    lineSeries.hovered().markers().enabled(true).type("circle").size(4);
+    lineSeries.hovered().markers().enabled(true).type("circle").size(3);
     lineSeries.stroke("#86BF15", 1);
-
+    lineSeries.tooltip().useHtml(true);
+    lineSeries.tooltip().format(function (this :any) {
+      const series = this.series;
+      return (
+        "주가 : " + this.value + "\n"
+      )
+    })
     // candlestick series 생성
-    const candlestickSeries = plot1.candlestick(data?.map((item: any) => [item.date, item.marketPrice, item.highPrice, item.lowPrice, item.endPrice]));
+    const candlestickSeries = plot1.candlestick(purifiedData?.map((item: any) => [item.date, item.marketPrice, item.highPrice, item.lowPrice, item.endPrice]));
     // candlestick series 속성 설정
     candlestickSeries.name("OHLC");
     candlestickSeries.legendItem().iconType("risingfalling");
     candlestickSeries.tooltip().useHtml(true);
     candlestickSeries.tooltip().format(function (this: any) {
-      const series = this.series;
       return (
         "시가 : " + this.open + "\n" +
         "고가 : " + this.high + "\n" +
@@ -93,21 +228,71 @@ export default function Chart({ data }: any) {
     candlestickSeries.fallingStroke("#0597FF", 1);
 
     // 이동평균선 그래프 생성(sma)
-    const sma5Series = plot1.line(calculateMovingAverage(data, 5));
+    const sma5Series = plot1.line(calculateMovingAverage(purifiedData, 5));
     sma5Series.name('5');
-    const sma20Series = plot1.line(calculateMovingAverage(data, 20));
+    const sma20Series = plot1.line(calculateMovingAverage(purifiedData, 20));
     sma20Series.name('20');
-    const sma60Series = plot1.line(calculateMovingAverage(data, 60));
+    const sma60Series = plot1.line(calculateMovingAverage(purifiedData, 60));
     sma60Series.name('60');
-    const sma120Series = plot1.line(calculateMovingAverage(data, 120));
+    const sma120Series = plot1.line(calculateMovingAverage(purifiedData, 120));
     sma120Series.name('120');
-
-    // // 이동평균선 그래프 색상 지정
+    
+    // 이동평균선 그래프 색상 지정
     sma5Series.stroke('purple');
     sma20Series.stroke('yello');
     sma60Series.stroke('green');
     sma120Series.stroke('blue');
    
+    // 이동평균선 툴팁 내용 지정
+    sma5Series.tooltip().useHtml(true);
+    sma5Series.tooltip().format(function (this :any) {
+      if (this.value) {
+        return (
+          "sma   5   : " + this.value
+        ) 
+      } else {
+        return (
+          "sma   5   : " + 0
+        )
+      }
+    }) 
+    sma20Series.tooltip().useHtml(true);
+    sma20Series.tooltip().format(function (this :any) {
+      if (this.value) {
+        return (
+          "sma  20         : " + this.value
+        ) 
+      } else {
+        return (
+          "sma  20 : " + 0
+        )
+      }
+    }) 
+    sma60Series.tooltip().useHtml(true);
+    sma60Series.tooltip().format(function (this :any) {
+      if (this.value) {
+        return (
+          "sma 60 : " + this.value
+        ) 
+      } else {
+        return (
+          "sma  60 :" + 0
+        )
+      }
+    }) 
+    sma120Series.tooltip().useHtml(true);
+    sma120Series.tooltip().format(function (this :any) {
+      if (this.value) {
+        return (
+          "sma 120 : " + this.value + "\n"
+        ) 
+      } else {
+        return (
+          "sma 120 : " + 0 + "\n"
+        )
+      }
+    }) 
+
     // 첫 번째 plot 속성 설정
     plot1.legend().title().useHtml(true);
     plot1.legend().titleFormat(<span></span>);
@@ -115,12 +300,21 @@ export default function Chart({ data }: any) {
     plot1.legend().itemsFormat(function (this: any) {
       const series = this.series;
       if (series.getType() == "line") {
-        return (
-          "<span style='color:#455a64;font-weight:600'>" +
-          series.name() +
-          ":</span>" +
-          this.value
-        );
+        if (this.value) {
+          return (
+            "<span style='color:#455a64;font-weight:600'>" +
+            series.name() +
+            ":</span>" +
+            this.value
+          );
+        } else {
+          return (
+            "<span style='color:#455a64;font-weight:600'>" +
+            series.name() +
+            ":</span>" +
+            0
+          )
+        }
       }
       if (series.getType() == "candlestick") {
         return (
@@ -138,6 +332,7 @@ export default function Chart({ data }: any) {
       }
     });
 
+    // 2번째 plot 생성(거래량)
     const plot2 = chart.plot(1);
     plot2.title("거래량")
     plot2.yAxis().orientation("right");
@@ -146,7 +341,7 @@ export default function Chart({ data }: any) {
     plot2.legend().title().useHtml(true);
     plot2.legend().titleFormat(<span></span>);
     const columnSeries = plot2.column(
-      data?.map((item: any) => [item.date, item.tradingVolume])
+      purifiedData?.map((item: any) => [item.date, item.tradingVolume])
     );
     columnSeries.name("거래량");
     columnSeries.risingFill("#F65742", 1);
@@ -167,26 +362,119 @@ export default function Chart({ data }: any) {
       }
     });
 
+    // 3번째 plot 생성(RSI)
     const plot3 = chart.plot(2);
     plot3.title("RSI");
     plot3.yAxis().orientation("right");
+    plot3.yAxis().labels().fontSize(15)
+    plot3.legend().useHtml(true);
+    plot3.legend().title().useHtml(true);
+    plot3.legend().titleFormat(<span></span>);
 
-    plot1.height("40%");
-    plot2.height("30%");
-    plot3.height("30%");
-    chart.scroller().height("20%")
+    const rsiSeries = plot3.line(calculateRSI(purifiedData, 14));
+    rsiSeries.name("RSI");
+    rsiSeries.hovered().markers().enabled(true).type("circle").size(2);
+    rsiSeries.stroke("blue", 1);
 
+    rsiSeries.tooltip().useHtml(true);
+    rsiSeries.tooltip().format(function (this :any) {
+      if (this.value) {
+        return (
+          "RSI : " + this.value
+        ) 
+      } else {
+        return (
+          "RSI : " + 0
+        )
+      }
+    }) 
+
+    // RSI 상한선, 하한선
+    const rsi70LineMarker = plot3.lineMarker(0);
+    rsi70LineMarker.value(70);
+    rsi70LineMarker.stroke({
+      thickness: 1,
+      color: "black",
+      dash: "5 5",
+    });    
+    const rsi30LineMarker = plot3.lineMarker(1);
+    rsi30LineMarker.value(30);
+    rsi30LineMarker.stroke({
+      thickness: 1,
+      color: "black",
+      dash: "5 5",
+    });    
+
+    const plot4 = chart.plot(3);
+    plot4.title("MACD 지표")
+    plot4.yAxis().orientation("right");
+    plot4.yAxis().labels().fontSize(15)
+    plot4.legend().title().useHtml(true);
+    plot4.legend().titleFormat(<span></span>);
+
+    const macdData = calculateMACD(purifiedData, 12, 26);
+    const signalData = calculateSignal(macdData, 9);
+    const histData = calculateHist(macdData, signalData);
+    const macdSeries = plot4.line(macdData);
+    const signalSeries = plot4.line(signalData);
+    const histSeries = plot4.column(histData);
+    
+    macdSeries.name("MACD");
+    signalSeries.name("Signal")
+    histSeries.name("Hist")
+
+    plot1.height("70%");
+    plot2.enabled(true);
+    plot2.height("30%") 
+    plot3.enabled(false); 
+    plot4.enabled(false); 
+    
     chart.draw();
-    chart.selectRange(data[249+turn].date.split('T')[0], data[299+turn].date.split('T')[0]);
+    chart.selectRange(purifiedData[249+turn].date.split('T')[0], data[299+turn].date.split('T')[0]);
+    const showPlot = (plotNumber: number) => {
+      switch (plotNumber) {
+        case 1:
+          plot2.enabled(true);
+          plot2.height("30%");
+          plot3.enabled(false);
+          plot4.enabled(false);
+          break;
+        case 2:
+          plot2.enabled(false);
+          plot3.enabled(true);
+          plot3.height("30%");
+          plot4.enabled(false);
+          break;
+        case 3:
+          plot2.enabled(false);
+          plot3.enabled(false);
+          plot4.enabled(true);
+          plot4.height("30%");
 
+          break;
+        default:
+          break;
+      }
+    };
+    const handleShowPlot = (plotNumber :number) => {
+      showPlot(plotNumber);
+    }
+    (window as any).handleShowPlot = handleShowPlot;
+    handleShowPlot(1);
     return () => {
       chart.dispose();
+      (window as any).handleShowPlot = null;
+
     };
   }, [data]);
+  
   return (
-    <div className="row-span-11 grid grid-rows-12">
-      <div className="row-span-1 flex items-center">
-          종목 {selectedStockIndex+1}  
+    <div className="row-span-12 grid grid-rows-12">
+      <div className="row-span-1 grid grid-cols-8 items-center">
+            종목 {selectedStockIndex+1}  
+            <button onClick={() => (window as any).handleShowPlot(1)} className="border border-black">거래량</button>
+            <button onClick={() => (window as any).handleShowPlot(2)} className="border border-black">RSI</button>
+            <button onClick={() => (window as any).handleShowPlot(3)} className="border border-black">MACD</button>
       </div>
       <div id="chart-container" className="row-span-12 flex items-center justify-center"></div>
     </div>

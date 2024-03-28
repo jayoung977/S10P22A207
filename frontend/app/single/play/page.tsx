@@ -51,7 +51,7 @@ export default function SinglePlay() {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       }
-    }).then((response) => {
+    }).then((response :any) => {
         console.log("useEffect axios 요청 데이터 결과")
         console.log(response.data.result);
 
@@ -80,7 +80,7 @@ export default function SinglePlay() {
         setTodayStockInfoListData(response.data.result.nextDayInfos);
 
         setIsLoading(false)
-    }).catch((error) => {
+    }).catch((error :any) => {
       console.log(error)
       setIsError(true);
     });
@@ -127,7 +127,7 @@ export default function SinglePlay() {
           {/* main */}
           <main className="col-span-7 grid grid-rows-12">
             <Chart data={stockListData[selectedStockIndex]?.stockChartList.slice(0, 300+turn)}/>
-            <StockMarket />
+            {/* <StockMarket /> */}
           </main>
           {/* right aside */}
           <aside className="col-span-2 grid grid-rows-6">
