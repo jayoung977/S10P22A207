@@ -19,7 +19,10 @@ public class SseEmitters {
     private final Map<String, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter add(String channelName, SseEmitter emitter) {
+
+        log.info("add 요청");
         if (!emitters.containsKey(channelName)) {
+            log.info("add 할 때 list 가 없어서 생성한뒤 추가 channelName : {} ", channelName);
             emitters.put(channelName, new CopyOnWriteArrayList<>());
         }
         emitters.get(channelName).add(emitter);
@@ -62,10 +65,12 @@ public class SseEmitters {
 
     public void noti(String channelName, String eventName, NotificationRequestDto data) {
 
-        log.info("메시지 noti at SseEmitters -> channelName: {}, eventName: {}, roomId : {}", channelName, eventName, data.roomId());
+
         AtomicInteger i = new AtomicInteger();
         emitters.get(channelName).forEach(emitter -> {
             try {
+
+                log.info("메시지 noti at SseEmitters -> channelName: {}, eventName: {}, roomId : {}", channelName, eventName, data.roomId());
                 ObjectMapper objectMapper = new ObjectMapper();
                 String jsonData = objectMapper.writeValueAsString(data);
                 log.info("emitter 각각의 요청 - {}", i.incrementAndGet());

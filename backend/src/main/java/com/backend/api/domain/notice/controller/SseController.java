@@ -21,18 +21,22 @@ public class SseController {
 
     @GetMapping(value = "/connect/{channelName}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> connect(@PathVariable String channelName) {
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(300_000L);
         log.info("구독 요청 - SseController {}", channelName);
         sseEmitters.add(channelName, emitter);
         try {
+
+            log.info("emitter.send 요청 전 : {} ", channelName);
             emitter.send(SseEmitter.event()
                 .name("connect")
-                .data("connected!"));
+                .data("connected!")
+                .reconnectTime(30_000L)
+
+            );
             log.info("emitter.send(SseEmitter.event() - {}", channelName);
 
         } catch (IOException e) {
-
-            throw new RuntimeException(e);
+            log.info("처음 구독시 에러가 발생했습니다. - {}", channelName);
         }
         return ResponseEntity.ok(emitter);
     }
