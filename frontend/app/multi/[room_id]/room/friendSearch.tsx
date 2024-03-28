@@ -4,24 +4,40 @@ import ProfileImage from '@/public/src/assets/images/profile-image.png'
 import Swal from 'sweetalert2'
 import multigameStore from '@/public/src/stores/multi/MultiGameStore'
 import { useEffect, useState } from 'react'
+import { useQuery, UseQueryResult } from 'react-query'
+import { Friend, FriendInfo } from '@/public/src/stores/user/userStore'
 
-interface Friend {
-  nickname: string,
-  memberId: number
+const fetchFriendInfo = async() => {
+  const token = sessionStorage.getItem('accessToken')
+  const response = await fetch('https://j10a207.p.ssafy.io/api/friend/list',{
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+  return response.json()
 }
 
+
 export default function FriendSearch() {
+  const {data, isLoading, error}: UseQueryResult<FriendInfo,Error> = useQuery('FriendInfo', fetchFriendInfo) 
+  
+  // 친구목록 react-query로 구현
+  const { result }: { result: Friend[] } = data
+  ? data
+  : { result: [] };
+  console.table(result)
+  
+
+  
   const { searchFriend } = multigameStore();
   const [filteredFriendList, setfilteredFriendList] = useState<Friend[]>([])
-
-  const friendList = [
-    {nickname:'김가영', memberId: 1},
-    {nickname:'김나영', memberId: 2},
-    {nickname:'김다영', memberId: 3},
-    {nickname:'김라영', memberId: 4},
-    {nickname:'김마영', memberId: 5},
-    {nickname:'김바영', memberId: 6},
-    {nickname:'김사영', memberId: 7}]
+  
+  useEffect(() => {
+    const filtered: Friend[] = result.filter((friend) =>
+    friend.nickname.includes(searchFriend)
+    );
+    setfilteredFriendList(filtered);
+  }, [searchFriend, result]);
   
   const inviteFriend = (nickname: string) => {
     console.log(`${nickname} 초대!`)
@@ -30,12 +46,15 @@ export default function FriendSearch() {
       icon: 'success'
     })
   }
-
-  useEffect(() => {
-    // searchQuery 기반으로 FundList filtering
-    const filtered: Friend[] = friendList.filter((friend) => friend.nickname.includes(searchFriend));
-    setfilteredFriendList(filtered);
-  }, [searchFriend]); 
+  
+  
+  if (isLoading) {
+    return <div className="rainbow"></div>;
+  }
+  
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
     <div className="row-span-3 border-e grid grid-rows-6">

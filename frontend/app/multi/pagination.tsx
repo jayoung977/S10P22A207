@@ -2,7 +2,7 @@ import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 
 export default function Pagination(){
   const { pageNumber, setPageNumber } = multigameStore();
-  const pages:number[] = [1,2,3,4];
+  const pages:number[] = [1,2,3,4,5];
   return(
     <div className='mt-2'>
       <nav aria-label="Page navigation example">

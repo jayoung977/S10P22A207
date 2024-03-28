@@ -21,24 +21,27 @@ export default function GameRoom (props: {color: string, room: MultiRoom}) {
       showLoaderOnConfirm: true,
       
     }).then((result) => {
-      if (String(result.value) === password) {
-        axios.get(`https://j10a207.p.ssafy.io/api/multi/${roomNumber}`,{
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-        .then((res)=> {
-          console.log(res.data)
-        })
-        .catch((error)=>{
-          console.error(error)
-        })
-        window.location.href = `/multi/${roomNumber}/room`
-      } else {
-        Swal.fire({
-          title: '비밀번호가 일치하지 않습니다.',
-          icon: 'error'
-        })
+      // cancel을 해도 뜬다.
+      if(result.isConfirmed){
+        if (String(result.value) === password) {
+          axios.get(`https://j10a207.p.ssafy.io/api/multi/${roomNumber}`,{
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
+          .then((res)=> {
+            console.log(res.data)
+          })
+          .catch((error)=>{
+            console.error(error)
+          })
+          window.location.href = `/multi/${roomNumber}/room`
+        } else {
+          Swal.fire({
+            title: '비밀번호가 일치하지 않습니다.',
+            icon: 'error'
+          })
+        }
       }
     });
   }

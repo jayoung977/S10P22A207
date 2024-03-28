@@ -1,5 +1,57 @@
+'use client'
+
+import userStore from "@/public/src/stores/user/userStore";
+import { useParams } from "next/navigation"
+import { useState } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
+
+
 // 매수, 매도 클릭 시 활성화되는 모달창
 export default function TradeModal({ tradeType, isOpen, onClose } :any) {
+  const params = useParams();
+  const gameId = params['game_id']
+  const { memberId } = userStore();
+  const [stocksAmount, setStocksAmount] = useState(0);
+  const token = sessionStorage.getItem('accessToken')
+
+  function handleStocksChange(e:React.ChangeEvent<HTMLInputElement>){
+    const stocks = Number(e.target.value)
+    setStocksAmount(stocks)
+  }
+
+  function handleTrade(stocksAmount: number, tradeType: string){
+    if(stocksAmount > 0){
+      axios({
+        method: 'post',
+        url: `https://j10a207.p.ssafy.io/api/multi/${tradeType}`,
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        data: {
+          gameIdx: gameId,
+          memberId,
+          amount: stocksAmount,
+          day: 1
+        }
+      })
+      .then((res)=> {
+        console.log(res.data)
+        onClose()
+      })
+      .catch((err)=> {
+        console.error(err)
+      })
+    } else {
+      Swal.fire({
+        text: '최소 1주 이상 기입해주세요',
+        icon: 'error'
+      })
+    }
+  }
+
+  
+  
   if (!isOpen) return null;
   
   return (
@@ -58,7 +110,7 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
                   }
               </div>
               <div>
-              <input type="number" id="number-input" aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="수량 입력" required />
+              <input type="number" id="number-input" onChange={handleStocksChange} aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="수량 입력" required />
               </div>
           </div>
           <div className="row-start-10 row-end-13 grid grid-rows-3">
@@ -66,11 +118,11 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
                   <button onClick={() => {onClose()}} className="col-start-2 col-end-4 rounded-full ml-1 text-red-500 bg-white border border-red-500">취소</button>
                   {
                       tradeType == 'buy' ? (
-                          <button onClick={() => {onClose()}} className="col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 bg-small-3">매수</button>
+                          <button onClick={() => {handleTrade(stocksAmount, 'buy')}} className="col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 bg-small-3">매수</button>
                       ) : tradeType == 'sell' ? (
-                          <button onClick={() => {onClose()}} className="col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 bg-small-1">매도</button>
+                          <button onClick={() => {handleTrade(stocksAmount, 'sell')}} className="col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 bg-small-1">매도</button>
                       ) : (
-                          <button onClick={() => {onClose()}} className="col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 bg-small-10">공매도</button>
+                          <button onClick={() => {handleTrade(stocksAmount, 'short-selling')}} className="col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 bg-small-10">공매도</button>
                       )
                   }
               </div>

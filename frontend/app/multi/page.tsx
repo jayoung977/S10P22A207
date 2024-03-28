@@ -29,6 +29,7 @@ interface userType {
 
 export default function Multi() {
   useFetchUserInfo();
+<<<<<<< HEAD
   const rooms: string[] = [
     "게임방",
     "게임방",
@@ -46,6 +47,10 @@ export default function Multi() {
     4: "bg-small-6",
     5: "bg-small-8",
   };
+=======
+  
+  // 이후 세션에서 받아올 로그인 사용자 데이터 이거 userStore에 담아놨어~~~~~~~~~~~~~~
+>>>>>>> bab6b549d75c8bc5bedbb95da781557af202cdde
 
   return (
     <QueryClientProvider client={queryClient}>
