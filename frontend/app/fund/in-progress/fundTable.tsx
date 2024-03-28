@@ -52,7 +52,7 @@ export default function FundTable() {
   const { result }: { result: FundResult[] | null } = data
     ? data
     : { result: null };
-  console.log(result);
+  // console.log(result);
 
   return (
     <div
