@@ -1,16 +1,5 @@
 package com.backend.api.domain.member.service;
 
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.backend.api.domain.member.dto.request.MemberAdditionalInfoReq;
 import com.backend.api.domain.member.dto.response.MemberProfileRes;
 import com.backend.api.domain.member.dto.response.MemberSearchRes;
@@ -28,9 +17,18 @@ import com.backend.api.global.exception.BaseExceptionHandler;
 import com.backend.api.global.jwt.dto.TokenDto;
 import com.backend.api.global.jwt.service.JwtService;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Log4j2
 @Service
@@ -78,7 +76,7 @@ public class MemberService {
 	public List<ProfileSingleGameLogRes> getSingleGameLogs(Long userId) {
 		Member findMember = memberRepository.findById(userId)
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
-		List<SingleGameLog> singleGameLogList = singleGameLogRepository.findAllByMember_Id(findMember.getId());
+		List<SingleGameLog> singleGameLogList = singleGameLogRepository.findAllByMember_IdOrderByIdDesc(findMember.getId());
 		return singleGameLogList.stream().map(singleGameLog ->
 			new ProfileSingleGameLogRes(
 				singleGameLog.getId(),
@@ -93,7 +91,7 @@ public class MemberService {
 	public List<ProfileMultiGameLogRes> getMultiGameLogs(Long userId) {
 		Member findMember = memberRepository.findById(userId)
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
-		List<MultiGamePlayer> multiGamePlayerList = multiGamePlayerRepository.findAllByMember_Id(findMember.getId());
+		List<MultiGamePlayer> multiGamePlayerList = multiGamePlayerRepository.findAllByMember_IdOrderByIdDesc(findMember.getId());
 		return multiGamePlayerList.stream().map(multiGamePlayer ->
 			new ProfileMultiGameLogRes(
 				multiGamePlayer.getMultiGameLog().getId(),
