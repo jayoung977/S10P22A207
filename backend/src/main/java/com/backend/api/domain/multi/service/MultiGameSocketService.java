@@ -1,5 +1,6 @@
 package com.backend.api.domain.multi.service;
 
+
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.multi.entity.MultiWaitingRoom;
