@@ -9,7 +9,8 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import userStore from "@/public/src/stores/user/userStore";
 import Swal from "sweetalert2";
-import { useState } from "react";
+import { useMutation, useQueryClient } from "react-query";
+
 import ProfileFriendRequest from "./ProfileFriendRequest";
 
 interface resultType {
@@ -36,6 +37,7 @@ export default function UserInfo() {
   const { memberId } = userStore();
   const { isOpen, setIsOpen, setFriendRequests, friendRequests } =
     profileStore();
+
   const fetchUserInfo = async () => {
     const response = await axios({
       method: "get",
@@ -48,39 +50,89 @@ export default function UserInfo() {
   };
 
   const { toggleButton, setToggleButton } = profileStore();
-  const { data, isLoading, error }: UseQueryResult<UserInfo, Error> = useQuery(
-    "userInfo",
-    fetchUserInfo
-  );
+  const {
+    data: userInfoData,
+    isLoading: userInfoLoading,
+    error: userInfoError,
+  }: UseQueryResult<UserInfo, Error> = useQuery("userInfo", fetchUserInfo);
 
-  if (isLoading) {
-    return <div className="rainbow"></div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
-  const { result }: { result: resultType | null } = data
-    ? data
-    : { result: null };
-
-  const sendFriendRequest = async (request: any) => {
+  const checkFriendRequest = async () => {
     const response = await axios({
-      method: "post",
-      url: "https://j10a207.p.ssafy.io/api/friend-ask",
+      method: "get",
+      url: `https://j10a207.p.ssafy.io/api/friend/check-friend?followingId=${id}`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
-      data: request,
     });
-    console.log(response);
+    return response.data;
   };
 
+  const {
+    data: isFriendData,
+    isLoading: isFriendLoading,
+    error: isFriendError,
+  }: UseQueryResult<any, Error> = useQuery("isFriend", checkFriendRequest);
+
+  const queryClient = useQueryClient();
+
+  const { mutate: sendFriendRequest } = useMutation(
+    (request: any) =>
+      axios({
+        method: "post",
+        url: "https://j10a207.p.ssafy.io/api/friend-ask",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+        data: request,
+      }),
+    {
+      onSuccess: () => {
+        Swal.fire("친구 하기 요청을 보냈어요!");
+        // 필요한 경우 특정 쿼리를 무효화할 수 있습니다.
+        queryClient.invalidateQueries("isFriend");
+      },
+    }
+  );
+
+  const { mutate: sendNoFriendRequest } = useMutation(
+    () =>
+      axios({
+        method: "delete",
+        url: `https://j10a207.p.ssafy.io/api/friend/delete?followingId=${id}`,
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      }),
+    {
+      onSuccess: () => {
+        Swal.fire("친구 안하기 요청을 보냈어요!");
+        // 필요한 경우 특정 쿼리를 무효화할 수 있습니다.
+        queryClient.invalidateQueries("isFriend");
+      },
+    }
+  );
+
+  if (userInfoLoading || isFriendLoading) {
+    return <div className="rainbow"></div>;
+  }
+
+  if (userInfoError || isFriendError) {
+    return (
+      <div>
+        Error: {userInfoError?.message} & {isFriendError?.message}
+      </div>
+    );
+  }
+
+  const { result }: { result: resultType | null } = userInfoData
+    ? userInfoData
+    : { result: null };
+
+  const myFriend = isFriendData?.result;
+  
   const handleFriendRequest = () => {
     const request = { nickname: result?.nickname };
     sendFriendRequest(request);
-    Swal.fire("친구요청을 보냈어요!");
   };
 
   const fetchFriendRequests = async () => {
@@ -116,15 +168,27 @@ export default function UserInfo() {
         >
           {/* 프로필 id와 내 id가 다르면 보여주기 */}
           {Number(memberId) != Number(id) ? (
-            <button
-              type="button"
-              className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 absolute bottom-2 "
-              onClick={() => {
-                handleFriendRequest();
-              }}
-            >
-              팔로우
-            </button>
+            myFriend !== true ? (
+              <button
+                type="button"
+                className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 absolute bottom-2 "
+                onClick={() => {
+                  handleFriendRequest();
+                }}
+              >
+                친구 하기
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 absolute bottom-2 "
+                onClick={() => {
+                  sendNoFriendRequest();
+                }}
+              >
+                친구 안하기
+              </button>
+            )
           ) : (
             <button
               type="button"

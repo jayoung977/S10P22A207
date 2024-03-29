@@ -61,7 +61,7 @@ export default function IsSignUpInfo() {
   };
 
   if (result && result[0] === "USER") {
-    router.push("/multi");
+    window.location.href = "/multi";
     // 여기서 get 요청 한번 보내기
     fetchLoginData();
   } else {
