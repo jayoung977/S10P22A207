@@ -44,17 +44,21 @@ export default function SingleRanking() {
           </thead>
           <tbody className="row-span-3 grid grid-rows-3 items-center">
             {
-              rankMemberList[selectedIndex]?.rankMemberDtoList.map((item :any, index :number) => (
-                <tr 
-                  key={index} 
-                  className="row-span-1 grid grid-cols-2 text-center bg-white rounded-lg m-1"
-                  onClick={() => {fetchRankingUserRecord(item.singleGameStockId, item.memberId)}}
-                  style={{ cursor : "pointer" }}
-                >
-                  <td className="col-span-1">{item.nickname}</td>
-                  <td className="col-span-1">{parseFloat(item.roi.toFixed(2))}</td>                      
-                </tr>
-              ))
+              rankMemberList[selectedIndex].rankMemberDtoList && rankMemberList[selectedIndex].rankMemberDtoList.length > 0 ? (
+                rankMemberList[selectedIndex]?.rankMemberDtoList.map((item :any, index :number) => (
+                  <tr 
+                    key={index} 
+                    className="row-span-1 grid grid-cols-2 text-center bg-white rounded-lg m-1"
+                    onClick={() => {fetchRankingUserRecord(item.singleGameStockId, item.memberId)}}
+                    style={{ cursor : "pointer" }}
+                  >
+                    <td className="col-span-1">{item.nickname}</td>
+                    <td className="col-span-1">{parseFloat(item.roi.toFixed(2))}</td>                      
+                  </tr>
+                  ))
+              ) : (
+                <div className="text-center mt-30">랭킹에 유저가 없습니다.</div>
+              )
             }
           </tbody>
         </table>

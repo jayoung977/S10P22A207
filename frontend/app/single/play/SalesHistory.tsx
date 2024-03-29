@@ -20,10 +20,13 @@ export default function SalesHistory () {
                     </tr>
                 </thead>
                 <tbody className="overflow-y-auto block" style={{ height: 'calc(20vh)' }}>
-                    {
+                    {   tradeListData && tradeListData.length > 0 ? (
                         tradeListData?.map((x :any, index :number) => (
                             <SaleHistory key={index} data={x}/>
                         ))
+                    ) : (
+                        <div className="text-center mt-10">매매 내역이 없습니다.</div>
+                    )
                     }
                 </tbody>
             </table>
