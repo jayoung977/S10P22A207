@@ -1,7 +1,6 @@
 'use client'
 import { useState } from "react";
-import TradeModal from "./room/[game_id]/play/TradeModal";
-
+import TradeModal from "./play/[game_id]/TradeModal";
 export default function TradeButtons(){
   // 거래 모달창 open 여부
   const [isOpenTradeModal, setIsOpenTradeModal] = useState<boolean>(false);

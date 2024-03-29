@@ -1,5 +1,4 @@
 'use client'
-
 import userStore from "@/public/src/stores/user/userStore";
 import { useParams } from "next/navigation"
 import { useState } from "react";
@@ -13,7 +12,6 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
   const gameId = params['game_id']
   const { memberId } = userStore();
   const [stocksAmount, setStocksAmount] = useState(0);
-  const token = sessionStorage.getItem('accessToken')
 
   function handleStocksChange(e:React.ChangeEvent<HTMLInputElement>){
     const stocks = Number(e.target.value)
@@ -26,7 +24,7 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
         method: 'post',
         url: `https://j10a207.p.ssafy.io/api/multi/${tradeType}`,
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
         },
         data: {
           gameIdx: gameId,
