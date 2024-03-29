@@ -2,7 +2,7 @@ package com.backend.api.domain.multi.entity;
 
 import static lombok.AccessLevel.PROTECTED;
 
-import com.backend.api.domain.multi.dto.MultiTradeListDto;
+import com.backend.api.domain.multi.dto.response.MultiTradeListDto;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
@@ -98,6 +98,14 @@ public class MultiGame {
 
     public void decreaseShortStockAmount(Integer amount) {
         this.shortStockAmount -= amount;
+    }
+
+    public void updateAveragePrice(Integer price){
+        this.averagePrice = price;
+    }
+
+    public void updateShortAveragePrice(Integer price){
+        this.shortAveragePrice = price;
     }
 
 }

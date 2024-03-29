@@ -33,10 +33,13 @@ public class MultiGameLog extends BaseEntity {
 	private List<MultiTrade> multiTrade = new ArrayList<>();
 
 	@NotNull
-	private Long stockId;
+	private Long gameId; // 레디스로 저장된 게임 Id
 
 	@NotNull
-	private int round;
+	private Integer round;
+
+	@NotNull
+	private Long stockId; // 주식 Id값
 
 	@NotNull
 	private LocalDateTime startDate;
@@ -45,10 +48,11 @@ public class MultiGameLog extends BaseEntity {
 	List<MultiGamePlayer> multiGamePlayers = new ArrayList<>();
 
 	@Builder
-	public MultiGameLog(List<MultiTrade> multiTrade, Long stockId, int round, LocalDateTime startDate, List<MultiGamePlayer> multiGamePlayers) {
+	public MultiGameLog(List<MultiTrade> multiTrade, Long gameId, int round, Long stockId, LocalDateTime startDate, List<MultiGamePlayer> multiGamePlayers) {
 		this.multiTrade = multiTrade;
-		this.stockId = stockId;
+		this.gameId = gameId;
 		this.round = round;
+		this.stockId = stockId;
 		this.startDate = startDate;
 		this.multiGamePlayers = multiGamePlayers;
 	}

@@ -1,4 +1,4 @@
-package com.backend.api.domain.multi.dto;
+package com.backend.api.domain.multi.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -19,6 +19,7 @@ public record MultiGameTotalResultDto(
 
     @Schema(description = "수익률")
     Double profitMargin
+
 ) {
 
 }

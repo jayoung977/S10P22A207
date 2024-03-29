@@ -82,7 +82,7 @@ export default function UserRecordInfoMulti() {
                 </th>
                 <td className="px-6 py-4">{item.players}명</td>
                 <td className="px-6 py-4">{item.ranking}등</td>
-                <td className="px-6 py-4">{item.finalRoi}%</td>
+                <td className="px-6 py-4">{item.finalRoi.toFixed(2)}%</td>
               </tr>
             );
           })}
