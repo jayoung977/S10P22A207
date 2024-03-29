@@ -9,8 +9,8 @@ import com.backend.api.domain.notice.repository.NotificationRepository;
 import com.backend.api.domain.notice.type.AlarmType;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.exception.BaseExceptionHandler;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -33,29 +33,29 @@ public class RedisSubService implements MessageListener {
     // 메시지가 도착하면 처리
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        try {
 
             log.info("메시지 도착 -> RedisSubService");
             // 수신된 메시지를 문자열로 변환
             String jsonMessage = new String(message.getBody());
             //JSON 문자열을 Dto 객체로 변환
-            NotificationRequestDto dto = mapper.readValue(jsonMessage, NotificationRequestDto.class);
+        NotificationRequestDto dto = null;
+        try {
+            dto = mapper.readValue(jsonMessage, NotificationRequestDto.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
-            // Notice Repository에 저장
-            switch (dto.alarmType()){
+        // Notice Repository에 저장
+//            switch (dto.alarmType()){
 //                case NOTICE -> {
 //                    sendNoticeToAllMembers(dto.content());
 //                    sseEmitters.noti("alarm:toAllUser", "newAlarmAdded");
 //                }
-                case INVITATION -> {
-                    sendInviteToMember(dto);
-                    sseEmitters.noti("alarm", dto.channelName() + ":INVITATION", "메시지 도착!");
-                }
-            }
+//                case INVITATION -> {
+        log.info("alarmType : {}", dto.alarmType());
+        sendInviteToMember(dto);
+        sseEmitters.noti("alarm", dto.channelName() + ":INVITATION", "메시지 도착!");
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void sendInviteToMember(NotificationRequestDto dto) {
