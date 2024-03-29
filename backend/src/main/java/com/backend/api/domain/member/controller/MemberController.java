@@ -1,19 +1,5 @@
 package com.backend.api.domain.member.controller;
 
-import java.text.ParseException;
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.backend.api.domain.member.dto.request.MemberAdditionalInfoReq;
 import com.backend.api.domain.member.dto.response.MemberProfileRes;
 import com.backend.api.domain.member.dto.response.MemberSearchRes;
@@ -25,7 +11,6 @@ import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.SuccessCode;
 import com.backend.api.global.jwt.dto.TokenDto;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -33,6 +18,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
+import java.util.List;
 
 @Log4j2
 @RestController
@@ -97,7 +90,7 @@ public class MemberController {
 	@PreAuthorize("hasAnyRole('USER')")
 	@Operation(summary = "유저 싱글게임 기록 조회")
 	@GetMapping("/single-game-log")
-	public ResponseEntity<BaseResponse<List<ProfileSingleGameLogRes>>> getSingleGameLog(@RequestParam Long memberId){
+	public ResponseEntity<BaseResponse<List<ProfileSingleGameLogRes>>> getSingleGameLog(@RequestParam(name = "memberId") Long memberId){
 		List<ProfileSingleGameLogRes> ProfileSingleGameLogResList = memberService.getSingleGameLogs(memberId);
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
@@ -130,7 +123,7 @@ public class MemberController {
 	@PreAuthorize("hasAnyRole('USER')")
 	@Operation(summary = "유저 멀티게임 기록 조회")
 	@GetMapping("/multi-game-log")
-	public ResponseEntity<BaseResponse<List<ProfileMultiGameLogRes>>> getMultiGameLog(@Valid @NotNull @RequestParam Long memberId) {
+	public ResponseEntity<BaseResponse<List<ProfileMultiGameLogRes>>> getMultiGameLog(@Valid @NotNull @RequestParam(name = "memberId") Long memberId) {
 		List<ProfileMultiGameLogRes> ProfileMultiGameLogResList = memberService.getMultiGameLogs(memberId);
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,

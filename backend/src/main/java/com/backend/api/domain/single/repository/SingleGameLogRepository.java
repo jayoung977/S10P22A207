@@ -1,12 +1,11 @@
 package com.backend.api.domain.single.repository;
 
-import java.util.List;
-
+import com.backend.api.domain.single.entity.SingleGameLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.backend.api.domain.single.entity.SingleGameLog;
+import java.util.List;
 
 public interface SingleGameLogRepository extends JpaRepository<SingleGameLog, Long> {
 
-	List<SingleGameLog> findAllByMember_Id(Long loginUserId);
+    List<SingleGameLog> findAllByMember_IdOrderByIdDesc(Long loginUserId);
 }
