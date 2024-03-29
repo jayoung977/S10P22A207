@@ -23,7 +23,7 @@ export default function FundTable(){
   const [fundList, setFundList] = useState<FundResult[]>([])
   const [filteredFunds, setFilteredFunds] = useState<FundResult[]>([])
   const { searchQuery } = fundCrudStore();
-  const { data, isLoading, error }: UseQueryResult<FundInfo,Error>  =  useQuery('ManagerFundInfo', fetchFundInfo );
+  const { data, isLoading, error }: UseQueryResult<FundInfo,Error>  =  useQuery('FundInfo', fetchFundInfo );
   const router = useRouter();
   
   useEffect(() => {
@@ -46,7 +46,7 @@ export default function FundTable(){
   }
 
   const { result }: {result: FundResult[] | null} = data ? data: {result: null};
-  // console.log(result)
+  console.log(result)
   return (
     <div className="overflow-auto shadow-md sm:rounded-lg" style={{height: 'calc(50vh)'}}>
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

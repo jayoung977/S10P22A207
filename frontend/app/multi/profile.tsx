@@ -1,5 +1,5 @@
 import ProfileImage from "@/public/src/assets/images/penguin.png";
-import TierImage from "@/public/src/assets/images/Tier/diamond.png";
+import TierImage from "@/public/src/assets/images/bronze.png";
 import Image from "next/image";
 import userStore from "@/public/src/stores/user/userStore";
 
@@ -24,9 +24,7 @@ export default function Profile() {
           <div className="row-span-3 m-2">
             <Image src={TierImage} alt="Tier-image" width={60} height={60} />
           </div>
-          <div className="row-span-1">
-            {rankPoint != null ? rankPoint : ``}
-          </div>
+          <div className="row-span-1">{rankPoint != null ? rankPoint : `브론즈`}</div>
         </div>
       </div>
       {/* 프로필 하단 */}
@@ -45,7 +43,7 @@ export default function Profile() {
           <div>평균수익률</div>
         </div>
         <div className="col-span-4">
-          <div>{asset?.toLocaleString()}원</div>
+          <div>{asset}원</div>
           <div>+{multiAvgRoi != null ? multiAvgRoi : 0}%</div>
         </div>
       </div>

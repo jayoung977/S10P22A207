@@ -2,21 +2,30 @@
 import UserRanking from "./userRanking";
 import { useQuery, UseQueryResult } from "react-query";
 import axios from "axios";
-import { userType, userInfo } from "./FriendUserRankingList";
+interface userType {
+  memberId: number;
+  nickname: string;
+  assets: number;
+}
 
-const fetchAllUserRankingInfo = async () => {
-  // 전체 랭킹 불러오는 api 개발 전
-  // 우선 친구 랭킹 불러오는 api 사용
-  const response = await fetch(`https://j10a207.p.ssafy.io/api/friend/list`,
-  {
-    headers: {
-      'Authorization': `Bearer ${sessionStorage.getItem("accessToken")}`,
-    },
-  });
-  return response.json();
-};
+interface userInfo {
+  result: userType[];
+}
 
 export default function AllUserRankingList() {
+  const fetchAllUserRankingInfo: any = async () => {
+    // 전체 랭킹 불러오는 api 개발 전
+    // 우선 친구 랭킹 불러오는 api 사용
+    const response = await axios({
+      url: `https://j10a207.p.ssafy.io/api/friend/list`,
+      method: "get",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+    });
+
+    return response;
+  };
   const { data, isLoading, error }: UseQueryResult<userInfo, Error> = useQuery(
     "allUserRankingInfo",
     fetchAllUserRankingInfo
@@ -30,10 +39,10 @@ export default function AllUserRankingList() {
     return <div>Error: {error.message}</div>;
   }
   const { result }: { result: userType[] | null } = data
-    ? data
-    : { result: null };
-
-  console.log(data);
+  ? data
+  : { result: null };
+  
+  console.log(data)
   return (
     <>
       <div

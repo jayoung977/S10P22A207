@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.api.global.common.SocketBaseDtoRes;
 import com.backend.api.global.common.type.SocketType;
-import com.backend.api.global.websocket.dto.WebSocketMessageReq;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,7 +28,7 @@ public class WebSocketController {
     @Operation(summary = "메시지 전송")
     @MessageMapping("/websocket/message")
     //TODO: 매개변수 RequestDto 로 수정
-    public void receiveAndSendMessage(WebSocketMessageReq webSocketMessageReq, SimpMessageHeaderAccessor headerAccessor) {
-        template.convertAndSend("/api/sub/" + webSocketMessageReq.roomId(), new SocketBaseDtoRes<>(SocketType.MESSAGE, webSocketMessageReq));
+    public void receiveAndSendMessage(String endPoint, SimpMessageHeaderAccessor headerAccessor) {
+        template.convertAndSend("/api/sub/" + endPoint, new SocketBaseDtoRes<>(SocketType.MESSAGE, endPoint));
     }
 }

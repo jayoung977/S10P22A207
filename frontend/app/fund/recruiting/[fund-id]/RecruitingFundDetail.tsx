@@ -5,7 +5,6 @@ import ProfileImage from "@/public/src/assets/images/profile-image.png";
 import { useParams, useRouter } from "next/navigation";
 import {
   useQuery,
-  useQueryClient,
   UseQueryResult,
 } from "react-query";
 import type {
@@ -39,7 +38,6 @@ const fetchFundDetail = async (fundId: string, token: string|null) => {
 
 export default function RecruitingFundDetail() {
   useFetchUserInfo();
-  const queryClient = useQueryClient();
   const { nickname, asset } = userStore();
   const token = typeof window !== 'undefined' ? sessionStorage.getItem('accessToken') : null;
   const [fundDetail, setFundDetail] = useState<FundDetail | null>(null);
@@ -128,9 +126,6 @@ export default function RecruitingFundDetail() {
     })
   };
   
-  
-
-
   const StartFund = async (fundId: string, fundName: string ) => {
     const fundInfo = {
       fundId: Number(fundId),
@@ -147,27 +142,6 @@ export default function RecruitingFundDetail() {
     )
     .then((response)=> {
       console.log(response.data)
-      const status = response.data.status
-      if(status == 200){
-        Swal.fire({
-          title: '펀드를 시작합니다!',
-          icon: 'success'
-        })
-        queryClient.invalidateQueries(["MemberFundInfo"]);
-        queryClient.invalidateQueries(["ManagerFundInfo"]);
-        queryClient.invalidateQueries(["InprogressFundInfo"]);
-        queryClient.invalidateQueries(["RecruitingFundInfo"]);
-        window.location.replace(`/fund/in-progress/${fundId}`);
-      }
-
-      if(status == 400){
-        Swal.fire({
-          title: `${response.data.message}`,
-          icon: 'error'
-
-        })
-      }
-
     })
     .catch((error)=> {
       console.error(error)

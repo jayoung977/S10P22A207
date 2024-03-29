@@ -13,9 +13,6 @@ public record FriendRes(
 	String nickname,
 	@Schema(description = "자산")
 	@NotNull
-	Long asset,
-
-	@Schema(description = "로그인 여부")
-	Boolean isLogin
+	Long assets
 ) {
 }

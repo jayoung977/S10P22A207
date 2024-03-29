@@ -1,18 +1,23 @@
 'use client'
 import { useState } from "react";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
+
 import axios from "axios";
 
+
 // 매수, 매도 클릭 시 활성화되는 모달창
-export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
-    const { gameIdx, stockListData, selectedStockIndex, turn, assetListData, setAssetListData, totalAssetData, setTotalAssetData, setTradeListData, isBuySellModalOpen, setIsBuySellModalOpen } = SingleGameStore();
-    const [stocks, setStocks] =  useState<number>(0) 
+export default function BuySellModal({ isBuy, isOpen, onClose } :any) {
+    const { gameIdx, stockListData, selectedStockIndex, turn, assetListData, setAssetListData, totalAssetData, setTotalAssetData, setTradeListData } = SingleGameStore();
+    const [stocks, setStocks] = useState<number>(0);
     const [disabled, setDisabled] = useState<boolean>(false);
     const [alertMessage, setAlertMessage] = useState<string>("");
+
     const foundAsset = assetListData?.find((x :any) => x.stockId === stockListData[selectedStockIndex].stockId);
 
     const handleStocksChange = (event: any) => {
         setStocks(event.target.value);
+
+        // 매수 -> 내 현금(totalAssetData.cash)를 주가(stockListData[selectedStockIndex].stockChartList[300+turn])
         if (isBuy) {
             if (0 > event.target.value || 0 == event.target.value) {
                 setAlertMessage("매수하려는 주식 개수는 양수여야 합니다.")
@@ -24,6 +29,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                 setAlertMessage("");
                 setDisabled(false);
             }
+        // 매도 -> 내 보유 자산의 해당 stock 보유 주식 수를 넘게 판매 불가
         } else {
             if (0 > event.target.value || 0 == event.target.value) {
                 setAlertMessage("매도하려는 주식 개수는 양수여야 합니다.")
@@ -38,6 +44,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                 }
             }
         }
+        
     }
 
     const handleBuy = async () => {
@@ -58,8 +65,8 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
             setAssetListData(response.data.result.assetList);
             setTotalAssetData(response.data.result.totalAsset);
             setTradeListData(response.data.result.tradeList);
-            setIsBuySellModalOpen(false);
 
+            onClose();
         } catch (error) {
             console.log("Buy Error : ", error);
         }
@@ -83,14 +90,15 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
             setAssetListData(response.data.result.assetList);
             setTotalAssetData(response.data.result.totalAsset);
             setTradeListData(response.data.result.tradeList);
+
             setStocks(0);
-            setIsBuySellModalOpen(false);
+            onClose();
         } catch (error) {
             console.log("Sell Error : ", error);
         }
     } 
-
-    if (!isBuySellModalOpen) return null;
+    if (!isOpen) return null;
+    
     return (
       <div className="fixed inset-0 flex items-center justify-center z-50">
         <div className="text-center bg-big-1 rounded shadow-lg grid grid-rows-12" style={{ width: '500px', height: '300px' }}>
@@ -122,15 +130,15 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                 </div>
                 <div className="flex justify-between m-1">
                     <div>주문 단가</div>
-                    <div>{stockListData[selectedStockIndex].stockChartList[299+turn].endPrice}</div>
+                    <div>{stockListData[selectedStockIndex].stockChartList[300+turn].endPrice}</div>
                 </div>
                 <div className="flex justify-between m-1">
                     <div className="text-textColor-1">주문 가능 수량</div>
                     {
                         isBuy ? (
-                            <div className="text-textColor-1">{Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[300+turn].endPrice)}주</div>
+                            <div className="text-textColor-1">{Math.floor(totalAssetData.cash/stockListData[selectedStockIndex].stockChartList[300+turn].endPrice)}주</div>
                         ) : (
-                            <div className="text-textColor-1">{assetListData[selectedStockIndex]?.stockAmount}</div>
+                            <div className="text-textColor-1">{}</div>
                         )
                     }
                 </div>
@@ -142,6 +150,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                             <label htmlFor="number-input" className="mb-2 font-medium text-small-3 dark:text-textColor-2">매수 수량:</label>
                         ) : (
                             <label htmlFor="number-input" className="mb-2 font-medium text-small-1 dark:text-textColor-2">매도 수량:</label>
+
                         )
                     }
                 </div>
@@ -149,7 +158,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                     <input 
                         type="number" 
                         id="number-input" 
-                        defaultValue={isBuy ? 0 : assetListData[selectedStockIndex]?.stockAmount}
+                        value={stocks} 
                         onChange={handleStocksChange}
                         aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="수량 입력" required 
                     />
@@ -163,12 +172,13 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                     <button 
                         onClick={() => {
                             setStocks(0)
-                            setIsBuySellModalOpen(false);
+                            onClose()
                         }} 
                         className="col-start-2 col-end-4 rounded-full ml-1 text-textColor-2 bg-small-10"
                     >
                         취소
                     </button>
+
                     {
                         isBuy ? (
                             <button 

@@ -21,7 +21,7 @@ const fetchFundInfo = async() => {
 
 export default function FundTable(){
   const [fundList, setFundList] = useState<FundResult[]>([])
-  const { data, isLoading, error }: UseQueryResult<FundInfo,Error> = useQuery('RecruitingFundInfo', fetchFundInfo );
+  const { data, isLoading, error }: UseQueryResult<FundInfo,Error> = useQuery('FundInfo', fetchFundInfo );
   const { searchQuery } = fundCrudStore();
   const [filteredFunds, setFilteredFunds] = useState<FundResult[]>([])
   const router = useRouter();
@@ -48,7 +48,7 @@ export default function FundTable(){
   }
 
   const { result }: {result: FundResult[] | null} = data ? data: {result: null};
-  // console.log(result)
+  console.log(result)
   
 
   return (

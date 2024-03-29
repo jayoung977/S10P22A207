@@ -1,65 +1,64 @@
 'use client'
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'
 import SingleGameStore from '@/public/src/stores/single/SingleGameStore';
-export default function SingleGameEndModal ({ isOpen, onClose } :any) {
-    const { singleGameEndInfoData, setSelectedStockIndex } = SingleGameStore();
+export default function SingleGameEndModal ({ isOpen, onClose, data }:any) {
+    const [startMoney, setStartMoney] = useState<number>(0);
+    const [endMoney, setEndMoney] = useState<number>(0);
+
     const router = useRouter();
-    
-    const singleGameAgainHandler = () => {
-        onClose();
-        if (typeof window != undefined) {
-            // window.location.replace("https://j10a207.p.ssafy.io/api/single/play");
-            window.location.href = window.location.href;
-        }
-    }
+    // api 요청
+    // useEffect(() => {
+
+    // }, [])
     if (!isOpen) return null;
-    
     
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="text-center bg-white rounded shadow-lg grid grid-rows-12" style={{ width: '500px', height: '300px' }}>
-                <div className="row-span-2">게임 종료</div>
-                <div className="row-span-6 m-3">
+                <div className="row-start-1 row-end-3">게임 종료</div>
+                <div className="row-start-3 row-end-11 m-3">
                     <div className="flex justify-between mt-2 mb-1">
                         <div>시작 금액</div>
-                        <div>{singleGameEndInfoData?.initialAsset}</div>
+                        {/* <div>{startMoney}</div> */}
+                        <div>7,000,000</div>
                     </div>
                     <div className="flex justify-between mt-1 mb-2">
                         <div>종료 금액</div>
-                        <div>{singleGameEndInfoData?.finalAsset}</div>
+                        {/* <div>{endMoney}</div> */}
+                        <div>9,000,000</div>
                     </div>
                     <hr></hr>
                     <div className="flex justify-between mt-2 mb-1">
                         <div>순이익</div>
-                        <div>{singleGameEndInfoData?.netProfit}원</div>
+                        {/* {
+                            endMoney - startMoney > 0 ? (
+                                <div>+{endMoney - startMoney}원</div>
+                            ) : (
+                                <div>-{startMoney - endMoney}원</div>
+                            )
+                        } */}
+                        <div>+ 2,000,000원</div>
                     </div>
                     <div className="flex justify-between mt-1 mb-2">
                         <div>수익률</div>
-                        <div>{parseFloat(singleGameEndInfoData?.profitMargin).toFixed(4)}%</div>
+                        {/* {
+                            endMoney - startMoney > 0 ? (
+                                <div>+{(((endMoney-startMoney)%startMoney) * 100).toFixed(1)}%</div>
+                            ) : (
+                                <div>{(((endMoney-startMoney)%startMoney) * 100).toFixed(1)}%</div>
+                            )
+                        } */}
+                        <div>+ 28.6 %</div>
                     </div>
                 </div>
-                <div className="row-span-4 grid grid-rows-4">
-                    <div className="row-span-1 text-center mb-2">현재 남은 기회 : {singleGameEndInfoData?.singleGameChance}</div>
-                    <div className="row-span-3 grid grid-cols-6">
+                <div className="row-start-11 row-end-13 grid grid-rows-3">
+                    <div className="row-start-2 row-end-3">
                         <button onClick={() => {
-                            setSelectedStockIndex(0);
                             onClose();
                             router.push('/multi')
                             
-                            }} className="col-span-3 rounded-full mx-16 my-8 text-white bg-gray-500"
-                        >
-                            나가기
-                        </button>
-                        <button 
-                            onClick={() => {
-                                setSelectedStockIndex(0);
-                                singleGameAgainHandler();
-                            }} 
-                            disabled={singleGameEndInfoData?.singleGameChance == 0}
-                            className="col-span-3 rounded-full mx-16 my-8 text-white bg-gray-500"
-                        >
-                            한번 더!
-                        </button>
+                            }} className="rounded-full px-2 mb-2 text-white bg-gray-500">나가기</button>
                     </div>
                 </div>
             </div>

@@ -5,8 +5,6 @@ import com.backend.api.global.jwt.service.JwtService;
 import com.backend.api.global.security.handler.CustomOAuth2FailHandler;
 import com.backend.api.global.security.handler.CustomOAuth2SuccessHandler;
 import com.backend.api.global.security.oauth2.service.CustomOAuth2UserService;
-import java.util.Collections;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Collections;
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -30,7 +31,7 @@ public class WebSecurityConfig {
 		"/management","/management/**","/error", "/login", "/favicon.ico",
 		"/health", "/api-docs/**", "/swagger-ui/**",
 		"/swagger-resources/**", "/swagger-ui.html", "/api/token/**",
-		"/ws/**", "/api/sub/**", "/api/pub/**", "/sse/**"
+		"/ws/**", "/api/sub/**", "/api/pub/**"
 	};
 
 	private final CustomOAuth2UserService customOAuth2UserService;

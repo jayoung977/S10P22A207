@@ -1,16 +1,14 @@
-"use client";
+// "use client";
 import Image from "next/image";
 import styles from "./page.module.css";
 import UserRecord from "./ProfileRecord";
-import bronze from "../../../public/src/assets/images/Tier/diamond.png";
+import bronze from "../../../public/src/assets/images/bronze.png";
 import profileStore from "@/public/src/stores/profile/profileStore";
 import { useQuery, UseQueryResult } from "react-query";
 import { useParams } from "next/navigation";
 import axios from "axios";
 import userStore from "@/public/src/stores/user/userStore";
 import Swal from "sweetalert2";
-import { useState } from "react";
-import ProfileFriendRequest from "./ProfileFriendRequest";
 
 interface resultType {
   memberID: number;
@@ -34,8 +32,6 @@ export default function UserInfo() {
   const params = useParams<{ userId?: string }>();
   const id: string | undefined = params.userId;
   const { memberId } = userStore();
-  const { isOpen, setIsOpen, setFriendRequests, friendRequests } =
-    profileStore();
   const fetchUserInfo = async () => {
     const response = await axios({
       method: "get",
@@ -60,47 +56,21 @@ export default function UserInfo() {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-
   const { result }: { result: resultType | null } = data
     ? data
     : { result: null };
 
-  const sendFriendRequest = async (request: any) => {
-    const response = await axios({
+  const sendFriendRequest = async () => {
+    axios({
       method: "post",
       url: "https://j10a207.p.ssafy.io/api/friend-ask",
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
-      data: request,
     });
-    console.log(response);
   };
-
   const handleFriendRequest = () => {
-    const request = { nickname: result?.nickname };
-    sendFriendRequest(request);
     Swal.fire("친구요청을 보냈어요!");
-  };
-
-  const fetchFriendRequests = async () => {
-    try {
-      const response = await axios({
-        url: "https://j10a207.p.ssafy.io/api/friend-ask/receive-list",
-        method: "get",
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-        },
-      });
-      if (response.data.status === 200) {
-        setFriendRequests(response.data.result);
-        setIsOpen(!isOpen); // 모달 열기
-      } else {
-        console.error("친구 요청 목록을 가져오는 데 실패했습니다.");
-      }
-    } catch (error) {
-      console.error("친구 요청 목록을 가져오는 중 오류 발생:", error);
-    }
   };
 
   return (
@@ -115,7 +85,7 @@ export default function UserInfo() {
           } rounded-md row-start-1 row-end-5 flex justify-center items-center relative`}
         >
           {/* 프로필 id와 내 id가 다르면 보여주기 */}
-          {Number(memberId) != Number(id) ? (
+          {Number(memberId) != Number(id) && (
             <button
               type="button"
               className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 absolute bottom-2 "
@@ -124,16 +94,6 @@ export default function UserInfo() {
               }}
             >
               팔로우
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 absolute bottom-2 "
-              onClick={() => {
-                fetchFriendRequests();
-              }}
-            >
-              친구 요청 목록
             </button>
           )}
           {/* 만약 팔로우가 되어있을때는 언팔로우를 보여주기 반대는 반대 */}

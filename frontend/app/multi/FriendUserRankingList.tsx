@@ -3,29 +3,27 @@ import UserRanking from "./userRanking";
 import { useQuery, UseQueryResult } from "react-query";
 import axios from "axios";
 
-export interface userType {
+interface userType {
   memberId: number;
   nickname: string;
-  asset: number;
-  isLogin: boolean;
+  assets: number;
 }
 
-export interface userInfo {
+interface userInfo {
   result: userType[];
 }
 
-const fetchFriendUserRankingInfo = async() => {
-  const response = await fetch(`https://j10a207.p.ssafy.io/api/friend/list`,
-  {
-    headers: {
-      'Authorization': `Bearer ${sessionStorage.getItem("accessToken")}`,
-    },
-  });
-  return response.json();
-};
-
-
 export default function FriendUserRankingList() {
+  const fetchFriendUserRankingInfo: any = async () => {
+    const response = await axios({
+      url: `https://j10a207.p.ssafy.io/api/friend/list`,
+      method: "get",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+    });
+    return response;
+  };
   const { data, isLoading, error }: UseQueryResult<userInfo, Error> = useQuery(
     "friendUserRankingInfo",
     fetchFriendUserRankingInfo
@@ -39,10 +37,9 @@ export default function FriendUserRankingList() {
     return <div>Error: {error.message}</div>;
   }
   const { result }: { result: userType[] | null } = data
-    ? data
-    : { result: null };
-  console.log(result);
-
+  ? data
+  : { result: null };
+  console.log(data);
   return (
     <>
       <div

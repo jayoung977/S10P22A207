@@ -112,10 +112,7 @@ public enum ErrorCode {
     NO_SINGLE_GAME_STOCK(404, "S301", "해당하는 주식 정보가 없습니다."),
     NOT_ENOUGH_MONEY(404, "S302", "보유중인 자금이 부족합니다."),
     NOT_ENOUGH_CHANCE(400, "S303", "기회가 부족합니다."),
-    NO_SINGLE_GAME_LOG(404, "S304", "게임 로그가 존재하지 않습니다."),
-    NO_SINGLE_LOG_STOCK_CHART(404, "S305", "해당하는 주식 차트 정보가 없습니다.");
-
-
+    NO_SINGLE_GAME_LOG(404, "S304", "게임 로그가 존재하지 않습니다.");
 
     /**
      * ******************************* Error Code Constructor ***************************************
