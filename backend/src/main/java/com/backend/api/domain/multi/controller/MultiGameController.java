@@ -9,11 +9,14 @@ import com.backend.api.domain.multi.dto.request.MultiNextDayRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiTradeRequestDto;
 import com.backend.api.domain.multi.dto.response.*;
 import com.backend.api.domain.multi.service.MultiGameService;
+import com.backend.api.domain.multi.service.MultiGameSocketService;
 import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.common.code.SuccessCode;
 import com.backend.api.global.exception.BaseExceptionHandler;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,7 @@ public class MultiGameController {
 
     private final MultiGameService multiGameService;
     private final MemberRepository memberRepository;
+    private final MultiGameSocketService multiGameSocketService;
 
     @GetMapping("")
     @Operation(summary = "멀티게임 대기실 불러오기", description = "멀티게임 모드를 선택하면 현재 생성되어있는 방 리스트를 불러옵니다.", tags = { "멀티게임" })
@@ -36,21 +40,22 @@ public class MultiGameController {
 
     @GetMapping("/{roomId}")
     @Operation(summary = "멀티게임 입장하기", description = "특정 멀티게임방 입장을 요청하면 해당 방으로 들어갑니다.", tags = {"멀티게임"})
-    public ResponseEntity<BaseResponse<MultiGameRoomEnterResponseDto>> enterMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable String roomId) {
+    public ResponseEntity<BaseResponse<MultiGameRoomEnterResponseDto>> enterMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long roomId) throws
+        JsonProcessingException {
         Member member = memberRepository.findById(userDetails.getId()).orElseThrow(
             () -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)
         );
         MultiGameRoomEnterResponseDto dto = new MultiGameRoomEnterResponseDto(userDetails.getId(), member.getNickname());
-
-//        multiGameService.enterMultiGameRoom(userDetails.getId(), roomId);
+       multiGameSocketService.enterMultiWaitingRoom(userDetails, roomId, userDetails.getNickname());
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, dto);
     }
 
     @PostMapping("/create-room")
     @Operation(summary = "멀티게임 만들기", description = "멀티게임 방을 만듭니다.", tags = {"멀티게임"})
-    public ResponseEntity<BaseResponse<MultiGameRoomCreateResponseDto>> createMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameRoomCreateRequestDto dto) {
+    public ResponseEntity<BaseResponse<MultiGameRoomCreateResponseDto>> createMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameRoomCreateRequestDto dto) throws
+        JsonProcessingException {
 
-        return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.createMultiGameRoom(userDetails.getId(), dto));
+        return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.createMultiGameRoom(userDetails, dto));
     }
 
     @PostMapping("/start-game")
