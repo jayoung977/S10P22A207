@@ -84,10 +84,12 @@ export default function TurnInfo () {
             handleSelectBuy();
         } else if (e.key === "w") {
             handleSelectSell();
-        } else if (e.key == "e" && !isBuySellModalOpen) {
+        } else if (e.key == "r" && !isBuySellModalOpen) {
             handleClickTurn();
         }
     }
+
+    
 
     useEffect (() => {
         window.addEventListener('keydown', handleBuySellTurn);
@@ -110,20 +112,20 @@ export default function TurnInfo () {
                         handleSelectBuy
                     }
                     className="col-span-1 rounded-md scale-95 text-small-3 bg-textColor-2 border border-small-3 m-2 hover:text-textColor-2 hover:bg-small-3 hover:scale-105 shadow-md shadow-small-3 ease-in-out duration-500"
-                >
-                    매수(Q)    
+                >   
+                    매수(Q)
                 </button>
                 <button 
                     onClick={handleSelectSell}
                     className="col-span-1 rounded-md scale-95 text-small-1 bg-textColor-2 border border-small-1 m-2 hover:text-textColor-2 hover:bg-small-1 hover:scale-105 shadow-md shadow-small-1 ease-in-out duration-500"
                 >
-                    매도(W)   
+                    매도(W)
                 </button>
                 <button 
                     onClick={handleClickTurn} 
                     className="col-span-1 rounded-md scale-95 text-textColor-1 bg-textColor-2 border border-textColor-1 m-2 hover:text-textColor-2 hover:bg-textColor-1 hover:scale-105 shadow-md shadow-textColor-1"
-                >
-                    다음
+                >   
+                    다음(R)
                 </button>
             </div>
             <BuySellModal isBuy={isBuy}/>

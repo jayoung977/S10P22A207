@@ -35,22 +35,12 @@ export default function SinglePlay() {
     setTotalAssetData, setAssetListData, setTradeListData,
     stockListData, setStockListData, setStockMarketListData, 
     setTrendListData, setMarketInfoListData, setTodayStockInfoListData,
-    selectedStockIndex, setSelectedStockIndex, isBuySellModalOpen, setIsBuySellModalOpen, isBuy, setIsBuy,
-    singleGameEndInfoData, setSingleGameEndInfoData,
-    isOpenEndModal, setIsOpenEndModal
+    selectedStockIndex
   } = SingleGameStore();
 
   const { asset } = userStore();
-
-  const handleSelectStockIndex = (e :KeyboardEvent) => {
-    const key = e.key;
-    if ("1" <= key && key <= "9" && !isBuySellModalOpen) {
-      setSelectedStockIndex(parseInt(key) - 1);
-      
-    }
-  }
-
   const fetchSingleGameData = async () => {
+    console.log(sessionStorage.getItem("accessToken"));
     try {
       const response = await axios({
         method : "get",
@@ -62,9 +52,13 @@ export default function SinglePlay() {
 
       console.log("useEffect axios 요청 데이터 결과")
       console.log(response.data.result);    
-      setTurn(response.data.result.day);
-        setGameIdx(response.data.result.gameIdx);      
-        setSingleGameChance(response.data.result.singleGameChance);
+      if (response.data.result.day > 0) {
+        setTurn(response.data.result.day);
+      } else {
+        setTurn(1);
+      }
+      setGameIdx(response.data.result.gameIdx);      
+      setSingleGameChance(response.data.result.singleGameChance);
 
         // 사용자 총 평가 자산 데이터
         if (response.data.result.totalAsset) {
@@ -112,9 +106,9 @@ export default function SinglePlay() {
 
   useEffect(() => {
     fetchSingleGameData();
-    window.addEventListener('keydown', handleSelectStockIndex);
+    // window.addEventListener('keydown', handleSelectStockIndex);
     return () => {
-      window.removeEventListener('keydown', handleSelectStockIndex);
+      // window.removeEventListener('keydown', handleSelectStockIndex);
     }
   }, []);
 

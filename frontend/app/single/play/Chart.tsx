@@ -1,6 +1,6 @@
 "use client";
 // 현재 턴/종목에 대한 차트 정보 (main - 1)
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import anychart from "anychart";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
 
@@ -143,6 +143,9 @@ function calculateHist(macdData :any, signalData :any) {
 
 export default function Chart({ data }: any) {
   const { selectedStockIndex, turn } = SingleGameStore();
+  // const { turn, selectedSecondaryIndicator, setSelectedSecondaryIndicator } = SingleGameStore();
+  const [selectedSecondaryIndicator, setSelectedSecondaryIndicator] = useState<number>(1);
+
   useEffect(() => {
 
     const purifiedData = filteringLowPriceZero(data);
@@ -150,6 +153,10 @@ export default function Chart({ data }: any) {
     const chart = anychart.stock();
     // 차트를 담을 컨테이너 생성
     const container = chart.container("chart-container")
+    const creditsElement = document.querySelector('.anychart-credits');
+    if (creditsElement) {
+      creditsElement.remove();
+    }
     chart.contextMenu(false);
     chart.width("90%");
     // 스크롤러
@@ -206,6 +213,7 @@ export default function Chart({ data }: any) {
         "주가 : " + this.value + "\n"
       )
     })
+    lineSeries.enabled(false);
     // candlestick series 생성
     const candlestickSeries = plot1.candlestick(purifiedData?.map((item: any) => [item.date, item.marketPrice, item.highPrice, item.lowPrice, item.endPrice]));
     // candlestick series 속성 설정
@@ -238,7 +246,7 @@ export default function Chart({ data }: any) {
     
     // 이동평균선 그래프 색상 지정
     sma5Series.stroke('purple');
-    sma20Series.stroke('yello');
+    sma20Series.stroke('red');
     sma60Series.stroke('green');
     sma120Series.stroke('blue');
    
@@ -247,11 +255,11 @@ export default function Chart({ data }: any) {
     sma5Series.tooltip().format(function (this :any) {
       if (this.value) {
         return (
-          "sma   5   : " + this.value
+          "sma  05 : " + this.value
         ) 
       } else {
         return (
-          "sma   5   : " + 0
+          "sma  05 : " + 0
         )
       }
     }) 
@@ -259,11 +267,11 @@ export default function Chart({ data }: any) {
     sma20Series.tooltip().format(function (this :any) {
       if (this.value) {
         return (
-          "sma  20         : " + this.value
+          "sma 20 : " + this.value
         ) 
       } else {
         return (
-          "sma  20 : " + 0
+          "sma 20 : " + 0
         )
       }
     }) 
@@ -275,7 +283,7 @@ export default function Chart({ data }: any) {
         ) 
       } else {
         return (
-          "sma  60 :" + 0
+          "sma 60 :" + 0
         )
       }
     }) 
@@ -283,11 +291,11 @@ export default function Chart({ data }: any) {
     sma120Series.tooltip().format(function (this :any) {
       if (this.value) {
         return (
-          "sma 120 : " + this.value + "\n"
+          "sma120 : " + this.value + "\n"
         ) 
       } else {
         return (
-          "sma 120 : " + 0 + "\n"
+          "sma120 : " + 0 + "\n"
         )
       }
     }) 
@@ -433,47 +441,56 @@ export default function Chart({ data }: any) {
     const showPlot = (plotNumber: number) => {
       switch (plotNumber) {
         case 1:
+          setSelectedSecondaryIndicator(1);
           plot2.enabled(true);
           plot2.height("30%");
           plot3.enabled(false);
           plot4.enabled(false);
           break;
         case 2:
+          setSelectedSecondaryIndicator(2);
           plot2.enabled(false);
           plot3.enabled(true);
           plot3.height("30%");
           plot4.enabled(false);
           break;
         case 3:
+          setSelectedSecondaryIndicator(3);
           plot2.enabled(false);
           plot3.enabled(false);
           plot4.enabled(true);
           plot4.height("30%");
 
           break;
+
         default:
           break;
       }
     };
     const handleShowPlot = (plotNumber :number) => {
       showPlot(plotNumber);
+      setSelectedSecondaryIndicator(plotNumber);
     }
     (window as any).handleShowPlot = handleShowPlot;
-    handleShowPlot(1);
+    handleShowPlot(selectedSecondaryIndicator);
+
     return () => {
       chart.dispose();
       (window as any).handleShowPlot = null;
 
     };
+    
   }, [data]);
+
+ 
   
   return (
     <div className="row-span-12 grid grid-rows-12">
       <div className="row-span-1 grid grid-cols-8 items-center">
-            종목 {selectedStockIndex+1}  
-            <button onClick={() => (window as any).handleShowPlot(1)} className="border border-black">거래량</button>
-            <button onClick={() => (window as any).handleShowPlot(2)} className="border border-black">RSI</button>
-            <button onClick={() => (window as any).handleShowPlot(3)} className="border border-black">MACD</button>
+            {/* 종목 {selectedStockIndex+1}   */}
+            <button onClick={() => (window as any).handleShowPlot(1)} className={`border border-black ${selectedSecondaryIndicator == 1 && 'bg-slate-400'}`}>Volume</button>
+            <button onClick={() => (window as any).handleShowPlot(2)} className={`border border-black ${selectedSecondaryIndicator == 2 && 'bg-slate-400'}`}>RSI</button>
+            <button onClick={() => (window as any).handleShowPlot(3)} className={`border border-black ${selectedSecondaryIndicator == 3 && 'bg-slate-400'}`}>MACD</button>
       </div>
       <div id="chart-container" className="row-span-12 flex items-center justify-center"></div>
     </div>
