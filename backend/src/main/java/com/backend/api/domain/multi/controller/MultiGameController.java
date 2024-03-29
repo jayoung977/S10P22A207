@@ -60,7 +60,7 @@ public class MultiGameController {
 
     @PostMapping("/create-room")
     @Operation(summary = "멀티게임 만들기", description = "멀티게임 방을 만듭니다.", tags = {"멀티게임"})
-    public ResponseEntity<BaseResponse<MultiGameRoomCreateResponseDto>> createMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails, MultiGameRoomCreateRequestDto dto) {
+    public ResponseEntity<BaseResponse<MultiGameRoomCreateResponseDto>> createMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameRoomCreateRequestDto dto) {
 
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.createMultiGameRoom(userDetails.getId(), dto));
     }
@@ -71,12 +71,6 @@ public class MultiGameController {
 
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.startMultiGame(userDetails.getId(), dto));
     }
-
-//    @GetMapping("/start-game")
-//    @Operation(summary = "멀티게임 라운드 진행", description = "멀티게임 특정 라운드를 시작합니다.", tags = {"멀티게임"})
-//    public ResponseEntity<BaseResponse<MultiGameStartRoundResponseDto>> startMultiGameMiddleOfRound(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam(name = "gameLogId") Long gameLogId, @RequestParam(name = "roundNumber") Long roundNumber){
-//        return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.startMultiGame(userDetails.getId(), gameLogId, roundNumber));
-//    }
 
     @PostMapping("/sell")
     @Operation(summary = "멀티 - 매도", description = "멀티게임 내에서 매도 하면 해당 종목을 팝니다.", tags = {"멀티게임"})
