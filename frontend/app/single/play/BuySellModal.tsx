@@ -125,7 +125,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                 </div>
                 <div className="flex justify-between m-1">
                     <div>주문 단가</div>
-                    <div>{stockListData[selectedStockIndex].stockChartList[300+turn].endPrice}</div>
+                    <div>{stockListData[selectedStockIndex].stockChartList[299+turn].endPrice}</div>
                 </div>
                 <div className="flex justify-between m-1">
                     <div className="text-textColor-1">주문 가능 수량</div>

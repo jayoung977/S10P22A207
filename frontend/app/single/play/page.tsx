@@ -17,6 +17,8 @@ import TurnInfo from "./TurnInfo";
 import StockList from "./StockList";
 import MarketAndTrends from "./MarketAndTrends";
 import InGameBgm from "@/public/src/components/bgm/InGameBgm";
+
+import userStore from "@/public/src/stores/user/userStore";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
 
 import axios from "axios";
@@ -28,13 +30,16 @@ export default function SinglePlay() {
 
 
   const { 
-    turn, setTurn, setGameIdx, setSingleGameChance,
+    turn, setTurn, gameIdx, setGameIdx, setSingleGameChance,
     setTotalAssetData, setAssetListData, setTradeListData,
     stockListData, setStockListData, setStockMarketListData, 
     setTrendListData, setMarketInfoListData, setTodayStockInfoListData,
-    selectedStockIndex, setSelectedStockIndex, isBuySellModalOpen, setIsBuySellModalOpen
+    selectedStockIndex, setSelectedStockIndex, isBuySellModalOpen, setIsBuySellModalOpen, isBuy, setIsBuy,
+    singleGameEndInfoData, setSingleGameEndInfoData,
+    isOpenEndModal, setIsOpenEndModal
   } = SingleGameStore();
 
+  const { asset } = userStore();
 
   const handleSelectStockIndex = (e :KeyboardEvent) => {
     const key = e.key;
@@ -45,22 +50,39 @@ export default function SinglePlay() {
   }
 
   const fetchSingleGameData = async () => {
-    await axios({
-      method: "get",
-      url: "https://j10a207.p.ssafy.io/api/single",
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-      }
-    }).then((response :any) => {
-        console.log("useEffect axios 요청 데이터 결과")
-        console.log(response.data.result);
+    try {
+      const response = await axios({
+        method : "get",
+        url : "https://j10a207.p.ssafy.io/api/single",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        }
+      })
 
-        setTurn(response.data.result.day);
+      console.log("useEffect axios 요청 데이터 결과")
+      console.log(response.data.result);    
+      setTurn(response.data.result.day);
         setGameIdx(response.data.result.gameIdx);      
         setSingleGameChance(response.data.result.singleGameChance);
 
         // 사용자 총 평가 자산 데이터
-        setTotalAssetData(response.data.result.totalAsset);
+        if (response.data.result.totalAsset) {
+            setTotalAssetData({
+              cash : response.data.result.totalAsset.cash,
+              resultProfit : response.data.result.totalAsset.resultProfit,
+              resultRoi : response.data.result.totalAsset.resultRoi,
+              totalPurchaseAmount : response.data.result.totalAsset.totalPurchaseAmount,
+              totalAsset : response.data.result.totalAsset.cash + response.data.result.totalAsset.totalPurchaseAmount,
+            })
+        } else {
+          setTotalAssetData({
+            cash : asset as number,
+            resultProfit : 0,
+            resultRoi : 0, 
+            totalPurchaseAmount : 0, 
+            totalAsset :  asset as number,
+          })
+        }
         // 사용자 보유 종목 주식 데이터
         if (response.data.result.assetList != null) {
           setAssetListData(response.data.result.assetList);
@@ -80,28 +102,21 @@ export default function SinglePlay() {
         setTodayStockInfoListData(response.data.result.nextDayInfos);
 
         setIsLoading(false)
-    }).catch((error :any) => {
+
+    } catch (error) {
       console.log(error)
       setIsError(true);
-    });
-  };
+    }
+  }
 
   useEffect(() => {
     fetchSingleGameData();
-
+    window.addEventListener('keydown', handleSelectStockIndex);
+    return () => {
+      window.removeEventListener('keydown', handleSelectStockIndex);
+    }
   }, []);
 
-  useEffect(() => {
-    if (isBuySellModalOpen) {
-      window.removeEventListener("keypress", handleSelectStockIndex);
-    } else {
-      window.addEventListener("keypress", handleSelectStockIndex);
-    }
-
-    return () => {
-      window.removeEventListener("keypress", handleSelectStockIndex);
-    }
-  }, [isBuySellModalOpen]);
   
   if (isLoading) {
     return <div className="rainbow"></div>;
@@ -131,7 +146,7 @@ export default function SinglePlay() {
           </main>
           {/* right aside */}
           <aside className="col-span-2 grid grid-rows-6">
-            <TurnInfo />
+            <TurnInfo/>
             <StockList />
             <MarketAndTrends />
           </aside>
