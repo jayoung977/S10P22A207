@@ -155,6 +155,9 @@ type Store = {
     
     isOpenEndModal :boolean;
     setIsOpenEndModal :(value :boolean) => void;
+
+    selectedSecondaryIndicator :number;
+    setSelectedSecondaryIndicator : (value :number) => void;
 };
 
 
@@ -217,6 +220,9 @@ const SingleGameStore = create<Store>((set: any) => ({
 
     isOpenEndModal :false,
     setIsOpenEndModal :(value) => set({ isOpenEndModal :value }),
+
+    selectedSecondaryIndicator : 1,
+    setSelectedSecondaryIndicator :(value) => set({ selectedSecondaryIndicator : value }),
 }));
 
 export default SingleGameStore;

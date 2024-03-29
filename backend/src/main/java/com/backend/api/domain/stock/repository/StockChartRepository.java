@@ -1,11 +1,12 @@
 package com.backend.api.domain.stock.repository;
 
-import com.backend.api.domain.stock.entity.Stock;
 import com.backend.api.domain.stock.entity.StockChart;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 public interface StockChartRepository extends JpaRepository<StockChart, Long>, StockChartRepositoryCustom  {
 
@@ -14,5 +15,5 @@ public interface StockChartRepository extends JpaRepository<StockChart, Long>, S
 
     List<StockChart> findRandomStocksInRange(LocalDateTime startDate, LocalDateTime endDate, List<String> stockIds);
     List<StockChart> findByIdBetween(Long startId, Long endId);
-    List<StockChart> findAllByStock(Stock stock);
+    Optional<StockChart> findByStock_StockCodeAndDateBetween(String stockCode, LocalDateTime startDateTime, LocalDateTime localDateTime);
 }

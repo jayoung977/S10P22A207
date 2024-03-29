@@ -8,11 +8,7 @@ import Swal from "sweetalert2";
 import socketStore from "../stores/websocket/socketStore";
 
 export const useWebSocket = () => {
-  const params = useParams<{ room_id: string }>();
   const client = useRef<CompatClient>({} as CompatClient);
-  const room_id: string = params.room_id;
-  const { sendMessage, setSendMessage, receiveMessage, setReceiveMessage } =
-    multigameStore();
   const { setClientObject, clientObject } = socketStore();
 
   useEffect(() => {
