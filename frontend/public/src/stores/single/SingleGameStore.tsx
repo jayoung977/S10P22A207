@@ -144,11 +144,17 @@ type Store = {
     selectedStockIndex :number;
     setSelectedStockIndex :(value :number) => void;
 
-    singleGameEndInfoData :singleGameEndInfoDataType | any;
-    setSingleGameEndInfoData :(value :singleGameEndInfoDataType) => void;
-
+    isBuy :boolean;
+    setIsBuy :(value :boolean) => void;
+    
     isBuySellModalOpen :boolean;
     setIsBuySellModalOpen :(value :boolean) => void;
+    
+    singleGameEndInfoData :singleGameEndInfoDataType | any;
+    setSingleGameEndInfoData :(value :singleGameEndInfoDataType) => void;
+    
+    isOpenEndModal :boolean;
+    setIsOpenEndModal :(value :boolean) => void;
 };
 
 
@@ -203,8 +209,14 @@ const SingleGameStore = create<Store>((set: any) => ({
     singleGameEndInfoData: [],
     setSingleGameEndInfoData: (value) => set({ singleGameEndInfoData : value }),
 
+    isBuy :false,
+    setIsBuy :(value) => set({ isBuy : value }),
+
     isBuySellModalOpen :false,
     setIsBuySellModalOpen :(value) => set({ isBuySellModalOpen : value }),
+
+    isOpenEndModal :false,
+    setIsOpenEndModal :(value) => set({ isOpenEndModal :value }),
 }));
 
 export default SingleGameStore;
