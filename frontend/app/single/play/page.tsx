@@ -22,13 +22,14 @@ import InGameBgm from "@/public/src/components/bgm/InGameBgm";
 import userStore from "@/public/src/stores/user/userStore";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
 
+import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 import axios from "axios";
 
 
 export default function SinglePlay() {
+  useFetchUserInfo();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
-
 
   const { 
     turn, setTurn, gameIdx, setGameIdx, setSingleGameChance,
@@ -37,10 +38,9 @@ export default function SinglePlay() {
     setTrendListData, setMarketInfoListData, setTodayStockInfoListData,
     selectedStockIndex
   } = SingleGameStore();
-
   const { asset } = userStore();
+  console.log("asset : ", asset);
   const fetchSingleGameData = async () => {
-    console.log(sessionStorage.getItem("accessToken"));
     try {
       const response = await axios({
         method : "get",
@@ -57,6 +57,7 @@ export default function SinglePlay() {
       } else {
         setTurn(1);
       }
+
       setGameIdx(response.data.result.gameIdx);      
       setSingleGameChance(response.data.result.singleGameChance);
 
@@ -70,6 +71,8 @@ export default function SinglePlay() {
               totalAsset : response.data.result.totalAsset.cash + response.data.result.totalAsset.totalPurchaseAmount,
             })
         } else {
+          console.log("없어서")
+          console.log(asset);
           setTotalAssetData({
             cash : asset as number,
             resultProfit : 0,
