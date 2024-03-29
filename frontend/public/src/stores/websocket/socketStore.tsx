@@ -1,5 +1,5 @@
 import { CompatClient } from "@stomp/stompjs";
-import create from "zustand";
+import { create } from "zustand";
 
 interface WebSocketStore {
   clientObject: any;
