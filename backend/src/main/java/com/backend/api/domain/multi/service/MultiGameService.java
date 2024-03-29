@@ -8,25 +8,8 @@ import com.backend.api.domain.multi.dto.request.MultiGameRoomCreateRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameStartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiNextDayRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiTradeRequestDto;
-import com.backend.api.domain.multi.dto.response.MultiGameFinalResultDto;
-import com.backend.api.domain.multi.dto.response.MultiGameResultDto;
-import com.backend.api.domain.multi.dto.response.MultiGameRoomCreateResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiGameRoomInfo;
-import com.backend.api.domain.multi.dto.response.MultiGameRoomsResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiGameStartResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiGameTotalResultDto;
-import com.backend.api.domain.multi.dto.response.MultiLogMemberDto;
-import com.backend.api.domain.multi.dto.response.MultiLogResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiLogTradeDto;
-import com.backend.api.domain.multi.dto.response.MultiNextDayInfoResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiNextDayResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiTradeListDto;
-import com.backend.api.domain.multi.dto.response.MultiTradeResponseDto;
-import com.backend.api.domain.multi.entity.MultiGame;
-import com.backend.api.domain.multi.entity.MultiGameLog;
-import com.backend.api.domain.multi.entity.MultiGamePlayer;
-import com.backend.api.domain.multi.entity.MultiTrade;
-import com.backend.api.domain.multi.entity.MultiWaitingRoom;
+import com.backend.api.domain.multi.dto.response.*;
+import com.backend.api.domain.multi.entity.*;
 import com.backend.api.domain.multi.repository.MultiGameLogRepository;
 import com.backend.api.domain.multi.repository.MultiTradeRepository;
 import com.backend.api.domain.single.dto.response.StockChartDto;
@@ -38,24 +21,18 @@ import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.common.type.TradeType;
 import com.backend.api.global.exception.BaseExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
@@ -768,13 +745,12 @@ public class MultiGameService {
         List<MultiLogTradeDto> tradeList = getMultiLogTradeList(multiGameLogId, memberId);
 
         //4. 다른 플레이어들의 정보(매매정보포함) 가져오기 - 나를 제외한
-        List<MultiLogMemberDto> multiLogMemberDtoList = multiGamePlayerRepository.findAllByMultiGameLog_Id(multiGameLogId).stream().filter(
-                multiGamePlayer -> multiGamePlayer.getMember().getId() != memberId
-        ).map(
+        List<MultiLogMemberDto> multiLogMemberDtoList = multiGamePlayerRepository.findAllByMultiGameLog_Id(multiGameLogId).stream().map(
                 multiGamePlayer -> new MultiLogMemberDto(
                         multiGamePlayer.getMember().getId(),
                         multiGamePlayer.getMember().getNickname(),
                         multiGamePlayer.getFinalRoi(),
+                        multiGamePlayer.getMember().getRankPoint(),
                         getMultiLogTradeList(multiGameLogId, multiGamePlayer.getMember().getId())
                 )
         ).toList();
