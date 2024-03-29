@@ -55,8 +55,8 @@ public class SingleGameController {
     }
     @GetMapping("/log")
     @Operation(summary = "싱글게임 복기", description = "싱글기록을 선택하면 해당 싱글게임기록을 가져옵니다.", tags = {"싱글게임"})
-    public ResponseEntity<BaseResponse<SingleGameLogResponseDto>> getSingleGameLog(@RequestParam(name = "singleGameLogId") Long singleGameLogId) {
-        SingleGameLogResponseDto responseDto = singleGameService.getSingleGameLog(singleGameLogId);
+    public ResponseEntity<BaseResponse<SingleLogResponseDto>> getSingleGameLog(@RequestParam(name = "singleGameLogId") Long singleGameLogId) {
+        SingleLogResponseDto responseDto = singleGameService.getSingleGameLog(singleGameLogId);
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, responseDto);
     }
     @GetMapping("/log/member")

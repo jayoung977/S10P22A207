@@ -736,7 +736,7 @@ public class SingleGameService {
         }
     }
 
-    public SingleGameLogResponseDto getSingleGameLog(Long singleGameLogId) {
+    public SingleLogResponseDto getSingleGameLog(Long singleGameLogId) {
         List<SingleGameStock> singleGameStocks = singleGameStockRepository.findAllBySingleGameLog_Id(singleGameLogId).orElseThrow(
                 () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
 
@@ -827,7 +827,7 @@ public class SingleGameService {
 
         }
 
-        return new SingleGameLogResponseDto(
+        return new SingleLogResponseDto(
                 stockInfoDtoList,
                 stockChartDataList,
                 tradeList,

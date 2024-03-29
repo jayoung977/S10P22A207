@@ -4,28 +4,19 @@ import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.member.repository.MultiGamePlayerRepository;
 import com.backend.api.domain.multi.dto.MultiGameResultRequestDto;
+import com.backend.api.domain.multi.dto.MultiLogMemberDto;
+import com.backend.api.domain.multi.dto.MultiLogResponseDto;
+import com.backend.api.domain.multi.dto.MultiLogTradeDto;
 import com.backend.api.domain.multi.dto.request.MultiGameRoomCreateRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameStartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiNextDayRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiTradeRequestDto;
-import com.backend.api.domain.multi.dto.response.MultiGameFinalResultDto;
-import com.backend.api.domain.multi.dto.response.MultiGameResultDto;
-import com.backend.api.domain.multi.dto.response.MultiGameRoomCreateResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiGameRoomInfo;
-import com.backend.api.domain.multi.dto.response.MultiGameRoomsResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiGameStartResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiGameTotalResultDto;
-import com.backend.api.domain.multi.dto.response.MultiNextDayInfoResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiNextDayResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiTradeListDto;
-import com.backend.api.domain.multi.dto.response.MultiTradeResponseDto;
-import com.backend.api.domain.multi.entity.MultiGame;
-import com.backend.api.domain.multi.entity.MultiGameLog;
-import com.backend.api.domain.multi.entity.MultiGamePlayer;
-import com.backend.api.domain.multi.entity.MultiTrade;
-import com.backend.api.domain.multi.entity.MultiWaitingRoom;
+import com.backend.api.domain.multi.dto.response.*;
+import com.backend.api.domain.multi.entity.*;
 import com.backend.api.domain.multi.repository.MultiGameLogRepository;
 import com.backend.api.domain.multi.repository.MultiTradeRepository;
+import com.backend.api.domain.single.dto.response.StockChartDto;
+import com.backend.api.domain.stock.entity.Stock;
 import com.backend.api.domain.stock.entity.StockChart;
 import com.backend.api.domain.stock.repository.StockChartRepository;
 import com.backend.api.domain.stock.repository.StockRepository;
@@ -33,24 +24,18 @@ import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.common.type.TradeType;
 import com.backend.api.global.exception.BaseExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
@@ -743,5 +728,76 @@ public class MultiGameService {
         }
 
         return points[index];
+    }
+    public MultiLogResponseDto getMultiGameLog(Long multiGameLogId, Long memberId) {
+        MultiGameLog multiGameLog = multiGameLogRepository.findById(multiGameLogId).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_MULTI_GAME_LOG));
+        //1. 종목 이름 가져오기
+        Stock stock = stockRepository.findById(multiGameLog.getStockId()).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_MULTI_GAME_LOG_STOCK));
+
+        //2. 해당 종목에 대한 차트 350개 넣기
+        //어떤 종목의 시작일 하나에 대한 StockChart 값 얻기
+        LocalDateTime startDateTime = multiGameLog.getStartDate().withHour(0).withMinute(0).withSecond(0);
+
+        log.info("[getMultiGameLog] stock.getStockCode(): "+stock.getStockCode());
+        log.info("[getMultiGameLog] startDateTime: "+ startDateTime);
+
+        StockChart stockChart = stockChartRepository.findByStock_StockCodeAndDateBetween(stock.getStockCode(),startDateTime,startDateTime.plusDays(1)).orElseThrow(
+                () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_LOG_STOCK_CHART)
+        );
+        log.info("[getMultiGameLog] stockChart.getId(): "+stockChart.getId());
+        // 350일치 차트
+        List<StockChart> stockChartList = stockChartRepository.findByIdBetween(stockChart.getId(), stockChart.getId() + 349);
+        // 각 날짜에 대해 StockChartDto 생성 후 넣어주기
+        List<StockChartDto> stockChartDtoList = new ArrayList<>();
+        // 350번 가져온다.
+        stockChartList.forEach((stockChart1) -> {
+            StockChartDto stockChartDto = new StockChartDto(
+                    stockChart1.getMarketPrice(),
+                    stockChart1.getHighPrice(),
+                    stockChart1.getLowPrice(),
+                    stockChart1.getEndPrice(),
+                    stockChart1.getTradingVolume(),
+                    stockChart1.getDate()
+            );
+
+            stockChartDtoList.add(stockChartDto);
+        });
+
+        //3. 나의 매매내역 가져오기
+        List<MultiLogTradeDto> tradeList = getMultiLogTradeList(multiGameLogId, memberId);
+
+        //4. 다른 플레이어들의 정보(매매정보포함) 가져오기 - 나를 제외한
+        List<MultiLogMemberDto> multiLogMemberDtoList = multiGamePlayerRepository.findAllByMultiGameLog_Id(multiGameLogId).stream().filter(
+                multiGamePlayer -> multiGamePlayer.getMember().getId() != memberId
+        ).map(
+                multiGamePlayer -> new MultiLogMemberDto(
+                        multiGamePlayer.getMember().getId(),
+                        multiGamePlayer.getMember().getNickname(),
+                        multiGamePlayer.getFinalRoi(),
+                        getMultiLogTradeList(multiGameLogId, multiGamePlayer.getMember().getId())
+                )
+        ).toList();
+
+
+        return new MultiLogResponseDto(
+                stock.getStockName(),
+                stockChartDtoList,
+                tradeList,
+                multiLogMemberDtoList
+        );
+    }
+
+    private List<MultiLogTradeDto> getMultiLogTradeList(Long multiGameLogId, Long memberId) {
+        List<MultiTrade> multiTradeList = multiTradeRepository.findAllByMultiGameLog_IdAndMemberId(multiGameLogId, memberId);
+        List<MultiLogTradeDto> tradeList = multiTradeList.stream().map(
+                multiTrade -> new MultiLogTradeDto(
+                        multiTrade.getDate(),
+                        multiTrade.getTradeType(),
+                        multiTrade.getAmount(),
+                        multiTrade.getPrice(),
+                        multiTrade.getRoi()
+                )
+        ).toList();
+        return tradeList;
     }
 }
