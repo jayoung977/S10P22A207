@@ -1,8 +1,13 @@
 package com.backend.api.domain.quiz.service;
 
+import com.backend.api.domain.member.entity.Member;
+import com.backend.api.domain.member.repository.MemberRepository;
+import com.backend.api.domain.quiz.dto.response.QuizRes;
+import com.backend.api.domain.quiz.dto.response.QuizeUpdateAssetRes;
 import com.backend.api.domain.quiz.entity.Quiz;
-import com.backend.api.domain.quiz.entity.response.QuizRes;
 import com.backend.api.domain.quiz.repository.QuizRepository;
+import com.backend.api.global.common.code.ErrorCode;
+import com.backend.api.global.exception.BaseExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -20,6 +25,8 @@ import java.util.stream.IntStream;
 public class QuizService {
 
     private final QuizRepository quizRepository;
+    private final MemberRepository memberRepository;
+
     public List<QuizRes> getQuizList() {
         List<Quiz> quizList = quizRepository.findAll();
         Random random = new Random();
@@ -49,6 +56,22 @@ public class QuizService {
                 }
         ).toList();
 
+
+    }
+    @Transactional
+    public QuizeUpdateAssetRes updateAsset(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+
+        log.info("[QuizeUpdateAsset] member.getAsset(): "+ member.getAsset());
+        QuizeUpdateAssetRes res;
+        if (member.getAsset() > 5_000_000L) {
+            res = new QuizeUpdateAssetRes(false, member.getAsset());
+            return res;
+        }
+        member.updateAsset(member.getAsset() + 1_000_000L);
+        res = new QuizeUpdateAssetRes(true, member.getAsset());
+        return res;
 
     }
 }
