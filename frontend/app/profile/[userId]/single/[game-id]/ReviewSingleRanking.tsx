@@ -1,30 +1,12 @@
+import SingleReviewStore from "@/public/src/stores/profile/SingleReviewStore";
 export default function SingleRanking() {
+  const { selectedIndex, rankMemberList } = SingleReviewStore();
   return (
-    <div className="p-4 row-span-5 grid grid-rows-4 m-4 bg-small-3  rounded-md shadow-lg hover:-translate-y-1 transition ease-in-out duration-500">
-      <div className="row-span-1 grid grid-cols-5">
-        <p className="text-textColor-2">랭킹</p>
-      </div>
-      <div className="row-span-1 text-textColor-2 grid grid-cols-5">
-        <div className="col-span-1">순위</div>
-        <div className="col-span-1">프사</div>
-        <div className="col-span-1">이름</div>
-        <div className="col-span-1">수익률</div>
-        <div className="col-span-1">필터</div>
-      </div>
-      <div className="row-span-1 text-textColor-2 grid grid-cols-5">
-        <div className="col-span-1">순위</div>
-        <div className="col-span-1">프사</div>
-        <div className="col-span-1">이름</div>
-        <div className="col-span-1">수익률</div>
-        <div className="col-span-1">필터</div>
-      </div>
-      <div className="row-span-1 text-textColor-2  grid grid-cols-5">
-        <div className="col-span-1">순위</div>
-        <div className="col-span-1">프사</div>
-        <div className="col-span-1">이름</div>
-        <div className="col-span-1">수익률</div>
-        <div className="col-span-1">필터</div>
-      </div>
+    <div className="row-span-4 grid grid-rows-12 bg-slate-500 rounded-md m-1">
+      <div className="text-textColor-2">랭킹 유저들</div>
     </div>
+
   );
 }
+
+// {memberId: 3, nickname: 'hide on bush', singleGameStockId: 993, roi: 25.36378334680679}

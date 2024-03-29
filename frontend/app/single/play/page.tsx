@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 const queryClient = new QueryClient();
 // navbar
 import Navbar from "@/app/Navbar";
+// BGM
+import InGameBgm from "@/public/src/components/bgm/InGameBgm";
 
 // left
 import TotalAssets from "./TotalAssets";
@@ -17,14 +19,14 @@ import StockMarket from "./StockMarket";
 import TurnInfo from "./TurnInfo";
 import StockList from "./StockList";
 import MarketAndTrends from "./MarketAndTrends";
-import InGameBgm from "@/public/src/components/bgm/InGameBgm";
 
+// Store
 import userStore from "@/public/src/stores/user/userStore";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
-
+// Hook
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
+// axios
 import axios from "axios";
-
 
 export default function SinglePlay() {
   useFetchUserInfo();
@@ -114,7 +116,6 @@ export default function SinglePlay() {
       // window.removeEventListener('keydown', handleSelectStockIndex);
     }
   }, []);
-
   
   if (isLoading) {
     return <div className="rainbow"></div>;

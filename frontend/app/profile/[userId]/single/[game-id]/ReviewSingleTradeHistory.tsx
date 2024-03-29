@@ -1,133 +1,35 @@
+import SingleReviewStore from "@/public/src/stores/profile/SingleReviewStore";
+
 export default function SingleTradeHistory() {
+  const { tradeList, selectedIndex } = SingleReviewStore();
+  
   return (
     <div
-      className="col-span-3 grid grid-rows-12 p-4 m-4 bg-small-10 rounded-md  overflow-y-auto max-h-96 shadow-lg hover:-translate-y-1 transition ease-in-out duration-500"
-      style={{ maxHeight: "100vh" }}
+      className="grid grid-rows-12 bg-small-10 m-1 rounded-md"
     >
-      <div className="row-span-1">
-        <p className="text-textColor-2">매매내역</p>
+      <div className="row-span-1 flex items-center justify-center">
+        <div className="text-textColor-2">매매내역</div>
       </div>
-      <div className="bg-white row-span-11 relative shadow-md sm:rounded-lg">
-        <table className="w-full text-sm text-left rtl:text-right text-blue-100 dark:text-blue-100">
-          <thead className="text-xs text-black uppercase border-b border-blue-400 dark:text-white">
-            <tr>
-              <th scope="col" className="px-6 py-3">
-                유형
-              </th>
-              <th scope="col" className="px-6 py-3">
-                <p>가격(수량)</p>
-                <p>수수료 및 세금</p>
-              </th>
-              <th scope="col" className="px-6 py-3">
-                체결금액
-              </th>
-            </tr>
-          </thead>
-          <tbody className="">
-            <tr className="bg-blue-500 border-b border-blue-300 hover:bg-blue-400">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
-              >
-                매수
-              </th>
-              <td className="px-6 py-4">Silver</td>
-              <td className="px-6 py-4">Laptop</td>
-            </tr>
-            <tr className="bg-blue-500 border-b border-blue-300 hover:bg-blue-400">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
-              >
-                매수
-              </th>
-              <td className="px-6 py-4">Silver</td>
-              <td className="px-6 py-4">Laptop</td>
-            </tr>
-            <tr className="bg-blue-500 border-b border-blue-300 hover:bg-blue-400">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
-              >
-                매수
-              </th>
-              <td className="px-6 py-4">Silver</td>
-              <td className="px-6 py-4">Laptop</td>
-            </tr>
-            <tr className="bg-blue-500 border-b border-blue-300 hover:bg-blue-400">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
-              >
-                매수
-              </th>
-              <td className="px-6 py-4">Silver</td>
-              <td className="px-6 py-4">Laptop</td>
-            </tr>
-            <tr className="bg-blue-500 border-b border-blue-300 hover:bg-blue-400">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-blue-50 whitespace-nowrap dark:text-blue-100"
-              >
-                매수
-              </th>
-              <td className="px-6 py-4">Silver</td>
-              <td className="px-6 py-4">Laptop</td>
-            </tr>
-
-            <tr className="bg-red-500 border-b border-red-300 hover:bg-red-400">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-red-50 whitespace-nowrap dark:text-red-100"
-              >
-                매도
-              </th>
-              <td className="px-6 py-4">Silver</td>
-              <td className="px-6 py-4">Laptop</td>
-            </tr>
-            <tr className="bg-red-500 border-b border-red-300 hover:bg-red-400">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-red-50 whitespace-nowrap dark:text-red-100"
-              >
-                매도
-              </th>
-              <td className="px-6 py-4">Silver</td>
-              <td className="px-6 py-4">Laptop</td>
-            </tr>
-            <tr className="bg-red-500 border-b border-red-300 hover:bg-red-400">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-red-50 whitespace-nowrap dark:text-red-100"
-              >
-                매도
-              </th>
-              <td className="px-6 py-4">Silver</td>
-              <td className="px-6 py-4">Laptop</td>
-            </tr>
-            <tr className="bg-red-500 border-b border-red-300 hover:bg-red-400">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-red-50 whitespace-nowrap dark:text-red-100"
-              >
-                매도
-              </th>
-              <td className="px-6 py-4">Silver</td>
-              <td className="px-6 py-4">Laptop</td>
-            </tr>
-            <tr className="bg-red-500 border-b border-red-300 hover:bg-red-400">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-red-50 whitespace-nowrap dark:text-red-100"
-              >
-                매도
-              </th>
-              <td className="px-6 py-4">Silver</td>
-              <td className="px-6 py-4">Laptop</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <table className="row-span-11 table-fixed rounded-md overflow-y-auto block">
+        <thead className="grid grid-cols-6 items-center m-1">
+          <tr className="col-span-6 grid grid-cols-6 items-center">
+            <th className="col-span-2 text-center">유형</th>
+            <th className="col-span-2 text-center">가격(수량)</th>
+            <th className="col-span-2 text-center">이익</th>
+          </tr>
+        </thead>
+        <tbody className="overflow-y-auto block" style={{ height: "calc(40vh)"}}>
+          {
+            tradeList[selectedIndex]?.singleLogTradeDtoList?.map((item :any, index :number) => (
+              <tr key={index} className="row-span-1 grid grid-cols-6 text-center bg-white rounded-lg m-1">
+                <td className="col-span-2">{item.tradeType}</td>
+                <td className="col-span-2">{item.price}{(item.amount)}</td>                      
+                <td className="col-span-2">{item.profit}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
     </div>
   );
 }
