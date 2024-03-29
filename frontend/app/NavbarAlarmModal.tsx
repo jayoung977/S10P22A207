@@ -13,7 +13,7 @@ export default function NavbarAlarmModal() {
   useEffect(() => {
     const EventSource = EventSourcePolyfill || NativeEventSource;
     const sse = new EventSource(
-      "https://j10a207.p.ssafy.io/api/sse/connect/alarm",
+      "https://j10a207.p.ssafy.io/sse/connect/alarm",
       {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
