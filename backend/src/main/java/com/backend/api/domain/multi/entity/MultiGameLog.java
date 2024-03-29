@@ -36,16 +36,19 @@ public class MultiGameLog extends BaseEntity {
 	private Long stockId;
 
 	@NotNull
+	private int round;
+
+	@NotNull
 	private LocalDateTime startDate;
 
 	@OneToMany(mappedBy = "multiGameLog")
 	List<MultiGamePlayer> multiGamePlayers = new ArrayList<>();
 
 	@Builder
-	public MultiGameLog(List<MultiTrade> multiTrade, Long stockId, LocalDateTime startDate,
-		List<MultiGamePlayer> multiGamePlayers) {
+	public MultiGameLog(List<MultiTrade> multiTrade, Long stockId, int round, LocalDateTime startDate, List<MultiGamePlayer> multiGamePlayers) {
 		this.multiTrade = multiTrade;
 		this.stockId = stockId;
+		this.round = round;
 		this.startDate = startDate;
 		this.multiGamePlayers = multiGamePlayers;
 	}
