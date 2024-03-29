@@ -35,7 +35,7 @@ export default function GameRoom (props: {color: string, room: MultiRoom}) {
           .catch((error)=>{
             console.error(error)
           })
-          window.location.href = `/multi/${roomNumber}/room`
+          window.location.href = `/multi/room/${roomNumber}`
         } else {
           Swal.fire({
             title: '비밀번호가 일치하지 않습니다.',

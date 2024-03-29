@@ -39,7 +39,7 @@ export default function MakeRoomModal ({ isOpen, onClose } : any) {
       const result = res.data.result
       const roomNumber = result.roomId
       console.log(roomNumber)
-      window.location.href = `/multi/${roomNumber}/room`
+      window.location.href = `/multi/room/${roomNumber}`
       onClose()
     })
     .catch((error) => {

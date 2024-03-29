@@ -3,10 +3,10 @@
 import Header from "./header";
 import GameStatus from "./gameStatus";
 import Chart from "@/app/single/play/Chart";
-import Chat from "../../../chat";
+import Chat from "../../chat";
 import TradeHistory from "./tradeHistory";
 import { useState, useEffect } from "react";
-import TradeButtons from "../../../tradeButton";
+import TradeButtons from "../../tradeButton";
 import GameMembers from "./GameMembers";
 
 export type dataType = {
@@ -18,7 +18,7 @@ export type dataType = {
   volume: number;
 };
 
-export default function MultiPlay() {
+export default function page() {
   const [data, setData] = useState<dataType[]>([]);
   useEffect(() => {
     setData([
