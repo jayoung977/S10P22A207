@@ -1,7 +1,10 @@
 package com.backend.api.global.exception;
 
+import com.backend.api.global.common.ErrorResponse;
+import com.backend.api.global.common.code.ErrorCode;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Objects;
-
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
@@ -10,12 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
-
-import com.backend.api.global.common.ErrorResponse;
-import com.backend.api.global.common.code.ErrorCode;
-
-
-import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestControllerAdvice
@@ -102,10 +99,19 @@ public class GlobalControllerAdvice {
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
+    public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
         ErrorResponse response = ErrorResponse.of()
                 .code(ErrorCode.FAILED_TO_UPLOAD_S3_FILE)
                 .message("Maximum upload size exceeded.")
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(JsonProcessingException.class)
+    public ResponseEntity<ErrorResponse> handleJsonProcessingException(JsonProcessingException e) {
+        ErrorResponse response = ErrorResponse.of()
+                .code(ErrorCode.JSON_PROCESSING_ERROR)
+                .message(e.getMessage())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

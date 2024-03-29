@@ -115,7 +115,10 @@ public enum ErrorCode {
     NO_SINGLE_GAME_LOG(404, "S304", "게임 로그가 존재하지 않습니다."),
     NO_SINGLE_LOG_STOCK_CHART(404, "S305", "해당하는 주식 차트 정보가 없습니다."),
     NO_MULTI_GAME_LOG(404, "S306", "해당하는 멀티 게임 로그가 없습니다."), 
-    NO_MULTI_GAME_LOG_STOCK(404, "S307", "멀티 게임 로그에 해당하는 주식 정보가 없습니다." );
+    NO_MULTI_GAME_LOG_STOCK(404, "S307", "멀티 게임 로그에 해당하는 주식 정보가 없습니다." ),
+
+    // JSON 파싱 에러 (CODE: 500)
+    JSON_PROCESSING_ERROR(500, "J500", "Json Processing Exception");
 
 
 

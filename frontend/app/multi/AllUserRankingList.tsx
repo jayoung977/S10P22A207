@@ -33,7 +33,7 @@ export default function AllUserRankingList() {
     ? data
     : { result: null };
 
-  console.log(data);
+  // console.log(data);
   return (
     <>
       <div

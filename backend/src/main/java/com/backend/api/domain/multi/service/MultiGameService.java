@@ -4,6 +4,7 @@ import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.member.repository.MultiGamePlayerRepository;
 import com.backend.api.domain.multi.dto.MultiGameResultRequestDto;
+import com.backend.api.domain.multi.dto.MultiWaitRoomInfo;
 import com.backend.api.domain.multi.dto.request.MultiGameRoomCreateRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameStartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiNextDayRequestDto;
@@ -37,6 +38,7 @@ import com.backend.api.domain.stock.repository.StockRepository;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.common.type.TradeType;
 import com.backend.api.global.exception.BaseExceptionHandler;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -45,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -79,54 +82,60 @@ public class MultiGameService {
     /*
      * 멀티게임 key :  multiGame:gameId:memberId:roundNumber
      */
+
+    // TODO : 대기방과 게임중인 방을 나눠서 보내줘야함.
     public MultiGameRoomsResponseDto getMultiGameRooms(int pageNumber) {
         Set<String> multiGameRooms = redisTemplate.keys("multiGame:*");
-        if (multiGameRooms == null) {
-            return null;
-        }
 
-        MultiGame currentGame = null;
-        // 방번호와 게임번호를 기준으로 그룹화
-        Map<String, List<Long>> roomGroups = new HashMap<>();
+        // MultiGameRoomInfo 객체를 담을 리스트
+        List<MultiGameRoomInfo> resultList = new ArrayList<>();
+        List<MultiWaitRoomInfo> waitRoomInfos = new ArrayList<>();
         for (String key : multiGameRooms) {
             String[] parts = key.split(":");
-            if (parts.length == 4) {
-                String roomId = parts[1];
-                String participantId = parts[2];
-                String roundNumber = parts[3];
-                currentGame = getGame(Long.parseLong(participantId), Long.parseLong(roomId));
-                String groupKey = roomId + ":" + roundNumber;
-                roomGroups.computeIfAbsent(groupKey, k -> new ArrayList<>()).add(Long.valueOf(participantId));
+            if (parts.length == 2 || parts.length == 4) { // 방 번호 또는 게임 정보가 있는 경우
+                Long roomId = null;
+                Integer roundNumber = null;
+                String roomTitle = null;
+                Boolean isOpen = null;
+                Integer password = null;
+
+                List<Long> participantsIds = new ArrayList<>();
+
+                // ":"로 분할된 각 요소에서 필요한 정보 추출
+                for (int i = 0; i < parts.length; i++) {
+                    if (parts[i].equals("multiGame")) continue; // 첫 번째 요소인 경우 skip
+                    if (i == 1) { // 두 번째 요소는 roomId
+                        roomId = Long.parseLong(parts[i]);
+                    } else if (i == 3) { // 네 번째 요소는 roundNumber
+                        roundNumber = Integer.parseInt(parts[i]);
+                    } else if(i == 2) { // 세 번째 요소는 participantsIds
+                        participantsIds.add(Long.parseLong(parts[i]));
+                    }
+                }
+                if(parts.length == 2){
+                    MultiWaitingRoom waitingRoom = getWaitingRoom(roomId);
+                    roomTitle = waitingRoom.getRoomTitle();
+                    isOpen = waitingRoom.getIsOpen();
+                    password = waitingRoom.getPassword();
+                    waitRoomInfos.add(new MultiWaitRoomInfo(roomId, roomTitle, participantsIds, isOpen, password));
+                } else{
+                    // MultiGameRoomInfo 객체 생성 후 리스트에 추가
+                    resultList.add(new MultiGameRoomInfo(roomId, roomTitle, roundNumber, participantsIds, isOpen, password)); // 방 이름과 비밀번호는 임의 값으로 설정
+                }
+
             }
         }
 
+        // 리스트를 정렬 (원하는 기준으로)
+        resultList.sort(Comparator.comparing(MultiGameRoomInfo::roomId)); // 방 번호를 기준으로 정렬
 
-        // MultiGameRoomsResponseDto 객체로 변환하여 리스트에 추가
-        List<MultiGameRoomInfo> resultList = new ArrayList<>();
-        for (Map.Entry<String, List<Long>> entry : roomGroups.entrySet()) {
-            String[] parts = entry.getKey().split(":");
-            if (parts.length == 2) {
-                Long roomId = Long.valueOf(parts[0]);
-                Integer roundNumber = Integer.valueOf(parts[1]);
-                List<Long> participantsIds = entry.getValue();
-                resultList.add(
-                    new MultiGameRoomInfo(roomId,
-                        currentGame.getRoomTitle(),
-                        roundNumber,
-                        participantsIds,
-                        currentGame.getIsOpen(),
-                        currentGame.getPassword()
-                    )
-                );
-            }
-        }
-        // 방 번호를 기준으로 정렬
-        resultList.sort(Comparator.comparing(MultiGameRoomInfo::roomId));
-
-        // 페이징 - 6으로 하드코딩 한 부분이 pageSize
+        // 페이징 처리
         int fromIndex = (pageNumber - 1) * 6;
         int toIndex = Math.min(fromIndex + 6, resultList.size());
-        return new MultiGameRoomsResponseDto(resultList.size(), resultList.subList(fromIndex, toIndex));
+
+        // MultiGameRoomsResponseDto 객체 생성하여 반환
+        // TODO: 대기방 먼저? 정렬 조건 마련
+        return new MultiGameRoomsResponseDto(resultList.size(), resultList.subList(fromIndex, toIndex), waitRoomInfos.subList(fromIndex, toIndex));
     }
 
     public void enterMultiGameRoom(Long memberId, String roomId) {
@@ -148,7 +157,7 @@ public class MultiGameService {
             redisTemplate.opsForValue().set("roomId", roomId);
         }
         String key = "multiGame:" + roomId; // Redis에 저장할 키
-        List<Long> participantIds = new ArrayList<>();
+        Set<Long> participantIds = new HashSet<>();
         participantIds.add(memberId);
         MultiWaitingRoom multiWaitingRoom =
             MultiWaitingRoom.builder()
@@ -158,7 +167,7 @@ public class MultiGameService {
                 .isOpen(dto.isOpen())
                 .round(0)
                 .build();
-        redisTemplate.opsForValue().set(key, multiWaitingRoom); // TODO : 이렇게 해도 되나?
+        redisTemplate.opsForValue().set(key, multiWaitingRoom);
         return new MultiGameRoomCreateResponseDto(roomId);
     }
 
@@ -240,40 +249,80 @@ public class MultiGameService {
             .build();
         gameLogId = multiGameLogRepository.save(multiGameLog).getId();
 
-        log.info("dto.playerIds.size() - {}", dto.playerIds().size());
-        for (Long playerId : dto.playerIds()) {
-            Member member = memberRepository.findById(playerId).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
-            MultiGamePlayer multiGamePlayer = MultiGamePlayer.builder()
-                .multiGameLog(multiGameLog)
-                .member(member)
-                .finalProfit(0)
-                .finalRoi(0.0)
-                .ranking(1)
-                .build();
-            multiGamePlayerRepository.save(multiGamePlayer);
-        }
-
+        Map<Long, Integer> map = new HashMap<>();
         // 게임아이디를 줄것이 아니라, roomId를 줘야한다.
         MultiWaitingRoom multiWaitingRoom = getWaitingRoom(dto.roomId());
 
-        // 각 플레이어의 게임 정보를 Redis에 저장.
+        log.info("dto.playerIds.size() - {}", dto.playerIds().size());
         for (Long playerId : dto.playerIds()) {
-            MultiGame multiGame = MultiGame.builder()
-                .multiGameLogId(gameLogId)
-                .memberId(playerId)
-                .firstDayStockChartId(firstDayStockChartId)
-                .roomTitle(multiWaitingRoom.getRoomTitle())
-                .password(multiWaitingRoom.getPassword())
-                .isOpen(multiWaitingRoom.getIsOpen())
-                .cash(1_000_000_0L)
-                .initial(1_000_000_0L)
-                .day(1)
-                .round(1)
-                .build();
+            Member member = memberRepository.findById(playerId).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+            // 첫 게임이 아니라면 이전 게임 결과를 가져오고, 이전 게임을 삭제한다.
+            MultiGame multiGame = null;
+            MultiGame beforeMultiGame = null;
+            MultiGamePlayer multiGamePlayer = null;
+            if(dto.roundNumber() != 1) {
+                try {
+                    String jsonStr = objectMapper.writeValueAsString(redisTemplate.opsForValue().get("multiGame:" + gameId + ":" + playerId + ":" + (dto.roundNumber() - 1)));
+                    beforeMultiGame = objectMapper.readValue(jsonStr, MultiGame.class);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
 
+                multiGame = MultiGame.builder()
+                     .multiGameLogId(gameLogId)
+                     .memberId(playerId)
+                     .firstDayStockChartId(firstDayStockChartId)
+                     .roomTitle(multiWaitingRoom.getRoomTitle())
+                     .password(multiWaitingRoom.getPassword())
+                     .isOpen(multiWaitingRoom.getIsOpen())
+                     .cash(beforeMultiGame.getCash())
+                     .initial(beforeMultiGame.getCash())
+                     .rank(map.get(playerId))
+                     .day(1)
+                     .round(dto.roundNumber())
+                     .build();
+
+                multiGamePlayer = MultiGamePlayer.builder()
+                    .multiGameLog(multiGameLog)
+                    .member(member)
+                    .finalProfit(beforeMultiGame.getProfit())
+                    .finalRoi(100.0 * beforeMultiGame.getProfit() / beforeMultiGame.getInitial())
+                    .ranking(beforeMultiGame.getRank())
+                    .build();
+
+                // TODO : redis에서 delete
+                redisTemplate.delete("multiGame:" + gameId + ":" + memberId + ":" + (dto.roundNumber() - 1));
+
+            } else{
+                multiGame = MultiGame.builder()
+                    .multiGameLogId(gameLogId)
+                    .memberId(playerId)
+                    .firstDayStockChartId(firstDayStockChartId)
+                    .roomTitle(multiWaitingRoom.getRoomTitle())
+                    .password(multiWaitingRoom.getPassword())
+                    .isOpen(multiWaitingRoom.getIsOpen())
+                    .cash(1_000_000_0L)
+                    .initial(1_000_000_0L)
+                    .day(1)
+                    .round(dto.roundNumber())
+                    .build();
+
+                multiGamePlayer = MultiGamePlayer.builder()
+                    .multiGameLog(multiGameLog)
+                    .member(member)
+                    .finalProfit(0)
+                    .finalRoi(0.0)
+                    .ranking(1)
+                    .build();
+            }
+            // 각 플레이어의 게임 정보를 Redis에 저장.
             String key = "multiGame:" + gameId + ":" + playerId + ":" + dto.roundNumber(); // Redis에 저장할 키
             redisTemplate.opsForValue().set(key, multiGame);
+
+            multiGamePlayerRepository.save(multiGamePlayer);
         }
+
+
         return new MultiGameStartResponseDto(gameLogId);
     }
 
@@ -299,9 +348,10 @@ public class MultiGameService {
         currentGame.updateCash(currentGame.getCash() - (long) (dto.amount() * todayChart.getEndPrice() * 1.0015));
         currentGame.addProfit((-1) * dto.amount() * todayChart.getEndPrice() * 0.0015);
         long totalAsset = currentGame.getCash() + ((long) currentGame.getStockAmount() * todayChart.getEndPrice());
+        currentGame.addPurchaseAmount((long) dto.amount() * todayChart.getEndPrice());
         currentGame.updateTotalAsset(totalAsset);
 
-        double resultRoi = 100.0 * currentGame.getProfit() / currentGame.getTotalPurchaseAmount();
+        double resultRoi = 100.0 * currentGame.getProfit() / currentGame.getInitial();
 
         MultiTrade multiTrade = MultiTrade.builder()
             .tradeType(TradeType.CLOSE_SHORT)
@@ -331,7 +381,7 @@ public class MultiGameService {
             TradeType.SELL,
             multiTrade.getPrice(),
             multiTrade.getAmount(),
-            (int) (todayChart.getEndPrice() * dto.amount() * 0.0025),
+            (int) (todayChart.getEndPrice() * dto.amount() * 0.025),
             (long) (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()) * dto.amount(),
             currentGame.getTotalAsset(),
             currentGame.getTradeList()
@@ -357,7 +407,7 @@ public class MultiGameService {
         currentGame.updateTotalAsset(totalAsset);
 
 
-        double resultRoi = 100.0 * currentGame.getProfit() / currentGame.getTotalPurchaseAmount();
+        double resultRoi = 100.0 * currentGame.getProfit() / currentGame.getInitial();
 
         MultiTrade multiTrade = MultiTrade.builder()
             .tradeType(TradeType.SELL)
@@ -424,7 +474,7 @@ public class MultiGameService {
         currentGame.addPurchaseAmount((long) currentGame.getStockAmount() * todayChart.getEndPrice());
 
 
-        double resultRoi = 100.0 * currentGame.getProfit() / currentGame.getTotalPurchaseAmount();
+        double resultRoi = 100.0 * currentGame.getProfit() / currentGame.getInitial();
 
         MultiTrade multiTrade = MultiTrade.builder()
             .tradeType(TradeType.SHORT)
@@ -487,7 +537,7 @@ public class MultiGameService {
         currentGame.addPurchaseAmount((long) dto.amount() * todayChart.getEndPrice());
         currentGame.updateAveragePrice((dto.amount() * todayChart.getEndPrice() + currentGame.getAveragePrice() * currentGame.getStockAmount())  / (dto.amount() + currentGame.getStockAmount()));
 
-        double resultRoi = 100.0 * currentGame.getProfit() / currentGame.getTotalPurchaseAmount();
+        double resultRoi = 100.0 * currentGame.getProfit() / currentGame.getInitial();
 
         MultiTrade multiTrade = MultiTrade.builder()
             .tradeType(TradeType.BUY)
@@ -551,7 +601,9 @@ public class MultiGameService {
             // 아직 매도하지 않은 물량은 팔아준다.
             totalAssets += (long) ((currentGame.getStockAmount() - currentGame.getShortStockAmount()) * todayChart.getEndPrice() * 0.9975);
             // 강제로 판다. (주식 수량 - 공매도 수량) * (오늘 가격 - 평단가) * 0.9975 // 생각해보니 주식수량과 공매도 수량은 공존할 수 없음.
-            currentGame.addProfit((currentGame.getStockAmount()- currentGame.getShortStockAmount()) * (todayChart.getEndPrice() - currentGame.getAveragePrice()) * 0.9975);
+            currentGame.addProfit((currentGame.getStockAmount() - currentGame.getShortStockAmount()) * (todayChart.getEndPrice() - currentGame.getAveragePrice()) * 0.9975);
+            currentGame.updateCash(totalAssets);
+
             String key = "multiGame:" + dto.gameId() + ":" + memberId + ":" + dto.roundNumber(); // Redis에 저장할 키
             redisTemplate.opsForValue().set(key, currentGame);
 
@@ -567,16 +619,24 @@ public class MultiGameService {
                 stockRepository.findById(todayChart.getStock().getId()).orElseThrow(
                     () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
                 ).getStockName(),
+                1,
                 stockChartRepository.findById(currentGame.getFirstDayStockChartId()).orElseThrow(
                     () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
                 ).getDate(),
+
                 stockChartRepository.findById(currentGame.getFirstDayStockChartId() + 349).orElseThrow(
                     () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
                 ).getDate(),
                 (long) currentGame.getProfit(), roi, dto.roundNumber()
             );
 
-            //TODO : MultiGamePlayer, MultiGameLog 둘중하나(매핑되어있으니) 갱신
+            MultiGameLog multiGameLog = multiGameLogRepository.findByGameIdAndRound(dto.gameId(), dto.roundNumber())
+                .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
+            MultiGamePlayer memberGamePlayer = multiGamePlayerRepository.findByMultiGameLog_IdAndMember_Id(multiGameLog.getId(), memberId).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+
+            memberGamePlayer.updateFinalProfit(currentGame.getProfit());
+            memberGamePlayer.updateFinalRoi(100.0 * currentGame.getProfit() / currentGame.getInitial());
+
             return new MultiNextDayResponseDto(multiNextDayInfoResponseDto, multiGameResult);
         }
 
@@ -636,14 +696,82 @@ public class MultiGameService {
         return null;
     }
 
+    public List<MultiGameResultDto> getSubResult(MultiGameSubResultRequestDto dto) {
+        MultiGameLog multiGameLog = multiGameLogRepository.findByGameIdAndRound(dto.gameId(), dto.roundNumber())
+            .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
+
+        List<MultiGamePlayer> multiGamePlayers = multiGameLog.getMultiGamePlayers();
+        List<Long> memberIds = multiGamePlayers.stream()
+            .map(MultiGamePlayer::getMember)
+            .map(Member::getId)
+            .toList();
+
+        String stockName = stockRepository.findById(multiGameLog.getStockId()).orElseThrow(
+            () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
+        ).getStockName();
+        StockChart firstDayStockChart = stockChartRepository.findByStock_IdAndDate(multiGameLog.getStockId(), multiGameLog.getStartDate())
+            .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_LOG_STOCK_CHART));
+        StockChart lastDayStockChart = stockChartRepository.findById(firstDayStockChart.getId() + 349)
+            .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_LOG_STOCK_CHART));
+
+        List<MultiGameResultDto> result = new ArrayList<>();
+
+        Map<Long, Integer> map = new HashMap<>();
+        // 결과를 보여달라고 할 때 랭크를 설정해서 보여준다.
+        if(dto.roundNumber() != 1) {
+            MultiGame multiGame;
+            Long finalGameId = dto.gameId();
+            List<MultiGame> multiGames = memberIds.stream().map(playerId -> {
+                try {
+                    String jsonStr = objectMapper.writeValueAsString(redisTemplate.opsForValue().get("multiGame:" + finalGameId + ":" + playerId + ":" + (dto.roundNumber() - 1)));
+                    return objectMapper.readValue(jsonStr, MultiGame.class);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }).toList();
+
+            // Sort players by profit in descending order
+            multiGames.sort(Comparator.comparing(MultiGame::getProfit).reversed());
+            for (int i = 0; i < multiGames.size(); i++) {
+                map.put(multiGames.get(i).getMemberId(), i + 1);
+            }
+
+            // 정산할 때 rank를 바꿔준다. -> 새로 API 요청!
+            MultiGameLog beforeMultigameLog = multiGameLogRepository.findByGameIdAndRound(dto.gameId(), dto.roundNumber() - 1)
+                .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
+            List<MultiGamePlayer> beforeMultiGameLogMultiGamePlayers = beforeMultigameLog.getMultiGamePlayers();
+
+            for (MultiGamePlayer gamePlayer : beforeMultiGameLogMultiGamePlayers) {
+                gamePlayer.updateRanking(map.get(gamePlayer.getMember().getId()));
+            }
+        }
+
+        for (MultiGamePlayer multiGamePlayer : multiGamePlayers) {
+            MultiGameResultDto multiGameResultDto = new MultiGameResultDto(
+                multiGamePlayer.getMember().getId(),
+                multiGamePlayer.getMember().getNickname(),
+                stockName,
+                multiGamePlayer.getRanking(),
+                multiGameLog.getStartDate(),
+                lastDayStockChart.getDate(),
+                (long) multiGamePlayer.getFinalProfit(),
+                multiGamePlayer.getFinalRoi(),
+                dto.roundNumber());
+
+            result.add(multiGameResultDto);
+        }
+
+        return result;
+    }
+
     public MultiGameFinalResultDto getFinalResult(MultiGameResultRequestDto dto) {
 
         List<MultiGameLog> multiGameLogs = multiGameLogRepository.findByGameId(dto.gameId());
         //라운드 순으로 정렬
         List<MultiGameLog> collect = multiGameLogs.stream()
             .sorted(Comparator.comparingInt(MultiGameLog::getRound))
-            .toList(); 
-      
+            .toList();
+
         // 각 라운드 별 정보
         List<MultiGameResultDto> multiGameResult = new ArrayList<>();
 
@@ -668,6 +796,7 @@ public class MultiGameService {
                     multiGamePlayer.getMember().getId(),
                     multiGamePlayer.getMember().getNickname(),
                     stockName,
+                    1,
                     multiGameLog.getStartDate(),
                     lastDayStockChart.getDate(),
                     (long) multiGamePlayer.getFinalProfit(),
@@ -775,6 +904,7 @@ public class MultiGameService {
                         multiGamePlayer.getMember().getId(),
                         multiGamePlayer.getMember().getNickname(),
                         multiGamePlayer.getFinalRoi(),
+                        multiGamePlayer.getMember().getRankPoint(),
                         getMultiLogTradeList(multiGameLogId, multiGamePlayer.getMember().getId())
                 )
         ).toList();

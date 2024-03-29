@@ -36,12 +36,13 @@ public class MultiGame {
     // 혹시 몰라 추가함
     private Long socketId;
     private Integer round;
+    private Integer rank;
 
     @Builder
     public MultiGame(Long multiGameLogId, Long memberId, Long firstDayStockChartId, List<MultiTradeListDto> tradeList, Integer stockAmount, String roomTitle, Integer password, Boolean isOpen,
         Long cash,
         Long initial, Long totalPurchaseAmount, Integer unrealizedProfit, Integer profit, Integer day, Long totalAsset, Integer averagePrice, Integer shortAveragePrice, Integer shortStockAmount,
-        Long socketId, Integer round) {
+        Long socketId, Integer round, Integer rank) {
         this.multiGameLogId = multiGameLogId;
         this.memberId = memberId;
         this.firstDayStockChartId = firstDayStockChartId;
@@ -62,6 +63,7 @@ public class MultiGame {
         this.shortStockAmount = shortStockAmount;
         this.socketId = socketId;
         this.round = round;
+        this.rank = rank;
     }
 
     public void decreaseStockAmount(int stockAmount) {
@@ -107,5 +109,8 @@ public class MultiGame {
     public void updateShortAveragePrice(Integer price){
         this.shortAveragePrice = price;
     }
+
+    public void updateRank(Integer rank){
+        this.rank = rank;}
 
 }
