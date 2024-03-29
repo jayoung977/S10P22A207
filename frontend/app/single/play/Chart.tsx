@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import anychart from "anychart";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
+
 // 주어진 데이터 정제
 function filteringLowPriceZero(data :any) {
   const newData = data.map((item :any) => {
@@ -147,7 +148,6 @@ export default function Chart({ data }: any) {
     const purifiedData = filteringLowPriceZero(data);
     // 차트 생성
     const chart = anychart.stock();
-    // chart?.current?.container(container.current)
     // 차트를 담을 컨테이너 생성
     const container = chart.container("chart-container")
     chart.contextMenu(false);

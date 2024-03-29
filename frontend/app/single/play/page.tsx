@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
+
 const queryClient = new QueryClient();
 // navbar
 import Navbar from "@/app/Navbar";

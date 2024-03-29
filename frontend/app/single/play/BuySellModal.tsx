@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
 import axios from "axios";
 
@@ -55,13 +55,11 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                     Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
                 },
             });
-            console.log("buy response: ", response);
-
             setAssetListData(response.data.result.assetList);
             setTotalAssetData(response.data.result.totalAsset);
             setTradeListData(response.data.result.tradeList);
-
             setIsBuySellModalOpen(false);
+
         } catch (error) {
             console.log("Buy Error : ", error);
         }
@@ -82,11 +80,9 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                     Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
                 }
             });
-            console.log(response.data.result);
             setAssetListData(response.data.result.assetList);
             setTotalAssetData(response.data.result.totalAsset);
             setTradeListData(response.data.result.tradeList);
-
             setStocks(0);
             setIsBuySellModalOpen(false);
         } catch (error) {

@@ -38,10 +38,8 @@ export default function TurnInfo () {
                         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`
                     }
                 })
-            console.log("다음 턴 결과");
-            console.log(response.data.result);
+
             if (turn == 50) {
-                console.log("싱글 게임 종료 모달 OPEN")
                 const stockInfoDtoList = response.data.result.stockInfoDtoList;
                 setSingleGameEndInfoData({
                     initialAsset :stockInfoDtoList.initialAsset,
@@ -83,17 +81,13 @@ export default function TurnInfo () {
     // 키보드 입력 처리 - 매수(q), 매도(w)
     const handleBuySellTurn = (e :KeyboardEvent) => {
         if (e.key === "q") {
-            console.log("q 눌렀다.")
             handleSelectBuy();
         } else if (e.key === "w") {
-            console.log("w 눌렀다.")
             handleSelectSell();
         } else if (e.key == "e" && !isBuySellModalOpen) {
-            console.log("e 눌렀다.")
             handleClickTurn();
         }
     }
-
 
     useEffect (() => {
         window.addEventListener('keydown', handleBuySellTurn);

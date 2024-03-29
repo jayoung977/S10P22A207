@@ -1,5 +1,6 @@
-import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
 // 매매 내역 컴포넌트
+import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
+
 export default function SaleHistory ({ data } :any) {
     const { stockListData } = SingleGameStore(); 
     const idx = stockListData.findIndex((x :any) => x?.stockId == data?.stockId);
