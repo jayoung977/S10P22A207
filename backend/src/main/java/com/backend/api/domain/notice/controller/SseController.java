@@ -5,7 +5,6 @@ import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +19,7 @@ public class SseController {
     private final SseEmitters sseEmitters;
 
     @GetMapping(value = "/connect/{channelName}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public ResponseEntity<SseEmitter> connect(@PathVariable String channelName) {
+    public SseEmitter connect(@PathVariable String channelName) {
         SseEmitter emitter = new SseEmitter(30_000L);
         log.info("구독 요청 - SseController {}", channelName);
         sseEmitters.add(channelName, emitter);
@@ -37,6 +36,6 @@ public class SseController {
         } catch (IOException e) {
             log.info("처음 구독시 에러가 발생했습니다. - {}", channelName);
         }
-        return ResponseEntity.ok(emitter);
+        return emitter;
     }
 }
