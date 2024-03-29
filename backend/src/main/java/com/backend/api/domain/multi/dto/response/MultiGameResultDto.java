@@ -1,4 +1,4 @@
-package com.backend.api.domain.multi.dto;
+package com.backend.api.domain.multi.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
@@ -18,17 +18,16 @@ public record MultiGameResultDto(
     @Schema(description = "끝 날짜")
     LocalDateTime endDate,
 
-    @Schema(description = "시작 금액")
-    Long initialAsset,
-
-    @Schema(description = "종료 금액")
-    Long finalAsset,
-
     @Schema(description = "순이익")
     Long netProfit,
 
     @Schema(description = "수익률")
-    Double profitMargin
+    Double profitMargin,
+
+    @Schema(description = "라운드")
+    Integer round
+
+
 ) {
 
 }

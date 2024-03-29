@@ -27,14 +27,12 @@ public class AlarmController {
     private final RedisPubService redisPubService;
     private final NotificationService notificationService;
 
-    @Operation(summary = "로그인시 자동 채널 구독", description = "로그인 후 본인 채널과 공지채널을 구독합니다.", tags = {"알림"})
+    @Operation(summary = "로그인시 상태 보여주기", description = "로그인 후 로그인 상태를 갱신합니다.", tags = {"알림"})
     @GetMapping("/login")
     public ResponseEntity<BaseResponse<String>> initialAutoSubScribe(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        redisPubService.subscribe("alarm:toAllUser");
-        redisPubService.subscribe("alarm:member:" + userDetails.getId());
         redisPubService.setLoginStatus(userDetails.getId());
 
-        return BaseResponse.success(SuccessCode.CREATE_SUCCESS, "자동으로 채널을 구독합니다.");
+        return BaseResponse.success(SuccessCode.CREATE_SUCCESS, "로그인 상태 갱신 완료");
     }
 
 //    @PreAuthorize("hasAnyRole('ADMIN')")
