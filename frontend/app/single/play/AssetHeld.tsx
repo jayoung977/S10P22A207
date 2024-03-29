@@ -1,8 +1,8 @@
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore"
+
 export default function AssetHeld({ data } :any) {
     const { stockListData, setSelectedStockIndex } = SingleGameStore();
     const idx:number = stockListData.findIndex((x :any) => x?.stockId == data?.stockId);
-    // data.stockId를 stockListData에서 찾아서 index 확인 과정 필요
     return (
         <div
             onClick={() => {setSelectedStockIndex(idx)}} 

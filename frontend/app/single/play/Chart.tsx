@@ -1,8 +1,9 @@
 "use client";
 // 현재 턴/종목에 대한 차트 정보 (main - 1)
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import anychart from "anychart";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
+
 // 주어진 데이터 정제
 function filteringLowPriceZero(data :any) {
   const newData = data.map((item :any) => {
@@ -142,13 +143,11 @@ function calculateHist(macdData :any, signalData :any) {
 
 export default function Chart({ data }: any) {
   const { selectedStockIndex, turn } = SingleGameStore();
-
   useEffect(() => {
-    
+
     const purifiedData = filteringLowPriceZero(data);
     // 차트 생성
     const chart = anychart.stock();
-    // chart?.current?.container(container.current)
     // 차트를 담을 컨테이너 생성
     const container = chart.container("chart-container")
     chart.contextMenu(false);
