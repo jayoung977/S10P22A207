@@ -5,51 +5,24 @@ import SockJS from "sockjs-client";
 import { useParams } from "next/navigation";
 import multigameStore from "../stores/multi/MultiGameStore";
 import Swal from "sweetalert2";
+import socketStore from "../stores/websocket/socketStore";
 
 export const useWebSocket = () => {
-  const params = useParams<{ room_id: string }>();
   const client = useRef<CompatClient>({} as CompatClient);
-  const room_id: string = params.room_id;
-  const { sendMessage, setSendMessage, receiveMessage, setReceiveMessage } =
-    multigameStore();
+  const { setClientObject, clientObject } = socketStore();
 
   useEffect(() => {
     client.current = Stomp.over(() => {
       const sock = new SockJS("https://j10a207.p.ssafy.io/ws");
       return sock;
     });
-
-    client.current.connect({}, () => {
-      // console.log("웹소켓 연결됨");
-      client.current.subscribe(`/api/sub/${room_id}`, (message) => {
-        const parsedMessage = JSON.parse(message.body);
-        const copy = [...receiveMessage];
-        copy.push(parsedMessage);
-        setReceiveMessage(copy);
-        console.log(receiveMessage);
-      });
-    });
-
+    Swal.fire("웹소켓 연결 됨");
+    setClientObject(client);
     return () => {
       if (client.current) {
         client.current.disconnect();
+        Swal.fire("웹소켓 연결 안됨");
       }
     };
-  }, [receiveMessage]);
-
-  const sendHandler = (nickname: any) => {
-    client.current.send(
-      `/api/pub/websocket/message`,
-      {},
-      JSON.stringify({
-        type: "MESSAGE",
-        roomId: room_id,
-        sender: nickname,
-        message: sendMessage,
-      })
-    );
-    setSendMessage("");
-  };
-
-  return { sendHandler };
+  }, []);
 };

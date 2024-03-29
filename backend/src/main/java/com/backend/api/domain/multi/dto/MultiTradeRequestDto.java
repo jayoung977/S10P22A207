@@ -6,12 +6,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record MultiTradeRequestDto(
     @Schema(description = "레디스에 저장된 Index")
     Long gameIdx,
-    @Schema(description = "플레이어 Id")
-    Long memberId,
+
+    @Schema(description = "라운드")
+    int roundNumber,
+
     @Schema(description = "거래요청 수량")
     Integer amount,
     @Schema(description = "시작일로부터의 일 수")
     int day
+
+
 ) {
 
 }

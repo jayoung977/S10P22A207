@@ -13,7 +13,6 @@ import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.SuccessCode;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,8 +33,8 @@ public class MultiGameController {
 
     @GetMapping("")
     @Operation(summary = "멀티게임 대기실 불러오기", description = "멀티게임 모드를 선택하면 현재 생성되어있는 방 리스트를 불러옵니다.", tags = { "멀티게임" })
-    public ResponseEntity<BaseResponse<List<MultiGameRoomsResponseDto>>> getMultiGameRooms(@RequestParam int pageNumber, @RequestParam int pageSize){
-        return BaseResponse.success(SuccessCode.SELECT_SUCCESS,multiGameService.getMultiGameRooms(pageNumber, pageSize));
+    public ResponseEntity<BaseResponse<MultiGameRoomsResponseDto>> getMultiGameRooms(@RequestParam int pageNumber){
+        return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.getMultiGameRooms(pageNumber));
     }
     @GetMapping("/{roomId}")
     @Operation(summary = "멀티게임 입장하기", description = "특정 멀티게임방 입장을 요청하면 해당 방으로 들어갑니다.", tags = { "멀티게임" })
@@ -44,7 +43,7 @@ public class MultiGameController {
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS,"보냈어용");
     }
 
-    @GetMapping("/create-room")
+    @PostMapping("/create-room")
     @Operation(summary = "멀티게임 만들기", description = "멀티게임 방을 만듭니다.", tags = { "멀티게임" })
     public ResponseEntity<BaseResponse<MultiGameRoomCreateResponseDto>> createMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails){
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS,multiGameService.createMultiGameRoom(userDetails.getId()));
@@ -52,7 +51,7 @@ public class MultiGameController {
 
     @PostMapping("/start-game")
     @Operation(summary = "멀티게임 시작하기", description = "멀티게임을 시작합니다.", tags = { "멀티게임" })
-    public ResponseEntity<BaseResponse<MultiGameStartResponseDto>> startMultiGame(@AuthenticationPrincipal CustomUserDetails userDetails, MultiGameStartRequestDto dto){
+    public ResponseEntity<BaseResponse<MultiGameStartResponseDto>> startMultiGame(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameStartRequestDto dto){
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.startMultiGame(userDetails.getId(), dto));
     }
 

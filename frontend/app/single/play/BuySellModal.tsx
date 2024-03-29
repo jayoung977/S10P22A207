@@ -6,7 +6,7 @@ import axios from "axios";
 // 매수, 매도 클릭 시 활성화되는 모달창
 export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
     const { gameIdx, stockListData, selectedStockIndex, turn, assetListData, setAssetListData, totalAssetData, setTotalAssetData, setTradeListData, isBuySellModalOpen, setIsBuySellModalOpen } = SingleGameStore();
-    const [stocks, setStocks] = useState<number>(0);
+    const [stocks, setStocks] =  useState<number>(0) 
     const [disabled, setDisabled] = useState<boolean>(false);
     const [alertMessage, setAlertMessage] = useState<string>("");
     const foundAsset = assetListData?.find((x :any) => x.stockId === stockListData[selectedStockIndex].stockId);
@@ -89,6 +89,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
             console.log("Sell Error : ", error);
         }
     } 
+
     if (!isBuySellModalOpen) return null;
     return (
       <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -148,7 +149,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                     <input 
                         type="number" 
                         id="number-input" 
-                        value={stocks} 
+                        defaultValue={isBuy ? 0 : assetListData[selectedStockIndex]?.stockAmount}
                         onChange={handleStocksChange}
                         aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="수량 입력" required 
                     />
