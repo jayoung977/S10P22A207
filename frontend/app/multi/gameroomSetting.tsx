@@ -50,7 +50,7 @@ export default function GameRoomSetting() {
   const [round, setRound] = useState(3);
 
   const handleQuickstart = () => {
-    router.push("multi/1/room");
+    router.push("multi/room/1");
   };
   
   useEffect(()=> {
