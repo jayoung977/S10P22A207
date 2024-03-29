@@ -7,6 +7,8 @@ public record SingleLogRankMemberDto(
         Long memberId,
         @Schema(description = "닉네임")
         String nickname,
+        @Schema(description = "해당 game stock id")
+        Long singleGameStockId,
         @Schema(description = "수익률")
         Double roi
 ) {
