@@ -1,9 +1,12 @@
 "use client";
-// 현재 턴/종목에 대한 차트 정보 (main - 1)
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import anychart from "anychart";
 import SingleReviewStore from "@/public/src/stores/profile/SingleReviewStore";
-// 주어진 데이터 정제
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+
+
 function filteringLowPriceZero(data :any) {
   const newData = data?.map((item :any) => {
     if (item.lowPrice == 0) {
@@ -19,7 +22,6 @@ function filteringLowPriceZero(data :any) {
   return newData;
 }
 
-// 이동평균선 데이터 생성 함수
 function calculateMovingAverage(data :any, period :any) {
     const result = [];
     for (let i = 0; i < data?.length; i++) {
@@ -29,24 +31,21 @@ function calculateMovingAverage(data :any, period :any) {
           result.push([data[i].date, parseFloat(average)]);
 
         } else {
-          // result.push([data[i].date, 0]);
         }
     }
     return result;
 }
 
 
-export default function Chart({ data }: any) {
-    const { selectedIndex, tradeList, stockInfoDtoList } = SingleReviewStore();
-    console.log(tradeList[selectedIndex].singleLogTradeDtoList);
-    console.log(stockInfoDtoList[selectedIndex])
+function Chart({ tradeList, data }: any) {
+    const { selectedIndex, stockInfoDtoList } = SingleReviewStore();
     useEffect(() => {
 
         const purifiedData = filteringLowPriceZero(data);
         // 차트 생성
         const chart = anychart.stock();
         // 차트를 담을 컨테이너 생성
-        const container = chart.container("chart-container")
+        const container = chart.container("container")
         const creditsElement = document.querySelector('.anychart-credits');
         if (creditsElement) {
         creditsElement.remove();
@@ -171,12 +170,9 @@ export default function Chart({ data }: any) {
             )
         }
         }) 
-
-    // const buyData = tradeList[selectedIndex]?.singleLogTradeDtoList?.filter((x :any) => x.tradeType == "BUY");
-    // const sellData = tradeList[selectedIndex]?.singleLogTradeDtoList?.filter((x :any) => x.tradeType =="SELL")
     
     let eventMarkerData :any = [];
-    tradeList[selectedIndex]?.singleLogTradeDtoList?.map((x :any) => {
+    tradeList?.map((x :any) => {
         if (x.tradeType == "BUY") {
             eventMarkerData.push({
                 symbol : 'B',
@@ -281,19 +277,36 @@ export default function Chart({ data }: any) {
         plot2.height("30%");
         
         chart.draw();
-        return () => {
-        chart.dispose();
 
+        return () => {
+            chart.dispose();
         };
-        
-    }, [data]);
+    }, [tradeList, data]);
 
  
   
   return (
-    <div className="row-span-12 grid grid-rows-12">
-        <div id="chart-container" className="row-span-12 flex items-center justify-center"></div>
+    <div className="row-span-11 grid grid-rows-12">
+        <div id="container" className="row-span-12 flex items-center justify-center"></div>
     </div>
 
   );
+}
+
+export default function RankingUserChartModal({ isOpen, onClose, data } :any) {
+    if (!isOpen) return null;
+    return (
+        <div 
+            className="grid grid-rows-12 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-3 mt-6 rounded-lg z-20 border border-black"
+            style={{ width: "80%", height: "90%"}}
+        >
+            <div className="row-span-1">
+                <FontAwesomeIcon icon={faCircleXmark} size="2xl" style={{ color: "#FF0000",  cursor: "pointer" }} 
+                    onClick={onClose}
+                    
+                />
+            </div>
+            <Chart tradeList={data?.tradeList} data={data?.stockChartList} />
+        </div>
+    )
 }
