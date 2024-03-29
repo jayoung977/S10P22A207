@@ -21,17 +21,17 @@ import SingleReviewStore from '@/public/src/stores/profile/SingleReviewStore';
 import axios from 'axios';
 
 export default function page() {
-  const params = useParams();
-  const gameId = params['game-id'];
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isError, setIsError] = useState<boolean>(false);
+    const params = useParams();
+    const gameId = params['game-id'];
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isError, setIsError] = useState<boolean>(false);
 
-  const { selectedIndex, setSelectedIndex,
-          rankMemberList, setRankMemberList, 
-          stockChartDataList, setStockChartDataList, 
-          stockInfoDtoList, setStockInfoDtoList, 
-          tradeList, setTradeList } = SingleReviewStore();
-    const fetchSingleGameRecord = async () => {  // 매개변수 타입 수정
+    const { selectedIndex, setSelectedIndex,
+            rankMemberList, setRankMemberList, 
+            stockChartDataList, setStockChartDataList, 
+            stockInfoDtoList, setStockInfoDtoList, 
+            tradeList, setTradeList } = SingleReviewStore();
+    const fetchSingleGameRecord = async () => {
       try {
         const response = await axios({
           method: "get",
