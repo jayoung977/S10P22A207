@@ -68,10 +68,10 @@ export default function UserRecord() {
           ></Image>
         </div>
         <div className="col-start-5 col-end-13 grid grid-rows-12">
-          <div className=" m-4 row-start-1 row-end-13 flex justify-center items-center grid grid-cols-4">
+          <div className="grid m-4 row-start-1 row-end-13 justify-center items-center  grid-cols-4">
             <div className="flex-col justify-center items-center col-span-1">
               <div className="text-center font-extrabold text-xl">
-                {result?.asset}
+                {result?.asset}원
               </div>
               <div className="text-center text-textColor-1">시드</div>
             </div>
@@ -86,7 +86,10 @@ export default function UserRecord() {
                 {result &&
                   (result.win + result.lose == 0
                     ? `0%`
-                    : `${(result.win / (result.win + result.lose)) * 100}%`)}
+                    : `${(
+                        (result.win / (result.win + result.lose)) *
+                        100
+                      ).toFixed(2)}%`)}
               </div>
               <div className="text-center text-textColor-1">승률</div>
             </div>
@@ -94,9 +97,17 @@ export default function UserRecord() {
               <div className="text-center font-extrabold text-xl text-red-500">
                 {toggleButton == "single"
                   ? result &&
-                    `${result.singleAvgRoi !== null ? result.singleAvgRoi : 0}%`
+                    `${
+                      result.singleAvgRoi !== null
+                        ? result.singleAvgRoi.toFixed(2)
+                        : 0
+                    }%`
                   : result &&
-                    `${result.multiAvgRoi !== null ? result.multiAvgRoi : 0}%`}
+                    `${
+                      result.multiAvgRoi !== null
+                        ? result.multiAvgRoi.toFixed(2)
+                        : 0
+                    }%`}
               </div>
               <div className="text-center text-textColor-1">평균 수익률</div>
             </div>

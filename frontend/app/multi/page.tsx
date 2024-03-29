@@ -29,7 +29,7 @@ interface userType {
 
 export default function Multi() {
   useFetchUserInfo();
-  
+
   // 이후 세션에서 받아올 로그인 사용자 데이터 이거 userStore에 담아놨어~~~~~~~~~~~~~~
 
   return (
