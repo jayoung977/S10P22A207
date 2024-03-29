@@ -28,12 +28,7 @@ public class SseEmitters {
              emitters.get(channelName).remove(emitter); // 연결이 끊기거나 .complete() 호출시 사용.
         });
         emitter.onTimeout(() -> {
-            // 타임아웃 발생 시 완료 처리 대신에 다시 연결을 시도.
-            try {
-                emitter.send(SseEmitter.event().name("timeout").data("Connection timed out"));
-            } catch (IOException e) {
-                // IOException 처리
-            }
+            emitter.onTimeout(emitter::complete);
         });
 
         return emitter;
