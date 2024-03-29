@@ -77,4 +77,14 @@ public class FriendController {
 		);
 	}
 
+	@Operation(summary = "친구 확인")
+	@GetMapping("/check-friend")
+	public ResponseEntity<BaseResponse<Boolean>> checkFriend(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@Valid @NotNull @RequestParam(name = "followingId") Long followingId) {
+		var result = friendService.checkFriend(userDetails.getId(), followingId);
+		return BaseResponse.success(
+			SuccessCode.DELETE_SUCCESS,
+			result
+		);
+	}
 }
