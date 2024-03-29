@@ -77,7 +77,6 @@ export default function BoardReceive() {
   const { result }: { result: ResultType[] | null } = data
     ? data
     : { result: null };
-  console.log(result);
   const handleDelete = (boardId: number): void => {
     Swal.fire({
       title: "정말로 삭제하시겠습니까?",
@@ -128,6 +127,7 @@ export default function BoardReceive() {
                       {item.communityFileList.map((photo, i) => {
                         return (
                           <img
+                            key={i}
                             className="w-full"
                             src={photo}
                             alt={`${i}번째사진`}
@@ -140,7 +140,7 @@ export default function BoardReceive() {
               </div>
               <div className="flex justify-center items-center">
                 <Image
-                  className="w-24 h-24 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500 "
+                  className="w-20 h-20 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500 "
                   src={penguin}
                   alt="Extra large avatar"
                   width={100}

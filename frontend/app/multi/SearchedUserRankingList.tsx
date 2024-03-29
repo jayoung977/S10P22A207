@@ -7,7 +7,7 @@ import axios from "axios";
 interface ResultType {
   memberId: number;
   nickname: string;
-  assets: number;
+  asset: number;
 }
 
 interface EntireUserType {
