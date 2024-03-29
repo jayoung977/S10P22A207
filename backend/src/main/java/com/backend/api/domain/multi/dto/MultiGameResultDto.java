@@ -5,6 +5,11 @@ import java.time.LocalDateTime;
 
 public record MultiGameResultDto(
 
+
+    @Schema(description = "멤버 ID")
+    Long memberId,
+    @Schema(description = "닉네임")
+    String nickName,
     @Schema(description = "종목 이름")
     String stockName,
 

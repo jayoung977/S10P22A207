@@ -19,6 +19,9 @@ public class MultiGame {
     private List<MultiTradeListDto> tradeList = new ArrayList<>();
     @Setter
     private Integer stockAmount = 0;
+    private String roomTitle;
+    private Integer password;
+    private Boolean isOpen;
     private Long cash;
     private Long initial;
     private Long totalPurchaseAmount = 0L;
@@ -35,13 +38,18 @@ public class MultiGame {
     private Integer round;
 
     @Builder
-    public MultiGame(Long multiGameLogId, Long memberId, Long firstDayStockChartId, List<MultiTradeListDto> tradeList, Integer stockAmount, Long cash, Long initial, Long totalPurchaseAmount,
-        Integer unrealizedProfit, Integer profit, Integer day, Long totalAsset, Integer averagePrice, Integer shortAveragePrice, Integer shortStockAmount, Long socketId, Integer round) {
+    public MultiGame(Long multiGameLogId, Long memberId, Long firstDayStockChartId, List<MultiTradeListDto> tradeList, Integer stockAmount, String roomTitle, Integer password, Boolean isOpen,
+        Long cash,
+        Long initial, Long totalPurchaseAmount, Integer unrealizedProfit, Integer profit, Integer day, Long totalAsset, Integer averagePrice, Integer shortAveragePrice, Integer shortStockAmount,
+        Long socketId, Integer round) {
         this.multiGameLogId = multiGameLogId;
         this.memberId = memberId;
         this.firstDayStockChartId = firstDayStockChartId;
         this.tradeList = tradeList;
         this.stockAmount = stockAmount;
+        this.roomTitle = roomTitle;
+        this.password = password;
+        this.isOpen = isOpen;
         this.cash = cash;
         this.initial = initial;
         this.totalPurchaseAmount = totalPurchaseAmount;
@@ -55,7 +63,6 @@ public class MultiGame {
         this.socketId = socketId;
         this.round = round;
     }
-
 
     public void decreaseStockAmount(int stockAmount) {
         this.stockAmount -= stockAmount;
@@ -92,4 +99,5 @@ public class MultiGame {
     public void decreaseShortStockAmount(Integer amount) {
         this.shortStockAmount -= amount;
     }
+
 }

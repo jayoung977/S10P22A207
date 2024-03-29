@@ -6,7 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record MultiNextDayRequestDto(
 
     @Schema(description = "레디스에 저장된 Index")
-    Long multiGameId,
+    Long gameIdx,
+
+    @Schema(description = "라운드")
+    Integer roundNumber,
     @Schema(description = "시작일로부터의 날짜")
     int day
 ) {
