@@ -38,6 +38,7 @@ export const useWebSocket = () => {
           if (parsedMessage.type === "INVITE") {
             setReceiveAlarm(true);
           }
+
         });
       });
       return () => {

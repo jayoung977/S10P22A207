@@ -18,6 +18,14 @@ export default function Header() {
     // })
     router.push(`${room_id}/play/1`);
   }
+  function handleExit() {
+    axios({
+      method: "delete",
+      url: `http://localhost:8080/api/multi/exit?roomId=${room_id}`,
+    }).then((res) => {
+      console.log(res.data);
+    });
+  }
   return (
     <header className="row-span-1 grid grid-cols-12 border items-center gap-2">
       <div className="col-start-2 col-end-3 flex items-center">
@@ -48,6 +56,7 @@ export default function Header() {
         </button>
         <button
           onClick={() => {
+            handleExit();
             router.back();
           }}
           className="border p-2 rounded-md border-red-500 hover:bg-red-100 hover:border-2"
