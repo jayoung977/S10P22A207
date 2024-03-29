@@ -8,9 +8,13 @@ public record MultiGameStartRequestDto(
     List<Long> playerIds,
 
     @Schema(description = "라운드")
-    Integer roundNumber
-    )
+    Integer roundNumber,
 
+    @Schema(description = "방ID")
+    Long roomId
+
+)
 
 {
+
 }
