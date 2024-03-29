@@ -61,7 +61,7 @@ public class SseEmitters {
 
     public void noti(String channelName, String eventName, String data) {
 
-
+        log.info("emitter({}) size : {}", channelName, emitters.get(channelName).size());
         emitters.get(channelName).forEach(emitter -> {
             try {
                 log.info("메시지 noti at SseEmitters -> channelName: {}, eventName: {}, roomId : {}", channelName, eventName, data);

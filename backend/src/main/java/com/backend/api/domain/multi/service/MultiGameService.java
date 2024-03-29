@@ -215,7 +215,7 @@ public class MultiGameService {
         MultiGame currentGame = this.getGame(memberId, dto.gameIdx());
 
         // 차트에서 오늘의 종가를 가져온다.
-        StockChart todayChart = stockChartRepository.findById(currentGame.getFirstDayStockChartId()+ 300 + dto.day()).orElseThrow(
+        StockChart todayChart = stockChartRepository.findById(currentGame.getFirstDayStockChartId()+ 299 + dto.day()).orElseThrow(
             () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
         );
 
