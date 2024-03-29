@@ -108,7 +108,9 @@ export default function TurnInfo () {
             </div>
             <div className="row-span-1 grid grid-cols-3 items-center justify-center">
                 <button 
-                    onClick={handleSelectBuy}
+                    onClick={
+                        handleSelectBuy
+                    }
                     className="col-span-1 rounded-md scale-95 text-small-3 bg-textColor-2 border border-small-3 m-2 hover:text-textColor-2 hover:bg-small-3 hover:scale-105 shadow-md shadow-small-3 ease-in-out duration-500"
                 >   
                     매수(Q)

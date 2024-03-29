@@ -151,7 +151,6 @@ export default function Chart({ data }: any) {
     const purifiedData = filteringLowPriceZero(data);
     // 차트 생성
     const chart = anychart.stock();
-    // chart.getCredits().setEnabled(false);
     // 차트를 담을 컨테이너 생성
     const container = chart.container("chart-container")
     const creditsElement = document.querySelector('.anychart-credits');

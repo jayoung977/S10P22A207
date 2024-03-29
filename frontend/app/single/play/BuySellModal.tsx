@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
 import axios from "axios";
 

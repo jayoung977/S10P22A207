@@ -13,14 +13,14 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/sse")
+@RequestMapping("/sse")
 @RequiredArgsConstructor
 public class SseController {
     private final SseEmitters sseEmitters;
 
     @GetMapping(value = "/connect/{channelName}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter connect(@PathVariable String channelName) {
-        SseEmitter emitter = new SseEmitter(30_000L);
+        SseEmitter emitter = new SseEmitter(3_000_000L);
         log.info("구독 요청 - SseController {}", channelName);
         sseEmitters.add(channelName, emitter);
         try {
