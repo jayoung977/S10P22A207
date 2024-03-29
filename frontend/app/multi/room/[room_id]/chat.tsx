@@ -1,17 +1,52 @@
+"use client";
 // Chat.tsx
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 import userStore from "@/public/src/stores/user/userStore";
 import { useRef, useEffect } from "react";
-import { useWebSocket } from "@/public/src/hooks/useWebSocket";
+import { useParams, useRouter } from "next/navigation";
+
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
+import socketStore from "@/public/src/stores/websocket/socketStore";
+import Swal from "sweetalert2";
+
 export default function Chat() {
   useFetchUserInfo();
+  const params = useParams<{ room_id: string }>();
   const { nickname } = userStore();
-  const { sendMessage, setSendMessage, receiveMessage } = multigameStore();
-  const { sendHandler } = useWebSocket();
-
+  const { sendMessage, setSendMessage, receiveMessage, setReceiveMessage } =
+    multigameStore();
+  const room_id: string = params.room_id;
+  multigameStore();
+  const { clientObject } = socketStore();
   const messageHandler = (message: string) => {
     setSendMessage(message);
+  };
+
+  if (!clientObject.current) {
+    clientObject.current.connect({}, () => {
+      Swal.fire("축하합니다");
+      clientObject.current.subscribe(`/api/sub/${room_id}`, (message: any) => {
+        const parsedMessage = JSON.parse(message.body);
+        const copy = [...receiveMessage];
+        copy.push(parsedMessage);
+        setReceiveMessage(copy);
+        console.log(receiveMessage);
+      });
+    });
+  }
+
+  const sendHandler = (nickname: any) => {
+    clientObject.current.send(
+      `/api/pub/websocket/message`,
+      {},
+      JSON.stringify({
+        type: "MESSAGE",
+        roomId: room_id,
+        sender: nickname,
+        message: sendMessage,
+      })
+    );
+    setSendMessage("");
   };
 
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
