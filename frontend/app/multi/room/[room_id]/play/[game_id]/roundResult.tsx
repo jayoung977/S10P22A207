@@ -2,7 +2,7 @@
 import RoundChart from './roundChart'
 import RoundUser from './roundUser'
 import { useEffect, useState } from 'react'
-import type { dataType } from './MultiPlay'
+import type { dataType } from './page'
 import Penguin from '@/public/src/assets/images/profile-person-image.png'
 import Image from 'next/image'
 

@@ -22,9 +22,16 @@ export default function NavbarAlarmModal() {
       }
     );
     sse.addEventListener(`${memberId}:INVITATION`, (event: any) => {
-      const data = JSON.parse(event.data);
-      console.log(event);
-      console.log(data);
+      // const data = JSON.parse(event.data);
+      // console.log(event);
+      // console.log(data);
+      console.log("Invitation Accept!")
+      console.log(event.data);
+    });
+
+    sse.addEventListener(`connect`, (event: any) => {
+      console.log("data Connect!")
+      console.log(event.data);
     });
 
     sse.onerror = (error) => {

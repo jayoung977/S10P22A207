@@ -1,6 +1,6 @@
 "use client";
-import ChartImage from "../chartImage";
-import Chat from "../chat";
+import ChartImage from "./chartImage";
+import Chat from "./chat";
 import GameUser from "./gameUser";
 import RoomInfo from "./roomInfo";
 import FriendSearch from "./friendSearch";
@@ -11,29 +11,27 @@ import { QueryClient, QueryClientProvider } from "react-query";
 
 const queryClient = new QueryClient();
 
-
-export default function MultiWait() {
+export default function page() {
   return (
     <QueryClientProvider client={queryClient}>
-
       <div className="grid grid-rows-12 h-screen border-separate">
-        <Header/>
+        <Header />
         <div className="row-start-2 row-end-13 grid grid-cols-12 border">
           <aside className="col-span-3 grid grid-rows-6 text-center">
-            <RoomInfo/>
-            <FriendSearch/>
-            <GameRule/>
+            <RoomInfo />
+            <FriendSearch />
+            <GameRule />
           </aside>
           <main className="col-span-6 grid grid-rows-8">
             <div className="row-span-5">
-              <ChartImage/>
+              <ChartImage />
             </div>
             <div className="border grid grid-cols-12 row-span-4">
-              <Chat/>
-              <div className='col-span-2 text-white text-center'></div>
+              <Chat />
+              <div className="col-span-2 text-white text-center"></div>
             </div>
           </main>
-          <GameMembers/>
+          <GameMembers />
         </div>
       </div>
     </QueryClientProvider>

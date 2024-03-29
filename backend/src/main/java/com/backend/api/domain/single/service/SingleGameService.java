@@ -167,7 +167,7 @@ public class SingleGameService {
 
             for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
                 AssetListDto dto = new AssetListDto(
-                    stockChartRepository.findById(currentGame.getFirstDayChartList().get(i)+300 + currentGame.getDay()).orElseThrow(
+                    stockChartRepository.findById(currentGame.getFirstDayChartList().get(i)+ 299 + currentGame.getDay()).orElseThrow(
                         () -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR)
                     ).getStock().getId(),
                     currentGame.getStockAmount()[i],
@@ -177,8 +177,8 @@ public class SingleGameService {
                 );
                 assetList.add(dto);
 
-                StockChart todayChart = stockChartRepository.findById(currentGame.getFirstDayChartList().get(i) + 300 +  currentGame.getDay()).orElseThrow();
-                StockChart yesterdayChart = stockChartRepository.findById(currentGame.getFirstDayChartList().get(i)+ 300 + currentGame.getDay() - 1).orElseThrow();
+                StockChart todayChart = stockChartRepository.findById(currentGame.getFirstDayChartList().get(i) + 299 +  currentGame.getDay()).orElseThrow();
+                StockChart yesterdayChart = stockChartRepository.findById(currentGame.getFirstDayChartList().get(i)+ 299 + currentGame.getDay() - 1).orElseThrow();
 
                 Long startDateChartStockId = todayChart.getStock().getId();
                 // 종목별 정보 담아주기
@@ -331,8 +331,8 @@ public class SingleGameService {
         }
         List<NextDayInfoResponseDto> stockSummaries = new ArrayList<>();
         for (Long firstDayStockChartId : singleGame.getFirstDayChartList()) {
-            StockChart todayChart = stockChartRepository.findById(firstDayStockChartId+300).orElseThrow();
-            StockChart yesterdayChart = stockChartRepository.findById(firstDayStockChartId +299).orElseThrow();
+            StockChart todayChart = stockChartRepository.findById(firstDayStockChartId + 300).orElseThrow();
+            StockChart yesterdayChart = stockChartRepository.findById(firstDayStockChartId + 299).orElseThrow();
 
             stockSummaries.add(
                 new NextDayInfoResponseDto(
@@ -359,7 +359,7 @@ public class SingleGameService {
         // 차트에서 오늘 날짜의 종가를 가져온다.
         StockChart firstDayChart = stockChartRepository.findById(currentGame.getFirstDayChartList().get(stockIdx))
             .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
-        StockChart todayChart = stockChartRepository.findById(firstDayChart.getId() + 300 + dto.day()).orElseThrow(
+        StockChart todayChart = stockChartRepository.findById(firstDayChart.getId() + 299 + dto.day()).orElseThrow(
             () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
         );
 
@@ -370,14 +370,14 @@ public class SingleGameService {
 
         // roi 계산
         long totalAsset = currentGame.getCash();
-        for (Long stockId : currentGame.getStocks().keySet()) {
-            StockChart todayStockChart = stockChartRepository.findById(stockId + 300 + dto.day()).orElseThrow(
+        for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
+            long firstDayChartId = currentGame.getFirstDayChartList().get(i);
+            StockChart todayStockChart = stockChartRepository.findById(firstDayChartId + 299 + dto.day()).orElseThrow(
                 () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
             );
+            int amount = currentGame.getStockAmount()[i]; // 해당 Stock의 보유량 가져오기
 
-            int amount = currentGame.getStockAmount()[currentGame.getStocks().get(stockId)]; // 해당 Stock의 보유량 가져오기
-
-            totalAsset += (long) amount * todayStockChart.getEndPrice(); // 총 자산 계산
+            totalAsset += (long) (amount * todayStockChart.getEndPrice() * 0.975); // 총 자산 계산
         }
 
         // 팔았으니 currentGame 바꿔주기
@@ -406,7 +406,7 @@ public class SingleGameService {
                 dto.day(),
                 singleTrade.getTradeType(),
                 singleTrade.getAmount(),
-                singleTrade.getAmount(),
+                singleTrade.getPrice(),
                 singleTrade.getProfit())
         );
 
@@ -453,8 +453,7 @@ public class SingleGameService {
             todayChart.getEndPrice(),
             dto.amount(),
             (int) (todayChart.getEndPrice() * dto.amount() * 0.025),
-            (long) (todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]) * dto.amount() - (int) (
-                todayChart.getEndPrice() * dto.amount() * 0.025),
+            (long) (0.975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]) * dto.amount(),
             totalAssetDto,
             assetList,
             currentGame.getTradeList()
@@ -472,7 +471,7 @@ public class SingleGameService {
         // 차트에서 첫 날짜, 오늘 날짜의 종가를 가져온다.
         StockChart firstDayChart = stockChartRepository.findById(currentGame.getFirstDayChartList().get(stockIdx))
             .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
-        StockChart todayChart = stockChartRepository.findById(firstDayChart.getId() + 300 + dto.day()).orElseThrow(
+        StockChart todayChart = stockChartRepository.findById(firstDayChart.getId() + 299 + dto.day()).orElseThrow(
             () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
         );
 
@@ -494,13 +493,13 @@ public class SingleGameService {
         // 총 roi 계산
         long totalAsset = currentGame.getCash();
         for (Long stockId : currentGame.getStocks().keySet()) {
-            StockChart todayStockCharts = stockChartRepository.findById(stockId + 300 + dto.day()).orElseThrow(
+            StockChart todayStockCharts = stockChartRepository.findById(stockId + 299 + dto.day()).orElseThrow(
                 () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
             );
 
             int amount = currentGame.getStockAmount()[currentGame.getStocks().get(stockId)]; // 해당 Stock의 보유량 가져오기
 
-            totalAsset += (long) amount * todayStockCharts.getEndPrice(); // 총 자산 계산
+            totalAsset += (long) (amount * todayStockCharts.getEndPrice() * 0.975); // 총 자산 계산
         }
         // 총 구입 금액 계산
         currentGame.addTotalPurchaseAmount((long) dto.amount() * todayChart.getEndPrice());
@@ -589,15 +588,15 @@ public class SingleGameService {
         List<AssetListDto> assetList = new ArrayList<>();
 
         for (Long firstDayStockChartId : currentGame.getFirstDayChartList()) {
-            StockChart todayChart = stockChartRepository.findById(firstDayStockChartId + 300 + dto.day()).orElseThrow();
-            StockChart yesterdayChart = stockChartRepository.findById(firstDayStockChartId + 300 + dto.day() - 1).orElseThrow();
+            StockChart todayChart = stockChartRepository.findById(firstDayStockChartId + 299 + dto.day()).orElseThrow();
+            StockChart yesterdayChart = stockChartRepository.findById(firstDayStockChartId + 299 + dto.day() - 1).orElseThrow();
 
             Long startDateChartStockId = todayChart.getStock().getId();
             // 종목별 정보 담아주기
             Integer stockIdx = currentGame.getStocks().get(startDateChartStockId);
             int amount = currentGame.getStockAmount()[stockIdx];
             // 총 자산 가치
-            totalAsset += (long) amount * todayChart.getEndPrice();
+            totalAsset += (long) (amount * todayChart.getEndPrice() * 0.975);
 
             stockSummaries.add(
                 new NextDayInfoResponseDto(
@@ -616,7 +615,7 @@ public class SingleGameService {
             currentGame.addProfit(stockIdx, currentGame.getStockAmount()[stockIdx] * (todayChart.getEndPrice() - yesterdayChart.getEndPrice()));
             // 보유 자산변동 보여주기
             AssetListDto assetListDto = new AssetListDto(
-                stockChartRepository.findById(firstDayStockChartId + 300 + currentGame.getDay()).orElseThrow(
+                stockChartRepository.findById(firstDayStockChartId + 299 + currentGame.getDay()).orElseThrow(
                     () -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR)
                 ).getStock().getId(),
                 currentGame.getStockAmount()[stockIdx],
