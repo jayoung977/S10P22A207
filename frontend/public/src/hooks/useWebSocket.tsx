@@ -11,7 +11,9 @@ export const useWebSocket = () => {
   const { setClientObject, clientObject } = socketStore();
   const { memberId } = userStore();
   const [receiveMessage, setReceiveMessage] = useState<any>([]);
-  const { receiveMessage2, setReceiveMessage2 } = socketStore();
+  const [receiveInvitation, setReceiveInvitation] = useState<any>([]);
+  const { receiveMessages, setReceiveMessages } = socketStore();
+  const { receiveAlarm, setReceiveAlarm } = socketStore();
   useEffect(() => {
     if (memberId) {
       client.current = Stomp.over(() => {
@@ -25,12 +27,16 @@ export const useWebSocket = () => {
         console.log("소켓 연결했으니까 알고있어라");
         client.current.subscribe(`/api/sub/${memberId}`, (message: any) => {
           const parsedMessage = JSON.parse(message.body);
+          console.log(parsedMessage);
           if (parsedMessage.type === "MESSAGE") {
             setReceiveMessage((prevReceiveMessage: any) => {
               const copy = [...prevReceiveMessage, parsedMessage];
-              setReceiveMessage2(copy);
+              setReceiveMessages(copy);
               return copy;
             });
+          }
+          if (parsedMessage.type === "INVITE") {
+            setReceiveAlarm(true);
           }
         });
       });

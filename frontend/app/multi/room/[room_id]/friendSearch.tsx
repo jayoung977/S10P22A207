@@ -86,7 +86,9 @@ export default function FriendSearch() {
           return (
             <div
               key={i}
-              className="grid grid-cols-12 items-center bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+              className={`${
+                friend.isLogin == false && `hidden`
+              } grid grid-cols-12 items-center bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
             >
               <div className="col-span-2 items-center text-gray-900 whitespace-nowrap dark:text-white">
                 <Image
