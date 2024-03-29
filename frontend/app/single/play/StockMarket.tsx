@@ -3,7 +3,7 @@ import SingleGameStore from "@/public/src/stores/single/SingleGameStore"
 export default function StockMarket() {
     const { turn, stockMarketListData } = SingleGameStore();
     return (
-        <div className="row-start-12 row-end-13 grid grid-cols-2 text-center">
+        <div className="row-span-13 grid grid-cols-2 text-center">
             <div className="col-span-1 grid grid-cols-5 items-center">
                 <div className="col-span-1">국내 증시</div>
                 <div className="col-span-2">코스피 : </div>

@@ -1,8 +1,8 @@
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore"
+
 export default function AssetHeld({ data } :any) {
     const { stockListData, setSelectedStockIndex } = SingleGameStore();
-    const idx:number = stockListData.findIndex((x :any) => x?.stockId == data.stockId);
-    // data.stockId를 stockListData에서 찾아서 index 확인 과정 필요
+    const idx:number = stockListData.findIndex((x :any) => x?.stockId == data?.stockId);
     return (
         <div
             onClick={() => {setSelectedStockIndex(idx)}} 
@@ -12,15 +12,15 @@ export default function AssetHeld({ data } :any) {
             <div className="row-span-2 grid grid-rows-2">
                 <div className="row-span-1 grid grid-cols-4 justify-center">
                     <div className="col-span-1 m-auto text-textColor-2">평가 손익</div>
-                    <div className="col-span-1 m-auto ">{data.unrealizedProfit}</div>
+                    <div className="col-span-1 m-auto ">{data?.unrealizedProfit}</div>
                     <div className="col-span-1 m-auto text-textColor-2">매도 가능</div>
-                    <div className="col-span-1 m-auto text-textColor-1">{data.stockAmount}</div>
+                    <div className="col-span-1 m-auto text-textColor-1">{data?.stockAmount}</div>
                 </div>
                 <div className="row-span-1 grid grid-cols-4">
                     <div className="col-span-1 m-auto text-textColor-2">손익률</div>
-                    <div className="col-span-1 m-auto text-textColor-1">{data.profitMargin.toFixed()} %</div>
+                    <div className="col-span-1 m-auto text-textColor-1">{data?.profitMargin.toFixed(2)} %</div>
                     <div className="col-span-1 m-auto text-textColor-2">평균 단가</div>
-                    <div className="col-span-1 m-auto text-textColor-1">{data.averagePurchasePrice}</div>
+                    <div className="col-span-1 m-auto text-textColor-1">{data?.averagePurchasePrice}</div>
                 </div>
             </div>
         </div>

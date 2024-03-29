@@ -9,14 +9,18 @@ type Store = {
   setReceiveMessage: (value: any) => void;
   sendMessage: string;
   setSendMessage: (value: string) => void;
-  lobbyModal: string;
-  setLobbyModal: (value: string) => void;
+  lobbyModal: boolean;
+  setLobbyModal: (value: boolean) => void;
+  userId: number;
+  setUserId: (value: number) => void;
+  pageNumber: number;
+  setPageNumber: (value: number) => void;
 };
 
 export interface MultiRoom {
-  title: string;
-  isopened: boolean;
-  members: number;
+  roomNumber: number;
+  roundNumber: number;
+  participantsIds: number[];
 }
 
 export interface MultiRoomInfo {
@@ -32,8 +36,12 @@ const multigameStore = create<Store>((set: any) => ({
   setReceiveMessage: (value) => set({ receiveMessage: value }),
   sendMessage: "",
   setSendMessage: (value) => set({ sendMessage: value }),
-  lobbyModal: "true",
+  lobbyModal: false,
   setLobbyModal: (value) => set({ lobbyModal: value }),
+  userId: 0,
+  setUserId: (value) => set({ userId: value}),
+  pageNumber: 1,
+  setPageNumber: (value) => set({pageNumber: value}),
 }));
 
 export default multigameStore;

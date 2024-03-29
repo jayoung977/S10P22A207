@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 export default function MakeRoomModal ({ isOpen, onClose } : any) {
   const [title, setTitle] = useState<string>("");  
@@ -8,8 +9,19 @@ export default function MakeRoomModal ({ isOpen, onClose } : any) {
   const [isRevealed, setIsRevealed] = useState<boolean>(true);
   const [password, setPassword] = useState<string>("");
 
+
   const router = useRouter();
   if (!isOpen) return null;
+
+  function handlePasswordChange (e: React.ChangeEvent<HTMLInputElement>) {
+     // 숫자만 허용하는 정규식 패턴
+    const pattern = /^[0-9]*$/;
+    
+    // 입력값이 숫자인지 확인
+    if (pattern.test(e.target.value)) {
+      setPassword(e.target.value);
+    }
+  }
 
   function handleRevealed () {
     setIsRevealed(false);
@@ -17,13 +29,25 @@ export default function MakeRoomModal ({ isOpen, onClose } : any) {
   }
 
   function handleClick () {
-    console.log(title);
-    console.log(round);
-    console.log(isRevealed);
-    console.log(password);
+    const token = sessionStorage.getItem('accessToken')
+    axios.get('https://j10a207.p.ssafy.io/api/multi/create-room',{
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then((res)=> {
+      const result = res.data.result
+      const roomNumber = result.roomId
+      console.log(roomNumber)
+      window.location.href = `/multi/room/${roomNumber}`
+      onClose()
+    })
+    .catch((error) => {
+      console.error(error)
+    })
   }
   return (
-      <div id="gameroom-modal" tabIndex={-1} aria-hidden="true" className="fixed -translate-x-1/4 -translate-y-1/2 inset-0 left-1/2 top-1/2 justify-center items-center">
+      <div id="gameroom-modal" tabIndex={-1} aria-hidden="true" className="z-40 fixed -translate-x-1/4 -translate-y-1/2 inset-0 left-1/2 top-1/2 justify-center items-center">
         <div className="relative p-4 w-[500px] max-h-full">
             {/* <!-- Modal content --> */}
             <div className="relative bg-white rounded-lg border shadow dark:bg-gray-700">
@@ -72,7 +96,7 @@ export default function MakeRoomModal ({ isOpen, onClose } : any) {
                             <label  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">비밀번호</label>
                         </div>
                         <div className='col-span-6'>
-                            <input type="password" id="password" value={password} placeholder="••••••••" disabled={isRevealed==false} onChange={(e) => setPassword(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"  />
+                          <input type="password" id="password" value={password} placeholder="••••••••" disabled={isRevealed==true} onChange={handlePasswordChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"  />
                         </div>
                       </div>
                       <div className='grid grid-cols-2 gap-x-4'>
@@ -80,8 +104,6 @@ export default function MakeRoomModal ({ isOpen, onClose } : any) {
                           <button 
                             onClick={()=> {
                               handleClick()
-                              onClose
-                              router.push('/multi/1/room')
                             }} className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">방만들기</button>
                         </div>
                         <div className='col-span-1'>

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
+
 const queryClient = new QueryClient();
 // navbar
 import Navbar from "@/app/Navbar";
@@ -17,6 +18,8 @@ import TurnInfo from "./TurnInfo";
 import StockList from "./StockList";
 import MarketAndTrends from "./MarketAndTrends";
 import InGameBgm from "@/public/src/components/bgm/InGameBgm";
+
+import userStore from "@/public/src/stores/user/userStore";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
 
 import axios from "axios";
@@ -28,30 +31,59 @@ export default function SinglePlay() {
 
 
   const { 
-    turn, setTurn, setGameIdx, setSingleGameChance,
+    turn, setTurn, gameIdx, setGameIdx, setSingleGameChance,
     setTotalAssetData, setAssetListData, setTradeListData,
     stockListData, setStockListData, setStockMarketListData, 
-    setTrendListData, setMarketInfoListData,
-    selectedStockIndex
+    setTrendListData, setMarketInfoListData, setTodayStockInfoListData,
+    selectedStockIndex, setSelectedStockIndex, isBuySellModalOpen, setIsBuySellModalOpen, isBuy, setIsBuy,
+    singleGameEndInfoData, setSingleGameEndInfoData,
+    isOpenEndModal, setIsOpenEndModal
   } = SingleGameStore();
 
-  const fetchSingleGameData = async () => {
-    await axios({
-      method: "get",
-      url: "https://j10a207.p.ssafy.io/api/single",
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-      }
-    }).then((response) => {
-        console.log("useEffect axios 요청 데이터 결과")
-        console.log(response.data.result);
+  const { asset } = userStore();
 
-        setTurn(response.data.result.day);
+  const handleSelectStockIndex = (e :KeyboardEvent) => {
+    const key = e.key;
+    if ("1" <= key && key <= "9" && !isBuySellModalOpen) {
+      setSelectedStockIndex(parseInt(key) - 1);
+      
+    }
+  }
+
+  const fetchSingleGameData = async () => {
+    try {
+      const response = await axios({
+        method : "get",
+        url : "https://j10a207.p.ssafy.io/api/single",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        }
+      })
+
+      console.log("useEffect axios 요청 데이터 결과")
+      console.log(response.data.result);    
+      setTurn(response.data.result.day);
         setGameIdx(response.data.result.gameIdx);      
         setSingleGameChance(response.data.result.singleGameChance);
 
         // 사용자 총 평가 자산 데이터
-        setTotalAssetData(response.data.result.totalAsset);
+        if (response.data.result.totalAsset) {
+            setTotalAssetData({
+              cash : response.data.result.totalAsset.cash,
+              resultProfit : response.data.result.totalAsset.resultProfit,
+              resultRoi : response.data.result.totalAsset.resultRoi,
+              totalPurchaseAmount : response.data.result.totalAsset.totalPurchaseAmount,
+              totalAsset : response.data.result.totalAsset.cash + response.data.result.totalAsset.totalPurchaseAmount,
+            })
+        } else {
+          setTotalAssetData({
+            cash : asset as number,
+            resultProfit : 0,
+            resultRoi : 0, 
+            totalPurchaseAmount : 0, 
+            totalAsset :  asset as number,
+          })
+        }
         // 사용자 보유 종목 주식 데이터
         if (response.data.result.assetList != null) {
           setAssetListData(response.data.result.assetList);
@@ -68,18 +100,25 @@ export default function SinglePlay() {
         // 트렌드, 시장 데이터
         setTrendListData(response.data.result.trendList);
         setMarketInfoListData(response.data.result.marketInfo);
+        setTodayStockInfoListData(response.data.result.nextDayInfos);
 
         setIsLoading(false)
-    }).catch((error) => {
+
+    } catch (error) {
       console.log(error)
       setIsError(true);
-    });
-  };
+    }
+  }
 
   useEffect(() => {
-    fetchSingleGameData()
+    fetchSingleGameData();
+    window.addEventListener('keydown', handleSelectStockIndex);
+    return () => {
+      window.removeEventListener('keydown', handleSelectStockIndex);
+    }
   }, []);
 
+  
   if (isLoading) {
     return <div className="rainbow"></div>;
   }
@@ -104,11 +143,11 @@ export default function SinglePlay() {
           {/* main */}
           <main className="col-span-7 grid grid-rows-12">
             <Chart data={stockListData[selectedStockIndex]?.stockChartList.slice(0, 300+turn)}/>
-            <StockMarket />
+            {/* <StockMarket /> */}
           </main>
           {/* right aside */}
           <aside className="col-span-2 grid grid-rows-6">
-            <TurnInfo />
+            <TurnInfo/>
             <StockList />
             <MarketAndTrends />
           </aside>

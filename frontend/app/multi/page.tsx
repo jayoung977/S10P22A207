@@ -1,6 +1,5 @@
 "use client";
 
-
 import Navbar from "../Navbar";
 import Profile from "./profile";
 import Ranking from "./Ranking";
@@ -10,7 +9,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 import { Boxes } from "../../public/src/components/ui/background-boxes";
 import { cn } from "../../public/src/utils/cn";
-
+import userStore from "@/public/src/stores/user/userStore";
+import axios from "axios";
 const queryClient = new QueryClient();
 
 interface userType {
@@ -29,24 +29,7 @@ interface userType {
 
 export default function Multi() {
   useFetchUserInfo();
-  const rooms: string[] = [
-    "게임방",
-    "게임방",
-    "게임방",
-    "게임방",
-    "게임방",
-    "게임방",
-  ];
-  type ColorClass = { [key: number]: string };
-  const RoomColor: ColorClass = {
-    0: "bg-small-1",
-    1: "bg-small-10",
-    2: "bg-small-4",
-    3: "bg-small-3",
-    4: "bg-small-6",
-    5: "bg-small-8",
-  };
-
+  
   // 이후 세션에서 받아올 로그인 사용자 데이터 이거 userStore에 담아놨어~~~~~~~~~~~~~~
 
   return (

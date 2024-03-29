@@ -1,18 +1,19 @@
 "use client";
 import { useRouter } from "next/navigation";
 import MakeRoomModal from "./makeRoomModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GameRoom from "./gameroom";
 import Pagination from "./pagination";
 import { useQuery, UseQueryResult } from "react-query";
-import {
+import multigameStore, {
   MultiRoomInfo,
   MultiRoom,
 } from "@/public/src/stores/multi/MultiGameStore";
 
-const fetchMultiRoomInfo = async () => {
+
+const fetchMultiRoomInfo = async (pageNumber: number) => {
   const token = sessionStorage.getItem("accessToken");
-  const response = await fetch("https://j10a207.p.ssafy.io/api/multi", {
+  const response = await fetch(`https://j10a207.p.ssafy.io/api/multi?pageNumber=${pageNumber}&pageSize=6`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -21,9 +22,11 @@ const fetchMultiRoomInfo = async () => {
 };
 
 export default function GameRoomSetting() {
+  const [rooms, setRooms] = useState<MultiRoom[]>([]);
+  const { pageNumber } = multigameStore();
   const { data, isLoading, error }: UseQueryResult<MultiRoomInfo, Error> =
-    useQuery("MultiRoomInfo", fetchMultiRoomInfo);
-  const rooms: number[] = [1, 2, 3, 4, 5, 6];
+  // pageNumber를 의존성 변수로 추가하면 pageNumber에 따라 react-query 실행
+    useQuery(['MultiRoomInfo', pageNumber], () => fetchMultiRoomInfo(pageNumber));
   type ColorClass = { [key: number]: string };
   const RoomColor: ColorClass = {
     0: "bg-small-1",
@@ -32,6 +35,13 @@ export default function GameRoomSetting() {
     3: "bg-small-3",
     4: "bg-small-6",
     5: "bg-small-8",
+    6: "bg-small-13",
+    7: "bg-small-2",
+    8: "bg-small-5",
+    9: "bg-small-7",
+    10: "bg-small-9",
+    11: "bg-small-11",
+    12: "bg-small-12",
   };
 
   const router = useRouter();
@@ -40,8 +50,18 @@ export default function GameRoomSetting() {
   const [round, setRound] = useState(3);
 
   const handleQuickstart = () => {
-    router.push("multi/1/room");
+    router.push("multi/room/1");
   };
+  
+  useEffect(()=> {
+    if(data?.result){
+      setRooms(data?.result);
+    } else {
+      setRooms([])
+    }
+  },[data])
+
+
   if (isLoading) {
     return <div className="rainbow"></div>;
   }
@@ -54,6 +74,9 @@ export default function GameRoomSetting() {
     ? data
     : { result: null };
   console.log(result);
+
+
+
   return (
     <div className="col-span-8 grid grid-rows-12 p-2">
       <div className="row-span-2 grid grid-cols-12 border items-center bg-background-1 rounded-lg shadow m-2 p-2 dark:bg-gray-800">
@@ -165,10 +188,11 @@ export default function GameRoomSetting() {
         />
       </div>
       {/* 게임방 목록 */}
-      <div className="bg-background-1 row-span-8 rounded-md grid grid-cols-12 shadow-md gap-1">
-        {rooms.map((room: number, i: number) => (
-          <div className="col-span-6 p-1 m-1 rounded-md" key={i}>
-            <GameRoom color={RoomColor[i]} />
+      <div className="bg-background-1 row-span-8 rounded-md grid grid-cols-12 grid-rows-3 shadow-md gap-1">
+        {rooms.map((room: MultiRoom, i: number) => (
+
+          <div className="col-span-6 row-span-1 p-1 m-1 rounded-md" key={i}>
+            <GameRoom color={RoomColor[(pageNumber - 1 + i) % 13]} room={room} />
           </div>
         ))}
       </div>
