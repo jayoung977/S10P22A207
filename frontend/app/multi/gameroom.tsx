@@ -37,7 +37,7 @@ export default function GameRoom(props: { color: string; room: MultiRoom }) {
             .catch((error) => {
               console.error(error);
             });
-          router.push("multi/room/1");
+          router.push(`multi/room/${roomNumber}`);
         } else {
           Swal.fire({
             title: "비밀번호가 일치하지 않습니다.",
