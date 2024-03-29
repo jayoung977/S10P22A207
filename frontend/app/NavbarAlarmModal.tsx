@@ -10,39 +10,39 @@ export default function NavbarAlarmModal() {
   const [fundSettlementOpen, setFundSettlementOpen] = useState(false);
   useFetchUserInfo();
   const { memberId } = userStore();
-  useEffect(() => {
-    const EventSource = EventSourcePolyfill || NativeEventSource;
-    const sse = new EventSource(
-      "https://j10a207.p.ssafy.io/api/sse/connect/alarm",
-      {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-        },
-        withCredentials: true,
-      }
-    );
-    sse.addEventListener(`${memberId}:INVITATION`, (event: any) => {
-      // const data = JSON.parse(event.data);
-      // console.log(event);
-      // console.log(data);
-      console.log("Invitation Accept!")
-      console.log(event.data);
-    });
+  // useEffect(() => {
+  //   const EventSource = EventSourcePolyfill || NativeEventSource;
+  //   const sse = new EventSource(
+  //     "https://j10a207.p.ssafy.io/api/sse/connect/alarm",
+  //     {
+  //       headers: {
+  //         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+  //       },
+  //       withCredentials: true,
+  //     }
+  //   );
+  //   sse.addEventListener(`${memberId}:INVITATION`, (event: any) => {
+  //     // const data = JSON.parse(event.data);
+  //     // console.log(event);
+  //     // console.log(data);
+  //     console.log("Invitation Accept!")
+  //     console.log(event.data);
+  //   });
 
-    sse.addEventListener(`connect`, (event: any) => {
-      console.log("data Connect!")
-      console.log(event.data);
-    });
+  //   sse.addEventListener(`connect`, (event: any) => {
+  //     console.log("data Connect!")
+  //     console.log(event.data);
+  //   });
 
-    sse.onerror = (error) => {
-      //에러 발생시 할 동작
-      console.error(error);
-      sse.close(); //연결 끊기
-    };
-    return () => {
-      sse.close();
-    };
-  }, [memberId]);
+  //   sse.onerror = (error) => {
+  //     //에러 발생시 할 동작
+  //     console.error(error);
+  //     sse.close(); //연결 끊기
+  //   };
+  //   return () => {
+  //     sse.close();
+  //   };
+  // }, [memberId]);
 
   return (
     <div
