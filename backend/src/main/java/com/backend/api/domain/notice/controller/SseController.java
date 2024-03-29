@@ -29,7 +29,7 @@ public class SseController {
             emitter.send(SseEmitter.event()
                 .name("connect")
                 .data("connected!")
-                .reconnectTime(15000L)
+                .reconnectTime(1000L)
             );
             log.info("emitter.send(SseEmitter.event() - {}", channelName);
 
