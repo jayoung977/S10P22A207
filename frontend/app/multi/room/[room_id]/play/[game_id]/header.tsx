@@ -75,7 +75,7 @@ export default function Header() {
             } else if (turn === 49) {
               setIsOpen(true);
               // 일단 3초로 설정
-              setTimeout(() => setIsOpen(false), 300000000);
+              setTimeout(() => setIsOpen(false), 1000);
               setRound(round + 1);
               setTurn(0);
             } else {

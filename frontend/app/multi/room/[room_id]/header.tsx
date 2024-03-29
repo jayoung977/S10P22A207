@@ -11,7 +11,16 @@ export default function Header() {
   function handleGameStart() {
     // axios({
     //   method: 'post',
-    //   url:
+    //   url: "https://j10a207.p.ssafy.io/api/multi/start-game",
+    //   headers: {
+    //     Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
+    //   },
+    //   data: {
+    //     // 어케아누?
+    //     playerIds: [],
+    //     roundNumber: 0,
+    //     roomId: params.room_id
+    //   }
     // })
     // .then((res)=> {
     //   console.log(res.data)
