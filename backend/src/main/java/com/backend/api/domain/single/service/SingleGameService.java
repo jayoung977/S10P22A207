@@ -383,14 +383,14 @@ public class SingleGameService {
             );
             int amount = currentGame.getStockAmount()[i]; // 해당 Stock의 보유량 가져오기
 
-            totalAsset += (long) (amount * todayStockChart.getEndPrice() * 0.975); // 총 자산 계산
+            totalAsset += (long) (amount * todayStockChart.getEndPrice() * 0.9975); // 총 자산 계산
         }
 
         // 팔았으니 currentGame 바꿔주기
         currentGame.getStockAmount()[stockIdx] -= dto.amount();
-        currentGame.updateCash(currentGame.getCash() + (long) (dto.amount() * todayChart.getEndPrice() * 0.975));
+        currentGame.updateCash(currentGame.getCash() + (long) (dto.amount() * todayChart.getEndPrice() * 0.9975));
         currentGame.addProfit(stockIdx, (int) (dto.amount() * (currentGame.getAveragePrice()[stockIdx] - todayChart.getEndPrice()) -
-            dto.amount() * todayChart.getEndPrice() * 0.025));
+            dto.amount() * todayChart.getEndPrice() * 0.0025));
         currentGame.updateTotalAsset(totalAsset);
 
         double resultRoi = 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx];
@@ -458,8 +458,8 @@ public class SingleGameService {
             TradeType.SELL,
             todayChart.getEndPrice(),
             dto.amount(),
-            (int) (todayChart.getEndPrice() * dto.amount() * 0.025),
-            (long) (0.975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]) * dto.amount(),
+            (int) (todayChart.getEndPrice() * dto.amount() * 0.0025),
+            (long) (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]) * dto.amount(),
             totalAssetDto,
             assetList,
             currentGame.getTradeList()
@@ -505,7 +505,7 @@ public class SingleGameService {
 
             int amount = currentGame.getStockAmount()[currentGame.getStocks().get(stockId)]; // 해당 Stock의 보유량 가져오기
 
-            totalAsset += (long) (amount * todayStockCharts.getEndPrice() * 0.975); // 총 자산 계산
+            totalAsset += (long) (amount * todayStockCharts.getEndPrice() * 0.9975); // 총 자산 계산
         }
         // 총 구입 금액 계산
         currentGame.addTotalPurchaseAmount((long) dto.amount() * todayChart.getEndPrice());
@@ -601,7 +601,7 @@ public class SingleGameService {
             Integer stockIdx = currentGame.getStocks().get(startDateChartStockId);
             int amount = currentGame.getStockAmount()[stockIdx];
             // 총 자산 가치
-            totalAsset += (long) (amount * todayChart.getEndPrice() * 0.975);
+            totalAsset += (long) (amount * todayChart.getEndPrice() * 0.9975);
 
             stockSummaries.add(
                 new NextDayInfoResponseDto(

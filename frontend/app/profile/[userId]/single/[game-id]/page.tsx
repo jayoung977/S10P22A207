@@ -1,27 +1,86 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+import { useState, useEffect } from 'react';
+import { useParams } from "next/navigation";  // useParams 대신 useRouter를 사용
+
+// navbar
 import Navbar from "@/app/Navbar";
+// BGM
+import PeacefulBgm from "@/public/src/components/bgm/PeacefulBgm";
+
+// left
 import SingleTradeHistory from "./ReviewSingleTradeHistory";
-import SingleChart from "./ReviewSingleChart";
+// middle
+import Chart from './Chart';
+// right
 import SingleStockTicker from "./ReviewSingleStockTicker";
 import SingleRanking from "./ReviewSingleRanking";
-import PeacefulBgm from "@/public/src/components/bgm/PeacefulBgm";
+
+// Store
+import SingleReviewStore from '@/public/src/stores/profile/SingleReviewStore';
+// axios
+import axios from 'axios';
+
 export default function page() {
-  return (
-    <div className=" grid grid-rows-12 h-screen">
-      <PeacefulBgm></PeacefulBgm>
-      <Navbar></Navbar>
-      <header className="flex justify-end items-center row-span-2 shadow bg-background-1">
-        <div className="text-6xl m-4 text-textColor-1">삼성전자</div>
-      </header>
-      <main className=" row-span-10 grid grid-cols-12 bg-background-1">
-        <SingleTradeHistory></SingleTradeHistory>
-        <SingleChart></SingleChart>
-        <div className="col-span-3 grid grid-rows-12">
-          <SingleStockTicker></SingleStockTicker>
-          <SingleRanking></SingleRanking>
+  const params = useParams();
+  const gameId = params['game-id'];
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isError, setIsError] = useState<boolean>(false);
+
+  const { selectedIndex, setSelectedIndex,
+          rankMemberList, setRankMemberList, 
+          stockChartDataList, setStockChartDataList, 
+          stockInfoDtoList, setStockInfoDtoList, 
+          tradeList, setTradeList } = SingleReviewStore();
+    const fetchSingleGameRecord = async () => {  // 매개변수 타입 수정
+      try {
+        const response = await axios({
+          method: "get",
+          url: `https://j10a207.p.ssafy.io/api/single/log?singleGameLogId=${gameId}`,
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          },
+        });
+        console.log(response.data.result);
+        setRankMemberList(response.data.result.rankMemberList);
+        setStockChartDataList(response.data.result.stockChartDataList);
+        setStockInfoDtoList(response.data.result.stockInfoDtoList);
+        setTradeList(response.data.result.tradeList);
+        setIsLoading(false)
+
+      } catch (error) {
+        console.log(error);
+        setIsError(true);
+      }
+    };
+
+    useEffect(() => {
+      fetchSingleGameRecord();
+    }, []);  // gameId를 의존성 배열에 추가하여 gameId가 변경될 때마다 useEffect가 실행되도록 함
+    
+    if (isLoading) {
+      return <div className="rainbow"></div>;
+    }
+  
+    if (isError) {
+      return <div>Error</div>
+    }
+  
+    return (
+      <div className="grid grid-rows-12 h-screen border-separate">
+        <PeacefulBgm />
+        <Navbar />
+        <div className="row-span-11 grid grid-cols-12">
+          <aside className="col-span-2">
+              <SingleTradeHistory />
+          </aside>
+          <main className="col-span-8 grid grid-rows-12">
+            <Chart data={stockChartDataList[selectedIndex].stockChartList}/>
+          </main>
+          <aside className="col-span-2 grid grid-rows-12">
+            <SingleStockTicker></SingleStockTicker>
+            <SingleRanking></SingleRanking>
+          </aside>
         </div>
-      </main>
-    </div>
-  );
+      </div>
+    );
 }
