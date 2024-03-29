@@ -80,10 +80,10 @@ export default function BoardSend() {
   };
 
   return (
-    <div className="flex justify-center items-center row-span-3 grid grid-cols-12 rounded-md  ">
-      <div className="col-start-2 ">
+    <div className="grid justify-center items-center row-span-3 grid-cols-12 rounded-md ">
+      <div className="col-start-2">
         <Image
-          className="w-24 h-24 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500 relative"
+          className="w-20 h-20 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500 relative"
           src={penguin}
           alt="Extra large avatar"
           width={100}
@@ -139,8 +139,8 @@ export default function BoardSend() {
 
             <textarea
               id="chat"
-              rows={5}
-              className="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              rows={3}
+              className="mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Your message..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -162,7 +162,7 @@ export default function BoardSend() {
               <span className="sr-only">Send message</span>
             </button>
           </div>
-        </form>
+        </form> 
       </div>
     </div>
   );
