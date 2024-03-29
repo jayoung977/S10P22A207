@@ -5,7 +5,7 @@ import FundSettlementModal from "./fund/fundSettlementModal";
 import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
 import { useEffect, useState } from "react";
 import userStore from "@/public/src/stores/user/userStore";
-
+import socketStore from "@/public/src/stores/websocket/socketStore";
 export default function NavbarAlarmModal() {
   const [fundSettlementOpen, setFundSettlementOpen] = useState(false);
   useFetchUserInfo();

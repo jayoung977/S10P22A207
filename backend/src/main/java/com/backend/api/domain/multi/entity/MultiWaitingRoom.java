@@ -1,9 +1,10 @@
 package com.backend.api.domain.multi.entity;
 
-import static lombok.AccessLevel.PROTECTED;
+import static lombok.AccessLevel.*;
 
 import java.util.Map;
 import java.util.Set;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
