@@ -74,7 +74,6 @@ export default function Navbar() {
                 게임
                 <svg
                   className="w-2.5 h-2.5 ms-2.5"
-                  aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 10 6"
@@ -100,9 +99,9 @@ export default function Navbar() {
             <li>
               <a
                 className="cursor-pointer block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                onClick={() =>{ 
-                  router.push("/fund/recruiting")
-                  setToggleButton('recruiting')
+                onClick={() => {
+                  router.push("/fund/recruiting");
+                  setToggleButton("recruiting");
                 }}
               >
                 펀드
@@ -138,7 +137,6 @@ export default function Navbar() {
               >
                 <svg
                   className="w-6 h-6 text-gray-800 dark:text-white hover:cursor-pointer"
-                  aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
                   height="24"
