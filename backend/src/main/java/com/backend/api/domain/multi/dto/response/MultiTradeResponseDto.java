@@ -1,4 +1,4 @@
-package com.backend.api.domain.multi.dto;
+package com.backend.api.domain.multi.dto.response;
 
 import com.backend.api.global.common.type.TradeType;
 import io.swagger.v3.oas.annotations.media.Schema;
