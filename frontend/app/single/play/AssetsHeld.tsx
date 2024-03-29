@@ -2,6 +2,7 @@
 // 보유 자산 목록 (left side bar - 2)
 import SingleGameStore from '@/public/src/stores/single/SingleGameStore'
 import AssetHeld from './AssetHeld'
+
 export default function AssetsHeld () {
     const { assetListData } = SingleGameStore();
     
