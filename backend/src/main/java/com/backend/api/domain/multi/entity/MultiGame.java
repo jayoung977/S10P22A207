@@ -100,4 +100,12 @@ public class MultiGame {
         this.shortStockAmount -= amount;
     }
 
+    public void updateAveragePrice(Integer price){
+        this.averagePrice = price;
+    }
+
+    public void updateShortAveragePrice(Integer price){
+        this.shortAveragePrice = price;
+    }
+
 }
