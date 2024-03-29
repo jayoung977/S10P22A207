@@ -39,7 +39,7 @@ export default function FriendSearch() {
     setfilteredFriendList(filtered);
   }, [searchFriend, result]);
   
-  const inviteFriend = (nickname: string) => {
+  const inviteFriend = (nickname: string, memberId: number) => {
     console.log(`${nickname} 초대!`)
     Swal.fire({
       text: `${nickname}에게 초대를 발송했습니다.`,
@@ -77,7 +77,7 @@ export default function FriendSearch() {
               <div className="col-span-6 text-base font-semibold">{friend.nickname}</div>
               <div className="col-span-4 px-6 py-4">
                 <button onClick={()=>{
-                  inviteFriend(friend.nickname)
+                  inviteFriend(friend.nickname, friend.memberId)
                   }} className='bg-blue-500 text-white px-2 py-1 rounded-md '>초대</button>
               </div>
             </div>  

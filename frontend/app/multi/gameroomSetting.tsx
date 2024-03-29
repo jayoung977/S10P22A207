@@ -13,7 +13,7 @@ import multigameStore, {
 
 const fetchMultiRoomInfo = async (pageNumber: number) => {
   const token = sessionStorage.getItem("accessToken");
-  const response = await fetch(`https://j10a207.p.ssafy.io/api/multi?pageNumber=${pageNumber}&pageSize=6`, {
+  const response = await fetch(`https://j10a207.p.ssafy.io/api/multi?pageNumber=${pageNumber}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -73,7 +73,7 @@ export default function GameRoomSetting() {
   const { result }: { result: MultiRoom[] | null } = data
     ? data
     : { result: null };
-
+  console.log(result)
 
 
   return (
