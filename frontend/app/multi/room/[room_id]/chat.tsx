@@ -13,7 +13,7 @@ export default function Chat() {
   const params = useParams<{ room_id: string }>();
   const { nickname, memberId } = userStore();
   const { sendMessage, setSendMessage } = multigameStore();
-  const { receiveMessage, setReceiveMessage } = socketStore();
+  const { receiveMessage2, setReceiveMessage2 } = socketStore();
   const room_id: string = params.room_id;
   multigameStore();
   const { clientObject } = socketStore();
@@ -32,6 +32,7 @@ export default function Chat() {
         message: sendMessage,
       })
     );
+    console.log(receiveMessage2);
     setSendMessage("");
   };
 
@@ -46,7 +47,7 @@ export default function Chat() {
     };
 
     scrollToBottom();
-  }, [receiveMessage]);
+  }, [receiveMessage2]);
 
   return (
     <div className="col-span-10 border relative">
@@ -54,7 +55,7 @@ export default function Chat() {
         className="h-[calc(25vh)] overflow-auto gap p-2"
         ref={messageContainerRef}
       >
-        {receiveMessage.map((item: any, i: any) => {
+        {receiveMessage2.map((item: any, i: any) => {
           return (
             <div key={i}>
               {item.result.sender} : {item.result.message}
