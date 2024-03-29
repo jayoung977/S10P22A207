@@ -80,8 +80,8 @@ export default function BoardSend() {
   };
 
   return (
-    <div className="flex justify-center items-center row-span-5 grid grid-cols-12 rounded-md ">
-      <div className="col-start-4">
+    <div className="flex justify-center items-center row-span-3 grid grid-cols-12 rounded-md  ">
+      <div className="col-start-2 ">
         <Image
           className="w-24 h-24 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500 relative"
           src={penguin}
@@ -90,7 +90,7 @@ export default function BoardSend() {
           height={100}
         ></Image>
       </div>
-      <div className="col-start-5 col-end-10 rounded-lg m-2">
+      <div className="col-start-4 col-end-12 rounded-lg m-2 bg-background-1">
         <form>
           <label htmlFor="chat" className="sr-only">
             Your message

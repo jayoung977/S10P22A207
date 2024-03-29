@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from "next/navigation"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { UseMutationResult, useMutation } from "react-query";
 import Swal from "sweetalert2";
@@ -31,21 +31,75 @@ const createFund = async(fund: NewFund) => {
 
 
 export default function MakeFundModal({isOpen, onClose}: any){
+  const [fundNameCheck, setFundNameCheck] = useState(false)
   const router = useRouter();
   const { 
     register,
     formState: { errors },
     handleSubmit,
+    watch,
     reset
   } = useForm<NewFund>({mode: 'onChange'});
 
+  
+  useEffect(()=> {
+    setFundNameCheck(false)
+    console.log(fundNameCheck)
+  },[isOpen])
+  
+  const funName = watch('fundName')
+
+
+  function handleFundNameCheck(fundName: string){
+    if(fundName.length < 2){
+      Swal.fire({
+        text: '펀드이름을 2자 이상 입력 후 확인하세요.',
+        icon: 'error'
+      })
+      return
+    }
+    const token = sessionStorage.getItem('accessToken')
+    axios({
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      url: 'https://j10a207.p.ssafy.io/api/fund/fundname/check',
+      params: {
+        fundName: funName,
+      }
+    })
+    .then((res) => {
+      const checked = res.data.result
+      if(checked){
+        Swal.fire({
+          title: `${fundName} 은/는 사용할 수 없는 이름입니다.`,
+          icon: 'error'
+        })
+      } else {
+        Swal.fire({
+          title: `${fundName} 은/는 사용할 수 있는 이름입니다.`,
+          icon: 'success'
+        })
+        setFundNameCheck(true)
+      }
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+  }
 
   const onSubmit = (data: NewFund) => {
-    console.log(data);
     // 여기에 폼 데이터를 처리하는 로직을 작성할 수 있습니다.
-    mutate(data)
+    if (fundNameCheck == true){
+      mutate(data)
+    } else {
+      Swal.fire({
+        html: `펀드이름 중복체크를 하지 않았습니다. <br> 중복확인 후 다시 제출해주세요.`,
+        icon: 'error'
+      })
+    }
   };
-
+  
   const { mutate } 
   = useMutation(createFund
     ,{
@@ -75,9 +129,12 @@ export default function MakeFundModal({isOpen, onClose}: any){
       }
     });
 
+  
 
 
   if(!isOpen) return null;
+
+  
 
   return(
     // Main modal
@@ -96,21 +153,26 @@ export default function MakeFundModal({isOpen, onClose}: any){
             <div className="space-y-2" >
               <div>
                   <label  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">이름</label>
-                  <input
-                     type="text"
-                     id="fund-name"
-                     {...register('fundName', {
-                      required: '펀드이름은 2자에서 최대 30자입니다.',
-                      minLength: {
-                        value: 2,
-                        message: '2글자 이상 입력해주세요.'
-                      },
-                      maxLength: {
-                        value: 30,
-                        message: '30자 이상 작성할 수 없습니다.'
-                      }
-                     })}
-                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="펀드 이름을 입력해주세요." />
+                  <div className="flex">
+                    <input
+                      type="text"
+                      id="fund-name"
+                      {...register('fundName', {
+                        required: '펀드이름은 2자에서 최대 30자입니다.',
+                        minLength: {
+                          value: 2,
+                          message: '2글자 이상 입력해주세요.'
+                        },
+                        maxLength: {
+                          value: 30,
+                          message: '30자 이상 작성할 수 없습니다.'
+                        }
+                      })}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="펀드 이름을 입력해주세요." />
+                      <button
+                        onClick={()=> {handleFundNameCheck(funName)}}
+                        className="w-1/3 m-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">중복확인</button>
+                  </div>
                      <p className="text-xs text-small-3 p-1">{errors.fundName?.message}</p>
               </div>
               <div>
