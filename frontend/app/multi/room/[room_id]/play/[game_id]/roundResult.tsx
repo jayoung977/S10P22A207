@@ -168,13 +168,10 @@ export default function RoundResult ({ isOpen, onClose }: any) {
           </div>
           <div>24초</div>
         </div>
-        <div className='col-span-2 justify-items-center text-lg text-center'>삼성전자</div> 
-        <div className='col-span-2 justify-items-center text-center'>
-          <button className='border rounded-md font-bold bg-slate-300 text-gray-700 px-2 py-1 text-normal'>기록저장</button>
-        </div> 
+        <div className='col-span-4 justify-items-center text-lg text-center'>삼성전자</div> 
       </div>
       <div className='row-span-7 grid grid-cols-12 gap-2'>
-        <div className='col-span-8 grid grid-rows-12 m-2'>
+        <div className='col-span-8 m-2'>
           <RoundChart data={RoundData}/>
         </div>
         <div className='col-span-4 grid grid-rows-6'>

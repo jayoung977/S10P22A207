@@ -16,54 +16,12 @@ export default function FinalResult({ isOpen, onClose }: any) {
 
   return (
     <div className="fixed -translate-x-1/2 translate-y-1/5 z-50 h-4/5 w-3/4 inset-0 left-1/2 border-4 bg-big-1 rounded-md grid grid-cols-8 gap-2">
-      <div className="col-span-1 flex flex-col justify-end m-2 rounded-md text-center items-center">
-        <div>
-          <button
-            onClick={() => {
-              setIsRound(true);
-            }}
-            className="border p-1 m-2 rounded-md text-white text-2xl font-bold bg-blue-500 hover:bg-small-1"
-          >
-            1라운드
-          </button>
-        </div>
-        <div>
-          <button
-            onClick={() => {
-              setIsRound(true);
-            }}
-            className="border p-1 m-2 rounded-md text-white text-2xl font-bold bg-blue-500 hover:bg-small-1"
-          >
-            2라운드
-          </button>
-        </div>
-        <div>
-          <button
-            onClick={() => {
-              setIsRound(true);
-            }}
-            className="border p-1 m-2 rounded-md text-white text-2xl font-bold bg-blue-500 hover:bg-small-1"
-          >
-            3라운드
-          </button>
-        </div>
-        <div>
-          <button
-            onClick={() => {
-              setIsRound(false);
-            }}
-            className="border p-2 m-2 rounded-md text-white text-xl font-bold bg-small-3 hover:bg-red-500"
-          >
-            최종결과
-          </button>
-        </div>
-      </div>
       {isRound == true ? (
-        <div className="col-span-6 grid grid-rows-6 gap-2">
+        <div className="col-span-7 grid grid-rows-6 gap-2">
           <RoundResult isOpen={isRound} />
         </div>
       ) : (
-        <div className="col-span-6 grid grid-rows-6 gap-2 m-2">
+        <div className="col-span-7 grid grid-rows-6 gap-2 m-2">
           <div className="row-span-1 bg-background-1 grid grid-cols-12 border rounded-md items-center">
             <div className="col-span-2 justify-center items-center m-2">
               <Image
@@ -113,15 +71,45 @@ export default function FinalResult({ isOpen, onClose }: any) {
         </div>
       )}
 
-      <div className="col-span-1 flex flex-col justify-end">
+      <div className="col-span-1 flex flex-col justify-end my-2">
+      <div>
+          <button
+            onClick={() => {
+              setIsRound(true);
+            }}
+            className="border py-1 px-4 m-2 rounded-md text-white text-2xl font-bold bg-blue-500 hover:bg-small-1"
+          >
+            1라운드
+          </button>
+        </div>
         <div>
           <button
             onClick={() => {
-              console.log("기록저장!");
+              setIsRound(true);
             }}
-            className="border p-1 py-2 m-2 rounded-md text-2xl text-white font-bold bg-blue-500 hover:bg-small-1"
+            className="border py-1 px-4 m-2 rounded-md text-white text-2xl font-bold bg-blue-500 hover:bg-small-1"
           >
-            기록 저장
+            2라운드
+          </button>
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              setIsRound(true);
+            }}
+            className="border py-1 px-4 m-2 rounded-md text-white text-2xl font-bold bg-blue-500 hover:bg-small-1"
+          >
+            3라운드
+          </button>
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              setIsRound(false);
+            }}
+            className="border py-1 px-2 m-2 rounded-md text-white text-2xl font-bold bg-small-3 hover:bg-red-500"
+          >
+            최종결과
           </button>
         </div>
         <div>

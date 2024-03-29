@@ -11,27 +11,15 @@ import zustand from "zustand";
 export default function Chat() {
   useFetchUserInfo();
   const params = useParams<{ room_id: string }>();
-  const { nickname } = userStore();
+  const { nickname, memberId } = userStore();
   const { sendMessage, setSendMessage } = multigameStore();
-  const [receiveMessage, setReceiveMessage] = useState<any>([]);
+  const { receiveMessages, setReceiveMessages } = socketStore();
   const room_id: string = params.room_id;
   multigameStore();
   const { clientObject } = socketStore();
   const messageHandler = (message: string) => {
     setSendMessage(message);
   };
-
-  clientObject?.current.connect({}, () => {
-    console.log("게임방 입장 소켓 연결했으니까 알고있어라");
-    clientObject?.current.subscribe(`/api/sub/${room_id}`, (message: any) => {
-      const parsedMessage = JSON.parse(message.body);
-      setReceiveMessage((prevReceiveMessage: any) => {
-        const copy = [...prevReceiveMessage, parsedMessage];
-        console.log(copy); // 업데이트된 값을 확인할 수 있습니다.
-        return copy;
-      });
-    });
-  });
 
   const sendHandler = (nickname: any) => {
     clientObject?.current.send(
@@ -58,7 +46,7 @@ export default function Chat() {
     };
 
     scrollToBottom();
-  }, [receiveMessage]);
+  }, [receiveMessages]);
 
   return (
     <div className="col-span-10 border relative">
@@ -66,7 +54,7 @@ export default function Chat() {
         className="h-[calc(25vh)] overflow-auto gap p-2"
         ref={messageContainerRef}
       >
-        {receiveMessage.map((item: any, i: any) => {
+        {receiveMessages.map((item: any, i: any) => {
           return (
             <div key={i}>
               {item.result.sender} : {item.result.message}

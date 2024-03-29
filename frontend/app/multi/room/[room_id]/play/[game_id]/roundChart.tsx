@@ -59,7 +59,7 @@ export default function RoundChart ({ data } :any) {
         }
     }, [data])
     return (
-        <div id="chart-container-2" className="border row-start-2 row-end-12 flex items-center justify-center">
+        <div id="chart-container-2" className="row-span-12 flex items-center justify-center">
         </div>
     )
 }

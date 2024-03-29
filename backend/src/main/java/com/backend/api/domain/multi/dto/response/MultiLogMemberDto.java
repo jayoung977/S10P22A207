@@ -14,7 +14,9 @@ public record MultiLogMemberDto(
         @Schema(description = "수익률")
         Double roi,
 
-        @Schema(description = "해당 플레이어들의 매매 내역")
+        @Schema(description = "rankPoint")
+        Integer rankPoint,
+        @Schema(description = "해당 플레이어의 매매 내역")
         List<MultiLogTradeDto> multiLogTradeDtoList
 ) {
 }
