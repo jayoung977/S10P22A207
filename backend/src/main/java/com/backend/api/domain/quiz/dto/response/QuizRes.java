@@ -1,4 +1,4 @@
-package com.backend.api.domain.quiz.entity.response;
+package com.backend.api.domain.quiz.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
