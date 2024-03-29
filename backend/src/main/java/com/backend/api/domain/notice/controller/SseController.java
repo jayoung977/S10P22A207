@@ -25,14 +25,12 @@ public class SseController {
         log.info("구독 요청 - SseController {}", channelName);
         sseEmitters.add(channelName, emitter);
         try {
-
             log.info("emitter.send 요청 전 : {} ", channelName);
 
             emitter.send(SseEmitter.event()
                 .name("connect")
                 .data("connected!")
                 .reconnectTime(15000L)
-
             );
             log.info("emitter.send(SseEmitter.event() - {}", channelName);
 
