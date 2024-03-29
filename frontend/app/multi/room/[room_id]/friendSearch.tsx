@@ -25,7 +25,6 @@ export default function FriendSearch() {
   const { result }: { result: Friend[] } = data
   ? data
   : { result: [] };
-  console.table(result)
   
 
   
