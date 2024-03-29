@@ -624,15 +624,6 @@ public class MultiGameService {
 
             String key = "multiGame:" + dto.gameId() + ":" + memberId + ":" + dto.roundNumber(); // Redis에 저장할 키
             redisTemplate.opsForValue().set(key, currentGame);
-			// 아직 매도하지 않은 물량은 팔아준다.
-			totalAssets += (long)((currentGame.getStockAmount() - currentGame.getShortStockAmount())
-				* todayChart.getEndPrice() * 0.9975);
-			// 강제로 판다. (주식 수량 - 공매도 수량) * (오늘 가격 - 평단가) * 0.9975 // 생각해보니 주식수량과 공매도 수량은 공존할 수 없음.
-			currentGame.addProfit(
-				(currentGame.getStockAmount() - currentGame.getShortStockAmount()) * (todayChart.getEndPrice()
-					- currentGame.getAveragePrice()) * 0.9975);
-			String key = "multiGame:" + dto.gameId() + ":" + memberId + ":" + dto.roundNumber(); // Redis에 저장할 키
-			redisTemplate.opsForValue().set(key, currentGame);
 
             // roi : (총수익) / (총 투자한 돈) * 100
             double roi = currentGame.getTotalPurchaseAmount() == 0L ? 0 :
@@ -646,6 +637,7 @@ public class MultiGameService {
                 stockRepository.findById(todayChart.getStock().getId()).orElseThrow(
                     () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
                 ).getStockName(),
+				1,
                 stockChartRepository.findById(currentGame.getFirstDayStockChartId()).orElseThrow(
                     () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
                 ).getDate(),
@@ -918,26 +910,6 @@ public class MultiGameService {
                 stockChart1.getTradingVolume(),
                 stockChart1.getDate()
             );
-		StockChart stockChart = stockChartRepository.findByStock_StockCodeAndDateBetween(stock.getStockCode(),
-			startDateTime, startDateTime.plusDays(1)).orElseThrow(
-			() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_LOG_STOCK_CHART)
-		);
-		log.info("[getMultiGameLog] stockChart.getId(): " + stockChart.getId());
-		// 350일치 차트
-		List<StockChart> stockChartList = stockChartRepository.findByIdBetween(stockChart.getId(),
-			stockChart.getId() + 349);
-		// 각 날짜에 대해 StockChartDto 생성 후 넣어주기
-		List<StockChartDto> stockChartDtoList = new ArrayList<>();
-		// 350번 가져온다.
-		stockChartList.forEach((stockChart1) -> {
-			StockChartDto stockChartDto = new StockChartDto(
-				stockChart1.getMarketPrice(),
-				stockChart1.getHighPrice(),
-				stockChart1.getLowPrice(),
-				stockChart1.getEndPrice(),
-				stockChart1.getTradingVolume(),
-				stockChart1.getDate()
-			);
 
 			stockChartDtoList.add(stockChartDto);
 		});
