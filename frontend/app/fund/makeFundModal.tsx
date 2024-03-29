@@ -44,7 +44,7 @@ export default function MakeFundModal({isOpen, onClose}: any){
   
   useEffect(()=> {
     setFundNameCheck(false)
-    console.log(fundNameCheck)
+    // console.log(fundNameCheck)
   },[isOpen])
   
   const funName = watch('fundName')

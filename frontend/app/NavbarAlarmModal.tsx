@@ -10,45 +10,10 @@ export default function NavbarAlarmModal() {
   const [fundSettlementOpen, setFundSettlementOpen] = useState(false);
   useFetchUserInfo();
   const { memberId } = userStore();
-  useEffect(() => {
-    const EventSource = EventSourcePolyfill || NativeEventSource;
-    const sse = new EventSource(
-      "https://j10a207.p.ssafy.io/sse/connect/alarm",
-      {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-        },
-        withCredentials: true,
-      }
-    );
-    sse.addEventListener(`${memberId}:INVITATION`, (event: any) => {
-      // const data = JSON.parse(event.data);
-      // console.log(event);
-      // console.log(data);
-      console.log("Invitation Accept!")
-      console.log(event.data);
-    });
-
-    sse.addEventListener(`connect`, (event: any) => {
-      console.log("data Connect!")
-      console.log(event.data);
-    });
-
-    sse.onerror = (error) => {
-      //에러 발생시 할 동작
-      console.error(error);
-      sse.close(); //연결 끊기
-    };
-    return () => {
-      sse.close();
-    };
-  }, [memberId]);
-
   return (
     <div
       id="dropdownNotification"
       className="z-50 w-full max-w-sm bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-800 dark:divide-gray-700"
-      aria-labelledby="dropdownNotificationButton"
     >
       <div className="block px-4 py-2 font-medium text-center text-gray-700 rounded-t-lg bg-gray-50 dark:bg-gray-800 dark:text-white">
         알림

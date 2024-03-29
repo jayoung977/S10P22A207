@@ -7,7 +7,7 @@ import axios from "axios";
 interface ResultType {
   memberId: number;
   nickname: string;
-  assets: number;
+  asset: number;
 }
 
 interface EntireUserType {
@@ -59,7 +59,6 @@ export default function SearchedUserRankingList() {
         >
           <svg
             className="w-4 h-4"
-            aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 20 20"
@@ -78,7 +77,7 @@ export default function SearchedUserRankingList() {
       <div
         className="row-span-10 overflow-auto border"
         style={{ height: "calc(38vh)" }}
-      > 
+      >
         {entireUser.length > 0 ? (
           entireUser.map((x, index) => <UserRanking key={index} user={x} />)
         ) : (

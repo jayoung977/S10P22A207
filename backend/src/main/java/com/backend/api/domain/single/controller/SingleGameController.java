@@ -59,5 +59,11 @@ public class SingleGameController {
         SingleGameLogResponseDto responseDto = singleGameService.getSingleGameLog(singleGameLogId);
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, responseDto);
     }
+    @GetMapping("/log/member")
+    @Operation(summary = "싱글게임 종목 중 상위 3위 안에 드는 어떤 멤버의 매매기록 및 해당 주식차트 반환", description = "싱글기록에서 어떤 종목에 상위 3위 유저중 어떤 유저를 선택하면 해당 유저의 매매기록과 해당시점의 주식차트를 가져옵니다.", tags = {"싱글게임"})
+    public ResponseEntity<BaseResponse<SingleLogRankMemberLogDto>> getSingleGameRankMemberLog(@RequestParam(name = "singelGameStockId") Long singelGameStockId, @RequestParam(name = "memberId") Long memberId) {
+        SingleLogRankMemberLogDto responseDto = singleGameService.getSingleGameRankMemberLog(singelGameStockId, memberId);
+        return BaseResponse.success(SuccessCode.SELECT_SUCCESS, responseDto);
+    }
 }
 

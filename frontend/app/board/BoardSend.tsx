@@ -80,10 +80,10 @@ export default function BoardSend() {
   };
 
   return (
-    <div className="flex justify-center items-center row-span-3 grid grid-cols-12 rounded-md  ">
-      <div className="col-start-2 ">
+    <div className="grid justify-center items-center row-span-3 grid-cols-12 rounded-md ">
+      <div className="col-start-2">
         <Image
-          className="w-24 h-24 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500 relative"
+          className="w-20 h-20 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500 relative"
           src={penguin}
           alt="Extra large avatar"
           width={100}
@@ -139,13 +139,12 @@ export default function BoardSend() {
 
             <textarea
               id="chat"
-              rows={5}
-              className="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              rows={3}
+              className="mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Your message..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
-
             <button
               onClick={handleSubmit}
               className="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"
@@ -161,6 +160,78 @@ export default function BoardSend() {
               </svg>
               <span className="sr-only">Send message</span>
             </button>
+            {image.length > 0 &&
+              image.map((fileOrFileList, index) => {
+                if (fileOrFileList instanceof FileList) {
+                  return Array.from(fileOrFileList).map((file, fileIndex) => (
+                    <div className="relative" key={`${index}-${fileIndex}`}>
+                      <img
+                        className="p-1 shadow m-1"
+                        width={100}
+                        src={URL.createObjectURL(file)}
+                        alt={`${index}번째 사진`}
+                      />
+                      <div
+                        className="absolute -top-1 -right-3 rounded-full bg-white shadow hover:cursor-pointer"
+                        onClick={() => {
+                          deletePhoto(index);
+                        }}
+                      >
+                        <svg
+                          className="w-6 h-6 text-black dark:text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="1"
+                            d="M6 18 17.94 6M18 18 6.06 6"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  ));
+                } else {
+                  return (
+                    <div className="relative" key={index}>
+                      <img
+                        className="p-1 shadow m-1"
+                        width={100}
+                        src={URL.createObjectURL(fileOrFileList)}
+                        alt={`${index}번째 사진`}
+                      />
+                      <div
+                        className="absolute -top-1 -right-3 rounded-full bg-white shadow hover:cursor-pointer"
+                        onClick={() => {
+                          deletePhoto(index);
+                        }}
+                      >
+                        <svg
+                          className="w-6 h-6 text-black dark:text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="1"
+                            d="M6 18 17.94 6M18 18 6.06 6"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  );
+                }
+              })}
           </div>
         </form>
       </div>

@@ -4,7 +4,12 @@ import com.backend.api.domain.friend.dto.response.FriendCursorRes;
 import com.backend.api.domain.friend.dto.response.FriendRes;
 import com.backend.api.domain.friend.entity.Friend;
 import com.backend.api.domain.friend.repository.FriendRepository;
+import com.backend.api.domain.member.entity.Member;
+import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.notice.service.RedisPubService;
+import com.backend.api.global.common.code.ErrorCode;
+import com.backend.api.global.exception.BaseExceptionHandler;
+
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,10 +26,11 @@ public class FriendService {
 
 	private final RedisPubService redisPubService;
 	private final FriendRepository friendRepository;
+	private final MemberRepository memberRepository;
 	private final int PAGE_SIZE = 10;
 
 	public List<FriendRes> getAllFriends(Long followerId) {
-		List<Friend> friendList = friendRepository.findByFollower_Id(followerId);
+		List<Friend> friendList = friendRepository.findByFollower_IdOrderByFollowing_AssetDesc(followerId);
 		return friendList.stream()
 			.map(friend ->
 				new FriendRes(
@@ -51,7 +57,7 @@ public class FriendService {
 	}
 
 	public List<FriendRes> searchFriends(Long followerId, String nickname) {
-		List<Friend> friendList = friendRepository.findByFollower_IdAndFollowing_NicknameContaining(followerId, nickname);
+		List<Friend> friendList = friendRepository.findByFollower_IdAndFollowing_NicknameContainingOrderByFollowing_AssetDesc(followerId, nickname);
 		return friendList.stream()
 			.map(friend ->
 				new FriendRes(
@@ -66,5 +72,9 @@ public class FriendService {
 	@Transactional
 	public void deleteFriend(Long followerId, Long followingId) {
 		friendRepository.deleteFriendByFollower_IdAndFollowing_IdOrFollower_IdAndFollowing_Id(followerId, followingId, followingId, followerId);
+	}
+
+	public Boolean checkFriend(Long followerId, Long followingId) {
+		return friendRepository.existsByFollower_IdAndFollowing_Id(followerId, followingId);
 	}
 }

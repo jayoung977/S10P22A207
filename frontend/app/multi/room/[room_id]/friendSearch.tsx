@@ -21,11 +21,11 @@ const fetchFriendInfo = async() => {
 export default function FriendSearch() {
   const {data, isLoading, error}: UseQueryResult<FriendInfo,Error> = useQuery('FriendInfo', fetchFriendInfo) 
   
+  
   // 친구목록 react-query로 구현
   const { result }: { result: Friend[] } = data
   ? data
   : { result: [] };
-  console.table(result)
   
 
   

@@ -67,7 +67,7 @@ export default function SignUp() {
       queryClient.invalidateQueries("signups");
       // get 요청 한번 보내기
       fetchLoginData();
-      router.push("/multi");
+      window.location.href = "/multi";
     },
     onError: (error: any) => {
       console.error(
