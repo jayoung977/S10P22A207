@@ -797,6 +797,7 @@ public class SingleGameService {
                         return new SingleLogRankMemberDto(
                                 member.getId(),
                                 member.getNickname(),
+                                singleGameStock1.getId(),
                                 singleGameStock1.getRoi()
                         );
                     }
@@ -835,5 +836,57 @@ public class SingleGameService {
         );
 
 
+    }
+
+
+    public SingleLogRankMemberLogDto getSingleGameRankMemberLog(Long singelGameStockId, Long memberId) {
+        SingleGameStock singleGameStock = singleGameStockRepository.findById(singelGameStockId).orElseThrow(
+                () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
+
+
+        //1. 종목 별 차트 350개 넣기
+        //어떤 종목의 시작일 하나에 대한 StockChart 값 얻기
+        log.info("[getSingleGameRankMemberLog] singleGameStock.getStock().getStockCode()"+singleGameStock.getStock().getStockCode());
+        log.info("[getSingleGameRankMemberLog] getStockCode(),singleGameStock.getSingleGameLog().getStartDate()"+ singleGameStock.getSingleGameLog().getStartDate().withHour(0).withMinute(0).withSecond(0));
+
+        LocalDateTime startDateTime = singleGameStock.getSingleGameLog().getStartDate().withHour(0).withMinute(0).withSecond(0);
+        StockChart stockChart = stockChartRepository.findByStock_StockCodeAndDateBetween(singleGameStock.getStock().getStockCode(),startDateTime,startDateTime.plusDays(1)).orElseThrow(
+                () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_LOG_STOCK_CHART)
+        );
+        log.info("[getSingleGameRankMemberLog] -----stockChart.getId()"+stockChart.getId());
+        // 350일치 차트
+        List<StockChart> stockChartList = stockChartRepository.findByIdBetween(stockChart.getId(), stockChart.getId() + 349);
+        // 각 날짜에 대해 StockChartDto 생성 후 넣어주기
+        List<StockChartDto> stockChartDtoList = new ArrayList<>();
+        // 350번 가져온다.
+        stockChartList.forEach((stockChart1) -> {
+            StockChartDto stockChartDto = new StockChartDto(
+                    stockChart1.getMarketPrice(),
+                    stockChart1.getHighPrice(),
+                    stockChart1.getLowPrice(),
+                    stockChart1.getEndPrice(),
+                    stockChart1.getTradingVolume(),
+                    stockChart1.getDate()
+            );
+
+            stockChartDtoList.add(stockChartDto);
+        });
+
+        //2. 매매 내역 넣기
+        List<SingleTrade> singleTradeList = singleTradeRepository.findAllBySingleGameStock_Id(singleGameStock.getId());
+        List<SingleLogTradeDto> tradeList = singleTradeList.stream().map(
+                singleTrade -> new SingleLogTradeDto(
+                        singleTrade.getDate(),
+                        singleTrade.getTradeType(),
+                        singleTrade.getAmount(),
+                        singleTrade.getPrice(),
+                        singleTrade.getProfit()
+                )
+        ).toList();
+
+        return new SingleLogRankMemberLogDto(
+                stockChartDtoList,
+                tradeList
+        );
     }
 }
