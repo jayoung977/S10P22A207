@@ -35,7 +35,6 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-
 	// security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
@@ -102,6 +101,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	//prometheus 추가
 	implementation 'io.micrometer:micrometer-registry-prometheus'
+
+	//webclient 추가
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 }
 
