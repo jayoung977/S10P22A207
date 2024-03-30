@@ -31,6 +31,9 @@ export default function Header() {
     axios({
       method: "delete",
       url: `http://localhost:8080/api/multi/exit?roomId=${room_id}`,
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
     }).then((res) => {
       console.log(res.data);
     });
