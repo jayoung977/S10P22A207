@@ -15,7 +15,7 @@ export default function Profile() {
             <Image
               src={useGetProfileImage(asset)}
               alt="Profile-image"
-              width={100}
+              width={70}
             />
           </div>
           <div className="row-span-1 flex justify-center items-center">
@@ -27,7 +27,7 @@ export default function Profile() {
             <Image
               src={useGetProfileRank(rankPoint)}
               alt="Tier-image"
-              width={100}
+              width={70}
             />
           </div>
           <div className="flex row-span-1 justify-center items-center">
