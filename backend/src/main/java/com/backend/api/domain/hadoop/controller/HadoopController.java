@@ -93,12 +93,4 @@ public class HadoopController {
 		);
 	}
 
-	// @GetMapping("")
-	// public ResponseEntity<BaseResponse<List<StockRes>>> createStockTradeLog(@AuthenticationPrincipal CustomUserDetails userDetails){
-	// 	var result = hadoopService.createStockTradeLog(userDetails.getId());
-	// 	return BaseResponse.success(
-	// 		SuccessCode.CHECK_SUCCESS,
-	// 		result
-	// 	);
-	// }
 }
