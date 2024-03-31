@@ -67,6 +67,7 @@ public class CommunityService {
                 .map(community -> new CommunityRes(
                         community.getId(),
                         community.getMember().getNickname(),
+                        community.getMember().getAsset(),
                         community.getContent(),
                         community.getCommunityFileList().stream().map(
                                 communityFile -> awsS3Service.getFilePath(communityFile.getUrl())
@@ -82,6 +83,7 @@ public class CommunityService {
                 .map(community -> new CommunityRes(
                         community.getId(),
                         community.getMember().getNickname(),
+                        community.getMember().getAsset(),
                         community.getContent(),
                         community.getCommunityFileList().stream().map(
                                 communityFile -> awsS3Service.getFilePath(communityFile.getUrl())

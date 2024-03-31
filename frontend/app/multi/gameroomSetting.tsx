@@ -10,6 +10,7 @@ import multigameStore, {
   MultiGameRoomInfoList,
   ResultType,
 } from "@/public/src/stores/multi/MultiGameStore";
+import axios from "axios";
 
 const fetchMultiRoomInfo = async (pageNumber: number) => {
   const token = sessionStorage.getItem("accessToken");
@@ -55,6 +56,17 @@ export default function GameRoomSetting() {
   const [round, setRound] = useState(3);
 
   const handleQuickstart = () => {
+    axios.get('https://j10a207.p.ssafy.io/api/multi/1', {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
+      }
+    })
+    .then((res)=> {
+      console.log(res.data)
+    })
+    .catch((e)=> {
+      console.error(e)
+    })
     router.push("multi/room/1");
   };
 
@@ -69,7 +81,6 @@ export default function GameRoomSetting() {
   const { result }: { result: ResultType | null } = data
     ? data
     : { result: null };
-
   return (
     <div className="col-span-8 grid grid-rows-12 p-2">
       <div className="row-span-2 grid grid-cols-12 border items-center bg-background-1 rounded-lg shadow m-2 p-2 dark:bg-gray-800">

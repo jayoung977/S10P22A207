@@ -45,8 +45,8 @@ export default function page() {
         },
       })
 
-      console.log(response.data.result);
-      console.log(response.data.result.multiLogMemberDtoList)
+      console.log("받아온 데이터 : ", response.data.result);
+
       setMultiLogMemberDtoList(response.data.result.multiLogMemberDtoList);
       // console.log(response.data.result.multiLogMemberDtoList.find((x :any) => x.memberId == userId));
       setStockName(response.data.result.stockName);
