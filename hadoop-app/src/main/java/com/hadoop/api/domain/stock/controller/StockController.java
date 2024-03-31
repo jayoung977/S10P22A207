@@ -32,9 +32,9 @@ public class StockController {
 
 	@GetMapping("/get")
 	public ResponseEntity<BaseResponse<List<StockRes>>> getStockData(
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size, @RequestParam String stockCode){
-		List<StockRes> stockResList = stockService.getStockData(page + 1, size, stockCode);
+		@RequestParam(defaultValue = "1") int page,
+		@RequestParam int size, @RequestParam String stockCode){
+		List<StockRes> stockResList = stockService.getStockData(page, size, stockCode);
 		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, stockResList);
 	}
 
@@ -61,5 +61,9 @@ public class StockController {
 		List<ChangeRateCountDto> changeRateCountDto = stockService.getChangeRateCount(stockCode);
 		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, changeRateCountDto);
 	}
-
+	@GetMapping("/partition")
+	public ResponseEntity<BaseResponse<String>> partitionParquetByStockCod() {
+		stockService.partitionParquetByStockCode();
+		return BaseResponse.success(SuccessCode.INSERT_SUCCESS, "Success to partition parquet by stockCode");
+	}
 }
