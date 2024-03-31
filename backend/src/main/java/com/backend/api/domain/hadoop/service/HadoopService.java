@@ -24,25 +24,27 @@ public class HadoopService {
 
 	private final WebClient webClient;
 
-	public List<StockRes> getStockData() {
+	public List<StockRes> getStockData(int page, int pageSize) {
 		// WebClient webClient = WebClient.create();
 		log.info("webClient 생성 완료");
 		//WebClient  요청
-		String uri = "http://hadoop-app:8080/hadoop/stock/get";
-
 		StockResponseDto response = webClient.get()
-			.uri(uri)
+			.uri(uriBuilder -> uriBuilder
+				.path("/hadoop/stock/get")
+				.queryParam("page", page)
+				.queryParam("pageSize", pageSize)
+				.build())
 			.retrieve()
 			.bodyToMono(StockResponseDto.class)
 			.blockOptional()
-			.orElseThrow(() -> new RuntimeException("Failed to retrieve trade logs from hadoop-app"));
-		log.info("service result mono: {}", response);
+			.orElseThrow(() -> new RuntimeException("Failed to retrieve stock data from hadoop-app"));
 
+		log.info("service result mono: {}", response);
 		return response.getResult();
 	}
 
 	public List<TradeLogDto> getTradeLog() {
-		String uri = "http://hadoop-app:8080/hadoop/trade/get";
+		String uri = "/trade/get";
 		TradeLogResponseDto response = webClient.get()
 			.uri(uri)
 			.retrieve()
@@ -65,7 +67,7 @@ public class HadoopService {
 		// WebClient webClient = WebClient.create();
 		log.info("webClient 생성 완료");
 		//WebClient  요청
-		String uri = "http://hadoop-app:8080/hadoop/trade/save";
+		String uri = "/hadoop/trade/save";
 		String result = webClient.post()
 			.uri(uri)
 			.bodyValue(apiTradeDto)
