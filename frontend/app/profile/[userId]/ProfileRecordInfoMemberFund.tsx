@@ -64,7 +64,7 @@ export default function UserRecordInfoMemberFund() {
               펀드이름
             </th>
             <th scope="col" className="px-6 py-3">
-              기간
+              상태
             </th>
             <th scope="col" className="px-6 py-3">
               펀드 자금
@@ -80,7 +80,17 @@ export default function UserRecordInfoMemberFund() {
         <tbody>
           {result?.map((item, i) => {
             return (
-              <tr className="cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <tr
+                key={i}
+                className="cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700 "
+                onClick={() => {
+                  router.push(
+                    item.status == "RUNNING"
+                      ? `/fund/in-progress/${item.fundId}`
+                      : `/fund/recruiting/${item.fundId}`
+                  );
+                }}
+              >
                 <th
                   scope="row"
                   className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"

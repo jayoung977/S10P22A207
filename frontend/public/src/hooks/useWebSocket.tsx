@@ -9,7 +9,7 @@ import socketStore from "../stores/websocket/socketStore";
 export const useWebSocket = () => {
   const client = useRef<CompatClient>({} as CompatClient);
   const { setClientObject, clientObject } = socketStore();
-  const { memberId } = userStore();
+  const { memberId, nickname } = userStore();
   const [receiveMessage, setReceiveMessage] = useState<any>([]);
   const [receiveInvitation, setReceiveInvitation] = useState<any>([]);
   const { receiveMessages, setReceiveMessages } = socketStore();
@@ -20,11 +20,10 @@ export const useWebSocket = () => {
         const sock = new SockJS("https://j10a207.p.ssafy.io/ws");
         return sock;
       });
-      Swal.fire("웹소켓 연결 됨");
+      Swal.fire(`${nickname}님 환영합니다.`);
       setClientObject(client);
 
       client.current.connect({}, () => {
-        console.log("소켓 연결했으니까 알고있어라");
         client.current.subscribe(`/api/sub/${memberId}`, (message: any) => {
           const parsedMessage = JSON.parse(message.body);
           console.log(parsedMessage);
@@ -43,7 +42,7 @@ export const useWebSocket = () => {
       return () => {
         if (client.current) {
           client.current.disconnect();
-          Swal.fire("웹소켓 연결 안됨");
+          Swal.fire("서버와의 연결이 끊어졌습니다.");
         }
       };
     }
