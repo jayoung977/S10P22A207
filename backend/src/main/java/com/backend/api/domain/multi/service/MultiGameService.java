@@ -1,5 +1,6 @@
 package com.backend.api.domain.multi.service;
 
+import com.backend.api.domain.multi.dto.MultiGameSubResultRequestDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -95,53 +97,68 @@ public class MultiGameService {
         // MultiGameRoomInfo 객체를 담을 리스트
         List<MultiGameRoomInfo> resultList = new ArrayList<>();
         List<MultiWaitRoomInfo> waitRoomInfos = new ArrayList<>();
-        for (String key : multiGameRooms) {
-            String[] parts = key.split(":");
-            if (parts.length == 2 || parts.length == 4) { // 방 번호 또는 게임 정보가 있는 경우
-                Long roomId = null;
-                Integer roundNumber = null;
-                String roomTitle = null;
-                Boolean isOpen = null;
-                Integer password = null;
+		Map<Integer, Set<Long>> gameParticipantsIds = new ConcurrentHashMap<>();
+		Map<Integer, Set<Long>> waitRoomParticipantsIds = new ConcurrentHashMap<>();
+		for (String key : multiGameRooms) {
+			String[] parts = key.split(":");
+			if (parts.length == 2 || parts.length == 4) { // 방 번호 또는 게임 정보가 있는 경우
+				Long roomId = null;
+				Integer roundNumber = null;
+				String roomTitle = null;
+				Boolean isOpen = null;
+				Integer password = null;
 
-                List<Long> participantsIds = new ArrayList<>();
+				// ":"로 분할된 각 요소에서 필요한 정보 추출
+				for (int i = 0; i < parts.length; i++) {
+					if (parts[i].equals("multiGame"))
+						continue; // 첫 번째 요소인 경우 skip
+					if (i == 1) { // 두 번째 요소는 roomId
+						roomId = Long.valueOf(parts[1]);
+						int roomInt = Integer.parseInt(parts[1]);
+						if (parts.length == 2) {
+							MultiWaitingRoom waitingRoom = getWaitingRoom(roomInt);
+							Set<Long> participantIds = waitRoomParticipantsIds.computeIfAbsent(roomInt, set -> new HashSet<>());
+                            participantIds.addAll(waitingRoom.getParticipantIds());
+						}
 
-                // ":"로 분할된 각 요소에서 필요한 정보 추출
-                for (int i = 0; i < parts.length; i++) {
-                    if (parts[i].equals("multiGame"))
-                        continue; // 첫 번째 요소인 경우 skip
-                    if (i == 1) { // 두 번째 요소는 roomId
-                        roomId = Long.parseLong(parts[i]);
-                    } else if (i == 3) { // 네 번째 요소는 roundNumber
-                        roundNumber = Integer.parseInt(parts[i]);
-                    } else if (i == 2) { // 세 번째 요소는 participantsIds
-                        participantsIds.add(Long.parseLong(parts[i]));
-                    }
-                }
-                if (parts.length == 2) {
-                    MultiWaitingRoom waitingRoom = getWaitingRoom(roomId);
-                    roomTitle = waitingRoom.getRoomTitle();
-                    isOpen = waitingRoom.getIsOpen();
-                    password = waitingRoom.getPassword();
-                    waitRoomInfos.add(new MultiWaitRoomInfo(roomId, roomTitle, participantsIds, isOpen, password));
-                } else {
-                    // MultiGameRoomInfo 객체 생성 후 리스트에 추가
-                    resultList.add(new MultiGameRoomInfo(roomId, roomTitle, roundNumber, participantsIds, isOpen, password)); // 방 이름과 비밀번호는 임의 값으로 설정
-                }
+					} else if (i == 3) { // 네 번째 요소는 roundNumber
+						roundNumber = Integer.parseInt(parts[i]);
+					} else if (i == 2) { // 세 번째 요소는 participantsIds
+						// 세 번째 요소는 participantsIds
+						Integer gameKey = Integer.parseInt(parts[1]);
+						Set<Long> participantIds = gameParticipantsIds.computeIfAbsent(gameKey, set -> new HashSet<>());
 
-            }
-        }
+                        participantIds.add(Long.parseLong(parts[2]));
+						gameParticipantsIds.get(gameKey).add(Long.parseLong(parts[i]));
+					}
+				}
+				if (parts.length == 2) {
+					int waitingRoomKey = Integer.parseInt(parts[1]);
+					MultiWaitingRoom waitingRoom = getWaitingRoom(waitingRoomKey);
+					roomTitle = waitingRoom.getRoomTitle();
+					isOpen = waitingRoom.getIsOpen();
+					password = waitingRoom.getPassword();
+					waitRoomInfos.add(new MultiWaitRoomInfo((long) waitingRoomKey, roomTitle, waitRoomParticipantsIds.get(waitingRoomKey), isOpen, password));
+				} else {
+					// MultiGameRoomInfo 객체 생성 후 리스트에 추가
+					resultList.add(new MultiGameRoomInfo(roomId, roomTitle, roundNumber, gameParticipantsIds.get(Integer.parseInt(parts[1])), isOpen, password)); // 방 이름과 비밀번호는 임의 값으로 설정
+				}
+
+			}
+		}
 
         // 리스트를 정렬 (원하는 기준으로)
         resultList.sort(Comparator.comparing(MultiGameRoomInfo::roomId)); // 방 번호를 기준으로 정렬
 
         // 페이징 처리
         int fromIndex = (pageNumber - 1) * 6;
-        int toIndex = Math.min(fromIndex + 6, resultList.size());
+        int gameRoomToIndex = Math.min(fromIndex + 6, resultList.size());
+        int waitingRoomToIndex = Math.min(fromIndex + 6, waitRoomInfos.size());
+
 
         // MultiGameRoomsResponseDto 객체 생성하여 반환
         // TODO: 대기방 먼저? 정렬 조건 마련
-        return new MultiGameRoomsResponseDto(resultList.size(), resultList.subList(fromIndex, toIndex), waitRoomInfos.subList(fromIndex, toIndex));
+        return new MultiGameRoomsResponseDto(resultList.size(), resultList.subList(fromIndex, gameRoomToIndex), waitRoomInfos.subList(fromIndex, waitingRoomToIndex));
     }
 
     public void enterMultiGameRoom(Long memberId, String roomId) {

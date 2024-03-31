@@ -1,4 +1,4 @@
-package com.backend.api.domain.multi.service;
+package com.backend.api.domain.multi.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
