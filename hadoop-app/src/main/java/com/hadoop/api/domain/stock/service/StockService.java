@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
@@ -24,32 +25,35 @@ public class StockService {
 	private final SparkSession sparkSession;
 
 	// HDFS에서 주식 데이터를 조회하는 메서드
-	public List<StockRes> getStockData() {
+	public List<StockRes> getStockData(int page, int pageSize) {
 		Dataset<Row> parquetData = sparkSession.read().parquet(stockDataPath); // Parquet 파일 읽기
+		parquetData.createOrReplaceTempView("parquetData"); // 임시 뷰 등록
 		parquetData.show(); // 읽어온 데이터 출력
 
-		Dataset<StockRes> stockResDataset = parquetData.as(Encoders.bean(StockRes.class)); // Dataset<Row>를 Dataset<StockRes>로 변환
-		List<StockRes> stockResList = stockResDataset.collectAsList(); // Dataset<StockRes>를 List<StockRes>로 변환
+		long skipCount = (long) (page - 1) * pageSize;
+		Dataset<Row> pagedData = sparkSession.sql(
+			"SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY 1) AS rn FROM parquetData) temp WHERE rn > " + skipCount + " AND rn <= " + (skipCount + pageSize)
+		);
 
+		Dataset<StockRes> stockResList = pagedData.as(Encoders.bean(StockRes.class)); // Dataset<Row>를 Dataset<StockRes>로 변환
 
-		return stockResList; // 주식 데이터 리스트 반환
+		return stockResList.collectAsList(); // 주식 데이터 리스트 반환
 	}
 
 	// 주식 데이터를 생성하고 HDFS에 저장하는 메서드
-	public String createStockData() {
+	public List<StockRes> createStockData() {
 		List<StockRes> stockList = generateStockData(); // 테스트용 주식 데이터 생성
+		Dataset<Row> parquetData = sparkSession.read().parquet(stockDataPath); // Parquet 파일 읽기
+
 		Dataset<StockRes> stockDataset = sparkSession.createDataset(stockList, Encoders.bean(StockRes.class)); // Dataset<StockRes> 생성
 
 		stockDataset.printSchema(); // 데이터셋 스키마 출력
 		stockDataset.show(); // 데이터셋 내용 출력
 
 		stockDataset.write().mode("append").parquet("/zigeum/stock/stock_data.parquet"); // 데이터셋을 Parquet 파일로 저장
+		List<StockRes> stockResList = stockDataset.collectAsList(); // Dataset<StockRes>를 List<StockRes>로 변환
 
-		Dataset<Row> parquetData = sparkSession.read().parquet("/zigeum/stock/stock_data.parquet"); // 저장된 Parquet 파일 읽기
-		String jsonData = parquetData.toJSON().collectAsList().toString(); // 데이터셋을 JSON 형식으로 변환
-
-
-		return jsonData; // JSON 형식의 주식 데이터 반환
+		return stockResList; // JSON 형식의 주식 데이터 반환
 	}
 
 	/* 테스트용 주식 데이터 생성 메서드 */
