@@ -5,12 +5,13 @@ import ProfileModal from "./profileModal";
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { userType } from "./FriendUserRankingList";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 
 export default function UserRanking({ user }: { user: userType }) {
   const { lobbyModal, setLobbyModal, userId, setUserId } = multigameStore();
   const queryClient = new QueryClient();
-  
+  const playClickSound = useClickSound();
   
   return (
    <QueryClientProvider client={queryClient}>
@@ -20,6 +21,7 @@ export default function UserRanking({ user }: { user: userType }) {
       <div
         className="flex justify-between test-left"
         onClick={() => {
+          playClickSound();
           setLobbyModal(true);
           setUserId(user.memberId)
         }}

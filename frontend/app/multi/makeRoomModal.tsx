@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 interface RoomInfo {
   title: string,
@@ -25,6 +26,8 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
     }
   });
 
+
+  const playClickSound = useClickSound();
   const openRoom = watch('isOpen')
 
   const router = useRouter();
@@ -42,6 +45,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
   }
 
   const onSubmit = async(data: RoomInfo) => {
+    playClickSound(); 
     const password = Number(data.password) || null;
     const formData = {
       roomTitle: data.title,
@@ -118,6 +122,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                         type="radio"
                         value={3}
                         {...register('roundNumber', { required: true })}
+                        onChange={playClickSound}
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                       />
                       <label htmlFor="3round" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
@@ -130,6 +135,8 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                         type="radio"
                         value={5}
                         {...register('roundNumber', { required: true })}
+                        onChange={playClickSound}
+
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                       />
                       <label htmlFor="5round" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
@@ -142,6 +149,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                         type="radio"
                         value={7}
                         {...register('roundNumber', { required: true })}
+                        onChange={playClickSound}
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                       />
                       <label htmlFor="7round" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
@@ -159,6 +167,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                         type="radio"
                         value="true"
                         {...register('isOpen',{ required: true })}
+                        onChange={playClickSound}
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                       />
                       <label
@@ -174,6 +183,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                         type="radio"
                         value="false"
                         {...register('isOpen', { required: true })}
+                        onChange={playClickSound}
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                       />
                       <label
@@ -215,6 +225,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                 <div className="col-span-1">
                   <button
                     onClick={() => {
+                      playClickSound();
                       reset()
                       onClose();
                     }}

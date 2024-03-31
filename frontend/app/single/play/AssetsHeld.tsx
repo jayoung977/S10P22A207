@@ -5,7 +5,7 @@ import AssetHeld from './AssetHeld'
 
 export default function AssetsHeld () {
     const { assetListData } = SingleGameStore();
-    
+
     return (
         <div className="row-span-1 grid grid-rows-6">
             <div className="row-span-1 flex items-center justify-between pl-2">

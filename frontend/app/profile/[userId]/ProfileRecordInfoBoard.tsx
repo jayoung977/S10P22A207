@@ -3,6 +3,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useQuery, UseQueryResult } from "react-query";
 import axios from "axios";
 import profileStore from "@/public/src/stores/profile/profileStore";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 interface resultType {
   id: number;
@@ -15,6 +16,7 @@ interface BoardInfo {
 }
 
 export default function UserRecordInfoBoard() {
+  const playClickSound = useClickSound();
   const router = useRouter();
   const params = useParams<{ userId?: string }>();
   const id: string | undefined = params.userId;
@@ -66,6 +68,7 @@ export default function UserRecordInfoBoard() {
                 className="cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                 key={i}
                 onClick={() => {
+                  playClickSound();
                   setIsBoardOpen(item.id);
                 }}
               >

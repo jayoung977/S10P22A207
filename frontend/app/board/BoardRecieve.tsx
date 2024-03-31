@@ -8,6 +8,7 @@ import axios, { AxiosResponse } from "axios";
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 import userStore from "@/public/src/stores/user/userStore";
 import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 interface ResultType {
   id: number;
@@ -61,7 +62,9 @@ export default function BoardReceive() {
     },
   });
 
+  
   useFetchUserInfo();
+  const playClickSound = useClickSound();
   const { nickname, memberId } = userStore();
   const { data, isLoading, error }: UseQueryResult<BoardInfo, Error> = useQuery(
     "boardInfo",
@@ -79,6 +82,7 @@ export default function BoardReceive() {
     ? data
     : { result: null };
   const handleDelete = (boardId: number): void => {
+    playClickSound();
     Swal.fire({
       title: "정말로 삭제하시겠습니까?",
       text: "이 작업은 되돌릴 수 없습니다!",

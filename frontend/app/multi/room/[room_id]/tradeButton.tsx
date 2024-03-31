@@ -1,11 +1,13 @@
 'use client'
 import { useState } from "react";
 import TradeModal from "./play/[game_id]/TradeModal";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 export default function TradeButtons(){
   // 거래 모달창 open 여부
   const [isOpenTradeModal, setIsOpenTradeModal] = useState<boolean>(false);
   // 매수 / 매도 / 공매도 
   const [tradeType, setTradeType] = useState<string>('')
+  const playClickSound = useClickSound();
 
   return(
     <div className='col-span-2'>
@@ -13,6 +15,7 @@ export default function TradeButtons(){
         tradeType={tradeType} 
         isOpen={isOpenTradeModal} 
         onClose={()=>{
+          playClickSound();
           setIsOpenTradeModal(false)
           setTradeType('')
         }}
@@ -20,6 +23,7 @@ export default function TradeButtons(){
       <div className="gap-1 grid grid-rows-4">
         <button
           onClick={()=>{
+            playClickSound();
             setTradeType('buy');
             setIsOpenTradeModal(true)
           }}
@@ -27,6 +31,7 @@ export default function TradeButtons(){
         </button>
         <button
           onClick={()=>{
+            playClickSound();
             setTradeType('sell')
             setIsOpenTradeModal(true)
           }}
@@ -34,6 +39,7 @@ export default function TradeButtons(){
          </button>
         <button
           onClick={()=>{
+            playClickSound();
             setTradeType('shortSell')
             setIsOpenTradeModal(true)
           }}

@@ -7,11 +7,12 @@ import userStore from "@/public/src/stores/user/userStore";
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 import Swal from "sweetalert2";
 import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 export default function BoardSend() {
   useFetchUserInfo();
   const { memberId } = userStore();
-
+  const playClickSound = useClickSound();
   const sendBoard = async (formData: FormData): Promise<AxiosResponse<any>> => {
     const response = await axios({
       method: "post",
@@ -45,6 +46,7 @@ export default function BoardSend() {
   const [image, setImage] = useState<(FileList | File)[]>([]);
 
   const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
+    playClickSound();
     e.preventDefault();
 
     const formData = new FormData();
@@ -76,6 +78,7 @@ export default function BoardSend() {
   };
 
   const deletePhoto = (num: number) => {
+    playClickSound();
     const filteredImage = image.filter((item, i) => i !== num);
     setImage(filteredImage);
   };
@@ -107,6 +110,7 @@ export default function BoardSend() {
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 20 18"
+                onClick={playClickSound}
               >
                 <path
                   fill="currentColor"

@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { useQuery, UseQueryResult } from "react-query";
 import userStore from "@/public/src/stores/user/userStore";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 interface resultType {
   id: number;
@@ -21,6 +22,7 @@ interface QuizInfo {
 
 export default function QuizProblem() {
   const router = useRouter();
+  const playClickSound = useClickSound();
 
   const fetchShowMeTheMoney = async () => {
     const response = await axios({
@@ -70,6 +72,7 @@ export default function QuizProblem() {
     : { result: null };
 
   function handleClickProblem(num: number): any {
+    playClickSound();
     if (page < 4) {
       if (result != null && num == result[page].answer) {
         Swal.fire({

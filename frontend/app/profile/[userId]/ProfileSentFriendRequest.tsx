@@ -12,6 +12,7 @@ import {
   useMutation,
   useQueryClient,
 } from "react-query";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 interface resultType {
   memberId: number;
@@ -53,7 +54,8 @@ export default function ProfileSentFriendRequest() {
   );
 
   const queryClient = useQueryClient();
-
+  
+  const playClickSound = useClickSound();
   const { mutate: deleteFriendRequest } = useMutation(
     (nickname: string) =>
       axios({
@@ -94,6 +96,7 @@ export default function ProfileSentFriendRequest() {
                 type="button"
                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 onClick={() => {
+                  playClickSound();
                   setIsSentOpen(!isSentOpen);
                 }}
               >
@@ -135,6 +138,7 @@ export default function ProfileSentFriendRequest() {
                         type="button"
                         className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800 m-2"
                         onClick={() => {
+                          playClickSound();
                           deleteFriendRequest(item.nickname);
                         }}
                       >

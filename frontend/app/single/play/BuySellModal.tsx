@@ -2,6 +2,7 @@
 import { useState } from "react";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
 import axios from "axios";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 // 매수, 매도 클릭 시 활성화되는 모달창
 export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
@@ -10,6 +11,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
     const [disabled, setDisabled] = useState<boolean>(false);
     const [alertMessage, setAlertMessage] = useState<string>("");
     const foundAsset = assetListData?.find((x :any) => x.stockId === stockListData[selectedStockIndex].stockId);
+    const playClickSound = useClickSound();
 
     const handleStocksChange = (event: any) => {
         setStocks(event.target.value);
@@ -162,6 +164,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                 <div className="row-start-1 row-end-3 grid grid-cols-8">
                     <button 
                         onClick={() => {
+                            playClickSound();
                             setStocks(0)
                             setIsBuySellModalOpen(false);
                         }} 
@@ -172,7 +175,10 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                     {
                         isBuy ? (
                             <button 
-                                onClick={() => {handleBuy()}}
+                                onClick={() => {
+                                    playClickSound();
+                                    handleBuy()
+                                }}
                                 disabled={disabled}
                                 className={`col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 ${disabled ? 'bg-red-300' : 'bg-small-3'}`}
                             >
@@ -180,7 +186,10 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                             </button>
                         ) : (
                             <button 
-                                onClick={() => {handleSell()}} 
+                                onClick={() => {
+                                    playClickSound();
+                                    handleSell()
+                                }} 
                                 disabled={disabled}
                                 className={`col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 ${disabled ? 'bg-blue-300' : 'bg-small-1'}`}
                             >
