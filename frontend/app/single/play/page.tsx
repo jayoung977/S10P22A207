@@ -38,7 +38,8 @@ export default function SinglePlay() {
     setTotalAssetData, setAssetListData, setTradeListData,
     stockListData, setStockListData, setStockMarketListData, 
     setTrendListData, setMarketInfoListData, setTodayStockInfoListData,
-    selectedStockIndex
+    selectedStockIndex,
+    setStartDate, setEndDate,
   } = SingleGameStore();
   const { asset } = userStore();
   console.log("asset : ", asset);
@@ -93,6 +94,18 @@ export default function SinglePlay() {
         }
         // 10개 랜덤 종목 데이터
         setStockListData(response.data.result.stockChartDataList);
+        // console.log('시작 날짜')
+        const startTime = new Date(response.data.result.stockChartDataList[0].stockChartList[249].date).getTime();
+        console.log("시작 : ", startTime);
+        const endTime = new Date(response.data.result.stockChartDataList[0].stockChartList[299].date).getTime();
+        console.log("끝 : ", endTime);
+        // setStartDate(Date(response.data.result.stockChartDataList[0].stockChartList[299].date).getTime())
+        setStartDate(startTime);
+        setEndDate(endTime);
+        // console.log('끝 날짜')
+        // setEndDate(response.data.result.stockChartDataList[0].stockChartList[349].date)
+
+
         // 증시 데이터
         setStockMarketListData(response.data.result.stockMarketList);
 
