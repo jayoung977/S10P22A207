@@ -19,9 +19,11 @@ type Store = {
 
 export interface MultiGameRoomInfoList {
   roomId: number;
-  roomNumber: number;
+  roomTitle: string;
   roundNumber: number;
   participantsIds: number[];
+  isOpen: boolean;
+  password: number;
 }
 
 export interface ResultType {

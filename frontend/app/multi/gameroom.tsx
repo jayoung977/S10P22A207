@@ -5,7 +5,10 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-export default function GameRoom(props: { color: string; room: MultiGameRoomInfoList }) {
+export default function GameRoom(props: {
+  color: string;
+  room: MultiGameRoomInfoList;
+}) {
   const { color, room } = props;
   const password = "1234";
   const router = useRouter();
@@ -25,7 +28,7 @@ export default function GameRoom(props: { color: string; room: MultiGameRoomInfo
       if (result.isConfirmed) {
         if (String(result.value) === password) {
           axios
-            .get(`https://j10a207.p.ssafy.io/api/multi/${room.roomNumber}`, {
+            .get(`https://j10a207.p.ssafy.io/api/multi/${room.roomId}`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
@@ -36,7 +39,7 @@ export default function GameRoom(props: { color: string; room: MultiGameRoomInfo
             .catch((error) => {
               console.error(error);
             });
-          router.push(`multi/room/${room.roomNumber}`);
+          router.push(`multi/room/${room.roomId}`);
         } else {
           Swal.fire({
             title: "비밀번호가 일치하지 않습니다.",
@@ -46,7 +49,6 @@ export default function GameRoom(props: { color: string; room: MultiGameRoomInfo
       }
     });
   };
-  console.log(room)
   return (
     <div
       className={`hover:-translate-y-1 transition ease-in-out duration-500 h-auto rounded-md shadow-md text-textColor-2 ${color}`}
@@ -58,7 +60,8 @@ export default function GameRoom(props: { color: string; room: MultiGameRoomInfo
         className="block p-2  border rounded-lg shadow hover:cursor-pointer"
       >
         <h5 className="mb-1 text-md font-bold tracking-tight">
-          {room.roomId} 번방
+          {`[${room.roomId}번방] `}
+          {room.roomTitle}
         </h5>
         <div className="flex justify-end gap-4 text-sm">
           <div>{room.roundNumber}라운드</div>
