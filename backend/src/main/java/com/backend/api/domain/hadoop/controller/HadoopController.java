@@ -1,14 +1,11 @@
 package com.backend.api.domain.hadoop.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,13 +17,8 @@ import com.backend.api.domain.hadoop.dto.MinDataDto;
 import com.backend.api.domain.hadoop.dto.StockRes;
 import com.backend.api.domain.hadoop.dto.TradeLogDto;
 import com.backend.api.domain.hadoop.service.HadoopService;
-import com.backend.api.domain.single.entity.SingleGameStock;
-import com.backend.api.domain.single.entity.SingleTrade;
-import com.backend.api.domain.stock.entity.Stock;
 import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.SuccessCode;
-import com.backend.api.global.common.type.TradeType;
-import com.backend.api.global.security.userdetails.CustomUserDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -118,35 +110,6 @@ public class HadoopController {
 		return BaseResponse.success(
 			SuccessCode.CHECK_SUCCESS,
 			result
-		);
-	}
-
-	@PostMapping("/trade/save")
-	public ResponseEntity<BaseResponse<String>> saveTradeLog(@AuthenticationPrincipal CustomUserDetails userDetails) {
-		log.info("Controller saveTradeLog");
-		SingleTrade singleTrade = SingleTrade.builder()
-			.singleGameStock(SingleGameStock.builder()
-				.singleGameLog(null)
-				.stock(Stock.builder()
-					.stockName("삼성전자")
-					.stockCode("005930")
-					.build())
-				.roi(0D)
-				.profit(0)
-				.averagePurchasePrice(0)
-				.build())
-			.date(LocalDateTime.now())
-			.tradeType(TradeType.BUY)
-			.amount(1)
-			.price(1000)
-			.stockQuantity(1)
-			.roi(0D)
-			.profit(0L)
-			.build();
-		hadoopService.saveSingleTradeLogHdfs(singleTrade, userDetails);
-		return BaseResponse.success(
-			SuccessCode.CHECK_SUCCESS,
-			"하둡 저장 끝"
 		);
 	}
 
