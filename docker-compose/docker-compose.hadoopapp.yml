@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  hadoop-app:
+    container_name: hadoop-app
+    image: hadoop-app
+    ports:
+      - "5000:8080"
