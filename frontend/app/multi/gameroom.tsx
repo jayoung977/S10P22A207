@@ -10,9 +10,16 @@ export default function GameRoom(props: {
   room: MultiGameRoomInfoList;
 }) {
   const { color, room } = props;
-  const password = "1234";
+  const password = room.password
   const router = useRouter();
   const handleClick = () => {
+    if(room.participantsIds.length == 6){
+      Swal.fire({
+        title: '정원이 가득 찼습니다.',
+        icon: 'error'
+      })
+      return
+    }
     const token = sessionStorage.getItem("accessToken");
     Swal.fire({
       title: "비밀번호를 입력하세요.",
@@ -26,7 +33,7 @@ export default function GameRoom(props: {
     }).then((result) => {
       // cancel을 해도 뜬다.
       if (result.isConfirmed) {
-        if (String(result.value) === password) {
+        if (Number(result.value) === password) {
           axios
             .get(`https://j10a207.p.ssafy.io/api/multi/${room.roomId}`, {
               headers: {

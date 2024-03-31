@@ -8,29 +8,36 @@ export default function Header() {
   const router = useRouter();
   const params = useParams<{ room_id?: string }>();
   const room_id: string | undefined = params.room_id;
-  function handleGameStart() {
-    // axios({
-    //   method: 'post',
-    //   url: "https://j10a207.p.ssafy.io/api/multi/start-game",
-    //   headers: {
-    //     Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
-    //   },
-    //   data: {
-    //     // 어케아누?
-    //     playerIds: [],
-    //     roundNumber: 0,
-    //     roomId: params.room_id
-    //   }
-    // })
-    // .then((res)=> {
-    //   console.log(res.data)
-    // })
-    router.push(`${room_id}/play/1`);
+  const handleGameStart = async() => {
+    const token = sessionStorage.getItem("accessToken");
+    try {
+      const response = await fetch("https://j10a207.p.ssafy.io/api/multi/start-game",{
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          'playerIds': [1, 2, 3, 4, 5, 6],
+          'roundNumber': 3,
+          'roomId': params.room_id
+        })
+      })
+      
+      const result = await response.json();
+      console.log(result)
+      const gameId = result.result.gameLogId
+      router.push(`${room_id}/play/${gameId}`);
+    } catch (error) {
+      console.error(error)
+    }
   }
+
+
   function handleExit() {
     axios({
       method: "delete",
-      url: `http://localhost:8080/api/multi/exit?roomId=${room_id}`,
+      url: `https://j10a207.p.ssafy.io/api/multi/exit?roomId=${room_id}`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
@@ -38,6 +45,8 @@ export default function Header() {
       console.log(res.data);
     });
   }
+
+
   return (
     <header className="row-span-1 grid grid-cols-12 border items-center gap-2">
       <div className="col-start-2 col-end-3 flex items-center">
