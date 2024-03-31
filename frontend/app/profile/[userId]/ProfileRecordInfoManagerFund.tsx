@@ -81,7 +81,17 @@ export default function UserRecordInfoManagerFund() {
         <tbody>
           {result?.map((item, i) => {
             return (
-              <tr className="cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <tr
+                key={i}
+                className="cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                onClick={() => {
+                  router.push(
+                    item.status == "RUNNING"
+                      ? `/fund/in-progress/${item.fundId}`
+                      : `/fund/recruiting/${item.fundId}`
+                  );
+                }}
+              >
                 <th
                   scope="row"
                   className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
