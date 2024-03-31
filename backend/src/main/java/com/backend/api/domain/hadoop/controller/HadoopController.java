@@ -40,16 +40,6 @@ public class HadoopController {
 	@Operation(
 		summary = "하둡테스트"
 	)
-	// @GetMapping("/stock/get")
-	// public ResponseEntity<BaseResponse<List<StockRes>>> getStockRes() {
-	// 	log.info("Controller getStockRes");
-	// 	List<StockRes> result = hadoopService.getStockData();
-	// 	log.info("controller result show: {}", result.toString());
-	// 	return BaseResponse.success(
-	// 		SuccessCode.CHECK_SUCCESS,
-	// 		result
-	// 	);
-	// }
 	@GetMapping("/stock/get")
 	public ResponseEntity<BaseResponse<List<StockRes>>> getStockRes(
 		@RequestParam(defaultValue = "0") int page,
