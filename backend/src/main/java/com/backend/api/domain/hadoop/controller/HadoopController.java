@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.api.domain.hadoop.dto.ChangeRateCountDto;
+import com.backend.api.domain.hadoop.dto.MaxDataDto;
+import com.backend.api.domain.hadoop.dto.MaxMinPriceDto;
+import com.backend.api.domain.hadoop.dto.MinDataDto;
 import com.backend.api.domain.hadoop.dto.StockRes;
 import com.backend.api.domain.hadoop.dto.TradeLogDto;
 import com.backend.api.domain.hadoop.service.HadoopService;
@@ -31,26 +35,79 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestController
-@RequestMapping("/hadoop/test")
+@RequestMapping("/hadoop/")
 @RequiredArgsConstructor
 @Tag(name = "하둡", description = "하둡 관련 API")
 public class HadoopController {
 	private final HadoopService hadoopService;
 
 	@Operation(
-		summary = "하둡테스트"
+		summary = "하둡 주식 조회"
 	)
 	@GetMapping("/stock/get")
 	public ResponseEntity<BaseResponse<List<StockRes>>> getStockRes(
 		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size) {
+		@RequestParam(defaultValue = "10") int size,
+		@RequestParam String stockCode) {
 		log.info("Controller getStockRes");
 
 		Pageable pageable = PageRequest.of(page, size);
-		List<StockRes> stockDataFlux = hadoopService.getStockData(pageable.getPageNumber() + 1, pageable.getPageSize());
+		List<StockRes> stockDataList = hadoopService.getStockData(pageable.getPageNumber() + 1, pageable.getPageSize(), stockCode);
+		log.info("controller result show: {} {} {} {}", page, size, stockCode, stockDataList.size());
+		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, stockDataList);
+	}
 
-		log.info("controller result show: {}", stockDataFlux.toString());
-		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, stockDataFlux);
+	@Operation(
+		summary = "하둡 최대가격 최소가격 조회"
+	)
+	@GetMapping("/stock/max-min")
+	public ResponseEntity<BaseResponse<List<MaxMinPriceDto>>> getMaxMinPrice(
+		@RequestParam String stockCode) {
+		log.info("Controller getMaxMinPrice");
+
+		List<MaxMinPriceDto> MaxMinPriceDtoList = hadoopService.getMaxMinPrice(stockCode);
+		log.info("controller result show: {} {}",stockCode, MaxMinPriceDtoList.size());
+		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, MaxMinPriceDtoList);
+	}
+	@Operation(
+		summary = "하둡 최대 가격 날짜 조회"
+	)
+	@GetMapping("/stock/max-date")
+	public ResponseEntity<BaseResponse<List<MaxDataDto>>> getMaxDate(
+		@RequestParam String stockCode,
+		@RequestParam int maxPrice) {
+		log.info("Controller getMaxMinPrice");
+
+		List<MaxDataDto> MaxDataDtoList = hadoopService.getMaxDate(stockCode, maxPrice);
+		log.info("controller result show: {} {}",stockCode, MaxDataDtoList.size());
+		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, MaxDataDtoList);
+	}
+
+	@Operation(
+		summary = "하둡 최소 가격 날짜 조회"
+	)
+	@GetMapping("/stock/min-date")
+	public ResponseEntity<BaseResponse<List<MinDataDto>>> getMinDate(
+		@RequestParam String stockCode,
+		@RequestParam int minPrice) {
+		log.info("Controller getMaxMinPrice");
+
+		List<MinDataDto> MinDataDtoList = hadoopService.getMinDate(stockCode, minPrice);
+		log.info("controller result show: {} {}",stockCode, MinDataDtoList.size());
+		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, MinDataDtoList);
+	}
+
+	@Operation(
+		summary = "하둡 등락률 개수 조회"
+	)
+	@GetMapping("/stock/change-count")
+	public ResponseEntity<BaseResponse<List<ChangeRateCountDto>>> getChangeRateCount(
+		@RequestParam String stockCode) {
+		log.info("Controller getChangeRateCount");
+
+		List<ChangeRateCountDto> ChangeRateCountDtoList = hadoopService.getChangeRateCount(stockCode);
+		log.info("controller result show: {} {}",stockCode, ChangeRateCountDtoList.size());
+		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, ChangeRateCountDtoList);
 	}
 
 	@GetMapping("/trade/get")

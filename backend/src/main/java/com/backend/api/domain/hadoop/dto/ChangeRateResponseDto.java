@@ -12,8 +12,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StockResponseDto implements Serializable {
+public class ChangeRateResponseDto implements Serializable {
 	private int status;
 	private String message;
-	private List<StockRes> result;
+	private List<ChangeRateCountDto> result;
 }
