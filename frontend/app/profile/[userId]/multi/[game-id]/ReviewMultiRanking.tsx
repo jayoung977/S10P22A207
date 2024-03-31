@@ -1,10 +1,10 @@
+import Image from "next/image";
 import MultiReviewStore from "@/public/src/stores/profile/MultiReviewStore";
+import bronze from '@/public/src/assets/images/Tier/bronze.png';
 
 export default function MultiRanking() {
   const { multiLogMemberDtoList, selectedTradeList, setSelectedTradeList } = MultiReviewStore();
- 
   function handleCheckMember(memberId :number) {
-    
     const index = selectedTradeList.findIndex((item :any) => item.memberId == memberId);
     if (index == -1) {
       const foundMemberInfo = multiLogMemberDtoList.find((item: any) => item.memberId === memberId);
@@ -25,28 +25,29 @@ export default function MultiRanking() {
       newTradeData.map((item :any) => {
         newSelectedTradeList.push(item);
       })
-      console.log(newSelectedTradeList);
+      console.log("새로 선택된 조합 : ", newSelectedTradeList);
       setSelectedTradeList(newSelectedTradeList);
       
     } else {
         const newTradeData = selectedTradeList.filter((item :any) => item.memberId != memberId)
+        console.log("새로 선택된 조합 : ", newTradeData);
         setSelectedTradeList(newTradeData);
       }
     }
   }
   return (
  
-    <div className="grid grid-rows-12 bg-slate-500 rounded-md m-1">
+    <div className="row-span-9 grid grid-rows-12 bg-slate-500 rounded-md m-1">
       <div className="row-span-1 flex items-center justify-center">
         <div className="text-textColor-2">랭킹 유저들</div>
       </div>
       <table className="row-span-11 grid grid-rows-11 table-fixed rounded-md">
         <thead className="row-span-1 grid grid-cols-2 items-center m-1">
-          <tr className="col-span-2 grid grid-cols-4 items-center">
+          <tr className="col-span-2 grid grid-cols-6 items-center">
             <th className="col-span-1 text-center">순위</th>
-            <th className="col-span-1">티어</th>
-            <th className="col-span-1 text-center">이름</th>
-            <th className="col-span-1 text-center">수익률</th>
+            <th className="col-span-1 text-center">티어</th>
+            <th className="col-span-2 text-center">이름</th>
+            <th className="col-span-2 text-center">수익률</th>
           </tr>
         </thead>
         <tbody className="row-span-10 grid grid-rows-10 items-center">
@@ -55,14 +56,22 @@ export default function MultiRanking() {
               multiLogMemberDtoList.map((item :any, index :number) => (
                 <tr 
                   key={item.memberId} 
-                  className="row-span-1 grid grid-cols-4 text-center bg-white rounded-lg m-1"
+                  className="row-span-2 grid grid-cols-6 items-center text-center bg-white rounded-lg m-1"
                   onClick={() => {handleCheckMember(item.memberId)}}
                   style={{ cursor : "pointer" }}
                 >
                   <td className="col-span-1">{index+1}</td>
-                  <td className="col-span-1">티어표</td>
-                  <td className="col-span-1">{item.nickname}</td>
-                  <td className="col-span-1">{parseFloat(item.roi.toFixed(2))}</td>                      
+                  <td className="col-span-1">
+                    <Image
+                      className="rounded-full border border-black"
+                      src={bronze}
+                      alt="User Tear Image"
+                      width={30}
+                      height={30}
+                    />
+                  </td>
+                  <td className="col-span-2">{item.nickname}</td>
+                  <td className="col-span-2">{parseFloat(item.roi.toFixed(2))}</td>                      
                 </tr>
               ))
 

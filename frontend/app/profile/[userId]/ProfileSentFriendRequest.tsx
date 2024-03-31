@@ -20,13 +20,13 @@ interface resultType {
   isLogin: boolean;
 }
 
-interface FriendRequestInfo {
+interface SentFriendRequestInfo {
   result: resultType[];
 }
 
-const fetchFriendRequests = async () => {
+const fetchSentFriendRequests = async () => {
   const response = await axios({
-    url: "https://j10a207.p.ssafy.io/api/friend-ask/receive-list",
+    url: "https://j10a207.p.ssafy.io/api/friend-ask/send-list",
     method: "get",
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -35,47 +35,42 @@ const fetchFriendRequests = async () => {
   return response.data;
 };
 
-export default function ProfileFriendRequest() {
-  const { isOpen, setIsOpen, isSentOpen, setIsSentOpen } = profileStore();
+export default function ProfileSentFriendRequest() {
+  const {
+    isSentOpen,
+    setIsSentOpen,
+    setSentFriendRequests,
+    sentFriendRequests,
+  } = profileStore();
 
-  const { data, isLoading, error }: UseQueryResult<FriendRequestInfo, Error> =
-    useQuery("userFriendRequestsInfo", fetchFriendRequests);
+  const {
+    data,
+    isLoading,
+    error,
+  }: UseQueryResult<SentFriendRequestInfo, Error> = useQuery(
+    "userSentFriendRequestsInfo",
+    fetchSentFriendRequests
+  );
 
   const queryClient = useQueryClient();
 
-  const { mutate: acceptFriendRequest } = useMutation(
+  const { mutate: deleteFriendRequest } = useMutation(
     (nickname: string) =>
       axios({
-        method: "post",
-        url: "https://j10a207.p.ssafy.io/api/friend-ask/accept",
+        method: "delete",
+        url: `https://j10a207.p.ssafy.io/api/friend-ask/cancel?nickname=${nickname}`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
-        data: { nickname },
       }),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("userFriendRequestsInfo");
+        queryClient.invalidateQueries("userSentFriendRequestsInfo");
       },
     }
   );
 
-  const { mutate: rejectFriendRequest } = useMutation(
-    (nickname: string) =>
-      axios({
-        method: "get",
-        url: `https://j10a207.p.ssafy.io/api/friend-ask/reject?nickname=${nickname}`,
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-        },
-      }),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("userFriendRequestsInfo");
-      },
-    }
-  );
-  if (!isOpen) return null;
+  if (!isSentOpen) return null;
   if (isLoading) {
     return <div className="rainbow"></div>;
   }
@@ -88,30 +83,18 @@ export default function ProfileFriendRequest() {
     : { result: null };
   {
     return (
-      <div
-        className={
-          "absolute z-40 w-full h-full flex justify-center items-center"
-        }
-      >
+      <div className="fixed z-50 w-full h-full flex justify-center items-center">
         <div className="relative p-4 w-full max-w-2xl max-h-full ">
           <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 ">
             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 ">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                받은 친구 요청 목록
-              </h3>
-              <button
-                onClick={() => {
-                  setIsSentOpen(!isSentOpen);
-                }}
-                className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 absolute bottom-2 right-2"
-              >
                 보낸 친구 요청 목록
-              </button>
+              </h3>
               <button
                 type="button"
                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 onClick={() => {
-                  setIsOpen(!isOpen);
+                  setIsSentOpen(!isSentOpen);
                 }}
               >
                 <svg
@@ -150,22 +133,12 @@ export default function ProfileFriendRequest() {
                     <div className="flex justify-between items-center">
                       <button
                         type="button"
-                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 m-2"
-                        onClick={() => {
-                          acceptFriendRequest(item.nickname);
-                          console.log("전송");
-                        }}
-                      >
-                        수락
-                      </button>
-                      <button
-                        type="button"
                         className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800 m-2"
                         onClick={() => {
-                          rejectFriendRequest(item.nickname);
+                          deleteFriendRequest(item.nickname);
                         }}
                       >
-                        거절
+                        취소
                       </button>
                     </div>
                   </div>

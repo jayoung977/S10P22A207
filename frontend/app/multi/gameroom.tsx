@@ -1,16 +1,25 @@
 "use client";
 
-import { MultiRoom } from "@/public/src/stores/multi/MultiGameStore";
+import { MultiGameRoomInfoList } from "@/public/src/stores/multi/MultiGameStore";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-export default function GameRoom(props: { color: string; room: MultiRoom }) {
+export default function GameRoom(props: {
+  color: string;
+  room: MultiGameRoomInfoList;
+}) {
   const { color, room } = props;
-  const password = "1234";
+  const password = room.password
   const router = useRouter();
-  const roomNumber = room.roomNumber;
   const handleClick = () => {
+    if(room.participantsIds.length == 6){
+      Swal.fire({
+        title: '정원이 가득 찼습니다.',
+        icon: 'error'
+      })
+      return
+    }
     const token = sessionStorage.getItem("accessToken");
     Swal.fire({
       title: "비밀번호를 입력하세요.",
@@ -24,9 +33,9 @@ export default function GameRoom(props: { color: string; room: MultiRoom }) {
     }).then((result) => {
       // cancel을 해도 뜬다.
       if (result.isConfirmed) {
-        if (String(result.value) === password) {
+        if (Number(result.value) === password) {
           axios
-            .get(`https://j10a207.p.ssafy.io/api/multi/${roomNumber}`, {
+            .get(`https://j10a207.p.ssafy.io/api/multi/${room.roomId}`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
@@ -37,7 +46,7 @@ export default function GameRoom(props: { color: string; room: MultiRoom }) {
             .catch((error) => {
               console.error(error);
             });
-          router.push(`multi/room/${roomNumber}`);
+          router.push(`multi/room/${room.roomId}`);
         } else {
           Swal.fire({
             title: "비밀번호가 일치하지 않습니다.",
@@ -58,7 +67,8 @@ export default function GameRoom(props: { color: string; room: MultiRoom }) {
         className="block p-2  border rounded-lg shadow hover:cursor-pointer"
       >
         <h5 className="mb-1 text-md font-bold tracking-tight">
-          {room.roomNumber} 번방
+          {`[${room.roomId}번방] `}
+          {room.roomTitle}
         </h5>
         <div className="flex justify-end gap-4 text-sm">
           <div>{room.roundNumber}라운드</div>
