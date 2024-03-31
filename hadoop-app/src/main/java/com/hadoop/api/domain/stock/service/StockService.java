@@ -1,5 +1,7 @@
 package com.hadoop.api.domain.stock.service;
 
+import static org.apache.spark.sql.functions.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,10 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.springframework.stereotype.Service;
 
+import com.hadoop.api.domain.stock.dto.ChangeRateCountDto;
+import com.hadoop.api.domain.stock.dto.MaxDataDto;
+import com.hadoop.api.domain.stock.dto.MaxMinPriceDto;
+import com.hadoop.api.domain.stock.dto.MinDataDto;
 import com.hadoop.api.domain.stock.dto.StockRes;
 
 import lombok.RequiredArgsConstructor;
@@ -25,19 +31,103 @@ public class StockService {
 	private final SparkSession sparkSession;
 
 	// HDFS에서 주식 데이터를 조회하는 메서드
-	public List<StockRes> getStockData(int page, int pageSize) {
-		Dataset<Row> parquetData = sparkSession.read().parquet(stockDataPath); // Parquet 파일 읽기
-		parquetData.createOrReplaceTempView("parquetData"); // 임시 뷰 등록
-		parquetData.show(); // 읽어온 데이터 출력
+	public List<StockRes> getStockData(int page, int pageSize, String stockCode) {
 
-		long skipCount = (long) (page - 1) * pageSize;
-		Dataset<Row> pagedData = sparkSession.sql(
-			"SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY 1) AS rn FROM parquetData) temp WHERE rn > " + skipCount + " AND rn <= " + (skipCount + pageSize)
-		);
+		Dataset<Row> parquetData = sparkSession.read().parquet(stockDataPath);
+		parquetData.createOrReplaceTempView("stock_data");
 
-		Dataset<StockRes> stockResList = pagedData.as(Encoders.bean(StockRes.class)); // Dataset<Row>를 Dataset<StockRes>로 변환
+		int offset = (page - 1) * pageSize;
+		String sql = "SELECT * FROM ( " +
+			"    SELECT *, ROW_NUMBER() OVER (ORDER BY date) AS rownum " +
+			"    FROM stock_data " +
+			"    WHERE stockCode = "+stockCode+
+			") " +
+			"WHERE rownum BETWEEN " + (offset + 1) + " AND " + (offset + pageSize);
 
-		return stockResList.collectAsList(); // 주식 데이터 리스트 반환
+		Dataset<Row> pagedData = sparkSession.sql(sql);
+		Dataset<StockRes> stockResDataset = pagedData.as(Encoders.bean(StockRes.class));
+		List<StockRes> stockResList = stockResDataset.collectAsList();
+
+		return stockResList; // 주식 데이터 리스트 반환
+	}
+
+	// HDFS에서 주식 데이터를 조회하는 메서드
+	public List<MaxMinPriceDto> getMaxMinPrice(String stockCode) {
+
+		Dataset<Row> parquetData = sparkSession.read()
+			.parquet(stockDataPath); // Parquet 파일 읽기
+		parquetData.filter(col("lowPrice").notEqual(0)).createOrReplaceTempView("stock_data");
+
+		String sql = "SELECT stockCode, MIN(lowPrice) AS minPrice, MAX(highPrice) AS maxPrice FROM ( " +
+			"    SELECT * " +
+			"    FROM stock_data " +
+			"    WHERE stockCode = " +stockCode +
+			") " +
+			"GROUP BY stockCode";
+
+		Dataset<Row> pagedData = sparkSession.sql(sql);
+		pagedData.show();
+		Dataset<MaxMinPriceDto> maxMinPriceDtoDataset = pagedData.as(Encoders.bean(MaxMinPriceDto.class));
+		List<MaxMinPriceDto> maxMinPriceDto = maxMinPriceDtoDataset.collectAsList();
+		return maxMinPriceDto;
+	}
+
+	public List<MaxDataDto> getMaxDate(String stockCode, int maxPrice) {
+
+		Dataset<Row> parquetData = sparkSession.read()
+			.parquet(stockDataPath); // Parquet 파일 읽기
+		parquetData.createOrReplaceTempView("stock_data");
+
+		String sql = "SELECT stockCode, date FROM ( " +
+			"    SELECT * " +
+			"    FROM stock_data " +
+			"    WHERE stockCode = " +stockCode +" AND highPrice = "+maxPrice+
+			") " +
+			" ";
+
+		Dataset<Row> pagedData = sparkSession.sql(sql);
+		pagedData.show();
+		Dataset<MaxDataDto> maxDataDtoDataset = pagedData.as(Encoders.bean(MaxDataDto.class));
+		List<MaxDataDto> maxDataDto = maxDataDtoDataset.collectAsList();
+		return maxDataDto;
+	}
+
+	public List<MinDataDto> getMinDate(String stockCode, int minPrice) {
+
+		Dataset<Row> parquetData = sparkSession.read()
+			.parquet(stockDataPath); // Parquet 파일 읽기
+		parquetData.createOrReplaceTempView("stock_data");
+
+		String sql = "SELECT stockCode, date FROM ( " +
+			"    SELECT * " +
+			"    FROM stock_data " +
+			"    WHERE stockCode = " +stockCode +" AND lowPrice = "+minPrice+
+			") " +
+			" ";
+
+		Dataset<Row> pagedData = sparkSession.sql(sql);
+		pagedData.show();
+		Dataset<MinDataDto> minDataDtoDataset = pagedData.as(Encoders.bean(MinDataDto.class));
+		List<MinDataDto> minDataDto = minDataDtoDataset.collectAsList();
+		return minDataDto;
+	}
+
+	public List<ChangeRateCountDto> getChangeRateCount(String stockCode) {
+
+		Dataset<Row> parquetData = sparkSession.read()
+			.parquet(stockDataPath); // Parquet 파일 읽기
+		parquetData.createOrReplaceTempView("stock_data");
+
+		String sql = "SELECT SUM(CASE WHEN changeRate > 0 THEN 1 ELSE 0 END) AS positiveCount,"
+			+ " SUM(CASE WHEN changeRate < 0 THEN 1 ELSE 0 END) AS negativeCount"
+			+ " FROM stock_data" +
+			"    WHERE stockCode = " +stockCode;
+
+		Dataset<Row> pagedData = sparkSession.sql(sql);
+		pagedData.show();
+		Dataset<ChangeRateCountDto> changeRateCountDtoDataset = pagedData.as(Encoders.bean(ChangeRateCountDto.class));
+		List<ChangeRateCountDto> changeRateCountDto = changeRateCountDtoDataset.collectAsList();
+		return changeRateCountDto;
 	}
 
 	// 주식 데이터를 생성하고 HDFS에 저장하는 메서드

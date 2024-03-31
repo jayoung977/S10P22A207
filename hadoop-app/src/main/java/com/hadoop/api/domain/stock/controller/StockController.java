@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hadoop.api.domain.stock.dto.ChangeRateCountDto;
+import com.hadoop.api.domain.stock.dto.MaxDataDto;
+import com.hadoop.api.domain.stock.dto.MaxMinPriceDto;
+import com.hadoop.api.domain.stock.dto.MinDataDto;
 import com.hadoop.api.domain.stock.dto.StockRes;
 import com.hadoop.api.domain.stock.service.StockService;
 import com.hadoop.api.global.common.BaseResponse;
@@ -29,14 +33,33 @@ public class StockController {
 	@GetMapping("/get")
 	public ResponseEntity<BaseResponse<List<StockRes>>> getStockData(
 		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size) {
-		List<StockRes> stockResList = stockService.getStockData(page + 1, size);
+		@RequestParam(defaultValue = "10") int size, @RequestParam String stockCode){
+		List<StockRes> stockResList = stockService.getStockData(page + 1, size, stockCode);
 		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, stockResList);
 	}
 
-	@PostMapping("/create")
-	public ResponseEntity<BaseResponse<List<StockRes>>> createStockData(@RequestBody String temp) {
-		List<StockRes> result = stockService.createStockData();
-		return BaseResponse.success(SuccessCode.INSERT_SUCCESS, result);
+	@GetMapping("/max-min")
+	public ResponseEntity<BaseResponse<List<MaxMinPriceDto>>> getMaxMinPrice(@RequestParam String stockCode){
+		List<MaxMinPriceDto> maxMinPriceDto = stockService.getMaxMinPrice(stockCode);
+		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, maxMinPriceDto);
 	}
+
+	@GetMapping("/max-date")
+	public ResponseEntity<BaseResponse<List<MaxDataDto>>> getMaxDate(@RequestParam String stockCode, @RequestParam int maxPrice){
+		List<MaxDataDto> maxMinPriceDto = stockService.getMaxDate(stockCode, maxPrice);
+		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, maxMinPriceDto);
+	}
+
+	@GetMapping("/min-date")
+	public ResponseEntity<BaseResponse<List<MinDataDto>>> getMinDate(@RequestParam String stockCode, @RequestParam int minPrice){
+		List<MinDataDto> maxMinPriceDto = stockService.getMinDate(stockCode, minPrice);
+		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, maxMinPriceDto);
+	}
+
+	@GetMapping("/change-count")
+	public ResponseEntity<BaseResponse<List<ChangeRateCountDto>>> getChangeRateCount(@RequestParam String stockCode){
+		List<ChangeRateCountDto> changeRateCountDto = stockService.getChangeRateCount(stockCode);
+		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, changeRateCountDto);
+	}
+
 }
