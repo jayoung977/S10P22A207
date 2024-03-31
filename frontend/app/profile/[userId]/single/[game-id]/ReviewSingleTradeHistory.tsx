@@ -20,13 +20,17 @@ export default function SingleTradeHistory() {
         </thead>
         <tbody className="overflow-y-auto block" style={{ height: "calc(40vh)"}}>
           {
-            tradeList[selectedIndex]?.singleLogTradeDtoList?.map((item :any, index :number) => (
-              <tr key={index} className="row-span-1 grid grid-cols-6 text-center bg-white rounded-lg m-1">
-                <td className="col-span-2">{item.tradeType}</td>
-                <td className="col-span-2">{item.price}{(item.amount)}</td>                      
-                <td className="col-span-2">{item.profit}</td>
-              </tr>
-            ))
+            tradeList[selectedIndex].singleLogTradeDtoList && tradeList[selectedIndex].singleLogTradeDtoList.length > 0 ? (
+              tradeList[selectedIndex]?.singleLogTradeDtoList?.map((item :any, index :number) => (
+                <tr key={index} className={`row-span-1 grid grid-cols-6 text-center ${item.tradeType == "BUY" ? "bg-red-300" : "bg-blue-300"} text-white rounded-lg m-1`}>
+                  <td className="col-span-2">{item.tradeType}</td>
+                  <td className="col-span-2">{item.price}{(item.amount)}</td>                      
+                  <td className="col-span-2">{item.profit}</td>
+                </tr>
+              ))
+            ) : (
+              <div className="flex items-center justify-center mt-20">매매내역이 없습니다.</div>
+            )
           }
         </tbody>
       </table>
