@@ -29,7 +29,7 @@ export default function SingleTradeHistory() {
                 </tr>
               ))
             ) : (
-              <div className="text-center mt-100">매매내역이 없습니다.</div>
+              <div className="flex items-center justify-center mt-20">매매내역이 없습니다.</div>
             )
           }
         </tbody>
