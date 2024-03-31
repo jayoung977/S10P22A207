@@ -17,14 +17,19 @@ type Store = {
   setPageNumber: (value: number) => void;
 };
 
-export interface MultiRoom {
+export interface MultiGameRoomInfoList {
+  roomId: number;
   roomNumber: number;
   roundNumber: number;
   participantsIds: number[];
 }
 
+export interface ResultType {
+  multiGameRoomInfoList: MultiGameRoomInfoList[];
+  totalMultiRoomCounts: number;
+}
 export interface MultiRoomInfo {
-  result: MultiRoom[];
+  result: ResultType;
 }
 
 const multigameStore = create<Store>((set: any) => ({
@@ -39,9 +44,9 @@ const multigameStore = create<Store>((set: any) => ({
   lobbyModal: false,
   setLobbyModal: (value) => set({ lobbyModal: value }),
   userId: 0,
-  setUserId: (value) => set({ userId: value}),
+  setUserId: (value) => set({ userId: value }),
   pageNumber: 1,
-  setPageNumber: (value) => set({pageNumber: value}),
+  setPageNumber: (value) => set({ pageNumber: value }),
 }));
 
 export default multigameStore;
