@@ -33,8 +33,8 @@ public class StockController {
 	@GetMapping("/get")
 	public ResponseEntity<BaseResponse<List<StockRes>>> getStockData(
 		@RequestParam(defaultValue = "1") int page,
-		@RequestParam int size, @RequestParam String stockCode){
-		List<StockRes> stockResList = stockService.getStockData(page, size, stockCode);
+		@RequestParam int pageSize, @RequestParam String stockCode){
+		List<StockRes> stockResList = stockService.getStockData(page, pageSize, stockCode);
 		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, stockResList);
 	}
 
