@@ -27,6 +27,9 @@ export default function ProfileBoardDetail({
   isBoardOpen,
   setIsBoardOpen,
 }: any) {
+  const params = useParams<{ userId?: string }>();
+  const id: string | undefined = params.userId;
+  const { memberId } = userStore();
   const fetchCommunityDetail = async () => {
     const response = await axios({
       url: `https://j10a207.p.ssafy.io/api/community?communityId=${isBoardOpen}`,
@@ -133,16 +136,18 @@ export default function ProfileBoardDetail({
                 />
               ))}
             </div>
-            <div className="flex justify-center">
-              <button
-                onClick={() => {
-                  deleteBoard(isBoardOpen);
-                }}
-                className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 "
-              >
-                게시글 삭제
-              </button>
-            </div>
+            {memberId == Number(id) && (
+              <div className="flex justify-center">
+                <button
+                  onClick={() => {
+                    deleteBoard(isBoardOpen);
+                  }}
+                  className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 "
+                >
+                  게시글 삭제
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

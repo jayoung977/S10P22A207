@@ -14,6 +14,7 @@ interface ResultType {
   nickname: string;
   content: string;
   communityFileList: string[];
+  asset: number;
 }
 
 interface BoardInfo {
@@ -94,7 +95,7 @@ export default function BoardReceive() {
       }
     });
   };
-
+  console.log(result);
   return (
     <div style={{ maxHeight: "60vh" }} className="overflow-auto">
       {result?.map((item, i) => {
@@ -142,7 +143,7 @@ export default function BoardReceive() {
               <div className="flex justify-center items-center">
                 <Image
                   className="rounded-full ring-1 ring-background-1 dark:ring-gray-500"
-                  src={useGetProfileImage(0)}
+                  src={useGetProfileImage(item.asset)}
                   alt="Extra large avatar"
                   width={90}
                 ></Image>
