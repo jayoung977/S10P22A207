@@ -3,18 +3,21 @@ package com.backend.api.domain.hadoop.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.api.domain.hadoop.dto.StockRes;
 import com.backend.api.domain.hadoop.dto.TradeLogDto;
 import com.backend.api.domain.hadoop.service.HadoopService;
 import com.backend.api.domain.single.entity.SingleGameStock;
 import com.backend.api.domain.single.entity.SingleTrade;
-import com.backend.api.domain.hadoop.dto.StockRes;
 import com.backend.api.domain.stock.entity.Stock;
 import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.SuccessCode;
@@ -38,14 +41,16 @@ public class HadoopController {
 		summary = "하둡테스트"
 	)
 	@GetMapping("/stock/get")
-	public ResponseEntity<BaseResponse<List<StockRes>>> getStockRes() {
+	public ResponseEntity<BaseResponse<List<StockRes>>> getStockRes(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
 		log.info("Controller getStockRes");
-		List<StockRes> result = hadoopService.getStockData();
-		log.info("controller result show: {}", result.toString());
-		return BaseResponse.success(
-			SuccessCode.CHECK_SUCCESS,
-			result
-		);
+
+		Pageable pageable = PageRequest.of(page, size);
+		List<StockRes> stockDataFlux = hadoopService.getStockData(pageable.getPageNumber() + 1, pageable.getPageSize());
+
+		log.info("controller result show: {}", stockDataFlux.toString());
+		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, stockDataFlux);
 	}
 
 	@GetMapping("/trade/get")
@@ -60,7 +65,7 @@ public class HadoopController {
 	}
 
 	@PostMapping("/trade/save")
-	public ResponseEntity<BaseResponse<String>> saveTradeLog(@AuthenticationPrincipal CustomUserDetails userDetails){
+	public ResponseEntity<BaseResponse<String>> saveTradeLog(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		log.info("Controller saveTradeLog");
 		SingleTrade singleTrade = SingleTrade.builder()
 			.singleGameStock(SingleGameStock.builder()
@@ -88,12 +93,4 @@ public class HadoopController {
 		);
 	}
 
-	// @GetMapping("")
-	// public ResponseEntity<BaseResponse<List<StockRes>>> createStockTradeLog(@AuthenticationPrincipal CustomUserDetails userDetails){
-	// 	var result = hadoopService.createStockTradeLog(userDetails.getId());
-	// 	return BaseResponse.success(
-	// 		SuccessCode.CHECK_SUCCESS,
-	// 		result
-	// 	);
-	// }
 }

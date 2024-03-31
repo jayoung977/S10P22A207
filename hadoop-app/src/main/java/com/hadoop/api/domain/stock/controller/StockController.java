@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hadoop.api.domain.stock.dto.StockRes;
@@ -26,14 +27,16 @@ public class StockController {
 	private final StockService stockService;
 
 	@GetMapping("/get")
-	public ResponseEntity<BaseResponse<List<StockRes>>> getStockData() {
-		List<StockRes> stockResList = stockService.getStockData();
+	public ResponseEntity<BaseResponse<List<StockRes>>> getStockData(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		List<StockRes> stockResList = stockService.getStockData(page + 1, size);
 		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, stockResList);
 	}
 
 	@PostMapping("/create")
-	public ResponseEntity<BaseResponse<String>> createStockData(@RequestBody String temp) {
-		String jsonData = stockService.createStockData();
-		return BaseResponse.success(SuccessCode.INSERT_SUCCESS, jsonData);
+	public ResponseEntity<BaseResponse<List<StockRes>>> createStockData(@RequestBody String temp) {
+		List<StockRes> result = stockService.createStockData();
+		return BaseResponse.success(SuccessCode.INSERT_SUCCESS, result);
 	}
 }
