@@ -1,9 +1,9 @@
 package com.backend.api.domain.hadoop.dto;
 
 import java.io.Serializable;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,8 +12,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StockResponseDto implements Serializable {
-	private int status;
-	private String message;
-	private List<StockRes> result;
+@Builder
+public class MaxMinPriceDto implements Serializable {
+	private String stockCode;
+	private Integer maxPrice;
+	private Integer minPrice;
+
 }
