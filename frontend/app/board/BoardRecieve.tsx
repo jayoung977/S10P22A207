@@ -7,6 +7,7 @@ import { useMutation } from "react-query";
 import axios, { AxiosResponse } from "axios";
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 import userStore from "@/public/src/stores/user/userStore";
+import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
 
 interface ResultType {
   id: number;
@@ -140,11 +141,10 @@ export default function BoardReceive() {
               </div>
               <div className="flex justify-center items-center">
                 <Image
-                  className="w-20 h-20 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500 "
-                  src={penguin}
+                  className="rounded-full ring-1 ring-background-1 dark:ring-gray-500"
+                  src={useGetProfileImage(0)}
                   alt="Extra large avatar"
-                  width={100}
-                  height={100}
+                  width={90}
                 ></Image>
               </div>
             </div>

@@ -42,6 +42,7 @@ export default function SignUp() {
     data.push(i);
   }
   data.reverse();
+  
   const signup = async (request: RequestType): Promise<AxiosResponse<any>> => {
     const response = await axios({
       method: "put",

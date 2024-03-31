@@ -90,15 +90,7 @@ services:
       - namenode:/opt/spark/eventLog
       - /env/hadoop-eco/hadoop/zeppelin/notebook:/zeppelin-0.10.1-bin-all/notebook
       - /home/ec2-user/testdata:/testdata
-  
-  # dockerx:
-  #   image: dockerx
-  #   container_name: spring-app
-  #   hostname: spring-app
-  #   ports:
-  #     - "8080:8080"
-    # networks:
-    #   - bridge
+
 
 volumes:
   namenode:

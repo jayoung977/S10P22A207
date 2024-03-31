@@ -5,24 +5,28 @@ import { useState } from "react";
 import RoundResult from "./roundResult";
 import FinalResult from "./finalResult";
 import axios from "axios";
+import { useParams } from "next/navigation";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isGameover, setIsGameover] = useState(false);
   const [turn, setTurn] = useState<number>(0);
   const [round, setRound] = useState<number>(1);
+  const params = useParams();
   const roundPercentage = (turn / 50) * 100;
   const allPercentage = ((50 * (round - 1) + turn) / 150) * 100;
-  // const token = sessionStorage.getItem('accessToken')
 
-  function handleTomorrow (){
+  function handleTomorrow (turn: number){
     axios({
       method: 'post',
       url: 'https://j10a207.p.ssafy.io/api/multi/tomorrow',
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
       },
-      data: {}
+      data: {
+        gameIdx: params.game_id,
+        day: turn,
+      }
     })
     .then((res)=> {
       console.log(res.data)
@@ -68,7 +72,7 @@ export default function Header() {
           disabled={turn === 50}
           // turn이 50이면 disabled 속성이 true가 됩니다.
           onClick={() => {
-            // handleTomorrow()
+            handleTomorrow(turn)
             if (round == 3 && turn == 49) {
               console.log("경기 종료");
               setIsGameover(true);

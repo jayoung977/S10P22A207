@@ -10,7 +10,6 @@ import Swal from "sweetalert2";
 export default function TradeModal({ tradeType, isOpen, onClose } :any) {
   const params = useParams();
   const gameId = params['game_id']
-  const { memberId } = userStore();
   const [stocksAmount, setStocksAmount] = useState(0);
 
   function handleStocksChange(e:React.ChangeEvent<HTMLInputElement>){
@@ -27,8 +26,8 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
           Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
         },
         data: {
-          gameIdx: gameId,
-          memberId,
+          gameId: gameId,
+          roundNumber: 1,
           amount: stocksAmount,
           day: 1
         }
