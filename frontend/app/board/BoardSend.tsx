@@ -6,6 +6,7 @@ import { useState } from "react";
 import userStore from "@/public/src/stores/user/userStore";
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 import Swal from "sweetalert2";
+import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
 
 export default function BoardSend() {
   useFetchUserInfo();
@@ -33,6 +34,7 @@ export default function BoardSend() {
     },
     onError: (error: any) => {
       console.error("에러발생", error.response?.data || error.message);
+      Swal.fire("게시글이 작성되지 못했습니다.");
     },
     onSettled: () => {
       setContent("");
@@ -79,15 +81,15 @@ export default function BoardSend() {
     setImage(filteredImage);
   };
 
+  const { asset } = userStore();
   return (
     <div className="grid justify-center items-center row-span-3 grid-cols-12 rounded-md ">
       <div className="col-start-2">
         <Image
-          className="w-20 h-20 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500 relative"
-          src={penguin}
+          className="rounded-full ring-2 ring-background-1 dark:ring-gray-500 relative"
+          src={useGetProfileImage(asset)}
           alt="Extra large avatar"
           width={100}
-          height={100}
         ></Image>
       </div>
       <div className="col-start-4 col-end-12 rounded-lg m-2 bg-background-1">

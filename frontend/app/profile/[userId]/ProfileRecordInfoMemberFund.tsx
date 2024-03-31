@@ -56,7 +56,10 @@ export default function UserRecordInfoMemberFund() {
     : { result: null };
 
   return (
-    <div className="shadow row-span-5 overflow-auto max-h-96 p-4">
+    <div
+      className="shadow row-span-5 overflow-auto p-4"
+      style={{ maxHeight: "50vh" }}
+    >
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
@@ -64,7 +67,7 @@ export default function UserRecordInfoMemberFund() {
               펀드이름
             </th>
             <th scope="col" className="px-6 py-3">
-              기간
+              상태
             </th>
             <th scope="col" className="px-6 py-3">
               펀드 자금
@@ -80,7 +83,17 @@ export default function UserRecordInfoMemberFund() {
         <tbody>
           {result?.map((item, i) => {
             return (
-              <tr className="cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <tr
+                key={i}
+                className="cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700 "
+                onClick={() => {
+                  router.push(
+                    item.status == "RUNNING"
+                      ? `/fund/in-progress/${item.fundId}`
+                      : `/fund/recruiting/${item.fundId}`
+                  );
+                }}
+              >
                 <th
                   scope="row"
                   className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"

@@ -11,6 +11,8 @@ public record CommunityRes(
         Long id,
         @Schema(description = "작성자 닉네임")
         String nickname,
+        @Schema(description = "자산")
+        Long asset, 
         @Schema(description = "글 내용")
         String content,
 

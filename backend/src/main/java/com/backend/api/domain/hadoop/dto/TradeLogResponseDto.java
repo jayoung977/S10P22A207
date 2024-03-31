@@ -1,5 +1,6 @@
 package com.backend.api.domain.hadoop.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -11,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TradeLogResponseDto {
+public class TradeLogResponseDto implements Serializable {
 	private int status;
 	private String message;
 	private List<TradeLogDto> result;

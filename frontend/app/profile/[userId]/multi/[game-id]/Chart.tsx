@@ -170,8 +170,6 @@ export default function Chart({ data }: any) {
         }
         }) 
 
-    // const buyData = tradeList[selectedIndex]?.singleLogTradeDtoList?.filter((x :any) => x.tradeType == "BUY");
-    // const sellData = tradeList[selectedIndex]?.singleLogTradeDtoList?.filter((x :any) => x.tradeType =="SELL")
     
     let eventMarkerData :any = [];
     selectedTradeList?.map((x :any) => {
