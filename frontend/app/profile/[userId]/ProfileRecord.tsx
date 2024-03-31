@@ -5,6 +5,7 @@ import { useQuery, UseQueryResult } from "react-query";
 import { useParams } from "next/navigation";
 import profileStore from "@/public/src/stores/profile/profileStore";
 import axios from "axios";
+import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
 
 interface resultType {
   memberID: number;
@@ -60,11 +61,10 @@ export default function UserRecord() {
       <div className="shadow row-start-1 row-end-4 grid grid-cols-12">
         <div className="col-start-1 col-end-5 flex justify-center items-center ">
           <Image
-            className="w-32 h-32 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500 "
-            src={penguin}
+            className="rounded-full ring-2 ring-background-1 dark:ring-background-1"
+            src={useGetProfileImage(result?.asset)}
             alt="Extra large avatar"
-            width={100}
-            height={100}
+            width={150}
           ></Image>
         </div>
         <div className="col-start-5 col-end-13 grid grid-rows-12">

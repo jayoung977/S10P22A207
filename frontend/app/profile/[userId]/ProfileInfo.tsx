@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 import { useMutation, useQueryClient } from "react-query";
 
 import ProfileFriendRequest from "./ProfileFriendRequest";
+import useGetProfileRank from "@/public/src/hooks/useGetProfileRank";
 
 interface resultType {
   memberID: number;
@@ -129,30 +130,10 @@ export default function UserInfo() {
     : { result: null };
 
   const myFriend = isFriendData?.result;
-  
+
   const handleFriendRequest = () => {
     const request = { nickname: result?.nickname };
     sendFriendRequest(request);
-  };
-
-  const fetchFriendRequests = async () => {
-    try {
-      const response = await axios({
-        url: "https://j10a207.p.ssafy.io/api/friend-ask/receive-list",
-        method: "get",
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-        },
-      });
-      if (response.data.status === 200) {
-        setFriendRequests(response.data.result);
-        setIsOpen(!isOpen); // 모달 열기
-      } else {
-        console.error("친구 요청 목록을 가져오는 데 실패했습니다.");
-      }
-    } catch (error) {
-      console.error("친구 요청 목록을 가져오는 중 오류 발생:", error);
-    }
   };
 
   return (
@@ -194,7 +175,7 @@ export default function UserInfo() {
               type="button"
               className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 absolute bottom-2 "
               onClick={() => {
-                fetchFriendRequests();
+                setIsOpen(!isOpen);
               }}
             >
               친구 요청 목록
@@ -205,17 +186,16 @@ export default function UserInfo() {
             {result?.nickname}
           </p>
         </div>
-        <div className=" row-start-5 row-end-9 flex justify-center items-center">
+        <div className="row-start-5 row-end-9 flex justify-center items-center">
           <Image
-            className="rounded-full w-40 h-50"
-            src={bronze}
-            alt="Extra large avatar"
-            width={500}
-            height={500}
+            className="ring-2 rounded-full ring-background-1"
+            src={useGetProfileRank(result?.rankPoint)}
+            alt="Tier Image"
+            width={200}
           ></Image>
         </div>
         <div className="row-start-9 row-end-13 flex justify-center items-center">
-          {result?.rankPoint}
+          {result?.rankPoint}점
         </div>
       </aside>
       <UserRecord></UserRecord>

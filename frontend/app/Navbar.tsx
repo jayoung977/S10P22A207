@@ -10,6 +10,7 @@ import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 import userStore from "@/public/src/stores/user/userStore";
 import fundCrudStore from "@/public/src/stores/fund/crud/FundCrudStore";
 import socketStore from "@/public/src/stores/websocket/socketStore";
+import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
 
 export default function Navbar() {
   useFetchUserInfo();
@@ -53,11 +54,10 @@ export default function Navbar() {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image
-            src={penguin}
+            src={useGetProfileImage(30000000)}
             alt="Logo"
-            className="h-8 bg-background-1"
-            width={32}
-            height={32}
+            className="bg-background-1"
+            width={60}
           />
           <span
             className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white hover:cursor-pointer"
