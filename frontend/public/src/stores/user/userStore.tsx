@@ -1,36 +1,33 @@
 import { create } from "zustand";
 
-
 export interface FriendInfo {
-  result: Friend[]
+  result: Friend[];
 }
 
 export interface Friend {
-  memberId: number
-  nickname: string
-  assets: number
-  isLogin: boolean
+  memberId: number;
+  nickname: string;
+  assets: number;
+  isLogin: boolean;
 }
 
 export interface UserInfo {
-  result: UserProfile
+  result: UserProfile;
 }
-
 
 export interface UserProfile {
-  memberId: number
-  email: string
-  nickname: string
-  birthYear: number
-  gender: string
-  asset: number
-  rankPoint: number
-  win: number
-  lose: number
-  singleAvgRoi: number
-  multiAvgRoi: number
+  memberId: number;
+  email: string;
+  nickname: string;
+  birthYear: number;
+  gender: string;
+  asset: number;
+  rankPoint: number;
+  win: number;
+  lose: number;
+  singleAvgRoi: number;
+  multiAvgRoi: number;
 }
-
 
 type Store = {
   memberId: number | null;
@@ -55,6 +52,8 @@ type Store = {
   setSingleAvgRoi: (value: number | null) => void;
   multiAvgRoi: number | null;
   setMultiAvgRoi: (value: number | null) => void;
+  isLogin: boolean;
+  setIsLogin: (value: boolean) => void;
 };
 
 const userStore = create<Store>((set: any) => ({
@@ -80,6 +79,8 @@ const userStore = create<Store>((set: any) => ({
   setSingleAvgRoi: (value) => set({ singleAvgRoi: value }),
   multiAvgRoi: null,
   setMultiAvgRoi: (value) => set({ multiAvgRoi: value }),
+  isLogin: false,
+  setIsLogin: (value) => set({ isLogin: value }),
 }));
 
 export default userStore;
