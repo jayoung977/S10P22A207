@@ -172,41 +172,40 @@ export default function Chart({ data }: any) {
         }
         }) 
 
-    // const buyData = tradeList[selectedIndex]?.singleLogTradeDtoList?.filter((x :any) => x.tradeType == "BUY");
-    // const sellData = tradeList[selectedIndex]?.singleLogTradeDtoList?.filter((x :any) => x.tradeType =="SELL")
-    
-    let eventMarkerData :any = [];
-    tradeList[selectedIndex]?.singleLogTradeDtoList?.map((x :any) => {
-        if (x.tradeType == "BUY") {
-            eventMarkerData.push({
-                symbol : 'B',
-                date : x.date,
-                description : `주가 : ${x.price}` + '\n' + `수량 : ${x.amount}`,
-                normal : { fill : 'red' }
+        // const buyData = tradeList[selectedIndex]?.singleLogTradeDtoList?.filter((x :any) => x.tradeType == "BUY");
+        // const sellData = tradeList[selectedIndex]?.singleLogTradeDtoList?.filter((x :any) => x.tradeType =="SELL")
+        
+        let eventMarkerData :any = [];
+        tradeList[selectedIndex]?.singleLogTradeDtoList?.map((x :any) => {
+            if (x.tradeType == "BUY") {
+                eventMarkerData.push({
+                    symbol : 'B',
+                    date : x.date,
+                    description : `주가 : ${x.price}` + '\n' + `수량 : ${x.amount}`,
+                    normal : { fill : 'red' }
 
-            })
-        } else {
-            eventMarkerData.push({
-                symbol : 'S',
-                date : x.date,
-                description : `주가 : ${x.price}` + '\n' + `수량 : ${x.amount}`,
-                normal : { fill : 'blue' }
-            })
-        }
-    })
-
-    if (eventMarkerData.length > 0) {
-        plot1.eventMarkers({"groups": [
-            {
-            "data": eventMarkerData,
+                })
+            } else {
+                eventMarkerData.push({
+                    symbol : 'S',
+                    date : x.date,
+                    description : `주가 : ${x.price}` + '\n' + `수량 : ${x.amount}`,
+                    normal : { fill : 'blue' }
+                })
             }
-        ]});
-    }
-    
-    // set the symbol of event markers
-    plot1.eventMarkers().format(function( this :any ) {
-        return this.getData("symbol");
-    });
+        })
+
+        if (eventMarkerData.length > 0) {
+            plot1.eventMarkers({"groups": [
+                {
+                "data": eventMarkerData,
+                }
+            ]});
+        }
+               
+        plot1.eventMarkers().format(function( this :any ) {
+            return this.getData("symbol");
+        });
     
     
         // 첫 번째 plot 속성 설정

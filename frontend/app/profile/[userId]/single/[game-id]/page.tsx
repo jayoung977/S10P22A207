@@ -40,8 +40,7 @@ export default function page() {
             Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
           },
         });
-        console.log(response.data.result);
-        console.log("랭킹 멤버 : ", response.data.result.rankMemberList);
+
         setRankMemberList(response.data.result.rankMemberList);
         setStockChartDataList(response.data.result.stockChartDataList);
         setStockInfoDtoList(response.data.result.stockInfoDtoList);

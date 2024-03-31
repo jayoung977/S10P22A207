@@ -143,11 +143,9 @@ function calculateHist(macdData :any, signalData :any) {
 
 export default function Chart({ data }: any) {
   const { selectedStockIndex, turn, startDate, setStartDate, endDate, setEndDate } = SingleGameStore();
-  // const { turn, selectedSecondaryIndicator, setSelectedSecondaryIndicator } = SingleGameStore();
   const [selectedSecondaryIndicator, setSelectedSecondaryIndicator] = useState<number>(1);
 
   useEffect(() => {
-
     const purifiedData = filteringLowPriceZero(data);
     // 차트 생성
     const chart = anychart.stock();
@@ -487,8 +485,9 @@ export default function Chart({ data }: any) {
     }
     (window as any).handleShowPlot = handleShowPlot;
     handleShowPlot(selectedSecondaryIndicator);
-
-    chart.selectRange(anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd'), anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd'))  
+    // console.log("purifiedData", purifiedData[turn+249].date.split('T')[0]);
+    chart.selectRange(purifiedData[turn+249].date.split('T')[0], purifiedData[turn+299].date.split('T')[0])
+    // chart.selectRange(anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd'), anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd'))  
     // chart.scroller().listen('scrollerChange', function () {
     //   var range = chart.getSelectedRange();
     //   setStartDate(range.firstSelected);
