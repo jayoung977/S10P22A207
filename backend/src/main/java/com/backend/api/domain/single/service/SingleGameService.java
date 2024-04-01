@@ -231,7 +231,7 @@ public class SingleGameService {
         // 10개 안채워지면 반복해야함.
         while (stocks.size() < 10) {
             log.info("stocks.size() - {}", stocks.size());
-            List<String> stockIds = stockChartRepository.findDistinctStockCodeByDateBetween(randomDateTime, randomDateTime.plusDays(1));
+            List<String> stockIds = stockChartRepository.findDistinctStockCodeByDateBetween(randomDateTime.minusDays(1), randomDateTime);
             System.out.println("stockIds.size()" + stockIds.size());
             if (stockIds.isEmpty()) {
                 log.info("해당하는 날짜의 데이터가 없음.{}", randomDateTime);
@@ -242,7 +242,7 @@ public class SingleGameService {
 
             // randomStocks 리스트에서 처음 50개의 요소 검토
             List<String> selectedStocks = stockIds.subList(0, Math.min(stockIds.size(), 50));   // 이거 넘기자
-            List<StockChart> randomStockCharts = stockChartRepository.findRandomStocksInRange(randomDateTime, randomDateTime.plusDays(1), selectedStocks);
+            List<StockChart> randomStockCharts = stockChartRepository.findRandomStocksInRange(randomDateTime.minusDays(1), randomDateTime, selectedStocks);
 
             for (StockChart stockChart : randomStockCharts) {
                 log.info("350개의 데이터가 없는지 확인 {}개까지 넣었음", stocks.size());
