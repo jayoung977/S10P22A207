@@ -13,6 +13,7 @@ import com.backend.api.domain.friend.entity.FriendAsk;
 import com.backend.api.domain.fund.entity.Fund;
 import com.backend.api.domain.fund.entity.FundMember;
 import com.backend.api.domain.member.entity.type.GenderType;
+import com.backend.api.domain.multi.dto.response.MultiMemberRes;
 import com.backend.api.domain.multi.entity.MultiGamePlayer;
 import com.backend.api.domain.notice.entity.Notice;
 import com.backend.api.domain.single.entity.SingleGameLog;
@@ -91,8 +92,8 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "member")
 	private List<Community> communities = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
-    private List<MultiGamePlayer> multiGamePlayers = new ArrayList<>();
+	@OneToMany(mappedBy = "member")
+	private List<MultiGamePlayer> multiGamePlayers = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member")
 	private List<SingleGameLog> singleGameLogs = new ArrayList<>();
@@ -120,9 +121,12 @@ public class Member extends BaseEntity {
 	private List<Privilege> role = new ArrayList<>();
 
 	@Builder
-	public Member(String email, String nickname, Short birthYear, GenderType gender, Long asset, Integer rankPoint, Integer win, Integer lose, Integer singleGameChance, Double singleAvgRoi,
-		Double multiAvgRoi, List<Notice> notices, List<Friend> followers, List<FriendAsk> receivers, List<FriendAsk> senders, List<Fund> funds, List<FundMember> fundMembers,
-		List<Community> communities, List<SingleGameLog> singleGameLogs, List<MultiGamePlayer> multiGamePlayers, List<Fund> fundList, List<Friend> friendList,
+	public Member(String email, String nickname, Short birthYear, GenderType gender, Long asset, Integer rankPoint,
+		Integer win, Integer lose, Integer singleGameChance, Double singleAvgRoi,
+		Double multiAvgRoi, List<Notice> notices, List<Friend> followers, List<FriendAsk> receivers,
+		List<FriendAsk> senders, List<Fund> funds, List<FundMember> fundMembers,
+		List<Community> communities, List<SingleGameLog> singleGameLogs, List<MultiGamePlayer> multiGamePlayers,
+		List<Fund> fundList, List<Friend> friendList,
 		List<FriendAsk> friendAskSendList, List<FriendAsk> friendAskReceiveList, List<Privilege> role) {
 		this.email = email;
 		this.nickname = nickname;
@@ -151,12 +155,13 @@ public class Member extends BaseEntity {
 		this.role = role;
 	}
 
-	public void updateMemberInfo(String nickname, Short birthYear, GenderType gender){
+	public void updateMemberInfo(String nickname, Short birthYear, GenderType gender) {
 		this.nickname = nickname;
 		this.birthYear = birthYear;
 		this.gender = gender;
 	}
-	public void addAsset(Long profit){
+
+	public void addAsset(Long profit) {
 		this.asset += profit;
 	}
 
@@ -182,6 +187,18 @@ public class Member extends BaseEntity {
 
 	public void decreaseChance() {
 		this.singleGameChance--;
+	}
+
+	public MultiMemberRes toMultiMemberRes() {
+		return new MultiMemberRes(
+			this.id,
+			this.nickname,
+			0.0,
+			this.rankPoint,
+			this.win,
+			this.lose,
+			this.asset,
+			0);
 	}
 }
 
