@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import anychart from "anychart";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
+
+
 
 // 주어진 데이터 정제
 function filteringLowPriceZero(data :any) {
@@ -504,13 +507,26 @@ export default function Chart({ data }: any) {
     
   }, [data]);
 
+ const playClickSound = useClickSound();
+  
   return (
     <div className="row-span-12 grid grid-rows-12">
       <div className="row-span-1 grid grid-cols-8 items-center">
             {/* 종목 {selectedStockIndex+1}   */}
-            <button onClick={() => (window as any).handleShowPlot(1)} className={`border border-black ${selectedSecondaryIndicator == 1 && 'bg-slate-400'}`}>Volume</button>
-            <button onClick={() => (window as any).handleShowPlot(2)} className={`border border-black ${selectedSecondaryIndicator == 2 && 'bg-slate-400'}`}>RSI</button>
-            <button onClick={() => (window as any).handleShowPlot(3)} className={`border border-black ${selectedSecondaryIndicator == 3 && 'bg-slate-400'}`}>MACD</button>
+            <button onClick={() => {
+              playClickSound();
+              (window as any).handleShowPlot(1)
+              }}
+               className={`border border-black ${selectedSecondaryIndicator == 1 && 'bg-slate-400'}`}>Volume</button>
+            <button onClick={() =>{
+              playClickSound();
+              (window as any).handleShowPlot(2)
+              }} className={`border border-black ${selectedSecondaryIndicator == 2 && 'bg-slate-400'}`}>RSI</button>
+            <button onClick={() =>{
+              playClickSound();
+              (window as any).handleShowPlot(3)
+            }} className={`border border-black ${selectedSecondaryIndicator == 3 && 'bg-slate-400'}`}>MACD</button>
+
       </div>
       <div id="chart-container" className="row-span-12 flex items-center justify-center"></div>
     </div>

@@ -1,11 +1,17 @@
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore"
+import useClickSound from '@/public/src/components/clickSound/DefaultClick';
+
 
 export default function AssetHeld({ data } :any) {
+    const playClickSound = useClickSound();
     const { stockListData, setSelectedStockIndex } = SingleGameStore();
     const idx:number = stockListData.findIndex((x :any) => x?.stockId == data?.stockId);
     return (
         <div
-            onClick={() => {setSelectedStockIndex(idx)}} 
+            onClick={() => {
+                playClickSound();
+                setSelectedStockIndex(idx)}
+            } 
             className="row-span-3 bg-small-6 border-black m-3 grid grid-rows-3 rounded-lg shadow-md hover:scale-105 ease-in-out duration-500"
         >
             <div className="row-span-1 text-textColor-1 ml-1">종목 {idx+1}</div>

@@ -3,6 +3,7 @@
 import { useRouter, useParams } from "next/navigation";
 import { useQuery, UseQueryResult } from "react-query";
 import axios from "axios";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 interface resultType {
   finalProfit: number;
@@ -17,6 +18,7 @@ interface SingleGameInfo {
 }
 
 export default function UserRecordInfoSingle() {
+  const playClickSound = useClickSound();
   const router = useRouter();
   const params = useParams<{ userId?: string }>();
   const id: string | undefined = params.userId;
@@ -73,6 +75,7 @@ export default function UserRecordInfoSingle() {
               <tr
                 className="cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                 onClick={() => {
+                  playClickSound();
                   router.push(`${id}/single/${item.singleGameLogId}`);
                 }}
                 key={i}

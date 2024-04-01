@@ -6,6 +6,7 @@ import RoundResult from "./roundResult";
 import FinalResult from "./finalResult";
 import axios from "axios";
 import { useParams } from "next/navigation";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,7 +16,9 @@ export default function Header() {
   const params = useParams();
   const roundPercentage = (turn / 50) * 100;
   const allPercentage = ((50 * (round - 1) + turn) / 150) * 100;
+  const playClickSound = useClickSound();
 
+  function handleTomorrow (turn: number){
   function handleTomorrow (turn: number){
     axios({
       method: 'post',
@@ -23,6 +26,10 @@ export default function Header() {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
       },
+      data: {
+        gameIdx: params.game_id,
+        day: turn,
+      }
       data: {
         gameIdx: params.game_id,
         day: turn,
@@ -72,6 +79,7 @@ export default function Header() {
           disabled={turn === 50}
           // turn이 50이면 disabled 속성이 true가 됩니다.
           onClick={() => {
+            playClickSound();
             handleTomorrow(turn)
             if (round == 3 && turn == 49) {
               console.log("경기 종료");

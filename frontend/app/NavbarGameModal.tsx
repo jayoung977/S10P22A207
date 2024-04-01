@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import axios from "axios";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 type stockChartData = {
   marketPrice: number;
@@ -24,6 +25,7 @@ interface RoomInfo {
 
 export default function NavbarGameModal() {
   const router = useRouter();
+  const playClickSound = useClickSound();
   const openSinglePlay = () => {
     // openSinglePlay 호출 시, 해당 사용자의 기존 싱글 게임 기록 유무 확인 api 요청(지금 경로 X)
     // api 요청으로 넘어오는 데이터 : 이어하기 유무(true/false), 게임 방 번호
@@ -91,7 +93,10 @@ export default function NavbarGameModal() {
       <li>
         <a
           className="shadow-sm cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          onClick={() => router.push("/multi")}
+          onClick={() => {
+            playClickSound();
+            router.push("/multi")
+          }}
         >
           멀티 플레이
         </a>
@@ -99,7 +104,10 @@ export default function NavbarGameModal() {
       <li>
         <a
           className="shadow-sm cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          onClick={() => openSinglePlay()}
+          onClick={() => {
+            playClickSound();
+            openSinglePlay()
+          }}
         >
           싱글 플레이
         </a>
@@ -108,7 +116,10 @@ export default function NavbarGameModal() {
       <li>
         <a
           className="shadow-sm cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          onClick={() => router.push("/quiz")}
+          onClick={() => {
+            playClickSound();
+            router.push("/quiz")
+          }}
         >
           퀴즈
         </a>

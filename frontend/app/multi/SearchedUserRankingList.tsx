@@ -3,6 +3,7 @@ import { easeInOut } from "framer-motion/dom";
 import { useState } from "react";
 import UserRanking from "./userRanking";
 import axios from "axios";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 interface ResultType {
   memberId: number;
@@ -17,6 +18,7 @@ interface EntireUserType {
 export default function SearchedUserRankingList() {
   const [search, setSearch] = useState<string>("");
   const [entireUser, setEntireUser] = useState([]);
+  const playClickSound = useClickSound();
   const fetchEntireUserData = async (search: string) => {
     const response = await axios({
       method: "get",
@@ -54,6 +56,7 @@ export default function SearchedUserRankingList() {
           type="submit"
           className="p-2.5 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           onClick={() => {
+            playClickSound();
             fetchEntireUserData(search);
           }}
         >
