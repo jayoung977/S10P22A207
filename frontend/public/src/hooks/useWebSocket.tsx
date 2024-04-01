@@ -27,6 +27,7 @@ export const useWebSocket = () => {
         client.current.subscribe(`/api/sub/${memberId}`, (message: any) => {
           const parsedMessage = JSON.parse(message.body);
           console.log(parsedMessage);
+          Swal.fire(`${parsedMessage.type} 신호 감지!`);
           if (parsedMessage.type === "MESSAGE") {
             setReceiveMessage((prevReceiveMessage: any) => {
               const copy = [...prevReceiveMessage, parsedMessage];
