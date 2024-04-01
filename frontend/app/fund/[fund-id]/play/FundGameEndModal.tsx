@@ -1,8 +1,8 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import SingleGameStore from '@/public/src/stores/single/SingleGameStore';
+import FundGameStore from '@/public/src/stores/fund/game/FundGameStore';
 export default function FundGameEndModal ({ isOpen, onClose } :any) {
-    const { singleGameEndInfoData, setSelectedStockIndex } = SingleGameStore();
+    const { fundGameEndInfoData, setSelectedStockIndex } = FundGameStore();
     const router = useRouter();
     
     const singleGameAgainHandler = () => {
@@ -22,24 +22,24 @@ export default function FundGameEndModal ({ isOpen, onClose } :any) {
                 <div className="row-span-6 m-3">
                     <div className="flex justify-between mt-2 mb-1">
                         <div>시작 금액</div>
-                        <div>{singleGameEndInfoData?.initialAsset}</div>
+                        <div>{fundGameEndInfoData?.initialAsset}</div>
                     </div>
                     <div className="flex justify-between mt-1 mb-2">
                         <div>종료 금액</div>
-                        <div>{singleGameEndInfoData?.finalAsset}</div>
+                        <div>{fundGameEndInfoData?.finalAsset}</div>
                     </div>
                     <hr></hr>
                     <div className="flex justify-between mt-2 mb-1">
                         <div>순이익</div>
-                        <div>{singleGameEndInfoData?.netProfit}원</div>
+                        <div>{fundGameEndInfoData?.netProfit}원</div>
                     </div>
                     <div className="flex justify-between mt-1 mb-2">
                         <div>수익률</div>
-                        <div>{parseFloat(singleGameEndInfoData?.profitMargin).toFixed(4)}%</div>
+                        <div>{parseFloat(fundGameEndInfoData?.profitMargin).toFixed(4)}%</div>
                     </div>
                 </div>
                 <div className="row-span-4 grid grid-rows-4">
-                    <div className="row-span-1 text-center mb-2">현재 남은 기회 : {singleGameEndInfoData?.singleGameChance}</div>
+                    <div className="row-span-1 text-center mb-2">현재 남은 기회 : {fundGameEndInfoData?.singleGameChance}</div>
                     <div className="row-span-3 grid grid-cols-6">
                         <button onClick={() => {
                             setSelectedStockIndex(0);
@@ -55,7 +55,7 @@ export default function FundGameEndModal ({ isOpen, onClose } :any) {
                                 setSelectedStockIndex(0);
                                 singleGameAgainHandler();
                             }} 
-                            disabled={singleGameEndInfoData?.singleGameChance == 0}
+                            disabled={fundGameEndInfoData?.singleGameChance == 0}
                             className="col-span-3 rounded-full mx-16 my-8 text-white bg-gray-500"
                         >
                             한번 더!

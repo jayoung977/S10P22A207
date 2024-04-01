@@ -15,7 +15,6 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
     const params = useParams();
     const playClickSound = useClickSound();
 
-    console.log(params)
     const handleStocksChange = (event: any) => {
         setStocks(event.target.value);
         if (isBuy) {
@@ -51,16 +50,17 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                 method: "post",
                 url: "https://j10a207.p.ssafy.io/api/fund/game/buy",
                 data: {
-                    fundId: params['fund-id'], 
+                    fundId:  Number(params['fund-id']),
                     gameIdx: gameIdx,
                     stockId: stockListData[selectedStockIndex]?.stockId,
-                    amount: stocks,
+                    amount: Number(stocks),
                     day: turn, 
                 },
                 headers: {
                     Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
                 },
             });
+            console.log(response)
             setAssetListData(response.data.result.assetList);
             setTotalAssetData(response.data.result.totalAsset);
             setTradeListData(response.data.result.tradeList);

@@ -27,6 +27,7 @@ export interface MultiGameRoomInfoList {
 }
 
 export interface ResultType {
+  multiWaitRoomInfoList: MultiGameRoomInfoList[];
   multiGameRoomInfoList: MultiGameRoomInfoList[];
   totalMultiRoomCounts: number;
 }

@@ -6,7 +6,6 @@ import FundGameStore from "@/public/src/stores/fund/game/FundGameStore";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 
-
 // 주어진 데이터 정제
 function filteringLowPriceZero(data :any) {
   const newData = data.map((item :any) => {
