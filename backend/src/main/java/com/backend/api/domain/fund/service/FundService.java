@@ -11,6 +11,7 @@ import com.backend.api.domain.fund.repository.FundMemberRepository;
 import com.backend.api.domain.fund.repository.FundRepository;
 import com.backend.api.domain.fund.repository.FundStockRepository;
 import com.backend.api.domain.fund.repository.FundTradeRepository;
+import com.backend.api.domain.hadoop.service.HadoopService;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.notice.entity.Notice;
@@ -50,6 +51,7 @@ public class FundService {
 	private final FundTradeRepository fundTradeRepository;
 	private final SimpMessageSendingOperations template;
 	private final NotificationService noticeService;
+	private final HadoopService hadoopService;
 	private HashMap<Long, Integer> stocks;
 	private List<Long> list;
 
@@ -480,6 +482,8 @@ public class FundService {
 				.profit((long) currentGame.getProfits()[stockIdx])
 				.build();
 		fundTradeRepository.save(fundTrade);
+		/* 하둡저장 */
+		hadoopService.saveFundTradeLogHdfs(fundTrade, managerId);
 		//Redis - 매매내역 추가 및 값 변경
 		currentGame.getTradeList().add(
 				new FundTradeListDto(
@@ -606,6 +610,7 @@ public class FundService {
 				.profit((long) currentGame.getProfits()[stockIdx])
 				.build();
 		fundTradeRepository.save(fundTrade);
+		hadoopService.saveFundTrade(fundTrade);
 		//Redis - 매매내역 추가 및 값 변경
 		currentGame.getTradeList().add(
 				new FundTradeListDto(
