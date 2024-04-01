@@ -173,6 +173,7 @@ public class MultiGameService {
 				.hostId(userDetails.getId())
 				.build();
 		redisTemplate.opsForValue().set(key, multiWaitingRoom); // TODO : 이렇게 해도 되나?
+		multiGameSocketService.sendMultiWaitingRoomDetailDto(roomId);
 		return new MultiGameRoomCreateResponseDto(roomId);
 	}
 
