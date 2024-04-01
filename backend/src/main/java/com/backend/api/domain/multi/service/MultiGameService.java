@@ -238,7 +238,7 @@ public class MultiGameService {
 			// 각 키에 대해 gameId를 추출하여 최대 gameId를 찾음
 			for (String key : keys) {
 				String[] parts = key.split(":");
-				long temp = Long.parseLong(parts[3]);
+				long temp = Long.parseLong(parts[1]);
 				if (maxGameId == null || temp > maxGameId) {
 					maxGameId = temp;
 				}
