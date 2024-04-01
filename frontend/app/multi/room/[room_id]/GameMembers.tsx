@@ -3,19 +3,32 @@
 import Image from 'next/image'
 import ProfileImage from '@/public/src/assets/images/profile-person-image.png'
 import useClickSound from '@/public/src/components/clickSound/DefaultClick'
-import { useWebSocket } from '@/public/src/hooks/useWebSocket'
 import socketStore from '@/public/src/stores/websocket/socketStore'
 import { ParticipantsType } from '@/public/src/stores/websocket/socketStore'
 import userStore from '@/public/src/stores/user/userStore'
-
+import axios from 'axios'
 
 
 export default function GameMembers(){
-  const { participants, readyState, hostId } = socketStore();
+  const { roomId, participants, readyState, hostId } = socketStore();
   const { memberId } = userStore();
   const playClickSound = useClickSound();
   const kickUser = (id: number) => {
     console.log(`${id}번,넌 나가라!`)
+    axios({
+      method: 'delete',
+      url: `https://j10a207.p.ssafy.io/api/multi/kick?roomId=${roomId}&kickMemberId=${id}`,
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
+      }
+    })
+    .then((res)=> {
+      console.log(res.data)
+    })
+    .catch((e) => {
+      console.error(e)
+    })
+
   }
 
 
@@ -55,10 +68,16 @@ export default function GameMembers(){
                 </div>
               </div>
               <div className="col-span-4 px-4">
-                <div onClick={()=>{
-                  playClickSound();
-                  kickUser(user.memberId)
-                }} className=' bg-red-500 text-white text-center py-1 rounded-md hover:cursor-pointer'>내보내기</div>
+                {
+                  hostId === memberId && hostId != user.memberId ? (
+                    <div onClick={()=>{
+                      playClickSound();
+                      kickUser(user.memberId)
+                    }} className=' bg-red-500 text-white text-center py-1 rounded-md hover:cursor-pointer'>내보내기</div>
+                  ) : (
+                    <div></div>
+                  )
+                }
               </div>
             </div>  
           )
