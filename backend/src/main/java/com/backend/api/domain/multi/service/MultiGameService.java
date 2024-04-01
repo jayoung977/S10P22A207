@@ -177,13 +177,13 @@ public class MultiGameService {
 	}
 
 	public MultiGameStartResponseDto startMultiGame(Long memberId, MultiGameStartRequestDto dto) {
+		log.info("MULTIGAMESTART:::");
 		// TODO: MultiGameStartResponseDto 여기 주식 정보 추가. createSingleGame 처럼.
 		// 여기에 처음 조건을
 		LocalDateTime lastDate = LocalDateTime.of(2024, 3, 10, 0, 0); // 위험할수도
 		LocalDateTime startDate = LocalDateTime.of(1996, 5, 10, 0, 0);
 
 		LocalDateTime randomDateTime = generateRandomDateTime(startDate, lastDate); // 이 날짜로 조회
-
 		Long firstDayStockChartId = null;
 		Long stockId = null;
 		while (stockId == null) {

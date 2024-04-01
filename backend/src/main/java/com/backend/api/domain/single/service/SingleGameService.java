@@ -404,8 +404,6 @@ public class SingleGameService {
             totalProfit += currentGame.getProfits()[i];
         }
         double totalRoi = 100.0 * totalProfit / currentGame.getInitial();
-
-
         TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalProfit, totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
 
         // 보유자산
@@ -744,6 +742,7 @@ public class SingleGameService {
         List<StockChartDataDto> stockChartDataList = new ArrayList<>();
         List<SingleLogRankMemberListDto> rankMemberList = new ArrayList<>();
         List<SingleLogTradeListDto> tradeList = new ArrayList<>();
+
         for(SingleGameStock singleGameStock: singleGameStocks){
             //1. 종목 정보 넣기(10개)
             log.info("singleGameStock.getId():"+singleGameStock.getId());
@@ -764,6 +763,7 @@ public class SingleGameService {
 
             LocalDateTime startDateTime = singleGameStock.getSingleGameLog().getStartDate().withHour(0).withMinute(0).withSecond(0);
             log.info("startDateTime : {}",startDateTime);
+
 
             StockChart stockChart = stockChartRepository.findByStock_StockCodeAndDateBetween(singleGameStock.getStock().getStockCode(),startDateTime,startDateTime.plusDays(1)).orElseThrow(
                     () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_LOG_STOCK_CHART)
@@ -829,8 +829,13 @@ public class SingleGameService {
                     ));
 
         }
+        List<StockChartDto> stockChartDtos = stockChartDataList.get(0).stockChartList();
+        LocalDateTime startDate = stockChartDtos.get(0).date();
+        LocalDateTime endDate = stockChartDtos.get(stockChartDtos.size()-1).date();;
 
         return new SingleGameLogResponseDto(
+                startDate,
+                endDate,
                 stockInfoDtoList,
                 stockChartDataList,
                 tradeList,

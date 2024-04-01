@@ -71,9 +71,19 @@ export default function BoardSend() {
     mutation.mutate(formData);
   };
 
+  const maxSize = 1024 * 1024;
+
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.size > maxSize) {
+          Swal.fire("업로드 가능한 최대 파일 크기는 1MB입니다.");
+          e.target.value = ""; // 파일 선택 초기화
+          return; // 반복문 탈출
+        }
+      }
       setImage([...image, ...Array.from(files)]);
     }
   };
@@ -147,7 +157,7 @@ export default function BoardSend() {
               id="chat"
               rows={3}
               className="mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="1.7MB 이하의 사진만 업로드 가능합니다."
+              placeholder="1MB 이하의 사진만 업로드 가능합니다."
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />

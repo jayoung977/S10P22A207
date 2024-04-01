@@ -12,8 +12,11 @@ export const useWebSocket = () => {
   const { memberId, nickname } = userStore();
   const [receiveMessage, setReceiveMessage] = useState<any>([]);
   const [receiveInvitation, setReceiveInvitation] = useState<any>([]);
-  const { receiveMessages, setReceiveMessages } = socketStore();
-  const { receiveAlarm, setReceiveAlarm } = socketStore();
+  const { receiveMessages, setReceiveMessages, addReceiveMessages, deleteReceiveMessages } = socketStore();
+  const { receiveAlarm, setReceiveAlarm, roomInfo, setRoomInfo } = socketStore();
+  const { setHostId, setParticipants, setRoomId, setRoomTitle, setReadyState } = socketStore();
+
+
   useEffect(() => {
     if (memberId) {
       client.current = Stomp.over(() => {
@@ -27,13 +30,28 @@ export const useWebSocket = () => {
         client.current.subscribe(`/api/sub/${memberId}`, (message: any) => {
           const parsedMessage = JSON.parse(message.body);
           console.log(parsedMessage);
+          Swal.fire(`${parsedMessage.type} 신호 감지!`);
           if (parsedMessage.type === "MESSAGE") {
-            setReceiveMessage((prevReceiveMessage: any) => {
-              const copy = [...prevReceiveMessage, parsedMessage];
-              setReceiveMessages(copy);
-              return copy;
-            });
+            addReceiveMessages(parsedMessage)
           }
+
+          if (parsedMessage.type === "EXIT") {
+            // setReceiveMessage((prevReceiveMessage: any) => {
+            //   setReceiveMessages([]);
+            //   return [];--
+            // });
+            console.log(parsedMessage)
+
+          }
+
+          if(parsedMessage.type === 'ROOMINFO'){
+            setHostId(parsedMessage.result.roomId)
+            setParticipants(parsedMessage.result.participants)
+            setRoomId(parsedMessage.result.roomId)
+            setRoomTitle(parsedMessage.result.roomTitle)
+            setReadyState(parsedMessage.result.readyState)
+          }
+
           if (parsedMessage.type === "INVITE") {
             setReceiveAlarm(true);
           }
