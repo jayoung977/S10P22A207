@@ -694,7 +694,7 @@ public class FundService {
 
 			if (dto.day() == 51) {
 				// FundStock 에 저장
-				FundStock fundGameStock = fundStockRepository.findByFund_IdAndStock_Id(currentGame.getFundId(), dto.stockId())
+				FundStock fundGameStock = fundStockRepository.findByFund_IdAndStock_Id(currentGame.getFundId(),todayChart.getStock().getId() )
 						.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK));
 
 				Long stockId = todayChart.getStock().getId();
