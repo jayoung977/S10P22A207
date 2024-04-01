@@ -1,5 +1,6 @@
 package com.backend.api.domain.single.service;
 
+import com.backend.api.domain.hadoop.service.HadoopService;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.single.dto.request.NextDayRequestDto;
@@ -43,6 +44,7 @@ public class SingleGameService {
     private final MemberRepository memberRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
+    private final HadoopService hadoopService;
 
     private HashMap<Long, Integer> stocks;
     private List<Long> list;
@@ -376,6 +378,7 @@ public class SingleGameService {
             .profit((long) (dto.amount() * (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]))) // 이번 거래의 profit
             .build();
         singleTradeRepository.save(singleTrade);
+        hadoopService.saveSingleTradeLogHdfs(singleTrade, memberId);
         currentGame.getTradeList().add(
             new SingleTradeListDto(
                 dto.stockId(),
@@ -399,8 +402,6 @@ public class SingleGameService {
 
         long totalProfit = 0;
         for (int i = 0; i < currentGame.getProfits().length; i++) {
-            System.out.println("currentGame = " + currentGame.getProfits()[i]);
-            System.out.println("totalProfit = " + totalProfit);
             totalProfit += currentGame.getProfits()[i];
         }
         double totalRoi = 100.0 * (totalAsset - currentGame.getInitial()) / currentGame.getInitial();
@@ -499,6 +500,7 @@ public class SingleGameService {
             .profit((-1) *(long) (dto.amount() * todayChart.getEndPrice() * 0.0015))
             .build();
         singleTradeRepository.save(singleTrade);
+        hadoopService.saveSingleTradeLogHdfs(singleTrade, memberId);
         currentGame.getTradeList().add(
             new SingleTradeListDto(
                 dto.stockId(),
@@ -598,7 +600,7 @@ public class SingleGameService {
                     () -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR)
                 ).getStock().getId(),
                 currentGame.getStockAmount()[stockIdx],
-                currentGame.getProfits()[stockIdx], // 팔면 profit에서 빼줘야지.
+                currentGame.getProfits()[stockIdx],
                 currentGame.getAveragePrice()[stockIdx],
                 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx]
             );
