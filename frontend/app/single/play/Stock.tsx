@@ -19,7 +19,7 @@ export default function Stock({ index, data, isSelected, onClick }: any) {
   const textColor = rate > 0 ? "small-3" : (rate < 0 ? "small-1" : rate == 0 && "textColor-1")
   return (
     <div
-      className={`hover:cursor-pointer grid grid-cols-8 rounded-full bg-${bgColor} text-${textColor} hover:bg-small-10 hover:text-textColor-2 my-5 mx-1 py-1`}
+      className={`hover:cursor-pointer grid grid-cols-8 rounded-full border border-small-10 bg-${bgColor} text-${textColor} hover:bg-small-10 hover:text-textColor-2 my-5 mx-1 py-1`}
       onMouseEnter={handleHover}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
@@ -36,21 +36,21 @@ export default function Stock({ index, data, isSelected, onClick }: any) {
               <div className="col-span-4 text-end">
                 <div>{parseFloat(rate.toFixed(1))}%({data.volatility})</div>
               </div>
-              <div className="col-span-3 text-end mr-1">{data.TodayEndPrice}원</div>
+              <div className="col-span-3 text-end mr-2">{data.TodayEndPrice}원</div>
             </div>
           ) : rate > 0 ? (
             <div className={`${isHovered && "hidden"} col-span-7 grid grid-cols-7 text-red-500`}>
               <div className="col-span-4 text-end">
                 <div>{parseFloat(rate.toFixed(1))}%(+{data.volatility})</div>
               </div>              
-              <div className="col-span-3 text-end mr-1">{data.TodayEndPrice}원</div>
+              <div className="col-span-3 text-end mr-2">{data.TodayEndPrice}원</div>
             </div>
           ) : (
             <div className={`${isHovered && "hidden"} col-span-7 grid grid-cols-7`}>
               <div className="col-span-4 text-end">
                 <div>{parseFloat(rate.toFixed(1))}%({data.volatility})</div>
               </div>
-              <div className="col-span-3 text-end mr-1">{data.TodayEndPrice}원</div>
+              <div className="col-span-3 text-end mr-2">{data.TodayEndPrice}원</div>
             </div>
           )
         }
