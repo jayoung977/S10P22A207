@@ -17,4 +17,6 @@ public interface MultiGameLogRepository extends JpaRepository<MultiGameLog, Long
 	List<MultiGameLog> findByGameId(Long gameId);
 
 	Optional<MultiGameLog> findByGameIdAndRound(Long gameId, Integer round);
+
+	Optional<MultiGameLog> findByMemberIdAndGameIdAndRound(Long memberId, Long gameId, Integer round);
 }

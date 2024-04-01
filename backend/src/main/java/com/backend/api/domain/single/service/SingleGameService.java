@@ -74,7 +74,7 @@ public class SingleGameService {
     private HashMap<Long, Integer> stocks;
     private List<Long> list;
     private static final int MAX_CHANCES = 5;
-    private static final long RECHARGE_TIME = 10 * 60 * 1000; // 10분
+    private static final long RECHARGE_TIME = 10 * 60 * 1000L; // 10분
     private final Map<Long, ScheduledFuture<?>> timers = new HashMap<>();
 
     public ExistingSingleGameResponseDto existSingleGame(Long memberId) {
