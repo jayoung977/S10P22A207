@@ -1,6 +1,17 @@
 import { CompatClient } from "@stomp/stompjs";
 import { create } from "zustand";
 
+export interface ParticipantsType {
+  memberId: number;
+  nickname: string;
+  gameRoi: number;
+  rankPoint: number;
+  win: number;
+  lose: number;
+  asset: number;
+  currentRank: number;
+}
+
 interface WebSocketStore {
   clientObject: any;
   setClientObject: (client: any) => void;
@@ -10,6 +21,18 @@ interface WebSocketStore {
   deleteReceiveMessages: () => void;
   receiveAlarm: any;
   setReceiveAlarm: (receiveAlarm: any) => void;
+  roomInfo: any;
+  setRoomInfo: (roomInfo: any) => void;
+  hostId: number;
+  setHostId: (hostId: number) => void;
+  participants: ParticipantsType[];
+  setParticipants:(participants: ParticipantsType[]) => void;
+  roomId: number;
+  setRoomId:(roomId: number) => void;
+  roomTitle: string;
+  setRoomTitle:(roomTitle: string) => void;
+  readyState: {[key: number]: boolean};
+  setReadyState: (readyState:{[key: number]: boolean} ) => void;
 }
 
 const socketStore = create<WebSocketStore>((set) => ({
@@ -25,6 +48,18 @@ const socketStore = create<WebSocketStore>((set) => ({
   })),
   receiveAlarm: false,
   setReceiveAlarm: (value) => set({ receiveAlarm: value }),
+  roomInfo: [],
+  setRoomInfo: (value) => set({roomInfo: value}),
+  hostId: 0,
+  setHostId:  (value) => set({hostId: value}),
+  participants: [],
+  setParticipants:(value) => set({participants: value}),
+  roomId: 0,
+  setRoomId:(value) => set({roomId: value}),
+  roomTitle: "",
+  setRoomTitle: (value) => set({roomTitle: value}),
+  readyState: {},
+  setReadyState: (value) => set({readyState: value})
 }));
 
 export default socketStore;
