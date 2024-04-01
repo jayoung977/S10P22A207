@@ -241,45 +241,11 @@ function Chart({ tradeList, data }: any) {
       }
     });
 
-    // 2번째 plot 생성(거래량)
-    const plot2 = chart.plot(1);
-    plot2.title("거래량");
-    plot2.yAxis().orientation("right");
-    plot2.yAxis().labels().fontSize(15);
-
-    plot2.legend().title().useHtml(true);
-    plot2.legend().titleFormat(<span></span>);
-    const columnSeries = plot2.column(
-      purifiedData?.map((item: any) => [item.date, item.tradingVolume])
-    );
-    columnSeries.name("거래량");
-    columnSeries.risingFill("#F65742", 1);
-    columnSeries.risingStroke("#F65742", 1);
-    columnSeries.fallingFill("#0597FF", 1);
-    columnSeries.fallingStroke("#0597FF", 1);
-
-    plot2.legend().useHtml(true);
-    plot2.legend().itemsFormat(function (this: any) {
-      const series = this.series;
-      if (series.getType() == "column") {
-        return (
-          "<span style='color:#455a64;font-weight:600'>" +
-          series.name() +
-          ":</span>" +
-          this.value
-        );
-      }
-    });
-    plot1.height("70%");
-    plot2.height("30%");
-
-    chart.draw();
-
-    return () => {
-      chart.dispose();
-    };
-  }, [tradeList, data]);
-
+        return () => {
+            chart.dispose();
+        };
+    }, [tradeList, data]); 
+  
   return (
     <div className="row-span-11 grid grid-rows-12">
       <div
@@ -297,7 +263,7 @@ export default function RankingUserChartModal({ isOpen, onClose, data }: any) {
   return (
     <div
       className="grid grid-rows-12 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-3 mt-9 rounded-lg z-20 border border-black"
-      style={{ width: "80%", height: "90%" }}
+      style={{ width: "80%", height: "90%", position: "absolute", top: "54%", left: "50%"}}
     >
       <div className="row-span-1 grid grid-cols-12">
         <div className="col-start-4 col-end-10 flex items-center justify-center">

@@ -1,12 +1,12 @@
-package com.backend.api.domain.multi.dto.response;
+package com.backend.api.domain.fund.dto.response;
 
 import com.backend.api.global.common.type.TradeType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-
-@Schema(name = "멀티게임 매매기록 response Dto", description = "멀티게임기록 관련 response Dto")
-public record MultiLogTradeDto(
-        @Schema(description = "일자")
+public record FundTradeListDto(
+        @Schema(description = "종목 Id")
+        Long stockId,
+        @Schema(description = "매매 턴")
         int day,
 
         @Schema(description = "매매 타입")
@@ -18,7 +18,7 @@ public record MultiLogTradeDto(
         @Schema(description = "가격")
         Integer price,
 
-        @Schema(description = "수익률")
-        Double roi
+        @Schema(description = "수익금")
+        Long profit
 ) {
 }

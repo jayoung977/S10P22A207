@@ -24,7 +24,7 @@ export default function AssetHeld({ data } :any) {
                 </div>
                 <div className="row-span-1 grid grid-cols-4">
                     <div className="col-span-1 m-auto text-textColor-2">손익률</div>
-                    <div className="col-span-1 m-auto text-textColor-1">{data?.profitMargin.toFixed(2)} %</div>
+                    <div className="col-span-1 m-auto text-textColor-1">{data?.profitMargin.toFixed(4)} %</div>
                     <div className="col-span-1 m-auto text-textColor-2">평균 단가</div>
                     <div className="col-span-1 m-auto text-textColor-1">{data?.averagePurchasePrice.toLocaleString()}원</div>
                 </div>

@@ -74,7 +74,7 @@ public class SingleGameService {
     private HashMap<Long, Integer> stocks;
     private List<Long> list;
     private static final int MAX_CHANCES = 5;
-    private static final long RECHARGE_TIME = 10 * 60 * 1000; // 10분
+    private static final long RECHARGE_TIME = 10 * 60 * 1000L; // 10분
     private final Map<Long, ScheduledFuture<?>> timers = new HashMap<>();
 
     public ExistingSingleGameResponseDto existSingleGame(Long memberId) {
@@ -387,7 +387,10 @@ public class SingleGameService {
         }
 
         // 팔았으니 currentGame 바꿔주기
+        System.out.println("currentGame.getStockAmount()[stockIdx] = " + currentGame.getStockAmount()[stockIdx]);
         currentGame.getStockAmount()[stockIdx] -= dto.amount();
+        System.out.println("currentGame.getStockAmount()[stockIdx] = " + currentGame.getStockAmount()[stockIdx]);
+
         currentGame.updateCash(currentGame.getCash() + (long) (dto.amount() * todayChart.getEndPrice() * 0.9975));
         currentGame.addProfit(stockIdx, (int) (dto.amount() * (currentGame.getAveragePrice()[stockIdx] - todayChart.getEndPrice()) -
             dto.amount() * todayChart.getEndPrice() * 0.0025));
