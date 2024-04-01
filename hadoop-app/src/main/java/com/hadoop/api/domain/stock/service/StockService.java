@@ -200,6 +200,26 @@ public class StockService {
 		return changeRateCountDto;
 	}
 
+	public List<ChangeRateCountDto> getChangeRateCountStartEnd(String startDate, String endDate, String stockCode) {
+		String partitionedStockDataPath = stockDataPath + "/partitioned/stockCode="+stockCode;
+		Dataset<Row> parquetData = sparkSession.read()
+			.option("select", "changeRate, stockCode")
+			.parquet(partitionedStockDataPath);
+		parquetData.createOrReplaceTempView("stock_data");
+
+		String sql = "SELECT SUM(CASE WHEN changeRate > 0 THEN 1 ELSE 0 END) AS positiveCount,"
+			+ " SUM(CASE WHEN changeRate < 0 THEN 1 ELSE 0 END) AS negativeCount"
+			+ " FROM stock_data "
+			+ " WHERE date BETWEEN cast('" + startDate + "' as date) AND cast('" + endDate + "' as date)";
+
+
+		Dataset<Row> pagedData = sparkSession.sql(sql);
+		pagedData.show();
+		Dataset<ChangeRateCountDto> changeRateCountDtoDataset = pagedData.as(Encoders.bean(ChangeRateCountDto.class));
+		List<ChangeRateCountDto> changeRateCountDto = changeRateCountDtoDataset.collectAsList();
+		return changeRateCountDto;
+	}
+
 	public void partitionParquetByStockCode() {
 		// 기존 Parquet 파일을 읽어오기
 		Dataset<Row> parquetData = sparkSession.read().parquet(stockDataPath);

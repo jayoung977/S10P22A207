@@ -69,6 +69,12 @@ public class StockController {
 		List<ChangeRateCountDto> changeRateCountDto = stockService.getChangeRateCount(stockCode);
 		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, changeRateCountDto);
 	}
+
+	@GetMapping("/change-count/start-end")
+	public ResponseEntity<BaseResponse<List<ChangeRateCountDto>>> getChangeRateCountStartEnd(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String stockCode){
+		List<ChangeRateCountDto> changeRateCountDto = stockService.getChangeRateCountStartEnd(startDate, endDate, stockCode);
+		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, changeRateCountDto);
+	}
 	@GetMapping("/partition")
 	public ResponseEntity<BaseResponse<String>> partitionParquetByStockCod() {
 		stockService.partitionParquetByStockCode();
