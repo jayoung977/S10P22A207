@@ -15,7 +15,9 @@ import lombok.Setter;
 @Builder
 public class MaxMinPriceDto implements Serializable {
 	private String stockCode;
+	private String minPriceDate;
 	private Integer maxPrice;
+	private String maxPriceDate;
 	private Integer minPrice;
 
 }
