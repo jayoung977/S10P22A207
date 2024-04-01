@@ -11,7 +11,7 @@ export default function TotalAssets () {
                 <div className="rounded-t-lg bg-small-5 text-textColor-2"><span className="mx-1">총 평가 자산</span></div>
                 <div className={`${totalAssetData?.resultProfit > 0 ? "text-red-500" : (totalAssetData?.resultProfit < 0 ? "text-blue-500" : "text-black")}`}>{totalAssetData?.totalAsset}원({parseFloat(totalAssetData?.resultRoi).toFixed(2)}%)</div>
             </div>
-            <div className="row-start-2 row-end-7 grid grid-rows-6 m-2 border border-small-5 scale-95 hover:scale-100 ease-in-out duration-500" >
+            <div className="row-start-2 row-end-7 grid grid-rows-6 m-2 border border-small-5 hover:-translate-y-1 transition ease-in-out duration-500 shadow" >
                 <div className="row-start-1 row-end-2 grid grid-cols-2 bg-small-5 rounded-b-md">
                     <div className="col-span-1 flex items-center justify-center text-textColor-2">보유 현금</div>
                     <div className="col-span-1 flex items-center justify-center text-textColor-2">총 평가 손익</div>

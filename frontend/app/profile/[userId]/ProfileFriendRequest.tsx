@@ -65,7 +65,7 @@ export default function ProfileFriendRequest() {
   const { mutate: rejectFriendRequest } = useMutation(
     (nickname: string) =>
       axios({
-        method: "get",
+        method: "delete",
         url: `https://j10a207.p.ssafy.io/api/friend-ask/reject?nickname=${nickname}`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
