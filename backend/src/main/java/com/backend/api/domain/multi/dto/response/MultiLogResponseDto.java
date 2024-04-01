@@ -9,6 +9,8 @@ import java.util.List;
 public record MultiLogResponseDto(
         @Schema(description = "종목 이름")
         String stockName,
+        @Schema(description = "종목 코드")
+        String stockCode,
         @Schema(description = "종목별 차트")
         List<StockChartDto> stockChartDtoList,
         @Schema(description = "나의 매매 내역")

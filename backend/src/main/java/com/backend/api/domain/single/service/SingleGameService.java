@@ -743,7 +743,7 @@ public class SingleGameService {
         List<SingleGameStock> singleGameStocks = singleGameStockRepository.findAllBySingleGameLog_Id(singleGameLogId).orElseThrow(
                 () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
 
-        List<StockInfoDto> stockInfoDtoList = new ArrayList<>();
+        List<SingleLogStockInfoDto> stockInfoDtoList = new ArrayList<>();
         List<StockChartDataDto> stockChartDataList = new ArrayList<>();
         List<SingleLogRankMemberListDto> rankMemberList = new ArrayList<>();
         List<SingleLogTradeListDto> tradeList = new ArrayList<>();
@@ -753,8 +753,9 @@ public class SingleGameService {
             log.info("singleGameStock.getId():"+singleGameStock.getSingleGameLog().getId());
             log.info("singleGameStock.getStock().getId():"+singleGameStock.getStock().getId());
             log.info("singleGameStock.getStock().getStockName():"+singleGameStock.getStock().getStockName());
-            StockInfoDto stockInfoDto = new StockInfoDto(
+            SingleLogStockInfoDto stockInfoDto = new SingleLogStockInfoDto(
                     singleGameStock.getStock().getId(),
+                    singleGameStock.getStock().getStockCode(),
                     singleGameStock.getStock().getStockName()
             );
             stockInfoDtoList.add(stockInfoDto);
