@@ -7,8 +7,6 @@ public record NextDayRequestDto(
     Long fundId,
     @Schema(description = "레디스 게임 Id")
     Long gameIdx,
-    @Schema(description = "종목 Id")
-    Long stockId,
     @Schema(description = "시작일로부터의 날짜")
     int day
 ) {

@@ -3,13 +3,11 @@ package com.backend.api.domain.multi.dto.response;
 import com.backend.api.global.common.type.TradeType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import java.time.LocalDateTime;
-
 
 @Schema(name = "멀티게임 매매기록 response Dto", description = "멀티게임기록 관련 response Dto")
 public record MultiLogTradeDto(
         @Schema(description = "일자")
-        LocalDateTime date,
+        int day,
 
         @Schema(description = "매매 타입")
         TradeType tradeType,

@@ -8,12 +8,11 @@ import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
     const { gameIdx, stockListData, selectedStockIndex, turn, assetListData, setAssetListData, totalAssetData, setTotalAssetData, setTradeListData, isBuySellModalOpen, setIsBuySellModalOpen,
             stocks, setStocks } = SingleGameStore();
-    // const [stocks, setStocks] =  useState<any>(0) 
+
     const [disabled, setDisabled] = useState<boolean>(true);
     const [alertMessage, setAlertMessage] = useState<string>("");
     const foundAsset = assetListData?.find((x :any) => x.stockId === stockListData[selectedStockIndex].stockId);
     const playClickSound = useClickSound();
-
     const handleStockChange = (e :any) => {
         setStocks(e.target.value)
         if (isBuy) {
@@ -116,8 +115,6 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
         }
     }
 
-
-
     const handleEscape = () => {
         setStocks(0);
         setDisabled(true);
@@ -125,6 +122,15 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
     }
 
     const handleBuy = async () => {
+        // console.log("stocks : ", stocks);
+        console.log('zz', stockListData[selectedStockIndex].stockChartList[299+turn].endPrice);
+
+        console.log({
+            gameIdx: gameIdx,
+            stockId: stockListData[selectedStockIndex]?.stockId,
+            amount: stocks,
+            day: turn, 
+        })
         try {
             const response = await axios({
                 method: "post",

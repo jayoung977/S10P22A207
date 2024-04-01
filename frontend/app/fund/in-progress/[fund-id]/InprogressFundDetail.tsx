@@ -182,15 +182,22 @@ export default function InprogressFundDetail() {
         }%</div>
       </div>
       <div className="row-span-1">
-        <button
-          onClick={() => {
-            playClickSound();
-            router.push(`/fund/${fundId}/play`);
-          }}
-          className="w-full border rounded-md bg-small-9 hover:bg-teal-400 py-2 text-textColor-2 text-center"
-        >
-          펀드 게임하러 가기
-        </button>
+        {
+          fundManager == nickname ? (
+          <button
+            onClick={() => {
+              playClickSound();
+              router.push(`/fund/${fundId}/play`);
+            }}
+            className="w-full border rounded-md bg-small-9 hover:bg-teal-400 py-2 text-textColor-2 text-center"
+          >
+            펀드 게임하러 가기
+          </button>
+          ) : (
+            <div></div>
+          )
+
+        }
       </div>
     </div>
   );

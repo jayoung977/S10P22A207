@@ -1,5 +1,18 @@
 package com.backend.api.domain.multi.controller;
 
+import com.backend.api.domain.multi.service.MultiGameSocketService;
+import com.backend.api.global.common.BaseResponse;
+import com.backend.api.global.common.SocketBaseDtoRes;
+import com.backend.api.global.common.code.SuccessCode;
+import com.backend.api.global.common.type.SocketType;
+import com.backend.api.global.security.userdetails.CustomUserDetails;
+import com.backend.api.global.websocket.dto.request.FriendInviteReq;
+import com.backend.api.global.websocket.dto.response.FriendInviteRes;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -25,6 +38,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 
 @RestController
 @RequestMapping("/api/multi")
@@ -72,6 +86,17 @@ public class MultiGameSocketController {
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
 			"나가기 성공"
+		);
+	}
+	@DeleteMapping("/kick")
+	@Operation(summary = "멀티게임 대기방 강퇴하기", description = "멀티게임 모드에서 유저를 강퇴합니다.")
+	public ResponseEntity<BaseResponse<String>> kickMultiRoom(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestParam Long roomId, @RequestParam Long kickMemberId) throws JsonProcessingException {
+		log.info("멀티게임 강퇴하기 {}방 {}강퇴", roomId, kickMemberId);
+		multiGameSocketService.kickMultiRoom(userDetails, roomId, kickMemberId);
+		return BaseResponse.success(
+			SuccessCode.SELECT_SUCCESS,
+			"추방 성공"
 		);
 	}
 }

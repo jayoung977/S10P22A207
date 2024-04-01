@@ -1,6 +1,7 @@
 "use client";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
+import logo from "@/public/src/assets/images/logo.png"
 import penguin from "@/public/src/assets/images/penguin.png";
 import axios from "axios";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
@@ -73,7 +74,7 @@ export default function Header() {
       <div className="col-start-2 col-end-3 flex items-center">
         <div className="flex gap-2 items-center">
           <Image
-            src={penguin}
+            src={logo}
             alt="Logo"
             className="h-8"
             width={32}
