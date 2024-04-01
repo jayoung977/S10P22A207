@@ -594,6 +594,9 @@ public class SingleGameService {
                             / currentGame.getAveragePrice()[stockIdx]// 손익률
                 )
             );
+
+            // 각 날짜의 변동에 맞게 종목의 실현손익이 변한다.
+            currentGame.addProfit(stockIdx, currentGame.getStockAmount()[stockIdx] * (todayChart.getEndPrice() - yesterdayChart.getEndPrice()));
             // 보유 자산변동 보여주기
             AssetListDto assetListDto = new AssetListDto(
                 stockChartRepository.findById(firstDayStockChartId + 299 + currentGame.getDay()).orElseThrow(
@@ -630,6 +633,7 @@ public class SingleGameService {
         // 총 profit 계산
         long resultProfit = totalAsset - currentGame.getInitial();
         double resultRoi = 100.0 * (totalAsset - currentGame.getInitial()) / currentGame.getInitial();
+
 
         currentGame.updateTotalAsset(totalAsset);
         redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.gameIdx(), currentGame);
