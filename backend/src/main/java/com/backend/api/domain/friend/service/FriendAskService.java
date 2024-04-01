@@ -77,7 +77,8 @@ public class FriendAskService {
 		);
 		FriendAskNoticeDto friendAskNoticeDto = new FriendAskNoticeDto(sender.getId(), sender.getNickname());
 		log.info("::FRIEND ASK:: {} {} {}", sender.getId(), sender.getNickname(), receiver.getId());
-		template.convertAndSend("/api/sub" + receiver.getId(), new SocketBaseDtoRes<>(SocketType.FRIENDASK, friendAskNoticeDto));		//notice 저장
+		template.convertAndSend("/api/sub/" + receiver.getId(), new SocketBaseDtoRes<>(SocketType.FRIENDASK, friendAskNoticeDto));		//notice 저장
+		log.info("::FRIEND ASK:: /api/sub/" + receiver.getId());
 		Notice notice = Notice.builder()
 			.member(receiver)
 			.sender(sender.getNickname())
