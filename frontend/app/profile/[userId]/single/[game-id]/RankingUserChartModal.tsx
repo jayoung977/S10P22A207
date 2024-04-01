@@ -263,7 +263,7 @@ export default function RankingUserChartModal({ isOpen, onClose, data }: any) {
   return (
     <div
       className="grid grid-rows-12 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-3 mt-9 rounded-lg z-20 border border-black"
-      style={{ width: "80%", height: "90%", position: "absolute", top: "54%", left: "50%"}}
+      style={{ width: "80%", height: "90%", position: "absolute", top: "49%", left: "50%"}}
     >
       <div className="row-span-1 grid grid-cols-12">
         <div className="col-start-4 col-end-10 flex items-center justify-center">

@@ -1,16 +1,17 @@
 'use client'
 // 턴 정보, 매수 + 매도 버튼 컴포넌트
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import SingleGameStore from '@/public/src/stores/single/SingleGameStore';
 import TurnNow from './TurnNow';
 import BuySellModal from './BuySellModal';
 import SingleGameEndModal from './SingleGameEndModal';
 import axios from 'axios';
 import useClickSound from '@/public/src/components/clickSound/DefaultClick';
+import { clear } from 'console';
 
 export default function TurnInfo () {
     const playClickSound = useClickSound();
-
+    const [isNextTurnDisabled, setIsNextTurnDisabled] = useState(false);
     // 현재 턴
     const { turn, setTurn, gameIdx, setTotalAssetData, setAssetListData, setTodayStockInfoListData, setSingleGameEndInfoData, isBuySellModalOpen, setIsBuySellModalOpen, isBuy, setIsBuy, isOpenEndModal, setIsOpenEndModal,
             setStocks,
@@ -94,19 +95,19 @@ export default function TurnInfo () {
             setStocks(0);
             handleSelectSell();
         } else if (e.key == "r" && !isBuySellModalOpen) {
-            
             handleClickTurn();
         }
     }
     
+    
     useEffect (() => {
         window.addEventListener('keydown', handleBuySellTurn);
-    
+        
         return () => {
             window.removeEventListener("keydown", handleBuySellTurn);
-
         }
     }, [turn, isBuySellModalOpen])
+
     
     return (
         <div className="row-start-1 row-end-2 grid grid-rows-2">
@@ -131,7 +132,7 @@ export default function TurnInfo () {
                 </button>
                 <button 
                     onClick={handleClickTurn} 
-                    className="col-span-1 rounded-md scale-95 text-textColor-1 bg-textColor-2 border border-textColor-1 m-2 hover:text-textColor-2 hover:bg-textColor-1 hover:scale-105 shadow-md shadow-textColor-1"
+                    className={`col-span-1 rounded-md scale-95 text-textColor-1 bg-textColor-2 border border-textColor-1 m-2 hover:text-textColor-2 hover:bg-textColor-1 hover:scale-105 shadow-md shadow-textColor-1 ease-in-out duration-500`}
                 >   
                     다음(R)
                 </button>
@@ -141,3 +142,4 @@ export default function TurnInfo () {
         </div>
     )
 }
+

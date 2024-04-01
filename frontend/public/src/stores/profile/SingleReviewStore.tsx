@@ -76,6 +76,7 @@ type Store = {
 const SingleReviewStore = create<Store>((set: any) => ({
     selectedIndex: 0,
     setSelectedIndex: (value) => set({ selectedIndex : value }),
+    
     rankMemberList: [],
     setRankMemberList: (value) => set({ rankMemberList : value }),
 
