@@ -7,10 +7,17 @@ import GameRule from "./gameRule";
 import Header from "./header";
 import GameMembers from "./GameMembers";
 import { QueryClient, QueryClientProvider } from "react-query";
+import socketStore from "@/public/src/stores/websocket/socketStore";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
 export default function page() {
+  const { roomInfo, setRoomInfo } = socketStore();
+  // 이후 세션에서 받아올 로그인 사용자 데이터 이거 userStore에 담아놨어~~~~~~~~~~~~~~
+  useEffect(()=>{
+    console.log(roomInfo)
+  }, [roomInfo])
   return (
     <QueryClientProvider client={queryClient}>
       <div className="grid grid-rows-12 h-screen border-separate">

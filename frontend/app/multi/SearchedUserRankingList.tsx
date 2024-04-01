@@ -82,7 +82,9 @@ export default function SearchedUserRankingList() {
         style={{ height: "calc(38vh)" }}
       >
         {entireUser.length > 0 ? (
-          entireUser.map((x, index) => <UserRanking key={index} user={x} />)
+          entireUser
+          .sort((a: ResultType, b: ResultType) => b.asset - a.asset) // 내림차순 정렬
+          .map((x, index) => <UserRanking key={index} user={x} rank={index} />)
         ) : (
           <div></div>
         )}
