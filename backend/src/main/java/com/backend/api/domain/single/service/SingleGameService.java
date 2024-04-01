@@ -4,25 +4,7 @@ import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.single.dto.request.NextDayRequestDto;
 import com.backend.api.domain.single.dto.request.SingleTradeRequestDto;
-import com.backend.api.domain.single.dto.response.AssetListDto;
-import com.backend.api.domain.single.dto.response.ChangedStockResponseDto;
-import com.backend.api.domain.single.dto.response.ExistingSingleGameResponseDto;
-import com.backend.api.domain.single.dto.response.NextDayInfoResponseDto;
-import com.backend.api.domain.single.dto.response.NextDayResponseDto;
-import com.backend.api.domain.single.dto.response.SingleGameCreateResponseDto;
-import com.backend.api.domain.single.dto.response.SingleGameLogResponseDto;
-import com.backend.api.domain.single.dto.response.SingleGameResultDto;
-import com.backend.api.domain.single.dto.response.SingleLogRankMemberDto;
-import com.backend.api.domain.single.dto.response.SingleLogRankMemberListDto;
-import com.backend.api.domain.single.dto.response.SingleLogRankMemberLogDto;
-import com.backend.api.domain.single.dto.response.SingleLogTradeDto;
-import com.backend.api.domain.single.dto.response.SingleLogTradeListDto;
-import com.backend.api.domain.single.dto.response.SingleTradeListDto;
-import com.backend.api.domain.single.dto.response.SingleTradeResponseDto;
-import com.backend.api.domain.single.dto.response.StockChartDataDto;
-import com.backend.api.domain.single.dto.response.StockChartDto;
-import com.backend.api.domain.single.dto.response.StockInfoDto;
-import com.backend.api.domain.single.dto.response.TotalAssetDto;
+import com.backend.api.domain.single.dto.response.*;
 import com.backend.api.domain.single.entity.SingleGame;
 import com.backend.api.domain.single.entity.SingleGameLog;
 import com.backend.api.domain.single.entity.SingleGameStock;
@@ -36,26 +18,17 @@ import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.common.type.TradeType;
 import com.backend.api.global.exception.BaseExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.concurrent.*;
 
 @Service
 @Transactional
@@ -789,9 +762,11 @@ public class SingleGameService {
             //2. 종목 별 차트 350개 넣기
             //어떤 종목의 시작일 하나에 대한 StockChart 값 얻기
             log.info("singleGameStock.getStock().getStockCode()"+singleGameStock.getStock().getStockCode());
-            log.info("getStockCode(),singleGameStock.getSingleGameLog().getStartDate()"+ singleGameStock.getSingleGameLog().getStartDate().withHour(0).withMinute(0).withSecond(0));
+            log.info("original Date: {}",singleGameStock.getSingleGameLog().getStartDate());
 
             LocalDateTime startDateTime = singleGameStock.getSingleGameLog().getStartDate().withHour(0).withMinute(0).withSecond(0);
+            log.info("startDateTime : {}",startDateTime);
+
             StockChart stockChart = stockChartRepository.findByStock_StockCodeAndDateBetween(singleGameStock.getStock().getStockCode(),startDateTime,startDateTime.plusDays(1)).orElseThrow(
                     () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_LOG_STOCK_CHART)
             );
