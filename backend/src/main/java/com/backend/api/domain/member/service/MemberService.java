@@ -1,15 +1,13 @@
 package com.backend.api.domain.member.service;
 
 import com.backend.api.domain.member.dto.request.MemberAdditionalInfoReq;
-import com.backend.api.domain.member.dto.response.MemberProfileRes;
-import com.backend.api.domain.member.dto.response.MemberSearchRes;
-import com.backend.api.domain.member.dto.response.ProfileMultiGameLogRes;
-import com.backend.api.domain.member.dto.response.ProfileSingleGameLogRes;
+import com.backend.api.domain.member.dto.response.*;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.entity.Privilege;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.member.repository.MultiGamePlayerRepository;
 import com.backend.api.domain.multi.entity.MultiGamePlayer;
+import com.backend.api.domain.notice.service.RedisPubService;
 import com.backend.api.domain.single.entity.SingleGameLog;
 import com.backend.api.domain.single.repository.SingleGameLogRepository;
 import com.backend.api.global.common.code.ErrorCode;
@@ -41,7 +39,7 @@ public class MemberService {
 	private final MultiGamePlayerRepository multiGamePlayerRepository;
 	private final JwtService jwtService;
 	private final RedisTemplate<String, Object> redisTemplate;
-
+	private final RedisPubService redisPubService;
 	public boolean existNickname(String nickname) {
 		return memberRepository.existsByNickname(nickname);
 	}
@@ -163,5 +161,16 @@ public class MemberService {
 			}
 		}
 		return null;
+	}
+
+	public List<MemberListRes> getAllMember() {
+		List<Member> memberList =memberRepository.findAllByOrderByAssetDesc();
+		return  memberList.stream().map(
+				member -> new MemberListRes(
+						member.getId(),
+						member.getNickname(),
+						member.getAsset(),
+						redisPubService.isUserLoggedIn(member.getId()))
+		).toList();
 	}
 }
