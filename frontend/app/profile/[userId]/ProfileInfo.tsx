@@ -196,7 +196,7 @@ export default function UserInfo() {
             className="ring-2 rounded-full ring-background-1"
             src={useGetProfileRank(result?.rankPoint)}
             alt="Tier Image"
-            width={200}
+            width={150}
           ></Image>
         </div>
         <div className="row-start-9 row-end-13 flex justify-center items-center">

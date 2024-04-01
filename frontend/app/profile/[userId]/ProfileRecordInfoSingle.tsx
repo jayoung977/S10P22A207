@@ -86,8 +86,12 @@ export default function UserRecordInfoSingle() {
                 >
                   {item.gameDate}
                 </th>
-                <td className="px-6 py-4">{item.initialAsset}원</td>
-                <td className="px-6 py-4">{item.finalProfit}원</td>
+                <td className="px-6 py-4">
+                  {item.initialAsset.toLocaleString()}원
+                </td>
+                <td className="px-6 py-4">
+                  {item.finalProfit.toLocaleString()}원
+                </td>
                 <td className="px-6 py-4">{item.finalRoi.toFixed(2)}%</td>
               </tr>
             );
