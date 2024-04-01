@@ -13,7 +13,7 @@ export default function AssetHeld({ data }: any) {
         playClickSound();
         setSelectedStockIndex(idx);
       }}
-      className="row-span-3 bg-small-6 border-black m-3 grid grid-rows-3 rounded-lg shadow-md hover:scale-105 ease-in-out duration-500"
+      className="row-span-3 bg-small-6 border-black m-3 grid grid-rows-3 rounded-lg shadow-md hover:-translate-y-1 transition ease-in-out duration-500"
     >
       <div className="row-span-1 text-textColor-1 ml-1">종목 {idx + 1}</div>
       <div className="row-span-2 grid grid-rows-2">
@@ -33,8 +33,12 @@ export default function AssetHeld({ data }: any) {
         </div>
         <div className="row-span-1 grid grid-cols-4">
           <div className="col-span-1 m-auto text-textColor-2">손익률</div>
-          <div className="col-span-1 m-auto text-textColor-1">
-            {data?.profitMargin.toFixed(4)} %
+          <div
+            className={`${
+              Number(data?.profitMargin) > 0 ? "text-red-500" : "text-blue-500"
+            } col-span-1 m-auto`}
+          >
+            {data?.profitMargin.toFixed(2)} %
           </div>
           <div className="col-span-1 m-auto text-textColor-2">평균 단가</div>
           <div className="col-span-1 m-auto text-textColor-1">
