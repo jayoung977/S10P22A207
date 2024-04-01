@@ -34,7 +34,7 @@ export default function Stock({ index, data, isSelected, onClick }: any) {
           rate < 0 ? (
             <div className={`${isHovered && "hidden"} col-span-7 grid grid-cols-7 text-blue-500`}>
               <div className="col-span-2 text-center">{rate}%</div>
-              <div className="col-span-4 text-center">{data.TodayEndPrice}원</div>
+              <div className="col-span-4 text-center">{data.TodayEndPrice.toLocaleString()}원</div>
               <div className="col-span-1 flex items-center justify-center mr-1">
                 <FontAwesomeIcon icon={faArrowDown} size="sm" style={{ color: "#0000FF" }} />
               </div>
@@ -42,7 +42,7 @@ export default function Stock({ index, data, isSelected, onClick }: any) {
           ) : rate > 0 ? (
             <div className={`${isHovered && "hidden"} col-span-7 grid grid-cols-7 text-red-500`}>
               <div className="col-span-2 text-center">{rate}%</div>
-              <div className="col-span-4 text-center">{data.TodayEndPrice}원</div>
+              <div className="col-span-4 text-center">{data.TodayEndPrice.toLocaleString()}원</div>
               <div className="col-span-1 flex items-center justify-center mr-1">
                 <FontAwesomeIcon icon={faArrowUp} size="sm" style={{ color: "#FF0000" }} />
               </div>
@@ -50,7 +50,7 @@ export default function Stock({ index, data, isSelected, onClick }: any) {
           ) : (
             <div className={`${isHovered && "hidden"} col-span-7 grid grid-cols-7`}>
               <div className="col-span-2 text-center">{rate}%</div>
-              <div className="col-span-4 text-center">{data.TodayEndPrice}원</div>
+              <div className="col-span-4 text-center">{data.TodayEndPrice.toLocaleString()}원</div>
               <div className="col-span-1 flex items-center justify-center mr-1">
                 <FontAwesomeIcon icon={faMinus} size="sm" style={{ color: "#000000" }} />
               </div>
