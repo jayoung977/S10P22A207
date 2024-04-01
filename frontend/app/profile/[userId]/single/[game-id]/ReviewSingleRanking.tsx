@@ -3,8 +3,10 @@ import { useState } from "react";
 import RankingUserChartModal from "./RankingUserChartModal";
 import SingleReviewStore from "@/public/src/stores/profile/SingleReviewStore";
 import axios from "axios";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 export default function SingleRanking() {
+  const playClickSound = useClickSound();
   const { selectedIndex, rankMemberList } = SingleReviewStore();
   const [isOpenReviewModal, setIsOpenReviewModal] = useState<boolean>(false);
   const [rankingUserData, setRankingUserData] = useState<any>([]);
@@ -60,6 +62,7 @@ export default function SingleRanking() {
                     className="row-span-1 grid grid-cols-6 text-center bg-white rounded-lg m-1 hover:bg-slate-300"
                     onClick={() => {
                       fetchRankingUserRecord(item);
+                      playClickSound();
                     }}
                     style={{ cursor: "pointer" }}
                   >
