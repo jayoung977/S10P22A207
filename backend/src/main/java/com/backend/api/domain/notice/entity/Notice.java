@@ -23,13 +23,13 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "notification")
+@Table(name = "notice")
 @NoArgsConstructor(access = PROTECTED)
 public class Notice extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "notification_id")
+    @Column(name = "notice_id")
     private Long id;
 
     @ManyToOne(fetch = LAZY)
