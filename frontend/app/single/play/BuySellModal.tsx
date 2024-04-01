@@ -8,12 +8,11 @@ import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
     const { gameIdx, stockListData, selectedStockIndex, turn, assetListData, setAssetListData, totalAssetData, setTotalAssetData, setTradeListData, isBuySellModalOpen, setIsBuySellModalOpen,
             stocks, setStocks } = SingleGameStore();
-    // const [stocks, setStocks] =  useState<any>(0) 
+
     const [disabled, setDisabled] = useState<boolean>(true);
     const [alertMessage, setAlertMessage] = useState<string>("");
     const foundAsset = assetListData?.find((x :any) => x.stockId === stockListData[selectedStockIndex].stockId);
     const playClickSound = useClickSound();
-    
     const handleStockChange = (e :any) => {
         setStocks(e.target.value)
         if (isBuy) {
@@ -116,8 +115,6 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
         }
     }
 
-
-
     const handleEscape = () => {
         setStocks(0);
         setDisabled(true);
@@ -148,7 +145,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                     Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
                 },
             });
-            console.log(response.data.result);
+            console.log("매수 : ", response.data.result);
             setAssetListData(response.data.result.assetList);
             setTotalAssetData(response.data.result.totalAsset);
             setTradeListData(response.data.result.tradeList);
@@ -175,6 +172,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                     Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
                 }
             });
+            console.log("매도 : ", response.data.result);
             setAssetListData(response.data.result.assetList);
             setTotalAssetData(response.data.result.totalAsset);
             setTradeListData(response.data.result.tradeList);
@@ -195,8 +193,22 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
             } 
             else if (event.key == "Escape") {
                 handleEscape();
+            } else {
+                if (event.key == "a") {
+                    handleSelectPer(25);
+                }
+                else if (event.key == "s") {
+                    handleSelectPer(50);
+                }
+                else if (event.key == "d") {
+                    handleSelectPer(75);
+                }
+                else if (event.key == "f") {
+                    handleSelectPer(100);
+                }
             }
         }
+        
         document.addEventListener("keydown", handleKeyPress);
 
         return () => {
@@ -207,60 +219,60 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
     if (!isBuySellModalOpen) return null;
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="text-center bg-big-1 rounded shadow-lg grid grid-rows-12" style={{ width: '500px', height: '300px' }}>
-                <div className="row-start-1 row-end-3">
+            <div className="text-center bg-big-1 rounded shadow-lg grid grid-rows-12" style={{ width: '500px', height: '600px' }}>
+                <div className="row-span-2 flex items-center justify-center text-5xl">
                     {
                         isBuy ? (
-                            <span className="text-small-3">매수</span> 
+                            <span className="text-small-3">매수 </span> 
                             ) : (
-                            <span className="text-small-1">매도</span> 
+                            <span className="text-small-1">매도 </span> 
                         ) 
                     }
-                    주문
+                     주문
                 </div>
                 <hr></hr>
-                <div className="row-start-3 row-end-7 m-3">
-                    <div className="flex justify-between m-1">
-                        <div className="text-textColor-1">
+                <div className="row-span-4 grid grid-rows-4">
+                    <div className="row-span-1 flex justify-around">
+                        <div className="ml-3 text-textColor-1">
                             {
                                 isBuy ? (
-                                    <span className="text-small-3 mt-1">매수</span> 
+                                    <span className="text-small-3">매수 </span> 
                                 ) : (
-                                    <span className="text-small-1 mt-1">매도</span>
+                                    <span className="text-small-1">매도 </span>
                                 )
                             }  
                             종목
                         </div>
-                        <div className="text-textColor-1">{selectedStockIndex+1}번 종목</div>
+                        <div className="mr-3 text-textColor-1">{selectedStockIndex+1}번 종목</div>
                     </div>
-                    <div className="flex justify-between m-1">
-                        <div>주문 단가</div>
-                        <div>{stockListData[selectedStockIndex].stockChartList[299+turn].endPrice}</div>
+                    <div className="row-span-1 flex justify-around">
+                        <div className="ml-3">주문 단가</div>
+                        <div className="mr-3">{stockListData[selectedStockIndex].stockChartList[299+turn].endPrice}</div>
                     </div>
-                    <div className="flex justify-between m-1">
-                        <div className="text-textColor-1">주문 가능 수량</div>
+                    <div className="row-span-1 flex justify-around">
+                        <div className="ml-3 text-textColor-1">주문 가능 수량</div>
                         {
                             isBuy ? (
-                                <div className="text-textColor-1">{Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[299+turn].endPrice)}주</div>
+                                <div className="mr-3 mr-3text-textColor-1">{Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[299+turn].endPrice)}주</div>
                             ) : (
-                                <div className="text-textColor-1">{assetListData[selectedStockIndex]?.stockAmount}</div>
+                                <div className="mr-3 text-textColor-1">{assetListData[selectedStockIndex]?.stockAmount}주</div>
                             )
                         }
                     </div>
-                    <div>
-                        <button onClick={() => {handleSelectPer(25)}}>25%</button>
-                        <button onClick={() => {handleSelectPer(50)}}>50%</button>
-                        <button onClick={() => {handleSelectPer(75)}}>75%</button>
-                        <button onClick={() => {handleSelectPer(100)}}>100%</button>
+                    <div className="row-span-1 grid grid-cols-4">
+                        <button onClick={() => {handleSelectPer(25)}} className="col-span-1 items-center justify-center border border-black rounded-md my-2 mx-5">25%(a)</button>
+                        <button onClick={() => {handleSelectPer(50)}} className="col-span-1 items-center justify-center border border-black rounded-md my-2 mx-5">50%(s)</button>
+                        <button onClick={() => {handleSelectPer(75)}} className="col-span-1 items-center justify-center border border-black rounded-md my-2 mx-5">75%(d)</button>
+                        <button onClick={() => {handleSelectPer(100)}} className="col-span-1 items-center justify-center border border-black rounded-md my-2 mx-5">100%(f)</button>
                     </div>
                 </div>
-                <div className="row-start-7 row-end-10 flex justify-center items-center gap-4 m-3">
+                <div className="row-span-3 gap-4 m-3">
                     <div>
                         {
                             isBuy ? (
-                                <label htmlFor="stocks" className="mb-2 font-medium text-small-3 dark:text-textColor-2">매수 수량:</label>
+                                <label htmlFor="stocks" className="mb-2 font-medium text-small-3 dark:text-textColor-2">매수 수량</label>
                             ) : (
-                                <label htmlFor="stocks" className="mb-2 font-medium text-small-1 dark:text-textColor-2">매도 수량:</label>
+                                <label htmlFor="stocks" className="mb-2 font-medium text-small-1 dark:text-textColor-2">매도 수량</label>
                             )
                         }
                     </div>
@@ -277,46 +289,16 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                         }
                     </div>
                 </div>
-                <div className="row-start-10 row-end-13 grid grid-rows-3">
-                    <div className="row-start-1 row-end-3 grid grid-cols-8">
-                        <button 
-                            onClick={() => {handleEscape()}} 
-                            className="col-start-2 col-end-4 rounded-full ml-1 text-textColor-2 bg-small-10"
-                        >
-                            취소(esc)
-                        </button>
-                        {
-                            isBuy ? (
-                                <button 
-                                    onClick={() => {handleBuy()}}
-                                    disabled={disabled}
-                                    className={`col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 ${disabled ? 'bg-red-300' : 'bg-small-3'}`}
-                                >
-                                    매수(enter)
-                                </button>
-                            ) : (
-                                <button 
-                                    onClick={() => {handleSell()}} 
-                                    disabled={disabled}
-                                    className={`col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 ${disabled ? 'bg-blue-300' : 'bg-small-1'}`}
-                                >
-                                    매도(enter)
-                                </button>
-                            )
-                        }
-                    </div>
-                </div>
-                <div className="row-start-10 row-end-13 grid grid-rows-3">
+                <div className="row-span-3 grid grid-rows-3">
                     <div className="row-start-1 row-end-3 grid grid-cols-8">
                         <button 
                             onClick={() => {
                                 playClickSound();
-                                setStocks(0)
-                                setIsBuySellModalOpen(false);
+                                handleEscape();
                             }} 
                             className="col-start-2 col-end-4 rounded-full ml-1 text-textColor-2 bg-small-10"
                         >
-                            취소
+                            취소(esc)
                         </button>
                         {
                             isBuy ? (
@@ -328,7 +310,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                                     disabled={disabled}
                                     className={`col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 ${disabled ? 'bg-red-300' : 'bg-small-3'}`}
                                 >
-                                    매수
+                                    매수(enter)
                                 </button>
                             ) : (
                                 <button 
@@ -339,7 +321,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                                     disabled={disabled}
                                     className={`col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 ${disabled ? 'bg-blue-300' : 'bg-small-1'}`}
                                 >
-                                    매도
+                                    매도(enter)
                                 </button>
                             )
                         }
