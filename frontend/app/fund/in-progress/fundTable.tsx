@@ -6,6 +6,7 @@ import type { FundResult } from "@/public/src/stores/fund/crud/FundCrudStore";
 import { FundInfo } from "@/public/src/stores/fund/crud/FundCrudStore";
 import fundCrudStore from "@/public/src/stores/fund/crud/FundCrudStore";
 import { useState, useEffect } from "react";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 const fetchFundInfo = async () => {
   const token = sessionStorage.getItem("accessToken");
@@ -25,6 +26,8 @@ export default function FundTable() {
   const { searchQuery } = fundCrudStore();
   const [filteredFunds, setFilteredFunds] = useState<FundResult[]>([])
   const router = useRouter();
+  const playClickSound = useClickSound();
+
   useEffect(() => {
     // Filter fundList based on searchQuery when searchQuery changes
     const filtered: FundResult[] = fundList.filter((fund) => fund.fundName.includes(searchQuery));
@@ -88,6 +91,7 @@ export default function FundTable() {
               <tr
                 key={i}
                 onClick={() => {
+                  playClickSound();
                   router.push(`./in-progress/${fund.fundId}`);
                 }}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 hover:cursor-pointer"

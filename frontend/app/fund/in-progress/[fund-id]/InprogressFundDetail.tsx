@@ -6,6 +6,7 @@ import type { FundDetail, FundStocks } from "@/public/src/stores/fund/crud/FundC
 import { useQuery, UseQueryResult } from "react-query";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 
 const fetchFundDetail = async(fundId: string) => {
@@ -22,6 +23,7 @@ const fetchFundDetail = async(fundId: string) => {
 
 export default function InprogressFundDetail() {
   const [fundDetail, setFundDetail] = useState<FundDetail|null>(null)
+  const playClickSound = useClickSound();
 
   const params = useParams();
   const fundId = params['fund-id'] as string;
@@ -146,7 +148,10 @@ export default function InprogressFundDetail() {
       </div>
       <div className="row-span-1">
           <button
-            onClick={()=> {window.location.href = `/fund/${fundId}/play`;}}
+            onClick={()=> {
+              playClickSound();
+              window.location.href = `/fund/${fundId}/play`;
+            }}
           className="w-full border rounded-md bg-small-9 hover:bg-teal-400 py-2 text-textColor-2 text-center">펀드 게임하러 가기
           </button>
       </div>

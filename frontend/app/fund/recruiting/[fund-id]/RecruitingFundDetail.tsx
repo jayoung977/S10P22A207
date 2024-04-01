@@ -17,6 +17,7 @@ import { useState, useEffect } from "react";
 import userStore from "@/public/src/stores/user/userStore";
 import Swal from "sweetalert2";
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 
 type FundRegister = {
@@ -39,6 +40,7 @@ const fetchFundDetail = async (fundId: string, token: string|null) => {
 
 export default function RecruitingFundDetail() {
   useFetchUserInfo();
+  const playClickSound = useClickSound();
   const queryClient = useQueryClient();
   const { nickname, asset } = userStore();
   const token = typeof window !== 'undefined' ? sessionStorage.getItem('accessToken') : null;
@@ -294,6 +296,7 @@ export default function RecruitingFundDetail() {
           <div className="row-span-1 rounded-md">
             <button
               onClick={() => {
+                playClickSound();
                 StartFund(fundId, fundName);
               }}
               className="w-full mb-2 p-2 text-textColor-2 text-xl bg-button-1 rounded-md items-center"
@@ -321,6 +324,7 @@ export default function RecruitingFundDetail() {
                 </div>
                 <button
                   onClick={() => {
+                    playClickSound();
                     RegisterFund(fundId, investmoney);
                   }}
                   className="col-span-1 text-textColor-2 text-xl bg-button-1 rounded-md items-center"

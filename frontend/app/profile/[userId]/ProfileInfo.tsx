@@ -13,6 +13,7 @@ import { useMutation, useQueryClient } from "react-query";
 
 import ProfileFriendRequest from "./ProfileFriendRequest";
 import useGetProfileRank from "@/public/src/hooks/useGetProfileRank";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 interface resultType {
   memberID: number;
@@ -38,6 +39,7 @@ export default function UserInfo() {
   const { memberId } = userStore();
   const { isOpen, setIsOpen, setFriendRequests, friendRequests } =
     profileStore();
+  const playClickSound = useClickSound();
 
   const fetchUserInfo = async () => {
     const response = await axios({
@@ -154,6 +156,7 @@ export default function UserInfo() {
                 type="button"
                 className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 absolute bottom-2 "
                 onClick={() => {
+                  playClickSound();
                   handleFriendRequest();
                 }}
               >
@@ -164,6 +167,7 @@ export default function UserInfo() {
                 type="button"
                 className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 absolute bottom-2 "
                 onClick={() => {
+                  playClickSound();
                   sendNoFriendRequest();
                 }}
               >
@@ -175,6 +179,7 @@ export default function UserInfo() {
               type="button"
               className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 absolute bottom-2 "
               onClick={() => {
+                playClickSound();
                 setIsOpen(!isOpen);
               }}
             >

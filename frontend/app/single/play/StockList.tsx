@@ -4,8 +4,10 @@
 import { useEffect } from 'react';
 import SingleGameStore from '@/public/src/stores/single/SingleGameStore'
 import Stock from "./Stock"
+import useClickSound from '@/public/src/components/clickSound/DefaultClick';
 
 export default function StockList () {
+    const playClickSound = useClickSound();
     const { selectedStockIndex, setSelectedStockIndex, todayStockInfoListData ,setTodayStockInfoListData, isBuySellModalOpen } = SingleGameStore();
     const handleSelectStockIndex = (e :KeyboardEvent) => {
         if (isBuySellModalOpen == false) {
@@ -38,7 +40,10 @@ export default function StockList () {
                             index={index}
                             data={x} 
                             isSelected={selectedStockIndex==index}
-                            onClick={()=>{setSelectedStockIndex(index)}}
+                            onClick={()=>{
+                                playClickSound();
+                                setSelectedStockIndex(index)
+                            }}
                         />
                         )
                     )
