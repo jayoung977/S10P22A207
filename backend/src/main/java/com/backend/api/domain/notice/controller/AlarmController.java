@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,5 +63,22 @@ public class AlarmController {
     public ResponseEntity<BaseResponse<List<NotificationResponseDto>>> getNotificationList(@AuthenticationPrincipal CustomUserDetails userDetails) {
         log.info("알림을 호출합니다.");
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, notificationService.getNotificationList(userDetails.getId()));
+    }
+
+    @Operation(summary = "안 읽은 알림 개수 가져오기", description = "자신에게 온 안읽은 알림 개수 호출", tags = {"알림"})
+    @GetMapping("/unread-notification-count")
+    public ResponseEntity<BaseResponse<Long>> getUnReadNotificationList(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        log.info("안읽은 알림을 호출합니다.");
+        return BaseResponse.success(SuccessCode.SELECT_SUCCESS, notificationService.getUnreadNotificationCount(userDetails.getId()));
+    }
+
+    @Operation(summary = "알림 삭제하기", description = "자신에게 온 알림 삭제", tags = {"알림"})
+    @DeleteMapping("/delete-notification")
+    public ResponseEntity<BaseResponse<String>> deleteNotification(Long noticeId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        log.info("알림을 호출합니다.");
+        notificationService.deleteNotification(noticeId, userDetails.getId());
+        return BaseResponse.success(
+            SuccessCode.SELECT_SUCCESS,
+            "알림을 삭제했습니다.");
     }
 }
