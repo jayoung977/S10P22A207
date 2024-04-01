@@ -50,7 +50,7 @@ export default function FriendUserRankingList() {
         style={{ height: "calc(42vh)" }}
       >
         {result?.map((x, index) => (
-          <UserRanking key={x.memberId} user={x} />
+          <UserRanking key={x.memberId} user={x} rank={index} />
         ))}
       </div>
     </>

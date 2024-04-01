@@ -84,7 +84,7 @@ export default function GameRoomSetting() {
   const { result }: { result: ResultType | null } = data
     ? data
     : { result: null };
-  console.log(result)
+  // console.log(result)
   const totalRooms = result ? result.totalMultiRoomCounts : 0;
   return (
     <div className="col-span-8 grid grid-rows-12 p-2">
