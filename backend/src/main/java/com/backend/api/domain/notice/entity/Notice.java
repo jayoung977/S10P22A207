@@ -20,6 +20,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -42,6 +43,7 @@ public class Notice extends BaseEntity {
     private String content; // 내용
 
     @NotNull
+    @Setter
     private boolean isRead; // 읽었는지 여부
 
     @Enumerated(EnumType.STRING)

@@ -3,6 +3,7 @@ package com.backend.api.domain.fund.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,9 @@ import com.backend.api.domain.fund.entity.type.FundStatus;
 import com.backend.api.domain.fund.repository.FundRepository;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
+import com.backend.api.domain.notice.entity.Notice;
+import com.backend.api.domain.notice.service.NotificationService;
+import com.backend.api.domain.notice.type.AlarmType;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.exception.BaseExceptionHandler;
 
@@ -24,7 +28,8 @@ import lombok.extern.log4j.Log4j2;
 public class FundAndMemberService {
 	private final FundRepository fundRepository;
 	private final MemberRepository memberRepository;
-
+	private final SimpMessageSendingOperations template;
+	private final NotificationService noticeService;
 	private final double FEE = 0.01;
 
 	@Transactional
@@ -40,6 +45,20 @@ public class FundAndMemberService {
 		fund.updateFundStatus(FundStatus.CLOSED);
 		memberRepository.saveAll(distributeProfit(fund, calculateProfitRate(fund)));
 		fundRepository.save(fund);
+		// 펀드 종료 알림
+		log.info("펀드 종료: {}", fund.getFundName());
+		for (Member member : fund.getFundMemberList().stream().map(FundMember::getMember).toList()) {
+			log.info("펀드 종료 알림: {}", member.getNickname());
+			template.convertAndSend("/api/sub/" + member.getId(), "펀드가 종료되었습니다.");
+			Notice notice = Notice.builder()
+				.member(member)
+				.sender(fund.getManager().getNickname())
+				.isRead(false)
+				.alarmType(AlarmType.FUNDCLOSED)
+				.content(fund.getFundName()+"펀드가 종료되었습니다.")
+				.build();
+			noticeService.createNotification(notice);
+		}
 	}
 
 	private double calculateProfitRate(Fund fund) {
