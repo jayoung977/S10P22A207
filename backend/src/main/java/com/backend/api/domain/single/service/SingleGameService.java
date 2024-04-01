@@ -359,7 +359,6 @@ public class SingleGameService {
 
         // 팔았으니 currentGame 바꿔주기
         currentGame.getStockAmount()[stockIdx] -= dto.amount();
-
         currentGame.updateCash(currentGame.getCash() + (long) (dto.amount() * todayChart.getEndPrice() * 0.9975));
         currentGame.addProfit(stockIdx, (int) (dto.amount() * (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx])));
         currentGame.updateTotalAsset(totalAsset);
@@ -397,17 +396,19 @@ public class SingleGameService {
                 currentGame.getAveragePrice()[stockIdx], //평균단가
                 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx] // 수익률
             );
-        redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.gameIdx(), currentGame);
 
         long totalProfit = 0;
         for (int i = 0; i < currentGame.getProfits().length; i++) {
+            System.out.println("currentGame = " + currentGame.getProfits()[i]);
+            System.out.println("totalProfit = " + totalProfit);
             totalProfit += currentGame.getProfits()[i];
         }
-        double totalRoi = 100.0 * totalProfit / currentGame.getInitial();
-        TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalProfit, totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
+        double totalRoi = 100.0 * (totalAsset - currentGame.getInitial()) / currentGame.getInitial();
+        TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalAsset - currentGame.getInitial(), totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
 
         // TotalAsset에 들어갔으면 뺴주기
-        currentGame.addProfit(stockIdx, (int) (dto.amount() * ((-1) * (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]))));
+        currentGame.updateProfit(stockIdx, dto.amount());
+        redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.gameIdx(), currentGame);
 
         // 보유자산
         List<AssetListDto> assetList = new ArrayList<>();
@@ -574,7 +575,6 @@ public class SingleGameService {
             // 종목별 정보 담아주기
             Long stockId = todayChart.getStock().getId();
             Integer stockIdx = currentGame.getStocks().get(stockId);
-            System.out.println("stockIdx = " + stockIdx);
             int amount = currentGame.getStockAmount()[stockIdx];
             // 총 자산 가치
             totalAsset += (long) (amount * todayChart.getEndPrice() * 0.9975);
@@ -592,10 +592,6 @@ public class SingleGameService {
                             / currentGame.getAveragePrice()[stockIdx]// 손익률
                 )
             );
-            // 보유 재산의 각
-            System.out.println("todayChart = " + todayChart.getEndPrice());
-            System.out.println("yesterdayChart = " + yesterdayChart.getEndPrice());
-            currentGame.addProfit(stockIdx, currentGame.getStockAmount()[stockIdx] * (todayChart.getEndPrice() - yesterdayChart.getEndPrice()));
             // 보유 자산변동 보여주기
             AssetListDto assetListDto = new AssetListDto(
                 stockChartRepository.findById(firstDayStockChartId + 299 + currentGame.getDay()).orElseThrow(
