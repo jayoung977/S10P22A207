@@ -34,5 +34,6 @@ public class NotificationService {
         log.info("알림 Type : {}", notice.getAlarmType());
         log.info("알림을 저장합니다.");
         notificationRepository.save(notice);
+        log.info("알림 저장 완료");
     }
 }
