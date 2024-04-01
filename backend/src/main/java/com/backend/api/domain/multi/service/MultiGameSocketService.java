@@ -110,10 +110,23 @@ public class MultiGameSocketService {
 		redisTemplate.opsForValue().set("multiGame:" + roomId, multiWaitingRoom);
 		log.info("멀티게임 대기방 입장상태를 제거합니다");
 		redisTemplate.opsForValue().getAndDelete(userDetails.getEmail());
-		sendMessageToMultiWaitingRoom(roomId, new SocketBaseDtoRes<>(SocketType.MESSAGE, new WebSocketMessageReq(roomId, "시스템", "방을 나가셨습니다.")));
+		sendMessageToMultiWaitingRoom(roomId, new SocketBaseDtoRes<>(SocketType.MESSAGE, new WebSocketMessageReq(roomId, "시스템",
+			userDetails.getNickname())+"님이 방을 나가셨습니다."));
 		if(multiWaitingRoom.getParticipantIds().isEmpty()) {
 			log.info("멀티게임 대기방이 비어있어 삭제합니다");
 			redisTemplate.delete("multiGame:" + roomId);
+		}
+		/* 방장인지 체크 */
+		log.info("멀티게임 대기방의 방장인지 체크합니다");
+		if (multiWaitingRoom.getHostId() == userDetails.getId()) {
+			log.info("멀티게임 대기방의 방장이 변경됩니다");
+			Long nextHostId = multiWaitingRoom.getParticipantIds().stream().findFirst().orElseThrow( // 방장이 나갔을 때 방장을 다음 참가자로 변경
+				() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)
+			);
+			multiWaitingRoom.setHostId(nextHostId);
+			redisTemplate.opsForValue().set("multiGame:" + roomId, multiWaitingRoom);
+			sendMessageToMultiWaitingRoom(roomId, new SocketBaseDtoRes<>(SocketType.MESSAGE, new WebSocketMessageReq(roomId, "시스템",
+				nextHostId+"번 님이 방장이 되셨습니다.")));
 		}
 	}
 	/* 내가 입장한 방이 있다면 멀티게임 대기방에서 나가기 */
@@ -121,6 +134,30 @@ public class MultiGameSocketService {
 		if(redisTemplate.hasKey(userDetails.getEmail())) { // 내가 방에 입장해 있는지 확인
 			Object existingRoodId = redisTemplate.opsForValue().get(userDetails.getEmail()); // 어떤 방에 있는지 가져옴
 			exitMultiRoom(userDetails, Long.valueOf((Integer)existingRoodId)); // 방 나가기
+		}
+	}
+
+	public void kickMultiRoom(CustomUserDetails userDetails, Long roomId, Long kickMemberId) throws JsonProcessingException {
+		log.info("멀티게임 대기방 강퇴 {} 님이 {} 방에서 {}님을 추방합니다.", userDetails.getId(), roomId, kickMemberId);
+		Member kickMember = memberRepository.findById(kickMemberId).orElseThrow(
+			() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)
+		);
+		MultiWaitingRoom multiWaitingRoom = getMultiWaitingRoom(roomId);
+		/* 방장인지 체크 */
+		if (multiWaitingRoom.getHostId() != userDetails.getId()) {
+			throw new BaseExceptionHandler(ErrorCode.NOT_HOST);
+		}
+		log.info("멀티게임 대기방의 참가자에서 제거합니다");
+		multiWaitingRoom.getParticipantIds().remove(kickMember.getId());
+		log.info("멀티게임 대기방의 레디 상태에서 제거합니다");
+		multiWaitingRoom.getReadyState().remove(kickMember.getId());
+		redisTemplate.opsForValue().set("multiGame:" + roomId, multiWaitingRoom);
+		log.info("멀티게임 대기방 입장상태를 제거합니다");
+		redisTemplate.opsForValue().getAndDelete(kickMember.getEmail());
+		sendMessageToMultiWaitingRoom(roomId, new SocketBaseDtoRes<>(SocketType.MESSAGE, new WebSocketMessageReq(roomId, "시스템", kickMember.getNickname()+"님이 추방당했습니다.")));
+		if(multiWaitingRoom.getParticipantIds().isEmpty()) {
+			log.info("멀티게임 대기방이 비어있어 삭제합니다");
+			redisTemplate.delete("multiGame:" + roomId);
 		}
 	}
 }

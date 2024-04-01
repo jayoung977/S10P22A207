@@ -8,6 +8,7 @@ import java.util.Set;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -18,6 +19,7 @@ public class MultiWaitingRoom {
 	private Boolean isOpen;
 	private Integer round;
 	private Map<Long, Boolean> readyState;
+	@Setter
 	private Long hostId;
 
 	@Builder
