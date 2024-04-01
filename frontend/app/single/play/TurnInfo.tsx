@@ -92,6 +92,7 @@ export default function TurnInfo () {
             handleSelectSell();
         } else if (e.key == "r" && !isBuySellModalOpen) {
             handleClickTurn();
+            console.log('r누름')
         }
     }
 

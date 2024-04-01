@@ -16,7 +16,7 @@ export default function QuizNow() {
           맞춘 문제 : {success}/5
         </div>
         <div className="col-start-6 col-end-12 text-end  text-white">
-          보유 시드 머니 : {asset} 원
+          보유 시드 머니 : {asset?.toLocaleString()} 원
         </div>
       </div>
     </div>
