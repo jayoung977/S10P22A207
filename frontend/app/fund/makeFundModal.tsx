@@ -22,7 +22,7 @@ interface NewFund {
 
 const createFund = async(fund: NewFund) => {
   const token = sessionStorage.getItem('accessToken')
-  const { data } = await axios.post(`https://j10a207.p.ssafy.io/api/fund/open?loginUserId=1`,fund,{
+  const { data } = await axios.post(`https://j10a207.p.ssafy.io/api/fund/open`,fund,{
     headers: {
       'Authorization': `Bearer ${token}`
     }
@@ -46,7 +46,6 @@ export default function MakeFundModal({isOpen, onClose}: any){
   
   useEffect(()=> {
     setFundNameCheck(false)
-    // console.log(fundNameCheck)
   },[isOpen])
   
   const funName = watch('fundName')
@@ -186,9 +185,9 @@ export default function MakeFundModal({isOpen, onClose}: any){
                     type="text"
                     id="fund-industry"
                     {...register('industry', {
-                      required: '투자하려는 산업 분야를 하나 이상 작성하세요.'
+                      required: '펀드설명에 대해서 적어주세요.'
                     })}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="투자하려는 산업 분야" />
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="펀드설명" />
                     <p className="text-xs text-small-3 p-1">{errors.industry?.message}</p>
               </div>
               <div>

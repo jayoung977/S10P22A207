@@ -1,16 +1,25 @@
 package com.backend.api.domain.friend.service;
 
+import com.backend.api.domain.friend.dto.response.FriendAskNoticeDto;
 import com.backend.api.domain.friend.dto.response.FriendRes;
 import com.backend.api.domain.friend.entity.FriendAsk;
 import com.backend.api.domain.friend.repository.FriendAskRepository;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
+import com.backend.api.domain.notice.entity.Notice;
+import com.backend.api.domain.notice.repository.NotificationRepository;
+import com.backend.api.domain.notice.service.NotificationService;
 import com.backend.api.domain.notice.service.RedisPubService;
+import com.backend.api.domain.notice.type.AlarmType;
+import com.backend.api.global.common.SocketBaseDtoRes;
 import com.backend.api.global.common.code.ErrorCode;
+import com.backend.api.global.common.type.SocketType;
 import com.backend.api.global.exception.BaseExceptionHandler;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +30,9 @@ public class FriendAskService {
 	private final FriendAskRepository friendAskRepository;
 	private final MemberRepository memberRepository;
 	private final RedisPubService redisPubService;
+	private final SimpMessageSendingOperations template;
+	private final NotificationService notificationService;
+
 
 	public List<FriendRes> getSendFriendAskList(Long followerId) {
 		List<FriendAsk> friendAskList = friendAskRepository.findBySender_Id(followerId);
@@ -60,6 +72,17 @@ public class FriendAskService {
 				.receiver(receiver)
 				.build()
 		);
+		FriendAskNoticeDto friendAskNoticeDto = new FriendAskNoticeDto(sender.getId(), sender.getNickname());
+		template.convertAndSend("/api/sub" + receiver.getId(), new SocketBaseDtoRes<>(SocketType.FRIENDASK, friendAskNoticeDto));
+		//notice 저장
+		Notice notice = Notice.builder()
+			.member(receiver)
+			.sender(sender.getNickname())
+			.content(sender.getNickname() + "님이 친구 요청을 보냈습니다.")
+			.alarmType(AlarmType.FRIENDASK)
+			.isRead(false)
+			.build();
+		notificationService.createNotification(notice);
 	}
 
 	@Transactional

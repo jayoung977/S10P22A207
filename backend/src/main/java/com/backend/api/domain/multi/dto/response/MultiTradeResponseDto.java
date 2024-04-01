@@ -17,7 +17,7 @@ public record MultiTradeResponseDto(
     @Schema(description = "수수료")
     int fee,
     @Schema(description = "실현 손익")
-    long realizedProfit,
+    long profit,
 
     @Schema(description = "총 평가 자산")
     long totalAsset,

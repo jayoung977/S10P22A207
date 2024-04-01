@@ -53,7 +53,7 @@ export default function GameRoomSetting() {
 
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [isWaiting, setIsWaiting] = useState(false);
+  const [isWaiting, setIsWaiting] = useState(true);
   const [round, setRound] = useState(3);
   const playClickSound = useClickSound();
 
@@ -95,25 +95,6 @@ export default function GameRoomSetting() {
               id="default-checkbox"
               type="checkbox"
               value=""
-              checked={isWaiting == false}
-              onChange={() => {
-                playClickSound();
-                setIsWaiting(false)
-              }}
-              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label
-              htmlFor="default-checkbox"
-              className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300"
-            >
-              전체방
-            </label>
-          </div>
-          <div className="col-span-1 flex items-center">
-            <input
-              id="default-checkbox"
-              type="checkbox"
-              value=""
               checked={isWaiting == true}
               onChange={() =>{
                 playClickSound();
@@ -126,6 +107,25 @@ export default function GameRoomSetting() {
               className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300"
             >
               대기방
+            </label>
+          </div>
+          <div className="col-span-1 flex items-center">
+            <input
+              id="default-checkbox"
+              type="checkbox"
+              value=""
+              checked={isWaiting == false}
+              onChange={() => {
+                playClickSound();
+                setIsWaiting(false)
+              }}
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <label
+              htmlFor="default-checkbox"
+              className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300"
+            >
+              게임중
             </label>
           </div>
           <div className="col-span-1 flex items-center">
@@ -215,14 +215,27 @@ export default function GameRoomSetting() {
       </div>
       {/* 게임방 목록 */}
       <div className="bg-background-1 row-span-8 rounded-md grid grid-cols-12 grid-rows-3 shadow-md gap-1">
-        {result?.multiGameRoomInfoList.map((room: MultiGameRoomInfoList, i: number) => (
-          <div className="col-span-6 row-span-1 p-1 m-1 rounded-md" key={i}>
-            <GameRoom
-              color={RoomColor[(pageNumber - 1 + i) % 13]}
-              room={room}
-            />
-          </div>
-        ))}
+        {
+          isWaiting ? (
+            result?.multiWaitRoomInfoList.map((room: MultiGameRoomInfoList, i: number) => (
+              <div className="col-span-6 row-span-1 p-1 m-1 rounded-md" key={i}>
+                <GameRoom
+                  color={RoomColor[(pageNumber - 1 + i) % 13]}
+                  room={room}
+                />
+              </div>
+            ))
+          ): (
+            result?.multiGameRoomInfoList.map((room: MultiGameRoomInfoList, i: number) => (
+              <div className="col-span-6 row-span-1 p-1 m-1 rounded-md" key={i}>
+                <GameRoom
+                  color={RoomColor[(pageNumber - 1 + i) % 13]}
+                  room={room}
+                />
+              </div>
+            ))
+          )
+        }
       </div>
       <section className="row-span-2 flex justify-center">
         <Pagination totalRooms={totalRooms} />
