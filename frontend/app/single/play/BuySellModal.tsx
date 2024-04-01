@@ -145,7 +145,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                     Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
                 },
             });
-            console.log(response.data.result);
+            console.log("매수 : ", response.data.result);
             setAssetListData(response.data.result.assetList);
             setTotalAssetData(response.data.result.totalAsset);
             setTradeListData(response.data.result.tradeList);
@@ -172,6 +172,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                     Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
                 }
             });
+            console.log("매도 : ", response.data.result);
             setAssetListData(response.data.result.assetList);
             setTotalAssetData(response.data.result.totalAsset);
             setTradeListData(response.data.result.tradeList);
@@ -192,8 +193,22 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
             } 
             else if (event.key == "Escape") {
                 handleEscape();
+            } else {
+                if (event.key == "a") {
+                    handleSelectPer(25);
+                }
+                else if (event.key == "s") {
+                    handleSelectPer(50);
+                }
+                else if (event.key == "d") {
+                    handleSelectPer(75);
+                }
+                else if (event.key == "f") {
+                    handleSelectPer(100);
+                }
             }
         }
+        
         document.addEventListener("keydown", handleKeyPress);
 
         return () => {
@@ -245,10 +260,10 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                         }
                     </div>
                     <div className="row-span-1 grid grid-cols-4">
-                        <button onClick={() => {handleSelectPer(25)}} className="col-span-1 items-center justify-center border border-black rounded-md my-2 mx-5">25%</button>
-                        <button onClick={() => {handleSelectPer(50)}} className="col-span-1 items-center justify-center border border-black rounded-md my-2 mx-5">50%</button>
-                        <button onClick={() => {handleSelectPer(75)}} className="col-span-1 items-center justify-center border border-black rounded-md my-2 mx-5">75%</button>
-                        <button onClick={() => {handleSelectPer(100)}} className="col-span-1 items-center justify-center border border-black rounded-md my-2 mx-5">100%</button>
+                        <button onClick={() => {handleSelectPer(25)}} className="col-span-1 items-center justify-center border border-black rounded-md my-2 mx-5">25%(a)</button>
+                        <button onClick={() => {handleSelectPer(50)}} className="col-span-1 items-center justify-center border border-black rounded-md my-2 mx-5">50%(s)</button>
+                        <button onClick={() => {handleSelectPer(75)}} className="col-span-1 items-center justify-center border border-black rounded-md my-2 mx-5">75%(d)</button>
+                        <button onClick={() => {handleSelectPer(100)}} className="col-span-1 items-center justify-center border border-black rounded-md my-2 mx-5">100%(f)</button>
                     </div>
                 </div>
                 <div className="row-span-3 gap-4 m-3">
