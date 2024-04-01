@@ -75,9 +75,9 @@ export default function FinalResult({ isOpen, onClose }: any) {
               onclose;
               router.push(`/multi/room/${params.room_id}`);
             }}
-            className="border py-1 px-5 m-2 text-2xl rounded-md text-textColor-1 font-bold bg-button-2 hover:bg-gray-300"
+            className="border py-1 px-5 m-2 text-2xl rounded-md font-bold bg-button-1 text-textColor-2 hover:bg-gray-300"
           >
-            방으로 돌아가기{" "}
+            방으로
           </button>
         </div>
         <div>
@@ -89,7 +89,7 @@ export default function FinalResult({ isOpen, onClose }: any) {
             }}
             className="border py-1 px-5 m-2 text-2xl rounded-md text-textColor-1 font-bold bg-button-2 hover:bg-gray-300"
           >
-            나가기{" "}
+            나가기
           </button>
         </div>
       </div>
