@@ -1,8 +1,10 @@
 package com.backend.api.global.jwt;
 
+import com.backend.api.domain.notice.service.RedisPubService;
 import com.backend.api.global.common.ErrorResponse;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.jwt.service.JwtService;
+import com.backend.api.global.security.userdetails.CustomUserDetails;
 import com.google.gson.Gson;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -16,8 +18,10 @@ import java.io.IOException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,6 +30,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticateFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final RedisPubService redisPubService;
     private final String[] URL_WHITE_LIST;
 
     @Override
@@ -49,8 +54,14 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
             log.info("userDetail : {}", authentication);
-//            UserDetails details = (UserDetails) authentication.getDetails();
-//            redisPubService.setLoginStatus(details.getUsername());
+            if (authentication instanceof UsernamePasswordAuthenticationToken) {
+                UsernamePasswordAuthenticationToken authToken = (UsernamePasswordAuthenticationToken) authentication;
+                Object principal = authToken.getPrincipal();
+                if (principal instanceof UserDetails) {
+                    CustomUserDetails customUserDetails = (CustomUserDetails) principal;
+                    redisPubService.setLoginStatus(customUserDetails.getId());
+                }
+            }
         } catch (ExpiredJwtException e) {
             log.info("유저의 액세스 토큰이 만료되었습니다.");
             sendJwtErrorResponse(ErrorCode.EXPIRED_ACCESS_TOKEN_EXCEPTION, response);

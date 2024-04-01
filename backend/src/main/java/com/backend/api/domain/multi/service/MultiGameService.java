@@ -136,7 +136,7 @@ public class MultiGameService {
 
         // MultiGameRoomsResponseDto 객체 생성하여 반환
         // TODO: 대기방 먼저? 정렬 조건 마련
-        return new MultiGameRoomsResponseDto(resultList.size(), resultList.subList(fromIndex, gameRoomToIndex), waitRoomInfos.subList(fromIndex, waitingRoomToIndex));
+		return new MultiGameRoomsResponseDto(resultList.size(), waitRoomInfos.size(), resultList.subList(fromIndex, gameRoomToIndex), waitRoomInfos.subList(fromIndex, waitingRoomToIndex));
     }
 
     public void enterMultiGameRoom(Long memberId, String roomId) {
