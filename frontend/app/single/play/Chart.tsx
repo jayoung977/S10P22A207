@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import anychart from "anychart";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
+
+
 
 // 주어진 데이터 정제
 function filteringLowPriceZero(data :any) {
@@ -144,7 +147,6 @@ function calculateHist(macdData :any, signalData :any) {
 export default function Chart({ data }: any) {
   const { selectedStockIndex, turn, startDate, setStartDate, endDate, setEndDate } = SingleGameStore();
   const [selectedSecondaryIndicator, setSelectedSecondaryIndicator] = useState<number>(1);
-
   useEffect(() => {
     const purifiedData = filteringLowPriceZero(data);
     // 차트 생성
@@ -503,13 +505,30 @@ export default function Chart({ data }: any) {
     
   }, [data]);
 
+ const playClickSound = useClickSound();
+  
   return (
     <div className="row-span-12 grid grid-rows-12">
       <div className="row-span-1 grid grid-cols-8 items-center">
         <div className="text-center">종목 {selectedStockIndex+1}</div>
-        <button onClick={() => (window as any).handleShowPlot(1)} className={`border ${selectedSecondaryIndicator == 1 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>Volume</button>
-        <button onClick={() => (window as any).handleShowPlot(2)} className={`border ${selectedSecondaryIndicator == 2 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>RSI</button>
-        <button onClick={() => (window as any).handleShowPlot(3)} className={`border ${selectedSecondaryIndicator == 3 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>MACD</button>
+        <button 
+          onClick={() => {
+            playClickSound();
+            (window as any).handleShowPlot(1)
+          }} 
+          className={`border ${selectedSecondaryIndicator == 1 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>Volume</button>
+        <button 
+          onClick={() => {
+            playClickSound();
+            (window as any).handleShowPlot(2)
+          }} 
+          className={`border ${selectedSecondaryIndicator == 2 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>RSI</button>
+        <button 
+          onClick={() => {
+            playClickSound();
+            (window as any).handleShowPlot(3)
+          }} 
+          className={`border ${selectedSecondaryIndicator == 3 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>MACD</button>
       </div>
       <div id="chart-container" className="row-span-12 flex items-center justify-center"></div>
     </div>

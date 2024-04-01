@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { useQuery, UseQueryResult } from "react-query";
 import userStore from "@/public/src/stores/user/userStore";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 interface resultType {
   id: number;
@@ -21,6 +22,7 @@ interface QuizInfo {
 
 export default function QuizProblem() {
   const router = useRouter();
+  const playClickSound = useClickSound();
 
   const fetchShowMeTheMoney = async () => {
     const response = await axios({
@@ -70,6 +72,7 @@ export default function QuizProblem() {
     : { result: null };
 
   function handleClickProblem(num: number): any {
+    playClickSound();
     if (page < 4) {
       if (result != null && num == result[page].answer) {
         Swal.fire({
@@ -164,12 +167,12 @@ export default function QuizProblem() {
     <div className="row-span-10 grid grid-rows-12">
       <div className="row-span-12 grid grid-cols-12 ">
         <div className="col-start-4 col-end-10 grid grid-rows-12 bg-white shadow">
-          <div className="row-start-1 row-end-3 flex items-center justify-center text-4xl p-4 text-center">
+          <div className="row-start-1 row-end-3 flex items-center justify-center text-3xl p-4 text-center">
             {page + 1}. {result && result[page].title}
           </div>
-          <div className="row-start-3 row-end-11 grid grid-row-8 items-center ">
+          <div className="row-start-3 row-end-9 grid grid-row-8 items-center ">
             <div
-              className="row-span-2 hover:cursor-pointer flex justify-center hover:scale-105 ease-in-out duration-500 text-2xl "
+              className="row-span-2 hover:cursor-pointer flex justify-center hover:scale-105 ease-in-out duration-500 text-xl "
               onClick={() => {
                 handleClickProblem(1);
               }}
@@ -177,7 +180,7 @@ export default function QuizProblem() {
               1. {result != null && result[page].selections[0]}
             </div>
             <div
-              className="row-span-2 hover:cursor-pointer flex justify-center hover:scale-105 ease-in-out duration-500 text-2xl"
+              className="row-span-2 hover:cursor-pointer flex justify-center hover:scale-105 ease-in-out duration-500 text-xl"
               onClick={() => {
                 handleClickProblem(2);
               }}
@@ -185,7 +188,7 @@ export default function QuizProblem() {
               2. {result != null && result[page].selections[1]}
             </div>
             <div
-              className="row-span-2 hover:cursor-pointer flex justify-center hover:scale-105 ease-in-out duration-500 text-2xl"
+              className="row-span-2 hover:cursor-pointer flex justify-center hover:scale-105 ease-in-out duration-500 text-xl"
               onClick={() => {
                 handleClickProblem(3);
               }}
@@ -193,7 +196,7 @@ export default function QuizProblem() {
               3. {result != null && result[page].selections[2]}
             </div>
             <div
-              className="row-span-2 hover:cursor-pointer flex justify-center hover:scale-105 ease-in-out duration-500 text-2xl"
+              className="row-span-2 hover:cursor-pointer flex justify-center hover:scale-105 ease-in-out duration-500 text-xl"
               onClick={() => {
                 handleClickProblem(4);
               }}

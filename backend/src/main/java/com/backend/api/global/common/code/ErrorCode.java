@@ -103,7 +103,8 @@ public enum ErrorCode {
     ALREADY_REGISTERED_FUND(400, "B604" , "이미 가입한 펀드입니다"),
     CLOSED_FUND_EXCEPTION(400, "B605" , "이미 종료된 펀드입니다" ),
     NOT_ENOUGH_ASSET(400,"B606" ,"자산이 부족합니다" ),
-
+    NOT_FUND_MANAGER(400,"B607", "펀드매니저가 아닙니다"),
+    NO_FUND_STOCK(400, "B608","펀드관련 주식 종목 정보가 없습니다"),
     /**
      * ******************************* Error Code Constructor ***************************************
      */
@@ -119,6 +120,7 @@ public enum ErrorCode {
 
     // JSON 파싱 에러 (CODE: 500)
     JSON_PROCESSING_ERROR(500, "J500", "Json Processing Exception");
+
 
 
 

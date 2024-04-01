@@ -7,11 +7,12 @@ import userStore from "@/public/src/stores/user/userStore";
 import useFetchUserInfo from "@/public/src/hooks/useFetchUserInfo";
 import Swal from "sweetalert2";
 import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 export default function BoardSend() {
   useFetchUserInfo();
   const { memberId } = userStore();
-
+  const playClickSound = useClickSound();
   const sendBoard = async (formData: FormData): Promise<AxiosResponse<any>> => {
     const response = await axios({
       method: "post",
@@ -46,6 +47,7 @@ export default function BoardSend() {
   const [image, setImage] = useState<(FileList | File)[]>([]);
 
   const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
+    playClickSound();
     e.preventDefault();
 
     const formData = new FormData();
@@ -77,6 +79,7 @@ export default function BoardSend() {
   };
 
   const deletePhoto = (num: number) => {
+    playClickSound();
     const filteredImage = image.filter((item, i) => i !== num);
     setImage(filteredImage);
   };
@@ -108,6 +111,7 @@ export default function BoardSend() {
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 20 18"
+                onClick={playClickSound}
               >
                 <path
                   fill="currentColor"
@@ -143,13 +147,13 @@ export default function BoardSend() {
               id="chat"
               rows={3}
               className="mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Your message..."
+              placeholder="1.7MB 이하의 사진만 업로드 가능합니다."
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
             <button
               onClick={handleSubmit}
-              className="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"
+              className="inline-flex justify-center p-2 text-gray-500 rounded-full cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600"
             >
               <svg
                 className="w-5 h-5 rotate-90 rtl:-rotate-90"

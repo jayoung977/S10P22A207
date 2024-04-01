@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation"
 import fundCrudStore from "@/public/src/stores/fund/crud/FundCrudStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 export default function FundTabs(){
+  const playClickSound = useClickSound();
   const router = useRouter();
   const { toggleButton, setToggleButton, searchQuery, setSearchQuery } = fundCrudStore();
 
@@ -24,6 +26,7 @@ export default function FundTabs(){
             value="recruiting"
             checked={toggleButton == 'recruiting'}
             onChange={()=>{
+              playClickSound();
               setToggleButton('recruiting')
               router.push('./recruiting')
             }}
@@ -43,6 +46,7 @@ export default function FundTabs(){
             value="in-progress"
             checked={toggleButton == 'in-progress'}
             onChange={()=>{
+              playClickSound();
               setToggleButton('in-progress')
               router.push('./in-progress')
             }}
@@ -62,6 +66,7 @@ export default function FundTabs(){
             value="member"
             checked={toggleButton == 'member'}
             onChange={()=>{
+              playClickSound();
               setToggleButton('member')
               router.push('./member')
             }}
@@ -81,6 +86,7 @@ export default function FundTabs(){
             value="manager"
             checked={toggleButton == 'manager'}
             onChange={()=>{
+              playClickSound();
               setToggleButton('manager')
               router.push('./manager')
             }}

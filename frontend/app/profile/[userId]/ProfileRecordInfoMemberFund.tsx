@@ -2,6 +2,7 @@
 import { useRouter, useParams } from "next/navigation";
 import { useQuery, UseQueryResult } from "react-query";
 import axios from "axios";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 interface resultType {
   fundId: number;
@@ -26,6 +27,7 @@ interface FundMemberInfo {
 }
 
 export default function UserRecordInfoMemberFund() {
+  const playClickSound = useClickSound();
   const router = useRouter();
   const params = useParams<{ userId?: string }>();
   const id: string | undefined = params.userId;
@@ -87,6 +89,7 @@ export default function UserRecordInfoMemberFund() {
                 key={i}
                 className="cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700 "
                 onClick={() => {
+                  playClickSound();
                   router.push(
                     item.status == "RUNNING"
                       ? `/fund/in-progress/${item.fundId}`
@@ -101,7 +104,7 @@ export default function UserRecordInfoMemberFund() {
                   {item.fundName}
                 </th>
                 <td className="px-6 py-4">{item.status}</td>
-                <td className="px-6 py-4">{item.fundAsset}원</td>
+                <td className="px-6 py-4">{item.fundAsset.toLocaleString()}원</td>
                 <td className="px-6 py-4">{item.industry}</td>
                 <td className="px-6 py-4">{item.roi}%</td>
               </tr>

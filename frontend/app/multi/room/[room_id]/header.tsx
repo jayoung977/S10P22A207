@@ -3,11 +3,32 @@ import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import penguin from "@/public/src/assets/images/penguin.png";
 import axios from "axios";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 export default function Header() {
+  const playClickSound = useClickSound();
   const router = useRouter();
   const params = useParams<{ room_id?: string }>();
   const room_id: string | undefined = params.room_id;
+
+  const handleGameReady = async() => {
+    const token = sessionStorage.getItem("accessToken");
+    try {
+      const response = await fetch(`https://j10a207.p.ssafy.io/api/multi/ready/${params.room_id}`,{
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      const result = await response.json();
+      console.log(result)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const handleGameStart = async() => {
     const token = sessionStorage.getItem("accessToken");
     try {
@@ -70,13 +91,24 @@ export default function Header() {
         <button
           className="border p-2 rounded-md bg-red-500 text-white hover:bg-red-400"
           onClick={() => {
+            playClickSound();
             handleGameStart();
           }}
         >
           시작하기
         </button>
         <button
+          className="border p-2 rounded-md bg-red-500 text-white hover:bg-red-400"
           onClick={() => {
+            playClickSound();
+            handleGameReady();
+          }}
+        >
+          준비하기
+        </button>
+        <button
+          onClick={() => {
+            playClickSound();
             handleExit();
             router.back();
           }}

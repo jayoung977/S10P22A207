@@ -8,6 +8,7 @@ import { UserInfo, UserProfile } from "@/public/src/stores/user/userStore";
 import axios from "axios";
 import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
 import useGetProfileRank from "@/public/src/hooks/useGetProfileRank";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 const fetchProfile = async (userId: number) => {
   const token = sessionStorage.getItem("accessToken");
@@ -28,7 +29,8 @@ export default function ProfileModal() {
     "OtherProfile",
     () => fetchProfile(userId)
   );
-
+  const playClickSound = useClickSound();
+  
   function handleClose() {
     setLobbyModal(false);
   }
@@ -125,13 +127,18 @@ export default function ProfileModal() {
       </div>
       <div className="col-span-1 justify-items-center">
         <div>
-          <button className="bg-blue-500 m-2 p-2 text-white rounded-md">
+          <button
+          onClick={()=>{
+            playClickSound();
+          }}
+          className="bg-blue-500 m-2 p-2 text-white rounded-md">
             같이하기
           </button>
         </div>
         <div>
           <button
             onClick={() => {
+              playClickSound();
               if (result) requestFriend(result?.nickname);
             }}
             className="bg-blue-500 m-2 p-2 text-white rounded-md"
@@ -142,6 +149,7 @@ export default function ProfileModal() {
         <div>
           <button
             onClick={() => {
+              playClickSound();
               handleClose();
             }}
             type="button"

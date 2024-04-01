@@ -1,8 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState, useLayoutEffect } from "react";
+import { useState, useLayoutEffect, useCallback } from "react";
 import Image from "next/image";
-import penguin from "../public/src/assets/images/penguin.png";
 import logo from "../public/src/assets/images/logo.png";
 import NavbarGameModal from "./NavbarGameModal";
 import NavbarAlarmModal from "./NavbarAlarmModal";
@@ -11,12 +10,14 @@ import userStore from "@/public/src/stores/user/userStore";
 import fundCrudStore from "@/public/src/stores/fund/crud/FundCrudStore";
 import socketStore from "@/public/src/stores/websocket/socketStore";
 import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 export default function Navbar() {
   useFetchUserInfo();
   const { setToggleButton } = fundCrudStore();
   const { memberId } = userStore();
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
+  const playClickSound = useClickSound();
 
   useLayoutEffect(() => {
     const interval = setInterval(() => {
@@ -34,15 +35,18 @@ export default function Navbar() {
   const { receiveAlarm, setReceiveAlarm } = socketStore();
 
   const toggleDropdown = () => {
+    playClickSound();
     setDropdownOpen(!dropdownOpen);
   };
 
   const toggleAlarm = () => {
+    playClickSound();
     setAlarmOpen(!alarmOpen);
     setReceiveAlarm(false);
   };
 
   const handleLogout = () => {
+    playClickSound();
     sessionStorage.removeItem("accessToken");
     document.cookie =
       "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -54,14 +58,17 @@ export default function Navbar() {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image
-            src={useGetProfileImage(30000000)}
+            src={logo}
             alt="Logo"
             className="bg-background-1"
-            width={60}
+            width={25}
           />
           <span
             className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white hover:cursor-pointer"
-            onClick={() => router.push("/multi")}
+            onClick={() => {
+              playClickSound();
+              router.push("/multi")
+            }}
           >
             지금이니
           </span>
@@ -72,7 +79,11 @@ export default function Navbar() {
               <button
                 id="dropdownNavbarLink"
                 className="cursor-pointer flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
-                onClick={toggleDropdown}
+                onClick={()=>{
+                  playClickSound();
+                  toggleDropdown()
+                }
+              }
               >
                 게임
                 <svg
@@ -103,6 +114,7 @@ export default function Navbar() {
               <a
                 className="cursor-pointer block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 onClick={() => {
+                  playClickSound();
                   router.push("/fund/recruiting");
                   setToggleButton("recruiting");
                 }}
@@ -113,7 +125,10 @@ export default function Navbar() {
             <li>
               <a
                 className="cursor-pointer block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                onClick={() => router.push("/board")}
+                onClick={() => {
+                    playClickSound();
+                    router.push("/board")
+                  }}
               >
                 커뮤니티
               </a>
@@ -121,7 +136,10 @@ export default function Navbar() {
             <li>
               <a
                 className="cursor-pointer block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray -700 dark:hover:text-white md:dark:hover:bg-transparent"
-                onClick={() => router.push(`/profile/${memberId}`)}
+                onClick={() => {
+                    playClickSound();
+                    router.push(`/profile/${memberId}`)
+                  }}
               >
                 프로필
               </a>

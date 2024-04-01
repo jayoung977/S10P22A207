@@ -6,8 +6,11 @@ import TurnNow from './TurnNow';
 import BuySellModal from './BuySellModal';
 import SingleGameEndModal from './SingleGameEndModal';
 import axios from 'axios';
+import useClickSound from '@/public/src/components/clickSound/DefaultClick';
 
 export default function TurnInfo () {
+    const playClickSound = useClickSound();
+
     // 현재 턴
     const { turn, setTurn, gameIdx, setTotalAssetData, setAssetListData, setTodayStockInfoListData, setSingleGameEndInfoData, isBuySellModalOpen, setIsBuySellModalOpen, isBuy, setIsBuy, isOpenEndModal, setIsOpenEndModal,
             setStocks,
@@ -15,18 +18,21 @@ export default function TurnInfo () {
 
     // 매수버튼 클릭
     const handleSelectBuy = () => {
+        playClickSound();
         setIsBuy(true);
         setIsBuySellModalOpen(true);
     }
 
     // 매도버튼 클릭
     const handleSelectSell = () => {
+        playClickSound();
         setIsBuy(false);
         setIsBuySellModalOpen(true);
     }
     
     // 다음 턴으로 넘어가기
     const handleClickTurn = async () => {
+        playClickSound();
         try {
             const response = await axios(
                 {

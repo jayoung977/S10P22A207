@@ -1,7 +1,9 @@
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 import SingleReviewStore from "@/public/src/stores/profile/SingleReviewStore";
 export default function SingleStockTicker() {
-  const { stockInfoDtoList, selectedIndex, setSelectedIndex, tradeList } = SingleReviewStore();
-  
+  const { stockInfoDtoList, selectedIndex, setSelectedIndex, tradeList } =
+    SingleReviewStore();
+  const playClickSound = useClickSound();
   return (
     <div className="row-span-6 grid grid-rows-11 bg-purple-200 m-1 rounded-md">
       <div className="row-span-1 flex items-center justify-center">
