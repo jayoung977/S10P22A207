@@ -170,18 +170,13 @@ export default function RoundResult ({ isOpen, onClose }: any) {
         </div>
         <div className='col-span-4 justify-items-center text-lg text-center'>삼성전자</div> 
       </div>
-      <div className='row-span-7 grid grid-cols-12 gap-2'>
-        <div className='col-span-8 m-2'>
-          <RoundChart data={RoundData}/>
-        </div>
-        <div className='col-span-4 grid grid-rows-6'>
-          <RoundUser/>
-          <RoundUser/>
-          <RoundUser/>
-          <RoundUser/>
-          <RoundUser/>
-          <RoundUser/>
-        </div>
+      <div className='row-span-7 gap-2'>
+        <RoundUser/>
+        <RoundUser/>
+        <RoundUser/>
+        <RoundUser/>
+        <RoundUser/>
+        <RoundUser/>
       </div>
     </div>
   )

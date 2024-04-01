@@ -8,6 +8,7 @@ import { useQuery, UseQueryResult } from "react-query";
 import { Friend, FriendInfo } from "@/public/src/stores/user/userStore";
 import axios from "axios";
 import { useParams } from "next/navigation";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 const fetchFriendInfo = async () => {
   const token = sessionStorage.getItem("accessToken");
@@ -25,9 +26,9 @@ export default function FriendSearch() {
 
   // 친구목록 react-query로 구현
   const { result }: { result: Friend[] } = data ? data : { result: [] };
-
   const { searchFriend } = multigameStore();
   const [filteredFriendList, setfilteredFriendList] = useState<Friend[]>([]);
+  const playClickSound = useClickSound();
 
   useEffect(() => {
     const filtered: Friend[] = result.filter((friend) =>
@@ -48,12 +49,11 @@ export default function FriendSearch() {
     console.log(response.data);
     return response.data;
   };
-  
+
   const params = useParams<{ room_id?: string }>();
   const room_id: string | undefined = params.room_id;
-
   const inviteFriend = (receiver_id: number) => {
-    const data = {
+  const data = {
       roomId: room_id,
       receiver: receiver_id,
     };
@@ -106,6 +106,7 @@ export default function FriendSearch() {
               <div className="col-span-4 px-6 py-4">
                 <button
                   onClick={() => {
+                    playClickSound();
                     inviteFriend(friend.memberId);
                   }}
                   className="bg-blue-500 text-white px-2 py-1 rounded-md "

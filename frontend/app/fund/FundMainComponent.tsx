@@ -4,10 +4,12 @@ import { useState } from "react"
 import { useRouter } from "next/navigation";
 import MakeFundModal from "./makeFundModal"
 import { QueryClient, QueryClientProvider } from "react-query";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 const queryClient = new QueryClient();
 
 export default function FundMainComponent(){
+  const playClickSound = useClickSound();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false)
   return(
@@ -19,7 +21,10 @@ export default function FundMainComponent(){
         <div className="col-span-4 grid grid-rows-4 border text-center p-2">
           <div className="row-start-2 row-span-3">
             <div>"안정적인 미래를 위해 펀드를 개설하세요"</div>
-            <button onClick={()=> {setIsOpen(true)}} className="bg-button-1 text-textColor-2 m-2 p-2 rounded-md font-bold">펀드 개설</button>
+            <button onClick={()=> {
+              playClickSound();
+              setIsOpen(true)
+              }} className="bg-button-1 text-textColor-2 m-2 p-2 rounded-md font-bold">펀드 개설</button>
           </div>
         </div>
         <MakeFundModal isOpen={isOpen} onClose={()=>{setIsOpen(false)}}/>

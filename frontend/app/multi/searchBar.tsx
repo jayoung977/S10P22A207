@@ -8,6 +8,7 @@ export default function SearchBar() {
     setSearchFriend(e.target.value);
   };
 
+
   return (
     <div className="flex ms-3 items-center mt-1">
       <label htmlFor="simple-search" className="sr-only">

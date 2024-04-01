@@ -4,6 +4,7 @@ import { useParams } from "next/navigation"
 import { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 
 // 매수, 매도 클릭 시 활성화되는 모달창
@@ -11,13 +12,19 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
   const params = useParams();
   const gameId = params['game_id']
   const [stocksAmount, setStocksAmount] = useState(0);
+  const playClickSound = useClickSound();
 
   function handleStocksChange(e:React.ChangeEvent<HTMLInputElement>){
-    const stocks = Number(e.target.value)
+    playClickSound();
+    if(Number(e.target.value) < 0 ){
+      e.target.value = '0'
+    }
+    let stocks = Number(e.target.value)
     setStocksAmount(stocks)
   }
 
   function handleTrade(stocksAmount: number, tradeType: string){
+    playClickSound();
     if(stocksAmount > 0){
       axios({
         method: 'post',
