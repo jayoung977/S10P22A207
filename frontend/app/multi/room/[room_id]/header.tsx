@@ -5,17 +5,35 @@ import logo from "@/public/src/assets/images/logo.png"
 import penguin from "@/public/src/assets/images/penguin.png";
 import axios from "axios";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
+import socketStore from "@/public/src/stores/websocket/socketStore";
+import { useEffect, useState } from "react";
+import userStore from "@/public/src/stores/user/userStore";
+
 
 export default function Header() {
+  const { memberId } = userStore();
   const playClickSound = useClickSound();
   const router = useRouter();
   const params = useParams<{ room_id?: string }>();
   const room_id: string | undefined = params.room_id;
+  const { receiveMessages, setReceiveMessages, deleteReceiveMessages, readyState } = socketStore();
+  const {roomId, roomTitle, hostId} = socketStore()
+  const [allReady, setAllReady] = useState(false)
 
+  useEffect(()=>{
+    Object.keys(readyState).map((item)=>{
+      if (!readyState[Number(item)]) 
+      {
+        setAllReady(false)
+        return
+      }
+    }) 
+    setAllReady(true)
+  }, [readyState])
   const handleGameReady = async() => {
     const token = sessionStorage.getItem("accessToken");
     try {
-      const response = await fetch(`https://j10a207.p.ssafy.io/api/multi/ready/${params.room_id}`,{
+      const response = await fetch(`https://j10a207.p.ssafy.io/api/multi/ready?roomId=${params.room_id}`,{
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -55,7 +73,7 @@ export default function Header() {
     }
   }
 
-
+  const [receiveMessage, setReceiveMessage] = useState<any>([]);
   function handleExit() {
     axios({
       method: "delete",
@@ -64,7 +82,7 @@ export default function Header() {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     }).then((res) => {
-      console.log(res.data);
+      deleteReceiveMessages()
     });
   }
 
@@ -86,27 +104,33 @@ export default function Header() {
         </div>
       </div>
       <div className="col-span-8 flex justify-center font-bold text-xl">
-        <div>이겨보시던지</div>
+        <div>{roomTitle}</div>
       </div>
       <div className="col-span-2 flex justify-center gap-4">
-        <button
-          className="border p-2 rounded-md bg-red-500 text-white hover:bg-red-400"
-          onClick={() => {
-            playClickSound();
-            handleGameStart();
-          }}
-        >
-          시작하기
-        </button>
-        <button
-          className="border p-2 rounded-md bg-red-500 text-white hover:bg-red-400"
-          onClick={() => {
-            playClickSound();
-            handleGameReady();
-          }}
-        >
-          준비하기
-        </button>
+        {
+          memberId === hostId ? (
+          <button
+            className="border p-2 rounded-md bg-red-500 text-white hover:bg-red-400"
+            onClick={() => {
+              playClickSound();
+              handleGameStart();
+            }}
+          >
+            시작하기
+          </button>
+          ): (
+          <button
+            className="border p-2 rounded-md bg-red-500 text-white hover:bg-red-400"
+            disabled={!allReady}
+            onClick={() => {
+              playClickSound();
+              handleGameReady();
+            }}
+          >
+            준비하기
+          </button>
+          )
+        }
         <button
           onClick={() => {
             playClickSound();

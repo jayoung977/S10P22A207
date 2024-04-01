@@ -30,13 +30,6 @@ export default function FriendSearch() {
   const [filteredFriendList, setfilteredFriendList] = useState<Friend[]>([]);
   const playClickSound = useClickSound();
 
-  useEffect(() => {
-    const filtered: Friend[] = result.filter((friend) =>
-      friend.nickname.includes(searchFriend)
-    );
-    setfilteredFriendList(filtered);
-  }, [searchFriend, result]);
-
   const invitationRequest = async (request: any) => {
     const response = await axios({
       method: "post",
@@ -72,15 +65,14 @@ export default function FriendSearch() {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  console.log(result);
+  // console.log(result);
   return (
-    <div className="row-span-3 border-e grid grid-rows-6">
-      <div className="row-span-1 flex justify-center border-b gap-2 items-center">
+    <div className="row-span-3 border-e grid grid-rows-8">
+      <div className="row-span-1 flex justify-center bg-small-6 text-xl text-textColor-2 border-b gap-2 items-center">
         <div>친구초대</div>
-        <SearchBar />
       </div>
       <div
-        className="overflow-auto row-span-5"
+        className="overflow-auto row-span-7"
         style={{ height: "calc(35vh)" }}
       >
         {result.map((friend: Friend, i: number) => {
