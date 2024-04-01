@@ -53,14 +53,36 @@ public class HadoopService {
 		return response.getResult();
 	}
 
-	public List<MaxMinPriceDto> getMaxMinPrice(String stockCode){
-		// WebClient webClient = WebClient.create();
+	public List<StockRes> getStockDataStartEnd(String startDate, String endDate, String stockCode){
+		log.info("webClient 생성 완료");
+		String uri = "/hadoop/stock/get/start-end";
+		//WebClient  요청
+		StockResponseDto response = webClient.get()
+			.uri(uriBuilder -> uriBuilder
+				.path(uri)
+				.queryParam("startDate", startDate)
+				.queryParam("endDate", endDate)
+				.queryParam("stockCode", stockCode)
+				.build())
+			.retrieve()
+			.bodyToMono(StockResponseDto.class)
+			.blockOptional()
+			.orElseThrow(() -> new RuntimeException("Failed to retrieve stock data from hadoop-app"));
+
+		log.info("service result mono: {}", response);
+		return response.getResult();
+	}
+
+	public List<MaxMinPriceDto> getMaxMinPrice(String startDate, String endDate, String stockCode){
+
 		log.info("webClient 생성 완료");
 		String uri = "/hadoop/stock/max-min";
 		//WebClient  요청
 		MaxMinResponseDto response = webClient.get()
 			.uri(uriBuilder -> uriBuilder
 				.path(uri)
+				.queryParam("startDate", startDate)
+				.queryParam("endDate", endDate)
 				.queryParam("stockCode", stockCode)
 				.build())
 			.retrieve()
@@ -118,6 +140,26 @@ public class HadoopService {
 		ChangeRateResponseDto response = webClient.get()
 			.uri(uriBuilder -> uriBuilder
 				.path(uri)
+				.queryParam("stockCode", stockCode)
+				.build())
+			.retrieve()
+			.bodyToMono(ChangeRateResponseDto.class)
+			.blockOptional()
+			.orElseThrow(() -> new RuntimeException("Failed to retrieve stock data from hadoop-app"));
+
+		log.info("service result mono: {}", response);
+		return response.getResult();
+	}
+
+	public List<ChangeRateCountDto> getChangeRateCountStartEnd(String startDate, String endDate, String stockCode){
+		log.info("webClient 생성 완료");
+		String uri = "/hadoop/stock/change-count/start-end";
+		//WebClient  요청
+		ChangeRateResponseDto response = webClient.get()
+			.uri(uriBuilder -> uriBuilder
+				.path(uri)
+				.queryParam("startDate", startDate)
+				.queryParam("endDate", endDate)
 				.queryParam("stockCode", stockCode)
 				.build())
 			.retrieve()
