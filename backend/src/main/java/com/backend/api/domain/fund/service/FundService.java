@@ -11,8 +11,12 @@ import com.backend.api.domain.fund.repository.FundMemberRepository;
 import com.backend.api.domain.fund.repository.FundRepository;
 import com.backend.api.domain.fund.repository.FundStockRepository;
 import com.backend.api.domain.fund.repository.FundTradeRepository;
+import com.backend.api.domain.hadoop.service.HadoopService;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
+import com.backend.api.domain.notice.entity.Notice;
+import com.backend.api.domain.notice.service.NotificationService;
+import com.backend.api.domain.notice.type.AlarmType;
 import com.backend.api.domain.stock.entity.StockChart;
 import com.backend.api.domain.stock.repository.StockChartRepository;
 import com.backend.api.global.common.code.ErrorCode;
@@ -23,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +49,9 @@ public class FundService {
     private final FundStockRepository fundStockRepository;
 	private final ObjectMapper objectMapper;
 	private final FundTradeRepository fundTradeRepository;
+	private final SimpMessageSendingOperations template;
+	private final NotificationService noticeService;
+	private final HadoopService hadoopService;
 	private HashMap<Long, Integer> stocks;
 	private List<Long> list;
 
@@ -249,6 +257,20 @@ public class FundService {
 		fund.updateFundStatus(FundStatus.RUNNING);
 		fund.updateFundStart();
 		fundRepository.save(fund);
+		// 펀드 시작 알림
+		log.info("펀드 시작: {}", fund.getFundName());
+		for(Member member : fund.getFundMemberList().stream().map(FundMember::getMember).toList()){
+			log.info("펀드 시작 알림: {}", member.getNickname());
+			template.convertAndSend("/api/sub/" + member.getId(), "펀드가 시작되었습니다.");
+			Notice notice = Notice.builder()
+				.member(member)
+				.sender(fund.getManager().getNickname())
+				.isRead(false)
+				.alarmType(AlarmType.FUNDSTARTED)
+				.content(fund.getFundName()+"펀드가 시작되었습니다.")
+				.build();
+			noticeService.createNotification(notice);
+		}
 		return fund.getId();
 	}
 
@@ -460,6 +482,8 @@ public class FundService {
 				.profit((long) currentGame.getProfits()[stockIdx])
 				.build();
 		fundTradeRepository.save(fundTrade);
+		/* 하둡저장 */
+		hadoopService.saveFundTradeLogHdfs(fundTrade, managerId);
 		//Redis - 매매내역 추가 및 값 변경
 		currentGame.getTradeList().add(
 				new FundTradeListDto(
@@ -586,6 +610,7 @@ public class FundService {
 				.profit((long) currentGame.getProfits()[stockIdx])
 				.build();
 		fundTradeRepository.save(fundTrade);
+		hadoopService.saveFundTradeLogHdfs(fundTrade, managerId);
 		//Redis - 매매내역 추가 및 값 변경
 		currentGame.getTradeList().add(
 				new FundTradeListDto(

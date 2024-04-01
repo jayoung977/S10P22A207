@@ -1,5 +1,6 @@
 package com.backend.api.domain.single.service;
 
+import com.backend.api.domain.hadoop.service.HadoopService;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.single.dto.request.NextDayRequestDto;
@@ -43,6 +44,7 @@ public class SingleGameService {
     private final MemberRepository memberRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
+    private final HadoopService hadoopService;
 
     private HashMap<Long, Integer> stocks;
     private List<Long> list;
@@ -359,7 +361,6 @@ public class SingleGameService {
 
         // 팔았으니 currentGame 바꿔주기
         currentGame.getStockAmount()[stockIdx] -= dto.amount();
-
         currentGame.updateCash(currentGame.getCash() + (long) (dto.amount() * todayChart.getEndPrice() * 0.9975));
         currentGame.addProfit(stockIdx, (int) (dto.amount() * (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx])));
         currentGame.updateTotalAsset(totalAsset);
@@ -377,6 +378,7 @@ public class SingleGameService {
             .profit((long) (dto.amount() * (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]))) // 이번 거래의 profit
             .build();
         singleTradeRepository.save(singleTrade);
+        hadoopService.saveSingleTradeLogHdfs(singleTrade, memberId);
         currentGame.getTradeList().add(
             new SingleTradeListDto(
                 dto.stockId(),
@@ -397,14 +399,17 @@ public class SingleGameService {
                 currentGame.getAveragePrice()[stockIdx], //평균단가
                 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx] // 수익률
             );
-        redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.gameIdx(), currentGame);
 
         long totalProfit = 0;
         for (int i = 0; i < currentGame.getProfits().length; i++) {
             totalProfit += currentGame.getProfits()[i];
         }
-        double totalRoi = 100.0 * totalProfit / currentGame.getInitial();
-        TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalProfit, totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
+        double totalRoi = 100.0 * (totalAsset - currentGame.getInitial()) / currentGame.getInitial();
+        TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalAsset - currentGame.getInitial(), totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
+
+        // TotalAsset에 들어갔으면 뺴주기
+        currentGame.updateProfit(stockIdx, dto.amount());
+        redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.gameIdx(), currentGame);
 
         // 보유자산
         List<AssetListDto> assetList = new ArrayList<>();
@@ -495,6 +500,7 @@ public class SingleGameService {
             .profit((-1) *(long) (dto.amount() * todayChart.getEndPrice() * 0.0015))
             .build();
         singleTradeRepository.save(singleTrade);
+        hadoopService.saveSingleTradeLogHdfs(singleTrade, memberId);
         currentGame.getTradeList().add(
             new SingleTradeListDto(
                 dto.stockId(),
@@ -563,13 +569,14 @@ public class SingleGameService {
         long totalAsset = currentGame.getCash();
         List<AssetListDto> assetList = new ArrayList<>();
 
-        for (Long firstDayStockChartId : currentGame.getFirstDayChartList()) {
+        for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
+            Long firstDayStockChartId = currentGame.getFirstDayChartList().get(i);
             StockChart todayChart = stockChartRepository.findById(firstDayStockChartId + 299 + dto.day()).orElseThrow();
             StockChart yesterdayChart = stockChartRepository.findById(firstDayStockChartId + 299 + dto.day() - 1).orElseThrow();
 
-            Long startDateChartStockId = todayChart.getStock().getId();
             // 종목별 정보 담아주기
-            Integer stockIdx = currentGame.getStocks().get(startDateChartStockId);
+            Long stockId = todayChart.getStock().getId();
+            Integer stockIdx = currentGame.getStocks().get(stockId);
             int amount = currentGame.getStockAmount()[stockIdx];
             // 총 자산 가치
             totalAsset += (long) (amount * todayChart.getEndPrice() * 0.9975);
@@ -580,14 +587,15 @@ public class SingleGameService {
                     todayChart.getEndPrice(), // 오늘의 종가
                     todayChart.getEndPrice() - yesterdayChart.getEndPrice(), // 등락정도
                     currentGame.getStockAmount()[stockIdx], // 보유수량
-                    (long) currentGame.getStockAmount()[stockIdx] * (todayChart.getEndPrice()
-                        - currentGame.getAveragePrice()[stockIdx]), // 평가손익
+                    (long) (currentGame.getStockAmount()[stockIdx] * (0.9975 * todayChart.getEndPrice()
+                        - currentGame.getAveragePrice()[stockIdx])), // 평가손익
                     currentGame.getAveragePrice()[stockIdx] == 0 ? 0 :
                         1.0 * ((todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]) * 100)
                             / currentGame.getAveragePrice()[stockIdx]// 손익률
                 )
             );
-            // 보유 재산의 각
+
+            // 각 날짜의 변동에 맞게 종목의 실현손익이 변한다.
             currentGame.addProfit(stockIdx, currentGame.getStockAmount()[stockIdx] * (todayChart.getEndPrice() - yesterdayChart.getEndPrice()));
             // 보유 자산변동 보여주기
             AssetListDto assetListDto = new AssetListDto(
@@ -606,8 +614,7 @@ public class SingleGameService {
                 SingleGameStock singleGameStock = singleGameStockRepository.findBySingleGameLog_IdAndStock_Id(currentGame.getSingleGameLogId(), todayChart.getStock().getId())
                     .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
 
-                Long stockId = todayChart.getStock().getId();
-                Integer index = currentGame.getStocks().get(stockId);
+                Integer index = currentGame.getStocks().get(todayChart.getStock().getId());
 
                 // 현재 저장된것 + 아직 매도 안한거
                 singleGameStock.updateAveragePurchasePrice(currentGame.getAveragePrice()[index]);
@@ -626,6 +633,7 @@ public class SingleGameService {
         // 총 profit 계산
         long resultProfit = totalAsset - currentGame.getInitial();
         double resultRoi = 100.0 * (totalAsset - currentGame.getInitial()) / currentGame.getInitial();
+
 
         currentGame.updateTotalAsset(totalAsset);
         redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.gameIdx(), currentGame);
