@@ -34,14 +34,10 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
   if (!isOpen) return null;
 
   function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const inputValue = e.target.value;
-    // 숫자만 허용하는 정규식 패턴
+        // 숫자만 허용하는 정규식 패턴
     const pattern = /^[0-9]*$/;
 
-    if (!pattern.test(inputValue)) {
-      // 숫자가 아닌 문자를 제거합니다.
-      e.target.value = inputValue.replace(/[^0-9]/g, '');
-    }
+    
   }
 
   const onSubmit = async(data: RoomInfo) => {

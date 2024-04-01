@@ -58,7 +58,10 @@ export default function UserRecordInfoMemberFund() {
     : { result: null };
 
   return (
-    <div className="shadow row-span-5 overflow-auto max-h-96 p-4">
+    <div
+      className="shadow row-span-5 overflow-auto p-4"
+      style={{ maxHeight: "50vh" }}
+    >
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>

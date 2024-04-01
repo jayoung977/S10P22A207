@@ -35,6 +35,7 @@ export default function BoardSend() {
     },
     onError: (error: any) => {
       console.error("에러발생", error.response?.data || error.message);
+      Swal.fire("게시글이 작성되지 못했습니다.");
     },
     onSettled: () => {
       setContent("");

@@ -71,7 +71,6 @@ type Store = {
 
     tradeList :tradeListType | any;
     setTradeList :(value :tradeListType | any) => void;
-
 };
 
 const SingleReviewStore = create<Store>((set: any) => ({

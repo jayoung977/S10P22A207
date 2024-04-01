@@ -17,7 +17,7 @@ import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 interface resultType {
   memberId: number;
   nickname: string;
-  assets: number;
+  asset: number;
   isLogin: boolean;
 }
 
@@ -127,7 +127,7 @@ export default function ProfileSentFriendRequest() {
                     <div className="flex justify-between items-center">
                       <Image
                         className="rounded-full ring-1 ring-background-1 dark:ring-gray-500"
-                        src={useGetProfileImage(item.assets)}
+                        src={useGetProfileImage(item.asset)}
                         alt="Extra large avatar"
                         width={50}
                       ></Image>

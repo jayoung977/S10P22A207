@@ -72,7 +72,7 @@ export default function FriendSearch() {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  console.log(filteredFriendList);
+  console.log(result);
   return (
     <div className="row-span-3 border-e grid grid-rows-6">
       <div className="row-span-1 flex justify-center border-b gap-2 items-center">
@@ -83,13 +83,15 @@ export default function FriendSearch() {
         className="overflow-auto row-span-5"
         style={{ height: "calc(35vh)" }}
       >
-        {filteredFriendList.map((friend: Friend, i: number) => {
+        {result.map((friend: Friend, i: number) => {
           return (
             <div
               key={i}
-              className={`${
-                friend.isLogin == false && `hidden`
-              } grid grid-cols-12 items-center bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
+              // className={`${
+              //   friend.isLogin == false && `hidden`
+              // } grid grid-cols-12 items-center bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
+
+              className={`grid grid-cols-12 items-center bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
             >
               <div className="col-span-2 items-center text-gray-900 whitespace-nowrap dark:text-white">
                 <Image
