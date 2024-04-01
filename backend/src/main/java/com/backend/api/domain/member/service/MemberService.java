@@ -1,15 +1,13 @@
 package com.backend.api.domain.member.service;
 
 import com.backend.api.domain.member.dto.request.MemberAdditionalInfoReq;
-import com.backend.api.domain.member.dto.response.MemberProfileRes;
-import com.backend.api.domain.member.dto.response.MemberSearchRes;
-import com.backend.api.domain.member.dto.response.ProfileMultiGameLogRes;
-import com.backend.api.domain.member.dto.response.ProfileSingleGameLogRes;
+import com.backend.api.domain.member.dto.response.*;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.entity.Privilege;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.member.repository.MultiGamePlayerRepository;
 import com.backend.api.domain.multi.entity.MultiGamePlayer;
+import com.backend.api.domain.notice.service.RedisPubService;
 import com.backend.api.domain.single.entity.SingleGameLog;
 import com.backend.api.domain.single.repository.SingleGameLogRepository;
 import com.backend.api.global.common.code.ErrorCode;
@@ -19,6 +17,7 @@ import com.backend.api.global.jwt.service.JwtService;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +28,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Log4j2
 @Service
@@ -38,7 +38,8 @@ public class MemberService {
 	private final SingleGameLogRepository singleGameLogRepository;
 	private final MultiGamePlayerRepository multiGamePlayerRepository;
 	private final JwtService jwtService;
-
+	private final RedisTemplate<String, Object> redisTemplate;
+	private final RedisPubService redisPubService;
 	public boolean existNickname(String nickname) {
 		return memberRepository.existsByNickname(nickname);
 	}
@@ -77,7 +78,13 @@ public class MemberService {
 		Member findMember = memberRepository.findById(userId)
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
 		List<SingleGameLog> singleGameLogList = singleGameLogRepository.findAllByMember_IdOrderByIdDesc(findMember.getId());
-		return singleGameLogList.stream().map(singleGameLog ->
+		boolean isPlaying;
+		String pattern = "singleGame:" + userId + ":*";
+		Set<String> keys = redisTemplate.keys(pattern);
+        isPlaying = keys != null && !keys.isEmpty(); //만약 진행중인 싱글게임이 있으면 최근 기록 제외
+        return singleGameLogList.stream().filter(
+				singleGameLog -> !isPlaying || singleGameLog != singleGameLogList.get(0)
+		).map(singleGameLog ->
 			new ProfileSingleGameLogRes(
 				singleGameLog.getId(),
 				singleGameLog.getInitialAsset(),
@@ -154,5 +161,16 @@ public class MemberService {
 			}
 		}
 		return null;
+	}
+
+	public List<MemberListRes> getAllMember() {
+		List<Member> memberList =memberRepository.findAllByOrderByAssetDesc();
+		return  memberList.stream().map(
+				member -> new MemberListRes(
+						member.getId(),
+						member.getNickname(),
+						member.getAsset(),
+						redisPubService.isUserLoggedIn(member.getId()))
+		).toList();
 	}
 }
