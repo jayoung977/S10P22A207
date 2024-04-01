@@ -146,11 +146,8 @@ function calculateHist(macdData :any, signalData :any) {
 
 export default function Chart({ data }: any) {
   const { selectedStockIndex, turn, startDate, setStartDate, endDate, setEndDate } = SingleGameStore();
-  // const { turn, selectedSecondaryIndicator, setSelectedSecondaryIndicator } = SingleGameStore();
   const [selectedSecondaryIndicator, setSelectedSecondaryIndicator] = useState<number>(1);
-
   useEffect(() => {
-
     const purifiedData = filteringLowPriceZero(data);
     // 차트 생성
     const chart = anychart.stock();
@@ -490,8 +487,9 @@ export default function Chart({ data }: any) {
     }
     (window as any).handleShowPlot = handleShowPlot;
     handleShowPlot(selectedSecondaryIndicator);
-
-    chart.selectRange(anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd'), anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd'))  
+    // console.log("purifiedData", purifiedData[turn+249].date.split('T')[0]);
+    chart.selectRange(purifiedData[turn+249].date.split('T')[0], purifiedData[turn+299].date.split('T')[0])
+    // chart.selectRange(anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd'), anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd'))  
     // chart.scroller().listen('scrollerChange', function () {
     //   var range = chart.getSelectedRange();
     //   setStartDate(range.firstSelected);
@@ -512,21 +510,25 @@ export default function Chart({ data }: any) {
   return (
     <div className="row-span-12 grid grid-rows-12">
       <div className="row-span-1 grid grid-cols-8 items-center">
-            {/* 종목 {selectedStockIndex+1}   */}
-            <button onClick={() => {
-              playClickSound();
-              (window as any).handleShowPlot(1)
-              }}
-               className={`border border-black ${selectedSecondaryIndicator == 1 && 'bg-slate-400'}`}>Volume</button>
-            <button onClick={() =>{
-              playClickSound();
-              (window as any).handleShowPlot(2)
-              }} className={`border border-black ${selectedSecondaryIndicator == 2 && 'bg-slate-400'}`}>RSI</button>
-            <button onClick={() =>{
-              playClickSound();
-              (window as any).handleShowPlot(3)
-            }} className={`border border-black ${selectedSecondaryIndicator == 3 && 'bg-slate-400'}`}>MACD</button>
-
+        <div className="text-center">종목 {selectedStockIndex+1}</div>
+        <button 
+          onClick={() => {
+            playClickSound();
+            (window as any).handleShowPlot(1)
+          }} 
+          className={`border ${selectedSecondaryIndicator == 1 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>Volume</button>
+        <button 
+          onClick={() => {
+            playClickSound();
+            (window as any).handleShowPlot(2)
+          }} 
+          className={`border ${selectedSecondaryIndicator == 2 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>RSI</button>
+        <button 
+          onClick={() => {
+            playClickSound();
+            (window as any).handleShowPlot(3)
+          }} 
+          className={`border ${selectedSecondaryIndicator == 3 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>MACD</button>
       </div>
       <div id="chart-container" className="row-span-12 flex items-center justify-center"></div>
     </div>

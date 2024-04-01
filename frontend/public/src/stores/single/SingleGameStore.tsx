@@ -163,6 +163,9 @@ type Store = {
     setStartDate :(value :any) => void,
     endDate :any,
     setEndDate :(value :any) => void,
+
+    stocks :number,
+    setStocks :(value :number) => void,
 };
 
 
@@ -234,6 +237,9 @@ const SingleGameStore = create<Store>((set: any) => ({
     setStartDate :(value) => set({ startDate : value }),
     endDate :null,
     setEndDate :(value) => set({ endDate : value }),
+
+    stocks :0,
+    setStocks :(value) => set({ stocks : value }),
 }));
 
 export default SingleGameStore;
