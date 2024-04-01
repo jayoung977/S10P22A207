@@ -82,7 +82,7 @@ public class MultiGameSocketService {
 		// 입장 메시지 전송
 		redisTemplate.opsForValue().set(userDetails.getEmail(), roomId); // 내가 방에 입장했다는 정보 저장
 		sendMessageToMultiWaitingRoom(roomId, new SocketBaseDtoRes<>(SocketType.ENTER, new WebSocketMessageReq(roomId, "시스템", nickName)));
-		sendMessageToMultiWaitingRoom(roomId, new SocketBaseDtoRes<>(SocketType.ROOMINFO, new WebSocketMessageReq(roomId, nickName, nickName+"님이 입장했습니다.")));
+		// sendMessageToMultiWaitingRoom(roomId, new SocketBaseDtoRes<>(SocketType.ROOMINFO, new WebSocketMessageReq(roomId, nickName, nickName+"님이 입장했습니다.")));
 	}
 
 	public boolean readyMultiRoom(Long memberId, Long roomId) throws JsonProcessingException {
