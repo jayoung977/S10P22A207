@@ -6,26 +6,25 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
-
 export default function GameRoom(props: {
   color: string;
   room: MultiGameRoomInfoList;
 }) {
   const playClickSound = useClickSound();
   const { color, room } = props;
-  const password = room.password
+  const password = room.password;
   const router = useRouter();
   const handleClick = (room: MultiGameRoomInfoList) => {
-    console.log(room)
-    if(room.participantsIds.length == 6){
+    console.log(room);
+    if (room.participantsIds.length == 6) {
       Swal.fire({
-        title: '정원이 가득 찼습니다.',
-        icon: 'error'
-      })
-      return
+        title: "정원이 가득 찼습니다.",
+        icon: "error",
+      });
+      return;
     }
     const token = sessionStorage.getItem("accessToken");
-    if(!room.isOpen){
+    if (!room.isOpen) {
       Swal.fire({
         title: "비밀번호를 입력하세요.",
         input: "password",

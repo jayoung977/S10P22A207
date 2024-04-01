@@ -2,7 +2,6 @@
 import { useRouter } from "next/navigation";
 import { useState, useLayoutEffect, useCallback } from "react";
 import Image from "next/image";
-import penguin from "../public/src/assets/images/penguin.png";
 import logo from "../public/src/assets/images/logo.png";
 import NavbarGameModal from "./NavbarGameModal";
 import NavbarAlarmModal from "./NavbarAlarmModal";
@@ -59,10 +58,10 @@ export default function Navbar() {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image
-            src={useGetProfileImage(30000000)}
+            src={logo}
             alt="Logo"
             className="bg-background-1"
-            width={60}
+            width={25}
           />
           <span
             className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white hover:cursor-pointer"

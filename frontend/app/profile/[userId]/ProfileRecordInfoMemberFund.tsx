@@ -104,7 +104,7 @@ export default function UserRecordInfoMemberFund() {
                   {item.fundName}
                 </th>
                 <td className="px-6 py-4">{item.status}</td>
-                <td className="px-6 py-4">{item.fundAsset}원</td>
+                <td className="px-6 py-4">{item.fundAsset.toLocaleString()}원</td>
                 <td className="px-6 py-4">{item.industry}</td>
                 <td className="px-6 py-4">{item.roi}%</td>
               </tr>
