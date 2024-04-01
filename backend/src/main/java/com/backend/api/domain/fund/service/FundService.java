@@ -610,7 +610,7 @@ public class FundService {
 				.profit((long) currentGame.getProfits()[stockIdx])
 				.build();
 		fundTradeRepository.save(fundTrade);
-		hadoopService.saveFundTrade(fundTrade);
+		hadoopService.saveFundTradeLogHdfs(fundTrade, managerId);
 		//Redis - 매매내역 추가 및 값 변경
 		currentGame.getTradeList().add(
 				new FundTradeListDto(

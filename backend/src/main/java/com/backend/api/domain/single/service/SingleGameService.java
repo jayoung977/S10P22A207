@@ -379,6 +379,7 @@ public class SingleGameService {
             .profit((long) (dto.amount() * (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]))) // 이번 거래의 profit
             .build();
         singleTradeRepository.save(singleTrade);
+        hadoopService.saveSingleTradeLogHdfs(singleTrade, memberId);
         currentGame.getTradeList().add(
             new SingleTradeListDto(
                 dto.stockId(),
