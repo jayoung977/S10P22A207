@@ -5,17 +5,22 @@ import logo from "@/public/src/assets/images/logo.png"
 import penguin from "@/public/src/assets/images/penguin.png";
 import axios from "axios";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
+import socketStore from "@/public/src/stores/websocket/socketStore";
+import { useState } from "react";
+
 
 export default function Header() {
   const playClickSound = useClickSound();
   const router = useRouter();
   const params = useParams<{ room_id?: string }>();
   const room_id: string | undefined = params.room_id;
+  const { receiveMessages, setReceiveMessages, deleteReceiveMessages } = socketStore();
+
 
   const handleGameReady = async() => {
     const token = sessionStorage.getItem("accessToken");
     try {
-      const response = await fetch(`https://j10a207.p.ssafy.io/api/multi/ready/${params.room_id}`,{
+      const response = await fetch(`https://j10a207.p.ssafy.io/api/multi/ready?roomId=${params.room_id}`,{
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -55,7 +60,7 @@ export default function Header() {
     }
   }
 
-
+  const [receiveMessage, setReceiveMessage] = useState<any>([]);
   function handleExit() {
     axios({
       method: "delete",
@@ -64,7 +69,7 @@ export default function Header() {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     }).then((res) => {
-      console.log(res.data);
+      deleteReceiveMessages()
     });
   }
 

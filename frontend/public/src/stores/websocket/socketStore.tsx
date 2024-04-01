@@ -6,6 +6,8 @@ interface WebSocketStore {
   setClientObject: (client: any) => void;
   receiveMessages: any;
   setReceiveMessages: (receiveMessages: any) => void;
+  addReceiveMessages: (receiveMessages: any) => void;
+  deleteReceiveMessages: () => void;
   receiveAlarm: any;
   setReceiveAlarm: (receiveAlarm: any) => void;
 }
@@ -15,6 +17,12 @@ const socketStore = create<WebSocketStore>((set) => ({
   setClientObject: (value) => set({ clientObject: value }),
   receiveMessages: [],
   setReceiveMessages: (value) => set({ receiveMessages: value }),
+  addReceiveMessages: (value : any) => set((state) =>({
+    receiveMessages: [...state.receiveMessages, value]
+  })),
+  deleteReceiveMessages: () => set((state) =>({
+    receiveMessages: []
+  })),
   receiveAlarm: false,
   setReceiveAlarm: (value) => set({ receiveAlarm: value }),
 }));

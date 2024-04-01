@@ -12,7 +12,7 @@ export const useWebSocket = () => {
   const { memberId, nickname } = userStore();
   const [receiveMessage, setReceiveMessage] = useState<any>([]);
   const [receiveInvitation, setReceiveInvitation] = useState<any>([]);
-  const { receiveMessages, setReceiveMessages } = socketStore();
+  const { receiveMessages, setReceiveMessages, addReceiveMessages, deleteReceiveMessages } = socketStore();
   const { receiveAlarm, setReceiveAlarm } = socketStore();
   useEffect(() => {
     if (memberId) {
@@ -26,14 +26,20 @@ export const useWebSocket = () => {
       client.current.connect({}, () => {
         client.current.subscribe(`/api/sub/${memberId}`, (message: any) => {
           const parsedMessage = JSON.parse(message.body);
-          console.log(parsedMessage);
           if (parsedMessage.type === "MESSAGE") {
-            setReceiveMessage((prevReceiveMessage: any) => {
-              const copy = [...prevReceiveMessage, parsedMessage];
-              setReceiveMessages(copy);
-              return copy;
-            });
+            addReceiveMessages(parsedMessage)
           }
+
+          if (parsedMessage.type === "EXIT") {
+            // setReceiveMessage((prevReceiveMessage: any) => {
+            //   setReceiveMessages([]);
+            //   return [];--
+            // });
+            console.log(parsedMessage)
+
+          }
+
+
           if (parsedMessage.type === "INVITE") {
             setReceiveAlarm(true);
           }
