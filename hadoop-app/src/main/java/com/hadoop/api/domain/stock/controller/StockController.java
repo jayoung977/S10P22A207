@@ -38,6 +38,14 @@ public class StockController {
 		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, stockResList);
 	}
 
+	@GetMapping("/get/start-end")
+	public ResponseEntity<BaseResponse<List<StockRes>>> getStockDataStartEnd(
+		@RequestParam int startDate,
+		@RequestParam int endDate, @RequestParam String stockCode){
+		List<StockRes> stockResList = stockService.getStockDataStartEnd(startDate, endDate, stockCode);
+		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, stockResList);
+	}
+
 	@GetMapping("/max-min")
 	public ResponseEntity<BaseResponse<List<MaxMinPriceDto>>> getMaxMinPrice(@RequestParam String stockCode){
 		List<MaxMinPriceDto> maxMinPriceDto = stockService.getMaxMinPrice(stockCode);
