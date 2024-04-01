@@ -66,16 +66,51 @@ public class StockService {
 		return stockResList; // 주식 데이터 리스트 반환
 	}
 
+	public List<StockRes> getStockDataStartEnd(String startDate, String endDate, String stockCode) {
+		String partitionedStockDataPath = stockDataPath + "/partitioned/stockCode="+stockCode;
+		Dataset<Row> parquetData = sparkSession.read().parquet(partitionedStockDataPath);
+		parquetData.createOrReplaceTempView("stock_data");
+		parquetData.printSchema();
+		String sql = "SELECT * FROM stock_data " +
+			"WHERE date BETWEEN cast('" + startDate + "' as date) AND cast('" + endDate + "' as date)";
+
+
+		Dataset<Row> pagedData = sparkSession.sql(sql);
+		// pagedData.show();
+		Dataset<StockRes> stockResDataset = pagedData.map(
+			(MapFunction<Row, StockRes>) row -> StockRes.builder()
+				.stockCode(stockCode)
+				.stockName(row.getString(7))
+				.marketPrice(row.getInt(1))
+				.highPrice(row.getInt(2))
+				.lowPrice(row.getInt(3))
+				.endPrice(row.getInt(4))
+				.tradingVolume(row.getLong(5))
+				.date(row.getString(0))
+				.changeRate(row.getDouble(6))
+				.build(),
+			Encoders.bean(StockRes.class)
+		);
+		List<StockRes> stockResList = stockResDataset.collectAsList();
+		return stockResList; // 주식 데이터 리스트 반환
+	}
+
 	// HDFS에서 주식 데이터를 조회하는 메서드
-	public List<MaxMinPriceDto> getMaxMinPrice(String stockCode) {
+	public List<MaxMinPriceDto> getMaxMinPrice(String startDate, String endDate, String stockCode) {
 		String partitionedStockDataPath = stockDataPath + "/partitioned/stockCode="+stockCode;
 		Dataset<Row> parquetData = sparkSession.read()
 			.parquet(partitionedStockDataPath); // Parquet 파일 읽기
 		parquetData.filter(col("lowPrice").notEqual(0)).createOrReplaceTempView("stock_data");
 
-		String sql = "SELECT MIN(lowPrice) AS minPrice, MAX(highPrice) AS maxPrice FROM ( " +
+		String sql = "SELECT " +
+			"    (SELECT date FROM stock_data WHERE date BETWEEN cast('" + startDate + "' as date) AND cast('" + endDate + "' as date) ORDER BY lowPrice ASC LIMIT 1) AS minPriceDate, " +
+			"    MIN(lowPrice) AS minPrice, " +
+			"    (SELECT date FROM stock_data WHERE date BETWEEN cast('" + startDate + "' as date) AND cast('" + endDate + "' as date) ORDER BY highPrice DESC LIMIT 1) AS maxPriceDate, " +
+			"    MAX(highPrice) AS maxPrice " +
+			"FROM ( " +
 			"    SELECT * " +
 			"    FROM stock_data " +
+			"    WHERE date BETWEEN cast('" + startDate + "' as date) AND cast('" + endDate + "' as date)" +
 			") ";
 
 		Dataset<Row> pagedData = sparkSession.sql(sql);
@@ -83,8 +118,10 @@ public class StockService {
 		Dataset<MaxMinPriceDto> maxMinPriceDtoDataset = pagedData.map(
 			(MapFunction<Row, MaxMinPriceDto>) row -> MaxMinPriceDto.builder()
 				.stockCode(stockCode)
-				.minPrice(row.getInt(0))
-				.maxPrice(row.getInt(1))
+				.minPriceDate(row.getString(0))
+				.minPrice(row.getInt(1))
+				.maxPriceDate(row.getString(2))
+				.maxPrice(row.getInt(3))
 				.build(),
 			Encoders.bean(MaxMinPriceDto.class)
 		);
