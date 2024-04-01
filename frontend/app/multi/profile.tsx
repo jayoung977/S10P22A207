@@ -52,7 +52,7 @@ export default function Profile() {
         </div>
         <div className="col-span-4">
           <div>{asset?.toLocaleString()}원</div>
-          <div>+{singleAvgRoi != null ? singleAvgRoi.toFixed(1) : 0}%</div>
+          <div>{singleAvgRoi != null ? singleAvgRoi.toFixed(1) : 0}%</div>
         </div>
       </div>
     </div>
