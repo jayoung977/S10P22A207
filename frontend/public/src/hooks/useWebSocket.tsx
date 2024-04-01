@@ -45,7 +45,7 @@ export const useWebSocket = () => {
           }
 
           if(parsedMessage.type === 'ROOMINFO'){
-            setHostId(parsedMessage.result.roomId)
+            setHostId(parsedMessage.result.hostId)
             setParticipants(parsedMessage.result.participants)
             setRoomId(parsedMessage.result.roomId)
             setRoomTitle(parsedMessage.result.roomTitle)
