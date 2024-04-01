@@ -27,11 +27,10 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration("localhost" ,port);
-//        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host,port);
-        config.setPassword(password);
-        log.info("host: " + host);
-        return new LettuceConnectionFactory(config);
+       RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host,port);
+       config.setPassword(password);
+       log.info("host: " + host);
+       return new LettuceConnectionFactory(config);
     }
 
     @Bean
