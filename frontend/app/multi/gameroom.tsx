@@ -61,6 +61,18 @@ export default function GameRoom(props: {
         }
       });
     } else {
+      axios
+      .get(`https://j10a207.p.ssafy.io/api/multi/${room.roomId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
       router.push(`multi/room/${room.roomId}`);
     }
   };

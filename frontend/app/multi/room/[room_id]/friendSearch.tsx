@@ -52,15 +52,15 @@ export default function FriendSearch() {
 
   const params = useParams<{ room_id?: string }>();
   const room_id: string | undefined = params.room_id;
-  const inviteFriend = (receiver_id: number) => {
+  const inviteFriend = (friend: any) => {
   const data = {
       roomId: room_id,
-      receiver: receiver_id,
+      receiver: friend.memberId,
     };
     console.log();
     invitationRequest(data);
     Swal.fire({
-      text: `${receiver_id}에게 초대를 발송했습니다.`,
+      text: `${friend.nickname}님에게 초대를 발송했습니다.`,
       icon: "success",
     });
   };
@@ -107,7 +107,7 @@ export default function FriendSearch() {
                 <button
                   onClick={() => {
                     playClickSound();
-                    inviteFriend(friend.memberId);
+                    inviteFriend(friend);
                   }}
                   className="bg-blue-500 text-white px-2 py-1 rounded-md "
                 >
