@@ -3,41 +3,27 @@ package com.backend.api.domain.multi.controller;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.multi.dto.MultiGameResultRequestDto;
+import com.backend.api.domain.multi.dto.MultiGameSubResultRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameRoomCreateRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameStartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiNextDayRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiTradeRequestDto;
-import com.backend.api.domain.multi.dto.response.MultiGameFinalResultDto;
-import com.backend.api.domain.multi.dto.response.MultiGameResultDto;
-import com.backend.api.domain.multi.dto.response.MultiGameRoomCreateResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiGameRoomEnterResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiGameRoomsResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiGameStartResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiLogResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiNextDayResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiTradeResponseDto;
+import com.backend.api.domain.multi.dto.response.*;
 import com.backend.api.domain.multi.service.MultiGameService;
 import com.backend.api.domain.multi.service.MultiGameSocketService;
-import com.backend.api.domain.multi.dto.MultiGameSubResultRequestDto;
 import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.common.code.SuccessCode;
 import com.backend.api.global.exception.BaseExceptionHandler;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/multi")
@@ -119,13 +105,13 @@ public class MultiGameController {
     }
 
     @GetMapping("/round-result")
-    @Operation(summary = "멀티 - 라운드 결과", description = "멀티게임 특정 라운드가 끝나면 결과를 보내줍니다.", tags = {"멀티게임"})
+    @Operation(summary = "멀티 - 라운드 결과", description = "멀티게임 특정 라운드가 끝나면 결과를 보내줍니다.", tags = {"멀티복기"})
     public ResponseEntity<BaseResponse<List<MultiGameResultDto>>> getSubResult(@RequestBody MultiGameSubResultRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.getSubResult(dto));
     }
 
     @GetMapping("/log")
-    @Operation(summary = "멀티게임 복기", description = "멀티기록을 선택하면 해당 싱글게임기록을 가져옵니다.", tags = {"멀티게임"})
+    @Operation(summary = "멀티게임 복기", description = "멀티기록을 선택하면 해당 싱글게임기록을 가져옵니다.", tags = {"멀티복기"})
     public ResponseEntity<BaseResponse<MultiLogResponseDto>> getMultiGameLog(@RequestParam(name = "multiGameLogId") Long multiGameLogId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         MultiLogResponseDto responseDto = multiGameService.getMultiGameLog(multiGameLogId, userDetails.getId());
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, responseDto);
