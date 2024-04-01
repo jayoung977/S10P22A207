@@ -1,9 +1,11 @@
 'use client'
 import { useState } from 'react';
+import SingleGameStore from '@/public/src/stores/single/SingleGameStore';
 
 // 시장 정보 컴포넌트
 import Market from "./Market"
 export default function MarketInfo () {
+    const { turn, marketInfoListData } = SingleGameStore();
     const [marketData, setMarketData] = useState([
         {
             name: '금',
@@ -33,6 +35,11 @@ export default function MarketInfo () {
                     <Market key={index} data={x}/>
                 ))
             }
+            {/* {
+                marketInfoListData[300+turn].map((x, index) => (
+                    <Market key={index} data={x}/>
+                ))
+            } */}
         </div>
     )
 }

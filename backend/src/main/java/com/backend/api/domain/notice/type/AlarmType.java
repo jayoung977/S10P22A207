@@ -1,6 +1,6 @@
 package com.backend.api.domain.notice.type;
 
 public enum AlarmType {
-    INVITATION, NOTICE
+    INVITATION, FRIENDASK, FRIENDACCEPT, NOTICE
 //    RANKING_CHANGE
 }

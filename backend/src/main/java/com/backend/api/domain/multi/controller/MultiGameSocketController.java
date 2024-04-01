@@ -88,4 +88,15 @@ public class MultiGameSocketController {
 			"나가기 성공"
 		);
 	}
+	@DeleteMapping("/kick")
+	@Operation(summary = "멀티게임 대기방 강퇴하기", description = "멀티게임 모드에서 유저를 강퇴합니다.")
+	public ResponseEntity<BaseResponse<String>> kickMultiRoom(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestParam Long roomId, @RequestParam Long kickMemberId) throws JsonProcessingException {
+		log.info("멀티게임 강퇴하기 {}방 {}강퇴", roomId, kickMemberId);
+		multiGameSocketService.kickMultiRoom(userDetails, roomId, kickMemberId);
+		return BaseResponse.success(
+			SuccessCode.SELECT_SUCCESS,
+			"추방 성공"
+		);
+	}
 }

@@ -1,5 +1,5 @@
 "use client";
-import penguin from "@/public/src/assets/images/penguin.png";
+import logo from "@/public/src/assets/images/logo.png"
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import RoundResult from "./roundResult";
@@ -48,7 +48,7 @@ export default function Header() {
       } else if (turn === 49) {
         setIsOpen(true);
         // 일단 3초로 설정
-        setTimeout(() => setIsOpen(false), 1000);
+        setTimeout(() => setIsOpen(false), 30000);
         setRound(round + 1);
         setTurn(0);
       } else {
@@ -84,7 +84,7 @@ export default function Header() {
       <div className="col-start-2 col-end-3 flex items-center">
         <div className="flex gap-2 items-center">
           <Image
-            src={penguin}
+            src={logo}
             alt="Logo"
             className="h-8"
             width={32}
@@ -110,8 +110,7 @@ export default function Header() {
               setIsGameover(true);
             } else if (turn === 49) {
               setIsOpen(true);
-              // 일단 3초로 설정
-              setTimeout(() => setIsOpen(false), 1000);
+              setTimeout(() => setIsOpen(false), 30000);
               setRound(round + 1);
               setTurn(0);
             } else {

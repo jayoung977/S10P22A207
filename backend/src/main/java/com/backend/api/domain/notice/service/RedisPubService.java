@@ -36,6 +36,7 @@ public class RedisPubService {
                 String str = "alarm:member:" + dto.channelName();
                 log.info("게임 초대 요청 - pubService {}", str);
                 redisTemplate.convertAndSend("alarm:member:" + dto.channelName(), dto);
+
             }
         }
     }

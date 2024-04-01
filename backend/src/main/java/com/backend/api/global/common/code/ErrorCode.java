@@ -93,7 +93,7 @@ public enum ErrorCode {
 
     NOT_MATCHING(404,"B501" , "매칭중이 아닙니다."),
     NOT_FOUND_WAITING_ROOM(404, "B502", "존재하지 않는 대기실입니다."),
-
+    NOT_HOST(404,"B503" ,"방장이 아닙니다." ),
 
     //펀드 에러 (CODE: 600)
     NOT_FOUND_FUND(404,"B600" , "존재하지 않는 펀드입니다" ),
@@ -119,7 +119,8 @@ public enum ErrorCode {
     NO_MULTI_GAME_LOG_STOCK(404, "S307", "멀티 게임 로그에 해당하는 주식 정보가 없습니다." ),
 
     // JSON 파싱 에러 (CODE: 500)
-    JSON_PROCESSING_ERROR(500, "J500", "Json Processing Exception");
+    JSON_PROCESSING_ERROR(500, "J500", "Json Processing Exception"); 
+    
 
 
 
