@@ -64,21 +64,22 @@ export default function SinglePlay() {
       setSingleGameChance(response.data.result.singleGameChance);
 
         // 사용자 총 평가 자산 데이터
-        if (response.data.result.totalAsset) {
+        if (response.data.result.totalAsset.totalAsset == 0) {
+            console.log()
             setTotalAssetData({
               cash : response.data.result.totalAsset.cash,
-              resultProfit : response.data.result.totalAsset.resultProfit,
-              resultRoi : response.data.result.totalAsset.resultRoi,
-              totalPurchaseAmount : response.data.result.totalAsset.totalPurchaseAmount,
-              totalAsset : response.data.result.totalAsset.cash + response.data.result.totalAsset.totalPurchaseAmount,
+              resultProfit : 0,
+              resultRoi : 0, 
+              totalPurchaseAmount : 0, 
+              totalAsset : response.data.result.totalAsset.cash,
             })
         } else {
           setTotalAssetData({
-            cash : asset as number,
-            resultProfit : 0,
-            resultRoi : 0, 
-            totalPurchaseAmount : 0, 
-            totalAsset :  asset as number,
+            cash : response.data.result.totalAsset.cash,
+            resultProfit : response.data.result.totalAsset.resultProfit,
+            resultRoi : response.data.result.totalAsset.resultRoi,
+            totalPurchaseAmount : response.data.result.totalAsset.totalPurchaseAmount,
+            totalAsset : response.data.result.totalAsset.totalAsset,
           })
         }
         // 사용자 보유 종목 주식 데이터

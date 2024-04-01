@@ -4,11 +4,11 @@ export default function SingleTradeHistory() {
   const { tradeList, selectedIndex } = SingleReviewStore();
 
   return (
-    <div className="grid grid-rows-12 bg-small-10 m-1 rounded-md">
+    <div className="grid grid-rows-12 bg-small-10 m-1 rounded-md p-1">
       <div className="row-span-1 flex items-center justify-center">
         <div className="text-textColor-2">매매내역</div>
       </div>
-      <table className="row-span-11 table-fixed rounded-md overflow-y-auto block">
+      <table className="row-span-11 table-fixed rounded-md  block">
         <thead className="grid grid-cols-6 items-center m-1">
           <tr className="col-span-6 grid grid-cols-6 items-center">
             <th className="col-span-2 text-center">유형</th>
@@ -30,12 +30,12 @@ export default function SingleTradeHistory() {
                     item.tradeType == "BUY" ? "bg-red-300" : "bg-blue-300"
                   } text-white rounded-lg m-1`}
                 >
-                  <td className="col-span-2">{item.tradeType}</td>
+                  <td className="col-span-2 flex items-center justify-center">{item.tradeType}</td>
                   <td className="col-span-2">
                     {item.price.toLocaleString()}
                     <br />({item.amount})
                   </td>
-                  <td className="col-span-2">{item.profit.toLocaleString()}</td>
+                  <td className="col-span-2 flex items-center justify-center">{item.profit.toLocaleString()}</td>
                 </tr>
               )
             )

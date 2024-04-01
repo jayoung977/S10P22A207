@@ -1,11 +1,10 @@
 package com.backend.api.domain.member.repository;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.backend.api.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.backend.api.domain.member.entity.Member;
+import java.util.List;
+import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
@@ -14,4 +13,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	List<Member> findAllByNicknameContaining(String nickname);
 
 	Optional<Member> findMemberByEmail(String email);
+
+    List<Member> findAllByOrderByAssetDesc();
 }

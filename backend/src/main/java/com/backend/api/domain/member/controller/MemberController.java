@@ -1,10 +1,7 @@
 package com.backend.api.domain.member.controller;
 
 import com.backend.api.domain.member.dto.request.MemberAdditionalInfoReq;
-import com.backend.api.domain.member.dto.response.MemberProfileRes;
-import com.backend.api.domain.member.dto.response.MemberSearchRes;
-import com.backend.api.domain.member.dto.response.ProfileMultiGameLogRes;
-import com.backend.api.domain.member.dto.response.ProfileSingleGameLogRes;
+import com.backend.api.domain.member.dto.response.*;
 import com.backend.api.domain.member.entity.Privilege;
 import com.backend.api.domain.member.service.MemberService;
 import com.backend.api.global.common.BaseResponse;
@@ -156,4 +153,16 @@ public class MemberController {
 			result
 		);
 	}
+	@PreAuthorize("hasAnyRole('USER')")
+	@Operation(summary = "전체 멤버 랭킹")
+	@GetMapping("/list")
+	public ResponseEntity<BaseResponse<List<MemberListRes>>> getAllMember() {
+		List<MemberListRes> memberList = memberService.getAllMember();
+		return BaseResponse.success(
+				SuccessCode.SELECT_SUCCESS,
+				memberList
+		);
+	}
+
+
 }
