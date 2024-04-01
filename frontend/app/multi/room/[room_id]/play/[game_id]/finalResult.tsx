@@ -4,7 +4,7 @@ import ProfileImage from "@/public/src/assets/images/profile-person-image.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
 import FinalUser from "./finalUser";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import RoundResult from "./roundResult";
 import { useState } from "react";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
@@ -13,6 +13,7 @@ export default function FinalResult({ isOpen, onClose }: any) {
   const router = useRouter();
   const [isRound, setIsRound] = useState(false);
   const playClickSound = useClickSound();
+  const params = useParams();
 
   if (!isOpen) return null;
 
@@ -67,6 +68,18 @@ export default function FinalResult({ isOpen, onClose }: any) {
         </div>
       </div>
       <div className="col-span-1 flex flex-col justify-end my-2">
+        <div>
+          <button
+            onClick={() => {
+              playClickSound();
+              onclose;
+              router.push(`/multi/room/${params.room_id}`);
+            }}
+            className="border py-1 px-5 m-2 text-2xl rounded-md text-textColor-1 font-bold bg-button-2 hover:bg-gray-300"
+          >
+            방으로 돌아가기{" "}
+          </button>
+        </div>
         <div>
           <button
             onClick={() => {

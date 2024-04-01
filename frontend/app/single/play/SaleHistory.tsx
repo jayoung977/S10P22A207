@@ -8,7 +8,7 @@ export default function SaleHistory ({ data } :any) {
         <tr className="row-span-1 bg-small-5 grid grid-cols-6 text-center rounded-lg m-1">
             <td className="col-span-1 text-textColor-1 mr-3">{idx+1}</td>
             <td className="col-span-1 text-textColor-2">{data?.tradeType}</td>
-            <td className="col-span-2 text-textColor-2">{data?.price}({data?.amount})</td>
+            <td className="col-span-2 text-textColor-2">{data?.price.toLocaleString()}원({data?.amount})</td>
         </tr>
     )
 }
