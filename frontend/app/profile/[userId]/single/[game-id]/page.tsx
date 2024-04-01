@@ -31,6 +31,7 @@ export default function page() {
             stockChartDataList, setStockChartDataList, 
             stockInfoDtoList, setStockInfoDtoList, 
             tradeList, setTradeList } = SingleReviewStore();
+            
     const fetchSingleGameRecord = async () => {
       try {
         const response = await axios({
@@ -40,7 +41,6 @@ export default function page() {
             Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
           },
         });
-        console.log(response.data.result);
         setRankMemberList(response.data.result.rankMemberList);
         setStockChartDataList(response.data.result.stockChartDataList);
         setStockInfoDtoList(response.data.result.stockInfoDtoList);

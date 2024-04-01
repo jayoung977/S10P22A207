@@ -5,11 +5,12 @@ import { useRef, useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 import socketStore from "@/public/src/stores/websocket/socketStore";
-import Swal from "sweetalert2";
 import zustand from "zustand";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 export default function Chat() {
   useFetchUserInfo();
+  const playClickSound = useClickSound();
   const params = useParams<{ room_id: string }>();
   const { nickname, memberId } = userStore();
   const { sendMessage, setSendMessage } = multigameStore();
@@ -78,6 +79,7 @@ export default function Chat() {
         <button
           className="bg-green-500 hover:bg-green-400 rounded-md py-1 px-2 text-white m-1"
           onClick={() => {
+            playClickSound();
             sendHandler(nickname);
           }}
         >

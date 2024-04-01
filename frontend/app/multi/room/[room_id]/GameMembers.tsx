@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import ProfileImage from '@/public/src/assets/images/profile-person-image.png'
+import useClickSound from '@/public/src/components/clickSound/DefaultClick'
 
 
 interface GameMember {
@@ -21,7 +22,8 @@ export default function GameMembers(){
     { rank: 6, nickname: '김민규소',  memberId: 6, status: 'NOT'},
   ]
 
-  const outUser = (id: number) => {
+  const playClickSound = useClickSound();
+  const kickUser = (id: number) => {
     console.log(`${id}번,넌 나가라!`)
   }
 
@@ -54,7 +56,10 @@ export default function GameMembers(){
               </div>
               <div className="col-span-4 px-4">
                 { user.status === 'NOT' ? (
-                    <div onClick={()=>{outUser(user.memberId)}} className=' bg-red-500 text-white text-center py-1 rounded-md hover:cursor-pointer'>내보내기</div>
+                    <div onClick={()=>{
+                      playClickSound();
+                      kickUser(user.memberId)
+                    }} className=' bg-red-500 text-white text-center py-1 rounded-md hover:cursor-pointer'>내보내기</div>
                   ) : (
                     <div></div>
                   )

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 interface RoomInfo {
   title: string,
@@ -25,19 +26,22 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
     }
   });
 
+
+  const playClickSound = useClickSound();
   const openRoom = watch('isOpen')
 
   const router = useRouter();
   if (!isOpen) return null;
 
   function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
-    // 숫자만 허용하는 정규식 패턴
+        // 숫자만 허용하는 정규식 패턴
     const pattern = /^[0-9]*$/;
 
-
+    
   }
 
   const onSubmit = async(data: RoomInfo) => {
+    playClickSound(); 
     const password = Number(data.password) || null;
     const formData = {
       roomTitle: data.title,
@@ -114,6 +118,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                         type="radio"
                         value={3}
                         {...register('roundNumber', { required: true })}
+                        onChange={playClickSound}
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                       />
                       <label htmlFor="3round" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
@@ -126,6 +131,8 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                         type="radio"
                         value={5}
                         {...register('roundNumber', { required: true })}
+                        onChange={playClickSound}
+
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                       />
                       <label htmlFor="5round" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
@@ -138,6 +145,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                         type="radio"
                         value={7}
                         {...register('roundNumber', { required: true })}
+                        onChange={playClickSound}
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                       />
                       <label htmlFor="7round" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
@@ -155,6 +163,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                         type="radio"
                         value="true"
                         {...register('isOpen',{ required: true })}
+                        onChange={playClickSound}
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                       />
                       <label
@@ -170,6 +179,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                         type="radio"
                         value="false"
                         {...register('isOpen', { required: true })}
+                        onChange={playClickSound}
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                       />
                       <label
@@ -195,7 +205,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                       required: openRoom === 'false',
                       disabled: openRoom === 'true'
                     })}
-
+                    onChange={handlePasswordChange}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                   />
                 </div>
@@ -211,6 +221,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                 <div className="col-span-1">
                   <button
                     onClick={() => {
+                      playClickSound();
                       reset()
                       onClose();
                     }}

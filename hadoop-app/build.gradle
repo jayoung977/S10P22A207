@@ -1,0 +1,93 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.8'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'simple.spring'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.apache.spark:spark-core_2.11:2.4.4'
+	implementation 'org.apache.spark:spark-sql_2.11:2.4.4'
+	implementation 'org.springframework.boot:spring-boot-starter'
+	runtimeOnly 'org.postgresql:postgresql'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.apache.hadoop:hadoop-client:3.4.0'
+	implementation 'mysql:mysql-connector-java:8.0.33'
+	implementation 'org.springframework.data:spring-data-hadoop:2.5.0.RELEASE'
+	implementation 'org.codehaus.janino:janino:3.1.2'
+
+	// swagger
+//	 implementation 'org.springdoc:springdoc-openapi-st arter-webmvc-ui:2.0.0'
+//	 implementation 'org.springdoc:springdoc-openapi-starter-common:2.0.0'
+//	 implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
+
+	// security
+	// implementation 'org.springframework.boot:spring-boot-starter-security'
+	// implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	// jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+	implementation 'io.openvidu:openvidu-java-client:2.29.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	testImplementation 'org.springframework.security:spring-security-test'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	runtimeOnly 'com.h2database:h2'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
+	implementation 'org.modelmapper:modelmapper:3.2.0'
+	testImplementation 'org.jeasy:easy-random-core:5.0.0'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2'
+	implementation 'com.google.code.gson:gson:2.10.1'
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+	annotationProcessor "javax.annotation:javax.annotation-api"
+	annotationProcessor "javax.persistence:javax.persistence-api"
+	// implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	implementation 'net.coobird:thumbnailator:0.4.8'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation "org.springframework.boot:spring-boot-starter-log4j2"
+	implementation("org.codehaus.janino:janino:3.0.8")
+	implementation("org.codehaus.janino:commons-compiler:3.0.8")
+	implementation("org.apache.spark:spark-network-common_2.11:2.4.7")
+
+	modules {
+		module("org.springframework.boot:spring-boot-starter-logging") {
+			replacedBy("org.springframework.boot:spring-boot-starter-log4j2", "Use Log4j2 instead of Logback")
+		}
+	}
+
+	configurations {
+		all*.exclude module : 'spring-boot-starter-logging'
+		all*.exclude module : 'logback-classic'
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

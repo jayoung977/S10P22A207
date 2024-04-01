@@ -2,11 +2,12 @@
 import AllUserRankingList from './AllUserRankingList';
 import FriendUserRankingList from "./FriendUserRankingList";
 import SearchedUserRankingList from "./SearchedUserRankingList"
-
+import useClickSound from '@/public/src/components/clickSound/DefaultClick';
 import multigameStore from "@/public/src/stores/multi/MultiGameStore"
 
 export default function Ranking(){
   const { toggleTab, setToggleTab } = multigameStore();
+  const playClickSound = useClickSound();
 
   return (
       <div className="grid grid-rows-10 shadow-md shadow-gray-400 rounded-md">
@@ -18,6 +19,7 @@ export default function Ranking(){
             value="all"
             checked={toggleTab == 'all'}
             onChange={()=>{
+              playClickSound();
               setToggleTab('all')
             }}
             />
@@ -36,6 +38,7 @@ export default function Ranking(){
             value="friend"
             checked={toggleTab == 'friend'}
             onChange={()=>{
+              playClickSound();
               setToggleTab('friend')
             }}
             />
@@ -54,6 +57,7 @@ export default function Ranking(){
             value="search"
             checked={toggleTab == 'search'}
             onChange={()=>{
+              playClickSound();
               setToggleTab('search')
             }}
             />

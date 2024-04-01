@@ -158,6 +158,14 @@ type Store = {
 
     selectedSecondaryIndicator :number;
     setSelectedSecondaryIndicator : (value :number) => void;
+
+    startDate :any,
+    setStartDate :(value :any) => void,
+    endDate :any,
+    setEndDate :(value :any) => void,
+
+    stocks :number,
+    setStocks :(value :number) => void,
 };
 
 
@@ -223,6 +231,15 @@ const SingleGameStore = create<Store>((set: any) => ({
 
     selectedSecondaryIndicator : 1,
     setSelectedSecondaryIndicator :(value) => set({ selectedSecondaryIndicator : value }),
+
+
+    startDate :null,
+    setStartDate :(value) => set({ startDate : value }),
+    endDate :null,
+    setEndDate :(value) => set({ endDate : value }),
+
+    stocks :0,
+    setStocks :(value) => set({ stocks : value }),
 }));
 
 export default SingleGameStore;

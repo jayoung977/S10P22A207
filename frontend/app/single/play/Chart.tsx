@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import anychart from "anychart";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
+
+
 
 // 주어진 데이터 정제
 function filteringLowPriceZero(data :any) {
@@ -142,12 +145,9 @@ function calculateHist(macdData :any, signalData :any) {
 
 
 export default function Chart({ data }: any) {
-  const { selectedStockIndex, turn } = SingleGameStore();
-  // const { turn, selectedSecondaryIndicator, setSelectedSecondaryIndicator } = SingleGameStore();
+  const { selectedStockIndex, turn, startDate, setStartDate, endDate, setEndDate } = SingleGameStore();
   const [selectedSecondaryIndicator, setSelectedSecondaryIndicator] = useState<number>(1);
-
   useEffect(() => {
-
     const purifiedData = filteringLowPriceZero(data);
     // 차트 생성
     const chart = anychart.stock();
@@ -162,6 +162,21 @@ export default function Chart({ data }: any) {
     // 스크롤러
     const scroller = chart.scroller();
     scroller.xAxis(false);
+    // console.log("startDate : ", anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd')); // 콘솔 결과 : 2020-09-15
+    // console.log("endDate : ",  anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd')); //  콘솔 결과 : 2020-11-30
+    // Store에 저장해놓은 범위를 chart에서 스크롤바가 선택된 범위로 바꿈
+    // chart.selectRange(anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd'), anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd'));
+    // chart.selectRange(startDate, endDate);
+
+    // var range = chart.getSelectedRange();
+    // console.log("차트 선택된 범위 시작 : ", anychart.format.dateTime(range.firstSelected, 'yyyy-MM-dd'));
+    // console.log("차트 선택된 범위 끝 : ", anychart.format.dateTime(range.lastSelected, 'yyyy-MM-dd'));
+    
+    // chart.scroller().listen('scrollerChange', function () {
+    //   var range = chart.getSelectedRange();
+    //   setStartDate(range.firstSelected);
+    //   setEndDate(range.lastSelected);
+    // })
     scroller.selectedFill({
       src: 'https://static.anychart.com/images/beach.png',
       mode: 'stretch',
@@ -435,9 +450,8 @@ export default function Chart({ data }: any) {
     plot2.height("30%") 
     plot3.enabled(false); 
     plot4.enabled(false); 
-    
     chart.draw();
-    chart.selectRange(purifiedData[249+turn].date.split('T')[0], data[299+turn].date.split('T')[0]);
+
     const showPlot = (plotNumber: number) => {
       switch (plotNumber) {
         case 1:
@@ -473,8 +487,17 @@ export default function Chart({ data }: any) {
     }
     (window as any).handleShowPlot = handleShowPlot;
     handleShowPlot(selectedSecondaryIndicator);
-
+    // console.log("purifiedData", purifiedData[turn+249].date.split('T')[0]);
+    chart.selectRange(purifiedData[turn+249].date.split('T')[0], purifiedData[turn+299].date.split('T')[0])
+    // chart.selectRange(anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd'), anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd'))  
+    // chart.scroller().listen('scrollerChange', function () {
+    //   var range = chart.getSelectedRange();
+    //   setStartDate(range.firstSelected);
+    //   setEndDate(range.lastSelected);
+    // })
     return () => {
+      // setStartDate(chart.getSelectedRange().firstSelected);
+      // setEndDate(chart.getSelectedRange().lastSelected);
       chart.dispose();
       (window as any).handleShowPlot = null;
 
@@ -482,15 +505,30 @@ export default function Chart({ data }: any) {
     
   }, [data]);
 
- 
+ const playClickSound = useClickSound();
   
   return (
     <div className="row-span-12 grid grid-rows-12">
       <div className="row-span-1 grid grid-cols-8 items-center">
-            {/* 종목 {selectedStockIndex+1}   */}
-            <button onClick={() => (window as any).handleShowPlot(1)} className={`border border-black ${selectedSecondaryIndicator == 1 && 'bg-slate-400'}`}>Volume</button>
-            <button onClick={() => (window as any).handleShowPlot(2)} className={`border border-black ${selectedSecondaryIndicator == 2 && 'bg-slate-400'}`}>RSI</button>
-            <button onClick={() => (window as any).handleShowPlot(3)} className={`border border-black ${selectedSecondaryIndicator == 3 && 'bg-slate-400'}`}>MACD</button>
+        <div className="text-center">종목 {selectedStockIndex+1}</div>
+        <button 
+          onClick={() => {
+            playClickSound();
+            (window as any).handleShowPlot(1)
+          }} 
+          className={`border ${selectedSecondaryIndicator == 1 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>Volume</button>
+        <button 
+          onClick={() => {
+            playClickSound();
+            (window as any).handleShowPlot(2)
+          }} 
+          className={`border ${selectedSecondaryIndicator == 2 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>RSI</button>
+        <button 
+          onClick={() => {
+            playClickSound();
+            (window as any).handleShowPlot(3)
+          }} 
+          className={`border ${selectedSecondaryIndicator == 3 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>MACD</button>
       </div>
       <div id="chart-container" className="row-span-12 flex items-center justify-center"></div>
     </div>

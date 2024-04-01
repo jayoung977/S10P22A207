@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MultiGamePlayerRepository extends JpaRepository<MultiGamePlayer, Long> {
 
-	List<MultiGamePlayer> findAllByMember_Id(Long loginUserId);
-
 	List<MultiGamePlayer> findAllByMultiGameLog_Id(Long multiGameLogId);
+
+	List<MultiGamePlayer> findAllByMember_IdOrderByIdDesc(Long loginUserId);
 
 	Optional<MultiGamePlayer> findByMultiGameLog_IdAndMember_Id(Long multiGameLogId,Long memberId);
 

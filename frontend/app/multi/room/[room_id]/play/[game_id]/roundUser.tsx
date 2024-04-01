@@ -3,7 +3,7 @@ export default function RoundUser(){
   return(
     <div
       onClick={() => {console.log('click!')}}
-      className="row-span-1 grid grid-cols-12 border rounded-md p-2 m-1 items-center bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+      className="grid grid-cols-12 border rounded-md p-2 m-1 items-center bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
       <div className='col-span-2'>
         <div>1위</div>
       </div>

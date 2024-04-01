@@ -3,9 +3,11 @@ import Image from "next/image";
 import kakaoLoginImg from "./../public/src/assets/images/kakao.svg";
 import { TypewriterEffectSmooth } from "../public/src/components/ui/typewriter-effect";
 import backgroundVideo from "./../static/videos/bg.mp4";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 // https://www.pixilart.com/art/blue-line-97f3322f9f26af9
 
 export default function KakaoLogin() {
+  const playClickSound = useClickSound();
   const words = [
     {
       text: "지",
@@ -33,6 +35,7 @@ export default function KakaoLogin() {
     },
   ];
   const loginHandler = () => {
+    playClickSound();
     if (typeof window !== "undefined") {
       const API_URL = "https://j10a207.p.ssafy.io";
       const KAKAO_AUTH_URL = `${API_URL}/oauth2/authorization/kakao`;

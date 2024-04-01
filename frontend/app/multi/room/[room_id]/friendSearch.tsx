@@ -8,6 +8,7 @@ import { useQuery, UseQueryResult } from "react-query";
 import { Friend, FriendInfo } from "@/public/src/stores/user/userStore";
 import axios from "axios";
 import { useParams } from "next/navigation";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 const fetchFriendInfo = async () => {
   const token = sessionStorage.getItem("accessToken");
@@ -25,9 +26,9 @@ export default function FriendSearch() {
 
   // 친구목록 react-query로 구현
   const { result }: { result: Friend[] } = data ? data : { result: [] };
-
   const { searchFriend } = multigameStore();
   const [filteredFriendList, setfilteredFriendList] = useState<Friend[]>([]);
+  const playClickSound = useClickSound();
 
   useEffect(() => {
     const filtered: Friend[] = result.filter((friend) =>
@@ -48,18 +49,18 @@ export default function FriendSearch() {
     console.log(response.data);
     return response.data;
   };
+
   const params = useParams<{ room_id?: string }>();
   const room_id: string | undefined = params.room_id;
-
-  const inviteFriend = (receiver_id: number) => {
-    const data = {
+  const inviteFriend = (friend: any) => {
+  const data = {
       roomId: room_id,
-      receiver: receiver_id,
+      receiver: friend.memberId,
     };
     console.log();
     invitationRequest(data);
     Swal.fire({
-      text: `${receiver_id}에게 초대를 발송했습니다.`,
+      text: `${friend.nickname}님에게 초대를 발송했습니다.`,
       icon: "success",
     });
   };
@@ -71,7 +72,7 @@ export default function FriendSearch() {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  console.log(filteredFriendList);
+  console.log(result);
   return (
     <div className="row-span-3 border-e grid grid-rows-6">
       <div className="row-span-1 flex justify-center border-b gap-2 items-center">
@@ -82,13 +83,15 @@ export default function FriendSearch() {
         className="overflow-auto row-span-5"
         style={{ height: "calc(35vh)" }}
       >
-        {filteredFriendList.map((friend: Friend, i: number) => {
+        {result.map((friend: Friend, i: number) => {
           return (
             <div
               key={i}
-              className={`${
-                friend.isLogin == false && `hidden`
-              } grid grid-cols-12 items-center bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
+              // className={`${
+              //   friend.isLogin == false && `hidden`
+              // } grid grid-cols-12 items-center bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
+
+              className={`grid grid-cols-12 items-center bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
             >
               <div className="col-span-2 items-center text-gray-900 whitespace-nowrap dark:text-white">
                 <Image
@@ -103,7 +106,8 @@ export default function FriendSearch() {
               <div className="col-span-4 px-6 py-4">
                 <button
                   onClick={() => {
-                    inviteFriend(friend.memberId);
+                    playClickSound();
+                    inviteFriend(friend);
                   }}
                   className="bg-blue-500 text-white px-2 py-1 rounded-md "
                 >

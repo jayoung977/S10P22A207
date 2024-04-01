@@ -1,32 +1,22 @@
 package com.backend.api.domain.fund.entity;
 
-import static jakarta.persistence.FetchType.*;
-import static jakarta.persistence.GenerationType.*;
-import static lombok.AccessLevel.*;
+import com.backend.api.domain.BaseEntity;
+import com.backend.api.domain.fund.entity.type.FundStatus;
+import com.backend.api.domain.member.entity.Member;
+import com.backend.api.global.common.type.FeeType;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.backend.api.domain.BaseEntity;
-import com.backend.api.domain.fund.entity.type.FundStatus;
-import com.backend.api.domain.member.entity.Member;
-import com.backend.api.global.common.type.FeeType;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
@@ -103,5 +93,13 @@ public class Fund extends BaseEntity {
 	public void updateFundStart(){
 		this.startAsset = this.fundAsset;
 		this.startDate = LocalDateTime.now();
+	}
+	public Double calRoi(){
+		if(this.startAsset == 0) return 0D;
+		return 100.0 * (this.fundAsset - this.startAsset) / this.startAsset;
+	}
+
+	public void updateFinalFundAsset(long totalAsset) {
+		this.fundAsset = totalAsset;
 	}
 }
