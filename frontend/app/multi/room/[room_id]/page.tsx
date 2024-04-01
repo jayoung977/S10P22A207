@@ -1,7 +1,6 @@
 "use client";
 import ChartImage from "./chartImage";
 import Chat from "./chat";
-import GameUser from "./gameUser";
 import RoomInfo from "./roomInfo";
 import FriendSearch from "./friendSearch";
 import GameRule from "./gameRule";
