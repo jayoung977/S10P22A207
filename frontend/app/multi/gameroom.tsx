@@ -14,7 +14,6 @@ export default function GameRoom(props: {
   const playClickSound = useClickSound();
   const { color, room } = props;
   const password = room.password
-  const password = room.password
   const router = useRouter();
   const handleClick = (room: MultiGameRoomInfoList) => {
     console.log(room)
