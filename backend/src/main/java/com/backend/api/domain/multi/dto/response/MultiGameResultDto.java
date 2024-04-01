@@ -13,6 +13,9 @@ public record MultiGameResultDto(
     @Schema(description = "종목 이름")
     String stockName,
 
+    @Schema(description = "랭킹")
+    Integer rank,
+
     @Schema(description = "시작 날짜")
     LocalDateTime StartDate,
     @Schema(description = "끝 날짜")

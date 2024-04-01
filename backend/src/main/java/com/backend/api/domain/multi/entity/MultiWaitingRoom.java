@@ -2,7 +2,6 @@ package com.backend.api.domain.multi.entity;
 
 import static lombok.AccessLevel.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,15 +18,17 @@ public class MultiWaitingRoom {
 	private Boolean isOpen;
 	private Integer round;
 	private Map<Long, Boolean> readyState;
+	private Long hostId;
 
 	@Builder
-	public MultiWaitingRoom(Set<Long> participantIds, String roomTitle, Integer password, Boolean isOpen, Integer round, Map<Long, Boolean> readyState) {
+
+	public MultiWaitingRoom(Set<Long> participantIds, String roomTitle, Integer password, Boolean isOpen, Integer round, Map<Long, Boolean> readyState, Long hostId) {
 		this.participantIds = participantIds;
 		this.roomTitle = roomTitle;
 		this.password = password;
 		this.isOpen = isOpen;
 		this.round = round;
 		this.readyState = readyState;
+		this.hostId = hostId;
 	}
-
 }

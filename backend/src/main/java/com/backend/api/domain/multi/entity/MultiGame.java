@@ -20,12 +20,12 @@ public class MultiGame {
     @Setter
     private Integer stockAmount = 0;
     private String roomTitle;
+    private Long roomId;
     private Integer password;
     private Boolean isOpen;
     private Long cash;
     private Long initial;
     private Long totalPurchaseAmount = 0L;
-    private Integer unrealizedProfit = 0;
     private Integer profit = 0;
     private Integer day = 1;
     private Long totalAsset;
@@ -36,24 +36,25 @@ public class MultiGame {
     // 혹시 몰라 추가함
     private Long socketId;
     private Integer round;
+    private Integer rank;
 
     @Builder
-    public MultiGame(Long multiGameLogId, Long memberId, Long firstDayStockChartId, List<MultiTradeListDto> tradeList, Integer stockAmount, String roomTitle, Integer password, Boolean isOpen,
-        Long cash,
-        Long initial, Long totalPurchaseAmount, Integer unrealizedProfit, Integer profit, Integer day, Long totalAsset, Integer averagePrice, Integer shortAveragePrice, Integer shortStockAmount,
-        Long socketId, Integer round) {
+    public MultiGame(Long multiGameLogId, Long memberId, Long firstDayStockChartId, List<MultiTradeListDto> tradeList, Integer stockAmount, String roomTitle, Long roomId, Integer password,
+        Boolean isOpen,
+        Long cash, Long initial, Long totalPurchaseAmount, Integer profit, Integer day, Long totalAsset, Integer averagePrice, Integer shortAveragePrice,
+        Integer shortStockAmount, Long socketId, Integer round, Integer rank) {
         this.multiGameLogId = multiGameLogId;
         this.memberId = memberId;
         this.firstDayStockChartId = firstDayStockChartId;
         this.tradeList = tradeList;
         this.stockAmount = stockAmount;
         this.roomTitle = roomTitle;
+        this.roomId = roomId;
         this.password = password;
         this.isOpen = isOpen;
         this.cash = cash;
         this.initial = initial;
         this.totalPurchaseAmount = totalPurchaseAmount;
-        this.unrealizedProfit = unrealizedProfit;
         this.profit = profit;
         this.day = day;
         this.totalAsset = totalAsset;
@@ -62,7 +63,9 @@ public class MultiGame {
         this.shortStockAmount = shortStockAmount;
         this.socketId = socketId;
         this.round = round;
+        this.rank = rank;
     }
+
 
     public void decreaseStockAmount(int stockAmount) {
         this.stockAmount -= stockAmount;
@@ -107,5 +110,8 @@ public class MultiGame {
     public void updateShortAveragePrice(Integer price){
         this.shortAveragePrice = price;
     }
+
+    public void updateRank(Integer rank){
+        this.rank = rank;}
 
 }
