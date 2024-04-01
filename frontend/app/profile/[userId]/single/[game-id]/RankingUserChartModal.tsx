@@ -281,9 +281,7 @@ function Chart({ tradeList, data }: any) {
         return () => {
             chart.dispose();
         };
-    }, [tradeList, data]);
-
- 
+    }, [tradeList, data]); 
   
   return (
     <div className="row-span-11 grid grid-rows-12">

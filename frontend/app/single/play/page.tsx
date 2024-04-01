@@ -42,7 +42,6 @@ export default function SinglePlay() {
     setStartDate, setEndDate,
   } = SingleGameStore();
   const { asset } = userStore();
-  console.log("asset : ", asset);
   const fetchSingleGameData = async () => {
     try {
       const response = await axios({
@@ -74,8 +73,6 @@ export default function SinglePlay() {
               totalAsset : response.data.result.totalAsset.cash + response.data.result.totalAsset.totalPurchaseAmount,
             })
         } else {
-          console.log("없어서")
-          console.log(asset);
           setTotalAssetData({
             cash : asset as number,
             resultProfit : 0,
@@ -96,9 +93,9 @@ export default function SinglePlay() {
         setStockListData(response.data.result.stockChartDataList);
         // console.log('시작 날짜')
         const startTime = new Date(response.data.result.stockChartDataList[0].stockChartList[249].date).getTime();
-        console.log("시작 : ", startTime);
+        // console.log("시작 : ", startTime);
         const endTime = new Date(response.data.result.stockChartDataList[0].stockChartList[299].date).getTime();
-        console.log("끝 : ", endTime);
+        // console.log("끝 : ", endTime);
         // setStartDate(Date(response.data.result.stockChartDataList[0].stockChartList[299].date).getTime())
         setStartDate(startTime);
         setEndDate(endTime);

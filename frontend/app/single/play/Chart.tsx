@@ -506,10 +506,10 @@ export default function Chart({ data }: any) {
   return (
     <div className="row-span-12 grid grid-rows-12">
       <div className="row-span-1 grid grid-cols-8 items-center">
-            {/* 종목 {selectedStockIndex+1}   */}
-            <button onClick={() => (window as any).handleShowPlot(1)} className={`border border-black ${selectedSecondaryIndicator == 1 && 'bg-slate-400'}`}>Volume</button>
-            <button onClick={() => (window as any).handleShowPlot(2)} className={`border border-black ${selectedSecondaryIndicator == 2 && 'bg-slate-400'}`}>RSI</button>
-            <button onClick={() => (window as any).handleShowPlot(3)} className={`border border-black ${selectedSecondaryIndicator == 3 && 'bg-slate-400'}`}>MACD</button>
+        <div className="text-center">종목 {selectedStockIndex+1}</div>
+        <button onClick={() => (window as any).handleShowPlot(1)} className={`border ${selectedSecondaryIndicator == 1 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>Volume</button>
+        <button onClick={() => (window as any).handleShowPlot(2)} className={`border ${selectedSecondaryIndicator == 2 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>RSI</button>
+        <button onClick={() => (window as any).handleShowPlot(3)} className={`border ${selectedSecondaryIndicator == 3 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>MACD</button>
       </div>
       <div id="chart-container" className="row-span-12 flex items-center justify-center"></div>
     </div>
