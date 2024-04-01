@@ -1,5 +1,5 @@
 package com.backend.api.global.common.type;
 
 public enum SocketType {
-	INVITE, READY, MESSAGE, FRIENDACCEPT, ENTER, EXIT, FRIENDASK
+	INVITE, READY, MESSAGE, FRIENDACCEPT, ENTER, EXIT, KICK, ROOMINFO, FRIENDASK
 }
