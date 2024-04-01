@@ -406,6 +406,9 @@ public class SingleGameService {
         double totalRoi = 100.0 * totalProfit / currentGame.getInitial();
         TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalProfit, totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
 
+        // TotalAsset에 들어갔으면 뺴주기
+        currentGame.addProfit(stockIdx, (int) (dto.amount() * ((-1) * (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]))));
+
         // 보유자산
         List<AssetListDto> assetList = new ArrayList<>();
         for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
@@ -563,13 +566,15 @@ public class SingleGameService {
         long totalAsset = currentGame.getCash();
         List<AssetListDto> assetList = new ArrayList<>();
 
-        for (Long firstDayStockChartId : currentGame.getFirstDayChartList()) {
+        for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
+            Long firstDayStockChartId = currentGame.getFirstDayChartList().get(i);
             StockChart todayChart = stockChartRepository.findById(firstDayStockChartId + 299 + dto.day()).orElseThrow();
             StockChart yesterdayChart = stockChartRepository.findById(firstDayStockChartId + 299 + dto.day() - 1).orElseThrow();
 
-            Long startDateChartStockId = todayChart.getStock().getId();
             // 종목별 정보 담아주기
-            Integer stockIdx = currentGame.getStocks().get(startDateChartStockId);
+            Long stockId = todayChart.getStock().getId();
+            Integer stockIdx = currentGame.getStocks().get(stockId);
+            System.out.println("stockIdx = " + stockIdx);
             int amount = currentGame.getStockAmount()[stockIdx];
             // 총 자산 가치
             totalAsset += (long) (amount * todayChart.getEndPrice() * 0.9975);
@@ -580,14 +585,16 @@ public class SingleGameService {
                     todayChart.getEndPrice(), // 오늘의 종가
                     todayChart.getEndPrice() - yesterdayChart.getEndPrice(), // 등락정도
                     currentGame.getStockAmount()[stockIdx], // 보유수량
-                    (long) currentGame.getStockAmount()[stockIdx] * (todayChart.getEndPrice()
-                        - currentGame.getAveragePrice()[stockIdx]), // 평가손익
+                    (long) (currentGame.getStockAmount()[stockIdx] * (0.9975 * todayChart.getEndPrice()
+                        - currentGame.getAveragePrice()[stockIdx])), // 평가손익
                     currentGame.getAveragePrice()[stockIdx] == 0 ? 0 :
                         1.0 * ((todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]) * 100)
                             / currentGame.getAveragePrice()[stockIdx]// 손익률
                 )
             );
             // 보유 재산의 각
+            System.out.println("todayChart = " + todayChart.getEndPrice());
+            System.out.println("yesterdayChart = " + yesterdayChart.getEndPrice());
             currentGame.addProfit(stockIdx, currentGame.getStockAmount()[stockIdx] * (todayChart.getEndPrice() - yesterdayChart.getEndPrice()));
             // 보유 자산변동 보여주기
             AssetListDto assetListDto = new AssetListDto(
@@ -595,7 +602,7 @@ public class SingleGameService {
                     () -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR)
                 ).getStock().getId(),
                 currentGame.getStockAmount()[stockIdx],
-                currentGame.getProfits()[stockIdx],
+                currentGame.getProfits()[stockIdx], // 팔면 profit에서 빼줘야지.
                 currentGame.getAveragePrice()[stockIdx],
                 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx]
             );
@@ -606,8 +613,7 @@ public class SingleGameService {
                 SingleGameStock singleGameStock = singleGameStockRepository.findBySingleGameLog_IdAndStock_Id(currentGame.getSingleGameLogId(), todayChart.getStock().getId())
                     .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
 
-                Long stockId = todayChart.getStock().getId();
-                Integer index = currentGame.getStocks().get(stockId);
+                Integer index = currentGame.getStocks().get(todayChart.getStock().getId());
 
                 // 현재 저장된것 + 아직 매도 안한거
                 singleGameStock.updateAveragePurchasePrice(currentGame.getAveragePrice()[index]);
