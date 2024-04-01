@@ -19,17 +19,12 @@ export default function Header() {
   const playClickSound = useClickSound();
 
   function handleTomorrow (turn: number){
-  function handleTomorrow (turn: number){
     axios({
       method: 'post',
       url: 'https://j10a207.p.ssafy.io/api/multi/tomorrow',
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
       },
-      data: {
-        gameIdx: params.game_id,
-        day: turn,
-      }
       data: {
         gameIdx: params.game_id,
         day: turn,
