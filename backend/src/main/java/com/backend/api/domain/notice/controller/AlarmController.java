@@ -12,6 +12,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,9 +49,11 @@ public class AlarmController {
 //    @PreAuthorize("hasAnyRole('USER')")
     @Operation(summary = "게임 초대 보내기", description = "특정 유저에게 게임 초대를 보내면 해당 유저에게 알림이 갑니다.", tags = {"알림"})
     @PostMapping("/invitation")
-    public ResponseEntity<BaseResponse<String>> sendInviteGameAlarm(@RequestBody NotificationRequestDto dto) {
+    public ResponseEntity<BaseResponse<String>> sendInviteGameAlarm(@RequestBody NotificationRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         log.info("게임 초대 요청 - controller");
-        redisPubService.sendMessage(dto);
+        log.info("dto : {} 초대보내는 사람: {} ", dto, userDetails.getNickname());
+
+        // redisPubService.sendMessage(dto);
         return BaseResponse.success(SuccessCode.CREATE_SUCCESS, "게임초대 알림을 보냈습니다.");
     }
 

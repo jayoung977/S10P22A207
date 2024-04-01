@@ -197,6 +197,7 @@ public class MultiGameService {
 				.isOpen(dto.isOpen())
 				.round(0)
 				.readyState(new HashMap<>())
+				.hostId(userDetails.getId())
 				.build();
 		redisTemplate.opsForValue().set(key, multiWaitingRoom); // TODO : 이렇게 해도 되나?
 		return new MultiGameRoomCreateResponseDto(roomId);
