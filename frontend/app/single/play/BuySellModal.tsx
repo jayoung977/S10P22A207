@@ -16,7 +16,6 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
     const handleStockChange = (e :any) => {
         setStocks(e.target.value)
         if (isBuy) {
-            console.log('zz', stockListData[selectedStockIndex].stockChartList[299+turn].endPrice);
             if (e.target.value < 0 || e.target.value == 0) {
                 setAlertMessage("매매하려는 주식 개수는 양수여야 합니다.")
                 setDisabled(true);
@@ -39,38 +38,39 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
         }
     }
 
+    const maxAvailableBuy = Math.floor(totalAssetData?.cash/(stockListData[selectedStockIndex]?.stockChartList[299+turn].endPrice * 1.0015))
     const handleSelectPer = (num :number) => {
         setDisabled(false);
         if (isBuy) {
             if (num == 25) {
                 // const stockNumber = totalAssetData.cash
                 // console.log(Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[300+turn].endPrice * 0.25));
-                setStocks(Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[299+turn].endPrice * 0.25))
-                if (Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[299+turn].endPrice * 0.25) > 0) {
+                setStocks(Math.floor(maxAvailableBuy * 0.25))
+                if (Math.floor(maxAvailableBuy * 0.25) > 0) {
                     setDisabled(false);
                 } else {
                     setDisabled(true);
                 }
             } else if (num == 50) {
                 // console.log(Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[300+turn].endPrice * 0.5))
-                setStocks(Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[299+turn].endPrice * 0.5))
-                if (Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[299+turn].endPrice * 0.5) > 0) {
+                setStocks(Math.floor(maxAvailableBuy * 0.5))
+                if (Math.floor(maxAvailableBuy * 0.5) > 0) {
                     setDisabled(false);
                 } else {
                     setDisabled(true);
                 }
             } else if (num == 75) {
                 // console.log(Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[300+turn].endPrice * 0.75))
-                setStocks(Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[299+turn].endPrice * 0.75))
-                if (Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[299+turn].endPrice * 0.75) > 0) {
+                setStocks(Math.floor(maxAvailableBuy * 0.75))
+                if (Math.floor(maxAvailableBuy * 0.75) > 0) {
                     setDisabled(false);
                 } else {
                     setDisabled(true);
                 }
             } else if (num == 100) {
                 // console.log(Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[300+turn].endPrice ))
-                setStocks(Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[299+turn].endPrice))
-                if (Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[299+turn].endPrice) > 0) {
+                setStocks(maxAvailableBuy)
+                if (maxAvailableBuy > 0) {
                     setDisabled(false);
                 } else {
                     setDisabled(true);
@@ -232,8 +232,8 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                 </div>
                 <hr></hr>
                 <div className="row-span-4 grid grid-rows-4">
-                    <div className="row-span-1 flex justify-around">
-                        <div className="ml-3 text-textColor-1">
+                    <div className="row-span-1 flex justify-between">
+                        <div className="text-textColor-1 flex justify-start ml-5">
                             {
                                 isBuy ? (
                                     <span className="text-small-3">매수 </span> 
@@ -243,19 +243,19 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                             }  
                             종목
                         </div>
-                        <div className="mr-3 text-textColor-1">{selectedStockIndex+1}번 종목</div>
+                        <div className="flex justify-end text-textColor-1 mr-5">{selectedStockIndex+1}번 종목</div>
                     </div>
-                    <div className="row-span-1 flex justify-around">
-                        <div className="ml-3">주문 단가</div>
-                        <div className="mr-3">{stockListData[selectedStockIndex].stockChartList[299+turn].endPrice}</div>
+                    <div className="row-span-1 flex justify-between">
+                        <div className="flex justify-start ml-5">주문 단가</div>
+                        <div className="flex justify-end mr-5">{stockListData[selectedStockIndex].stockChartList[299+turn].endPrice}</div>
                     </div>
-                    <div className="row-span-1 flex justify-around">
-                        <div className="ml-3 text-textColor-1">주문 가능 수량</div>
+                    <div className="row-span-1 flex justify-between">
+                        <div className="flex justify-start text-textColor-1 ml-5">주문 가능 수량</div>
                         {
                             isBuy ? (
-                                <div className="mr-3 mr-3text-textColor-1">{Math.floor(totalAssetData?.cash/stockListData[selectedStockIndex]?.stockChartList[299+turn].endPrice)}주</div>
+                                <div className="flex justify-end mr-5 text-textColor-1">{maxAvailableBuy}주</div>
                             ) : (
-                                <div className="mr-3 text-textColor-1">{assetListData[selectedStockIndex]?.stockAmount}주</div>
+                                <div className="flex justify-end mr-5 text-textColor-1">{assetListData[selectedStockIndex]?.stockAmount}주</div>
                             )
                         }
                     </div>
