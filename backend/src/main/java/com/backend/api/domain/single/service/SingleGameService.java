@@ -205,7 +205,6 @@ public class SingleGameService {
         while (stocks.size() < 10) {
             log.info("stocks.size() - {}", stocks.size());
             List<String> stockIds = stockChartRepository.findDistinctStockCodeByDateBetween(randomDateTime.minusDays(1), randomDateTime);
-            System.out.println("stockIds.size()" + stockIds.size());
             if (stockIds.isEmpty()) {
                 log.info("해당하는 날짜의 데이터가 없음.{}", randomDateTime);
                 randomDateTime = randomDateTime.plusDays(1);
@@ -355,7 +354,6 @@ public class SingleGameService {
                 () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
             );
             int amount = currentGame.getStockAmount()[i]; // 해당 Stock의 보유량 가져오기
-
             totalAsset += (long) (amount * todayStockChart.getEndPrice() * 0.9975); // 총 자산 계산
         }
 
@@ -406,8 +404,6 @@ public class SingleGameService {
             totalProfit += currentGame.getProfits()[i];
         }
         double totalRoi = 100.0 * totalProfit / currentGame.getInitial();
-
-
         TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalProfit, totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
 
         // 보유자산
@@ -473,18 +469,18 @@ public class SingleGameService {
 
         // 총 roi 계산
         long totalAsset = currentGame.getCash();
-        for (Long stockId : currentGame.getStocks().keySet()) {
-            StockChart todayStockCharts = stockChartRepository.findById(stockId + 299 + dto.day()).orElseThrow(
+
+        for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
+            long firstDayChartId = currentGame.getFirstDayChartList().get(i);
+            StockChart todayStockChart = stockChartRepository.findById(firstDayChartId + 299 + dto.day()).orElseThrow(
                 () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
             );
-
-            int amount = currentGame.getStockAmount()[currentGame.getStocks().get(stockId)]; // 해당 Stock의 보유량 가져오기
-
-            totalAsset += (long) (amount * todayStockCharts.getEndPrice() * 0.9975); // 총 자산 계산
+            int amount = currentGame.getStockAmount()[i]; // 해당 Stock의 보유량 가져오기
+            totalAsset += (long) (amount * todayStockChart.getEndPrice() * 0.9975); // 총 자산 계산
         }
         // 총 구입 금액 계산
         currentGame.addTotalPurchaseAmount((long) dto.amount() * todayChart.getEndPrice());
-
+        currentGame.updateTotalAsset(totalAsset);
         double resultRoi = 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx];
         // 총 profit 계산
 
@@ -496,7 +492,7 @@ public class SingleGameService {
             .price(todayChart.getEndPrice()) // 현재가격.
             .stockQuantity(currentGame.getStockAmount()[stockIdx] + dto.amount())
             .roi(Double.parseDouble(String.format("%.2f", resultRoi)))
-            .profit((long) currentGame.getProfits()[stockIdx])
+            .profit((-1) *(long) (dto.amount() * todayChart.getEndPrice() * 0.0015))
             .build();
         singleTradeRepository.save(singleTrade);
         currentGame.getTradeList().add(
