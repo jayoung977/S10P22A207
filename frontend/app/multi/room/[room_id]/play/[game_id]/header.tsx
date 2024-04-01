@@ -1,7 +1,7 @@
 "use client";
 import penguin from "@/public/src/assets/images/penguin.png";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RoundResult from "./roundResult";
 import FinalResult from "./finalResult";
 import axios from "axios";
@@ -37,6 +37,35 @@ export default function Header() {
       console.error(error)
     })
   }
+
+  const handleTradeTurn = (e :KeyboardEvent) => {
+    if (e.key === "r") {
+      playClickSound();
+      handleTomorrow(turn)
+      if (round == 3 && turn == 49) {
+        console.log("경기 종료");
+        setIsGameover(true);
+      } else if (turn === 49) {
+        setIsOpen(true);
+        // 일단 3초로 설정
+        setTimeout(() => setIsOpen(false), 1000);
+        setRound(round + 1);
+        setTurn(0);
+      } else {
+        setTurn(turn + 1);
+      }
+    }
+  }
+
+
+  useEffect (() => {
+    window.addEventListener('keydown', handleTradeTurn);
+
+    return () => {
+        window.removeEventListener("keydown", handleTradeTurn);
+
+    }
+  }, [turn])
 
   return (
     <header className="row-span-1 grid grid-cols-12 border gap-2 items-center">
@@ -94,7 +123,7 @@ export default function Header() {
           }`}
         >
           {" "}
-          다음 턴으로!
+          다음 턴(R)
         </button>
       </div>
       <div className="col-span-1 grid grid-rows-2 gap-0 text-md text-center font-semibold">

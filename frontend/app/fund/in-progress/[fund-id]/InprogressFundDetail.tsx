@@ -10,6 +10,7 @@ import { useQuery, UseQueryResult } from "react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
+import userStore from "@/public/src/stores/user/userStore";
 
 const fetchFundDetail = async (fundId: string) => {
   const token = sessionStorage.getItem("accessToken");
@@ -30,6 +31,7 @@ export default function InprogressFundDetail() {
   const router = useRouter();
   const [fundDetail, setFundDetail] = useState<FundDetail | null>(null);
   const playClickSound = useClickSound();
+  const { nickname } = userStore();
 
   const params = useParams();
   const fundId = params["fund-id"] as string;
@@ -54,6 +56,17 @@ export default function InprogressFundDetail() {
     ? data
     : { result: null };
   console.table(result);
+
+  const fundManager = result?.managerNickname
+  const totalInvestment = result?.fundStocks.reduce(
+    (accumulator, currentStock) => {
+      return accumulator + currentStock.investmentAmount;
+  },0)
+
+  const totalProfit = result?.fundStocks.reduce(
+    (accumulator, currentStock) => {
+      return accumulator + (currentStock.investmentAmount*currentStock.roi)/100;
+    },0)
 
   return (
     <div className="bg-big-1 p-2 rounded-md row-span-11 grid grid-rows-12 gap-2 mx-auto xl:max-w-screen-xl">
@@ -142,8 +155,12 @@ export default function InprogressFundDetail() {
                     <td className="px-6 py-4">
                       {stock.investmentAmount.toLocaleString()} 원
                     </td>
-                    <td className="px-6 py-4">+ 20,000,000 원</td>
-                    <td className="px-6 py-4">{stock.roi} %</td>
+                    <td className="px-6 py-4">
+                    {((stock.investmentAmount*stock.roi)/100).toLocaleString()} 원
+                    </td>
+                    <td className="px-6 py-4">
+                      {stock.roi} %
+                    </td>
                   </tr>
                 );
               })
@@ -154,9 +171,15 @@ export default function InprogressFundDetail() {
       {/* 펀드 status */}
       <div className="row-span-2 bg-textColor-1 text-textColor-2 rounded-md grid grid-cols-4">
         <div className="col-span-1 text-lg mt-2 ms-10">총합</div>
-        <div className="col-span-1 ms-4 text-lg mt-2"> 대충 얼마</div>
-        <div className="col-span-1 text-lg mt-2 ms-10">100,000,000원</div>
-        <div className="col-span-1 text-lg mt-2 ms-10">+ 20 %</div>
+        <div className="col-span-1 ms-4 text-lg mt-2"> {totalInvestment?.toLocaleString()}원</div>
+        <div className="col-span-1 ms-4 text-lg mt-2"> {totalProfit?.toLocaleString()}원</div>
+        <div className="col-span-1 text-lg mt-2 ms-10">
+          { totalInvestment != null && totalProfit != null 
+          ? totalInvestment > 0
+              ? (totalProfit/totalInvestment*100).toFixed(1)
+              : 0
+            : 0
+        }%</div>
       </div>
       <div className="row-span-1">
         <button
