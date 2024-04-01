@@ -97,12 +97,7 @@ public class MultiGameSocketService {
 		multiWaitingRoom.getReadyState().put(memberId, !readyState);
 		redisTemplate.opsForValue().set("multiGame:" + roomId, multiWaitingRoom);
 		log.info("멤버 {} 레디 상태 변경 후: {}", memberId, !readyState);
-		MultiGameReadyRes multiGameReadyRes = new MultiGameReadyRes(
-			roomId,
-			!readyState,
-			memberId
-		);
-		sendMessageToMultiWaitingRoom(roomId, new SocketBaseDtoRes<>(SocketType.READY, multiGameReadyRes));
+		sendMultiWaitingRoomDetailDto(roomId);
 		return !readyState;
 	}
 
@@ -189,7 +184,8 @@ public class MultiGameSocketService {
 					() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)
 				).toMultiMemberRes()
 			).toList(),
-			multiWaitingRoom.getHostId()
+			multiWaitingRoom.getHostId(),
+			multiWaitingRoom.getReadyState()
 		);
 		sendMessageToMultiWaitingRoom(roomId, new SocketBaseDtoRes<>(SocketType.ROOMINFO, multiWaitingRoomDetailDto));
 	}
