@@ -1,17 +1,9 @@
 package com.backend.api.global.jwt;
 
-import java.io.IOException;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.PatternMatchUtils;
-import org.springframework.web.filter.OncePerRequestFilter;
-
 import com.backend.api.global.common.ErrorResponse;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.jwt.service.JwtService;
 import com.google.gson.Gson;
-
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -20,9 +12,14 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.PatternMatchUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -51,6 +48,9 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
             log.info("유저의 토큰이 검증되었습니다. 유저를 SecurityContextHolder에 저장합니다.");
             SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
+            log.info("userDetail : {}", authentication);
+//            UserDetails details = (UserDetails) authentication.getDetails();
+//            redisPubService.setLoginStatus(details.getUsername());
         } catch (ExpiredJwtException e) {
             log.info("유저의 액세스 토큰이 만료되었습니다.");
             sendJwtErrorResponse(ErrorCode.EXPIRED_ACCESS_TOKEN_EXCEPTION, response);

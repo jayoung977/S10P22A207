@@ -11,7 +11,7 @@ public record MultiTradeListDto(
     @Schema(description = "라운드")
     int round,
     @Schema(description = "매매 턴")
-    LocalDateTime date,
+    int day,
 
     @Schema(description = "매매 타입")
     TradeType tradeType,
