@@ -50,14 +50,31 @@ public class HadoopController {
 	}
 
 	@Operation(
+		summary = "하둡 주식 조회 날짜 기준"
+	)
+	@GetMapping("/stock/get/start-end")
+	public ResponseEntity<BaseResponse<List<StockRes>>> getStockRes(
+		@RequestParam String startDate,
+		@RequestParam String endDate,
+		@RequestParam String stockCode) {
+		log.info("Controller getStockRes start-end");
+
+		List<StockRes> stockDataList = hadoopService.getStockDataStartEnd(startDate, endDate, stockCode);
+		log.info("controller result show: {} {} {} {}", startDate, endDate, stockCode, stockDataList.size());
+		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, stockDataList);
+	}
+
+	@Operation(
 		summary = "하둡 최대가격 최소가격 조회"
 	)
 	@GetMapping("/stock/max-min")
 	public ResponseEntity<BaseResponse<List<MaxMinPriceDto>>> getMaxMinPrice(
+		@RequestParam String startDate,
+		@RequestParam String endDate,
 		@RequestParam String stockCode) {
 		log.info("Controller getMaxMinPrice");
 
-		List<MaxMinPriceDto> MaxMinPriceDtoList = hadoopService.getMaxMinPrice(stockCode);
+		List<MaxMinPriceDto> MaxMinPriceDtoList = hadoopService.getMaxMinPrice(startDate, endDate, stockCode);
 		log.info("controller result show: {} {}",stockCode, MaxMinPriceDtoList.size());
 		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, MaxMinPriceDtoList);
 	}
@@ -98,6 +115,21 @@ public class HadoopController {
 		log.info("Controller getChangeRateCount");
 
 		List<ChangeRateCountDto> ChangeRateCountDtoList = hadoopService.getChangeRateCount(stockCode);
+		log.info("controller result show: {} {}",stockCode, ChangeRateCountDtoList.size());
+		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, ChangeRateCountDtoList);
+	}
+
+	@Operation(
+		summary = "하둡 등락률 개수 조회"
+	)
+	@GetMapping("/stock/change-count/start-end")
+	public ResponseEntity<BaseResponse<List<ChangeRateCountDto>>> getChangeRateCountStartEnd(
+		@RequestParam String startDate,
+		@RequestParam String endDate,
+		@RequestParam String stockCode) {
+		log.info("Controller getChangeRateCount");
+
+		List<ChangeRateCountDto> ChangeRateCountDtoList = hadoopService.getChangeRateCountStartEnd(startDate, endDate, stockCode);
 		log.info("controller result show: {} {}",stockCode, ChangeRateCountDtoList.size());
 		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, ChangeRateCountDtoList);
 	}
