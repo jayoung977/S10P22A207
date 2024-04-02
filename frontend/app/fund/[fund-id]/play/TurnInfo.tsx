@@ -46,7 +46,8 @@ export default function TurnInfo () {
                         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`
                     }
                 })
-
+            
+            console.log(response)
             if (turn == 50) {
                 const stockInfoDtoList = response.data.result.stockInfoDtoList;
                 setFundGameEndInfoData({

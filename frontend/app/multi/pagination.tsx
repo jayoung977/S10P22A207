@@ -1,11 +1,13 @@
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 
-export default function Pagination({totalRooms} : { totalRooms:number}){
+export default function Pagination({totalwaitRooms, totalGameRooms} : { totalwaitRooms:number, totalGameRooms: number}){
   const playClickSound = useClickSound();
-  const { pageNumber, setPageNumber } = multigameStore();
-  const pages = Array.from({ length: Math.ceil(totalRooms / 6) }, (_, i) => i + 1);
-  
+  const { pageNumber, setPageNumber, isWaiting } = multigameStore();
+  const waitPages = Array.from({ length: Math.max(Math.ceil(totalwaitRooms / 6), 1) }, (_, i) => i + 1);
+  const gamePages = Array.from({ length: Math.max(Math.ceil(totalwaitRooms / 6), 1) }, (_, i) => i + 1);
+  const pages = isWaiting ? waitPages : gamePages
+
   return(
     <div className='mt-2'>
       <nav aria-label="Page navigation example">
