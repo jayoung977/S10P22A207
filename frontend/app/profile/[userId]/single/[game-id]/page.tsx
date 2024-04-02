@@ -28,7 +28,7 @@ export default function page() {
   const gameId = params["game-id"];
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
-
+  // const { handleClickStock } = SingleRecordFunctions();
   const {
     selectedIndex,
     setSelectedIndex,
@@ -40,6 +40,8 @@ export default function page() {
     setStockInfoDtoList,
     tradeList,
     setTradeList,
+    setStartDate,
+    setEndDate,
   } = SingleReviewStore();
 
   const fetchSingleGameRecord = async () => {
@@ -51,7 +53,9 @@ export default function page() {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
       });
-      console.log("response.data.result : ", response.data.result);
+      console.log("싱글 복기 가장 첫 response : ", response.data.result);
+      setStartDate(response.data.result.startDate.split("T")[0]);
+      setEndDate(response.data.result.endDate.split("T")[0]);
       setRankMemberList(response.data.result.rankMemberList);
       setStockChartDataList(response.data.result.stockChartDataList);
       setStockInfoDtoList(response.data.result.stockInfoDtoList);
@@ -64,15 +68,12 @@ export default function page() {
   };
 
   useEffect(() => {
+    setSelectedIndex(0);
     fetchSingleGameRecord();
-  }, []); // gameId를 의존성 배열에 추가하여 gameId가 변경될 때마다 useEffect가 실행되도록 함
+  }, []);
 
   if (isLoading) {
     return <div className="rainbow"></div>;
-  }
-
-  if (isError) {
-    return <div>Error</div>;
   }
 
   return (

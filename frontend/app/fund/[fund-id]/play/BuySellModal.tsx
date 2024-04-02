@@ -87,6 +87,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                     Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
                 }
             });
+            console.log(response)
             setAssetListData(response.data.result.assetList);
             setTotalAssetData(response.data.result.totalAsset);
             setTradeListData(response.data.result.tradeList);

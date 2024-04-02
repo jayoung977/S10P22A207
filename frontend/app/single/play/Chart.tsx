@@ -145,7 +145,7 @@ function calculateHist(macdData :any, signalData :any) {
 
 
 export default function Chart({ data }: any) {
-  const { selectedStockIndex, turn, startDate, setStartDate, endDate, setEndDate } = SingleGameStore();
+  const { selectedStockIndex, turn, startDate, setStartDate, endDate, setEndDate, isBuySellModalOpen } = SingleGameStore();
   const [selectedSecondaryIndicator, setSelectedSecondaryIndicator] = useState<number>(1);
   useEffect(() => {
     const purifiedData = filteringLowPriceZero(data);
@@ -210,8 +210,8 @@ export default function Chart({ data }: any) {
     todayEndPriceTextMarker.background().stroke("2 pink");
     todayEndPriceTextMarker.padding(3);
     todayEndPriceTextMarker.align("right");
-    todayEndPriceTextMarker.offsetX(-50);
-    todayEndPriceTextMarker.fontSize(20);
+    todayEndPriceTextMarker.offsetX(-60);
+    todayEndPriceTextMarker.fontSize(15);
 
     // line series 생성
     const lineSeries = plot1.line(
@@ -481,10 +481,21 @@ export default function Chart({ data }: any) {
           break;
       }
     };
+    const handleShowAll = () => {
+      chart.selectRange(purifiedData[0].date.split('T')[0], purifiedData[turn+299].date.split('T')[0])
+    }
     const handleShowPlot = (plotNumber :number) => {
       showPlot(plotNumber);
       setSelectedSecondaryIndicator(plotNumber);
     }
+    const handleKeyPress = (event :KeyboardEvent) => {
+      if (event.key == "`" && !isBuySellModalOpen) {
+        handleShowAll();
+      }
+    }
+    document.addEventListener('keypress', handleKeyPress);
+
+    (window as any).handleShowAll = handleShowAll;
     (window as any).handleShowPlot = handleShowPlot;
     handleShowPlot(selectedSecondaryIndicator);
     // console.log("purifiedData", purifiedData[turn+249].date.split('T')[0]);
@@ -496,9 +507,12 @@ export default function Chart({ data }: any) {
     //   setEndDate(range.lastSelected);
     // })
     return () => {
+      document.removeEventListener('keypress', handleKeyPress);
+
       // setStartDate(chart.getSelectedRange().firstSelected);
       // setEndDate(chart.getSelectedRange().lastSelected);
       chart.dispose();
+      (window as any).handleShowAll = null;
       (window as any).handleShowPlot = null;
 
     };
@@ -529,7 +543,14 @@ export default function Chart({ data }: any) {
             (window as any).handleShowPlot(3)
           }} 
           className={`border ${selectedSecondaryIndicator == 3 ? 'bg-slate-400 text-white border-slate-400' : 'border-black'} m-1 px-1 rounded-md`}>MACD</button>
+        <button 
+          onClick={() => {
+            playClickSound();
+            (window as any).handleShowAll()
+          }} 
+          className="border border-black m-1 px-1 rounded-md">전체보기(`)</button>
       </div>
+
       <div id="chart-container" className="row-span-12 flex items-center justify-center"></div>
     </div>
 
