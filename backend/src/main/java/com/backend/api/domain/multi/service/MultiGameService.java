@@ -12,6 +12,7 @@ import com.backend.api.domain.multi.dto.request.MultiGameStartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiNextDayRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiTradeRequestDto;
 import com.backend.api.domain.multi.dto.response.MultiGameFinalResultDto;
+import com.backend.api.domain.multi.dto.response.MultiGameInfo;
 import com.backend.api.domain.multi.dto.response.MultiGameResultDto;
 import com.backend.api.domain.multi.dto.response.MultiGameRoomCreateResponseDto;
 import com.backend.api.domain.multi.dto.response.MultiGameRoomInfo;
@@ -322,6 +323,7 @@ public class MultiGameService {
 			.cash(beforeMultiGame.getCash())
 			.initial(beforeMultiGame.getCash())
 			.stockAmount(0)
+			.roomId(dto.roomId())
 			.totalAsset(beforeMultiGame.getCash())
 			.totalPurchaseAmount(0L)
 			.averagePrice(0)
@@ -350,6 +352,7 @@ public class MultiGameService {
 				.multiGameLogId(gameLogId)
 				.memberId(memberId)
 				.firstDayStockChartId(dto.firstDayStockChartId())
+				.roomId(dto.roomId())
 				.roomTitle(multiWaitingRoom.getRoomTitle())
 				.password(multiWaitingRoom.getPassword())
 				.isOpen(multiWaitingRoom.getIsOpen())
@@ -671,6 +674,9 @@ public class MultiGameService {
 	}
 
     public MultiNextDayResponseDto getTomorrow(MultiNextDayRequestDto dto, Long memberId) {
+		log.info("dto.gameId() : {}", dto.gameId());
+		log.info("dto.day() : {}", dto.day());
+		log.info("dto.roundNumber() : {}", dto.roundNumber());
         MultiGame currentGame = this.getGame(memberId, dto.gameId());
 
         currentGame.updateDay(dto.day());
@@ -692,6 +698,14 @@ public class MultiGameService {
                 100.0 * currentGame.getProfit() / currentGame.getTotalPurchaseAmount()
             );
         long totalAssets = currentGame.getCash();
+
+		// 방의 다른 참여자들에게 현재 진행상황을 전한다.
+		MultiWaitingRoom multiWaitingRoom = getWaitingRoom(currentGame.getRoomId());
+
+		for(Long participantId : multiWaitingRoom.getParticipantIds()){
+ 			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIGAMEINFO, new MultiGameInfo(memberId, dto.day())));
+		}
+
         if (dto.day() == 51) {
 
             // 아직 매도하지 않은 물량은 팔아준다.
