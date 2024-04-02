@@ -69,7 +69,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
       
       const result = await response.json();
       console.log(result)
-      const roomId = result.result.multiGameId
+      const roomId = result.result.roomId
       router.push(`multi/room/${roomId}`)
     } catch (error) {
       console.error(error)

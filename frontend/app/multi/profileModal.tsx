@@ -66,11 +66,18 @@ export default function ProfileModal() {
       },
     })
     .then((response) => {
-      console.log(response.data);
-      Swal.fire({
-        title: "친구 요청이 성공했습니다.",
-        icon: 'success'
-      })
+      const data = response.data
+      if(data.status == 409){
+        Swal.fire({
+          title: "이미 보낸 요청입니다.",
+          icon: 'error'
+        })
+      } else {
+        Swal.fire({
+          title: "친구 요청이 성공했습니다.",
+          icon: 'success'
+        })
+      }
     })
     .catch((error) => {
       console.error(error);

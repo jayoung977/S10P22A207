@@ -1,7 +1,7 @@
 // 국내 / 해외 증시 컴포넌트
-import SingleGameStore from "@/public/src/stores/single/SingleGameStore"
+import FundGameStore from "@/public/src/stores/fund/game/FundGameStore"
 export default function StockMarket() {
-    const { turn, stockMarketListData } = SingleGameStore();
+    const { turn, stockMarketListData } = FundGameStore();
     return (
         <div className="row-span-13 grid grid-cols-2 text-center">
             <div className="col-span-1 grid grid-cols-5 items-center">
