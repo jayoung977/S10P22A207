@@ -54,9 +54,9 @@ export default function Chart({ data }: any) {
         // 스크롤러
         const scroller = chart.scroller();
         scroller.selectedFill({
-        src: 'https://static.anychart.com/images/beach.png',
-        mode: 'stretch',
-        opacity: 0.5
+            src: 'https://static.anychart.com/images/beach.png',
+            mode: 'stretch',
+            opacity: 0.5
         });
         
         // 툴 팁
@@ -70,7 +70,7 @@ export default function Chart({ data }: any) {
 
         // line series 생성
         const lineSeries = plot1.line(
-        purifiedData?.map((item: any) => [item.date, item.endPrice])
+            purifiedData?.map((item: any) => [item.date, item.endPrice])
         );
           
         // line series 속성 설정
