@@ -813,8 +813,8 @@ public class MultiGameService {
 		return null;
 	}
 
-    public List<MultiGameResultDto> getSubResult(MultiGameSubResultRequestDto dto) {
-        MultiGameLog multiGameLog = multiGameLogRepository.findByGameIdAndRound(dto.gameId(), dto.roundNumber())
+    public List<MultiGameResultDto> getSubResult(Long memberId, MultiGameSubResultRequestDto dto) {
+        MultiGameLog multiGameLog = multiGameLogRepository.findByMemberIdAndGameIdAndRound(memberId, dto.gameId(), dto.roundNumber())
             .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
 
         List<MultiGamePlayer> multiGamePlayers = multiGameLog.getMultiGamePlayers();
@@ -833,19 +833,19 @@ public class MultiGameService {
 
         List<MultiGameResultDto> result = new ArrayList<>();
 
-        Map<Long, Integer> map = new HashMap<>();
+
+        Map<Long, Integer> map = new HashMap<>(); // 랭크를 담을 map
         // 결과를 보여달라고 할 때 랭크를 설정해서 보여준다.
         if (dto.roundNumber() != 1) {
-            MultiGame multiGame;
             Long finalGameId = dto.gameId();
-            List<MultiGame> multiGames = memberIds.stream().map(playerId -> {
+            List<MultiGame> multiGames = new ArrayList<>(memberIds.stream().map(playerId -> {
                 try {
-                    String jsonStr = objectMapper.writeValueAsString(redisTemplate.opsForValue().get("multiGame:" + finalGameId + ":" + playerId + ":" + (dto.roundNumber() - 1)));
+                    String jsonStr = objectMapper.writeValueAsString(redisTemplate.opsForValue().get("multiGame:" + finalGameId + ":" + playerId + ":" + (dto.roundNumber())));
                     return objectMapper.readValue(jsonStr, MultiGame.class);
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
-            }).toList();
+            }).toList());
 
             // Sort players by profit in descending order
             multiGames.sort(Comparator.comparing(MultiGame::getProfit).reversed());
@@ -854,7 +854,7 @@ public class MultiGameService {
             }
 
             // 정산할 때 rank를 바꿔준다. -> 새로 API 요청!
-            MultiGameLog beforeMultigameLog = multiGameLogRepository.findByGameIdAndRound(dto.gameId(), dto.roundNumber() - 1)
+            MultiGameLog beforeMultigameLog = multiGameLogRepository.findByMemberIdAndGameIdAndRound(memberId, dto.gameId(), dto.roundNumber())
                 .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
             List<MultiGamePlayer> beforeMultiGameLogMultiGamePlayers = beforeMultigameLog.getMultiGamePlayers();
 
