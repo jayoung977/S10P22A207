@@ -119,7 +119,12 @@ public enum ErrorCode {
     NO_MULTI_GAME_LOG_STOCK(404, "S307", "멀티 게임 로그에 해당하는 주식 정보가 없습니다." ),
 
     // JSON 파싱 에러 (CODE: 500)
-    JSON_PROCESSING_ERROR(500, "J500", "Json Processing Exception"); 
+    JSON_PROCESSING_ERROR(500, "J500", "Json Processing Exception"),
+
+    // 멀티 게임 에러 (CODE: 600)
+    FULL_ROOM(404,"M600" , "방이 가득 찼습니다."),
+    IS_PLAYING(404,"M601" , "게임이 진행중입니다."),
+    NOT_ENOUGH_PARTICIPANTS(404,"M602" ,"2명 이상의 플레이어가 필요합니다." );
     
 
 
