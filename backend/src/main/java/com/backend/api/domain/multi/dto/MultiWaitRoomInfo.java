@@ -9,7 +9,6 @@ public record MultiWaitRoomInfo(
     Long roomId,
     @Schema(description = "방 이름")
     String roomTitle,
-
     @Schema(description = "참가자 Id")
     Set<Long> participantsIds,
 

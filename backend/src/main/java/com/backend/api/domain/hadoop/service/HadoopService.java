@@ -3,6 +3,7 @@ package com.backend.api.domain.hadoop.service;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -192,6 +193,7 @@ public class HadoopService {
 		return response.getResult();
 	}
 
+	@Async
 	public void saveSingleTradeLogHdfs(SingleTrade trade, Long loginUserId) {
 
 		//거래 내역 생성
