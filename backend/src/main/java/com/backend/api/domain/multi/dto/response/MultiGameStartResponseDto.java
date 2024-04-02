@@ -6,7 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record MultiGameStartResponseDto(
 
     @Schema(description = "레디스에 저장된 게임 Id")
-    Long gameId
+    Long gameId,
+
+    @Schema(description = "종목별 차트 response Dto")
+    StockChartDataDto stockChartData
 
 ) {
 

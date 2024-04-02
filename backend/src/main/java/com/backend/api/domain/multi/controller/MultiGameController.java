@@ -57,7 +57,6 @@ public class MultiGameController {
     @Operation(summary = "멀티게임 만들기", description = "멀티게임 방을 만듭니다.", tags = {"멀티게임"})
     public ResponseEntity<BaseResponse<MultiGameRoomCreateResponseDto>> createMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameRoomCreateRequestDto dto) throws
         JsonProcessingException {
-
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.createMultiGameRoom(userDetails, dto));
     }
 
