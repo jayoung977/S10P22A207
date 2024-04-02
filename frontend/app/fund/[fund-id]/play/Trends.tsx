@@ -1,10 +1,10 @@
 'use client'
 import { useState } from 'react'
-import SingleGameStore from '@/public/src/stores/single/SingleGameStore'
+import FundGameStore from '@/public/src/stores/fund/game/FundGameStore'
 import Trend from "./Trend"
 
 export default function Trends () {
-    const { turn, trendListData } = SingleGameStore();
+    const { turn, trendListData } = FundGameStore();
     const [trendData, setTrendData] = useState([
         {
             트렌드 : '트렌드1',
