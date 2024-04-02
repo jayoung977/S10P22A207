@@ -157,7 +157,7 @@ public class MultiGameService {
 		}
 		String key = "multiGame:" + roomId; // Redis에 저장할 키
 		Set<Long> participantIds = new HashSet<>();
-		redisTemplate.opsForValue().set(String.valueOf(userDetails.getEmail()), roomId); // 내가 방에 입장했다는 정보 저장
+		redisTemplate.opsForValue().set("enterRoomId:"+userDetails.getEmail(), roomId); // 내가 방에 입장했다는 정보 저장
 		participantIds.add(userDetails.getId());
 		MultiWaitingRoom multiWaitingRoom =
 			MultiWaitingRoom.builder()
@@ -169,6 +169,7 @@ public class MultiGameService {
 				.readyState(new HashMap<>())
 				.hostId(userDetails.getId())
 				.build();
+		multiWaitingRoom.getReadyState().put(userDetails.getId(), true); // 방장은 레디상태 true로 초기화
 		redisTemplate.opsForValue().set(key, multiWaitingRoom);
 		multiGameSocketService.sendMultiWaitingRoomDetailDto(roomId);
 		return new MultiGameRoomCreateResponseDto(roomId);
