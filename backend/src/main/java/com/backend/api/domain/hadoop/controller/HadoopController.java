@@ -83,11 +83,13 @@ public class HadoopController {
 	)
 	@GetMapping("/stock/max-date")
 	public ResponseEntity<BaseResponse<List<MaxDataDto>>> getMaxDate(
+		@RequestParam String startDate,
+		@RequestParam String endDate,
 		@RequestParam String stockCode,
 		@RequestParam int maxPrice) {
 		log.info("Controller getMaxMinPrice");
 
-		List<MaxDataDto> MaxDataDtoList = hadoopService.getMaxDate(stockCode, maxPrice);
+		List<MaxDataDto> MaxDataDtoList = hadoopService.getMaxDate(startDate, endDate, stockCode, maxPrice);
 		log.info("controller result show: {} {}",stockCode, MaxDataDtoList.size());
 		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, MaxDataDtoList);
 	}
@@ -97,11 +99,13 @@ public class HadoopController {
 	)
 	@GetMapping("/stock/min-date")
 	public ResponseEntity<BaseResponse<List<MinDataDto>>> getMinDate(
+		@RequestParam String startDate,
+		@RequestParam String endDate,
 		@RequestParam String stockCode,
 		@RequestParam int minPrice) {
 		log.info("Controller getMaxMinPrice");
 
-		List<MinDataDto> MinDataDtoList = hadoopService.getMinDate(stockCode, minPrice);
+		List<MinDataDto> MinDataDtoList = hadoopService.getMinDate(startDate, endDate, stockCode, minPrice);
 		log.info("controller result show: {} {}",stockCode, MinDataDtoList.size());
 		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, MinDataDtoList);
 	}
