@@ -1,14 +1,20 @@
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 
-export default function Pagination(){
-  const { pageNumber, setPageNumber } = multigameStore();
-  const pages:number[] = [1,2,3,4,5];
+export default function Pagination({totalwaitRooms, totalGameRooms} : { totalwaitRooms:number, totalGameRooms: number}){
+  const playClickSound = useClickSound();
+  const { pageNumber, setPageNumber, isWaiting } = multigameStore();
+  const waitPages = Array.from({ length: Math.max(Math.ceil(totalwaitRooms / 6), 1) }, (_, i) => i + 1);
+  const gamePages = Array.from({ length: Math.max(Math.ceil(totalwaitRooms / 6), 1) }, (_, i) => i + 1);
+  const pages = isWaiting ? waitPages : gamePages
+
   return(
     <div className='mt-2'>
       <nav aria-label="Page navigation example">
       <ul className="flex items-center -space-x-px h-8 text-sm">
         <li>
           <a onClick={()=> {
+            playClickSound();
             const newPage = Math.max(pageNumber - 1, 1)
             setPageNumber(newPage)
             }} className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
@@ -21,6 +27,7 @@ export default function Pagination(){
           {
             pages.map((page :number, i :number)=> (
               <a onClick={()=>{
+                playClickSound();
                 setPageNumber(page)
                 }} 
                 key={i} 
@@ -37,6 +44,7 @@ export default function Pagination(){
         </li>
         <li>
           <a onClick={()=> {
+            playClickSound();
             const newPage = Math.min(pageNumber + 1, Math.max(...pages))
             setPageNumber(newPage)
             }} className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">

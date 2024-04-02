@@ -1,6 +1,7 @@
-'use client'
-import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+"use client";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import { useQuery, QueryClient, QueryClientProvider } from "react-query";
 
 // navbar
 import Navbar from "@/app/Navbar";
@@ -15,35 +16,42 @@ import Chart from "./Chart";
 import MultiRanking from "./ReviewMultiRanking";
 
 // Store
-import MultiReviewStore from '@/public/src/stores/profile/MultiReviewStore';
+import MultiReviewStore from "@/public/src/stores/profile/MultiReviewStore";
 // axios
-import axios from 'axios';
+import axios from "axios";
+
+const queryClient = new QueryClient();
 
 export default function page() {
-
   const params = useParams();
-  const gameId = params['game-id'];
-  const userId = params['userId'];
-  const [selectedUserNicknameList, setSelectedUserNicknameList] = useState<string[]>([])
+  const gameId = params["game-id"];
+  const userId = params["userId"];
+  const [selectedUserNicknameList, setSelectedUserNicknameList] = useState<
+    string[]
+  >([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
-  
 
-  const { stockName, setStockName, 
-          stockChartDtoList, setStockChartDtoList,
-          multiLogMemberDtoList, setMultiLogMemberDtoList,
-          selectedTradeList, setSelectedTradeList,
-        } = MultiReviewStore();
+  const {
+    stockName,
+    setStockName,
+    stockChartDtoList,
+    setStockChartDtoList,
+    multiLogMemberDtoList,
+    setMultiLogMemberDtoList,
+    selectedTradeList,
+    setSelectedTradeList,
+  } = MultiReviewStore();
 
   const fetchMultiGameRecord = async () => {
     try {
       const response = await axios({
-        method : "get",
-        url :` https://j10a207.p.ssafy.io/api/multi/log?multiGameLogId=${gameId}`,
+        method: "get",
+        url: ` https://j10a207.p.ssafy.io/api/multi/log?multiGameLogId=${gameId}`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
-      })
+      });
 
       console.log("받아온 데이터 : ", response.data.result);
 
@@ -52,42 +60,41 @@ export default function page() {
       setStockName(response.data.result.stockName);
       setStockChartDtoList(response.data.result.stockChartDtoList);
 
-      setIsLoading(false)
-
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
       setIsError(true);
-
     }
-  }
+  };
   useEffect(() => {
     fetchMultiGameRecord();
   }, []);
-       
+
   if (isLoading) {
     return <div className="rainbow"></div>;
   }
 
   if (isError) {
-    return <div>Error</div>
+    return <div>Error</div>;
   }
 
-  
   return (
-    <div className="grid grid-rows-12 h-screen border-separate">
-      <PeacefulBgm />
-      <Navbar />
-      <div className="row-span-11 grid grid-cols-12">
-        <aside className="col-span-3">
-          <MultiTradeHistory />
-          <MultiRanking />
-        </aside>
-        <main className="col-span-9 grid grid-rows-12">
-          <Chart data={stockChartDtoList}/>
-        </main>
-        {/* <aside className="col-span-2 grid grid-rows-12">
+    <QueryClientProvider client={queryClient}>
+      <div className="grid grid-rows-12 h-screen border-separate">
+        <PeacefulBgm />
+        <Navbar />
+        <div className="row-span-11 grid grid-cols-12">
+          <aside className="col-span-3">
+            <MultiTradeHistory />
+            <MultiRanking />
+          </aside>
+          <main className="col-span-9 grid grid-rows-12">
+            <Chart data={stockChartDtoList} />
+          </main>
+          {/* <aside className="col-span-2 grid grid-rows-12">
         </aside> */}
+        </div>
       </div>
-    </div>
+    </QueryClientProvider>
   );
 }

@@ -1,11 +1,12 @@
 "use client";
-import penguin from "@/public/src/assets/images/penguin.png";
+import logo from "@/public/src/assets/images/logo.png"
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RoundResult from "./roundResult";
 import FinalResult from "./finalResult";
 import axios from "axios";
 import { useParams } from "next/navigation";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +16,7 @@ export default function Header() {
   const params = useParams();
   const roundPercentage = (turn / 50) * 100;
   const allPercentage = ((50 * (round - 1) + turn) / 150) * 100;
+  const playClickSound = useClickSound();
 
   function handleTomorrow (turn: number){
     axios({
@@ -36,6 +38,35 @@ export default function Header() {
     })
   }
 
+  const handleTradeTurn = (e :KeyboardEvent) => {
+    if (e.key === "r") {
+      playClickSound();
+      handleTomorrow(turn)
+      if (round == 3 && turn == 49) {
+        console.log("경기 종료");
+        setIsGameover(true);
+      } else if (turn === 49) {
+        setIsOpen(true);
+        // 일단 3초로 설정
+        setTimeout(() => setIsOpen(false), 30000);
+        setRound(round + 1);
+        setTurn(0);
+      } else {
+        setTurn(turn + 1);
+      }
+    }
+  }
+
+
+  useEffect (() => {
+    window.addEventListener('keydown', handleTradeTurn);
+
+    return () => {
+        window.removeEventListener("keydown", handleTradeTurn);
+
+    }
+  }, [turn])
+
   return (
     <header className="row-span-1 grid grid-cols-12 border gap-2 items-center">
       <FinalResult
@@ -53,7 +84,7 @@ export default function Header() {
       <div className="col-start-2 col-end-3 flex items-center">
         <div className="flex gap-2 items-center">
           <Image
-            src={penguin}
+            src={logo}
             alt="Logo"
             className="h-8"
             width={32}
@@ -72,14 +103,14 @@ export default function Header() {
           disabled={turn === 50}
           // turn이 50이면 disabled 속성이 true가 됩니다.
           onClick={() => {
+            playClickSound();
             handleTomorrow(turn)
             if (round == 3 && turn == 49) {
               console.log("경기 종료");
               setIsGameover(true);
             } else if (turn === 49) {
               setIsOpen(true);
-              // 일단 3초로 설정
-              setTimeout(() => setIsOpen(false), 1000);
+              setTimeout(() => setIsOpen(false), 30000);
               setRound(round + 1);
               setTurn(0);
             } else {
@@ -91,7 +122,7 @@ export default function Header() {
           }`}
         >
           {" "}
-          다음 턴으로!
+          다음 턴(R)
         </button>
       </div>
       <div className="col-span-1 grid grid-rows-2 gap-0 text-md text-center font-semibold">

@@ -1,7 +1,8 @@
 package com.backend.api.domain.multi.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public record MultiGameRoomInfo(
 
@@ -14,14 +15,16 @@ public record MultiGameRoomInfo(
     Integer roundNumber,
 
     @Schema(description = "참가자 Id")
-    List<Long> participantsIds,
+    Set<Long> participantsIds,
 
     @Schema(description = "비밀방 여부")
     Boolean isOpen,
 
     @Schema(description = "비밀번호")
-    Integer password
+    Integer password,
+
+    @Schema(description = "총 라운드 수")
+    Integer maxRoundNumber
 
     ) {
-
 }

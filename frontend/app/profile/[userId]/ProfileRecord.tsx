@@ -64,14 +64,14 @@ export default function UserRecord() {
             className="rounded-full ring-2 ring-background-1 dark:ring-background-1"
             src={useGetProfileImage(result?.asset)}
             alt="Extra large avatar"
-            width={150}
+            width={120}
           ></Image>
         </div>
         <div className="col-start-5 col-end-13 grid grid-rows-12">
           <div className="grid m-4 row-start-1 row-end-13 justify-center items-center  grid-cols-4">
             <div className="flex-col justify-center items-center col-span-1">
               <div className="text-center font-extrabold text-xl">
-                {result?.asset}원
+                {result?.asset.toLocaleString()}원
               </div>
               <div className="text-center text-textColor-1">시드</div>
             </div>

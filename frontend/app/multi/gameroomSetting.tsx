@@ -11,6 +11,7 @@ import multigameStore, {
   ResultType,
 } from "@/public/src/stores/multi/MultiGameStore";
 import axios from "axios";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 const fetchMultiRoomInfo = async (pageNumber: number) => {
   const token = sessionStorage.getItem("accessToken");
@@ -27,7 +28,7 @@ const fetchMultiRoomInfo = async (pageNumber: number) => {
 
 export default function GameRoomSetting() {
   const [rooms, setRooms] = useState<MultiGameRoomInfoList[]>([]);
-  const { pageNumber } = multigameStore();
+  const { pageNumber, isWaiting, setIsWaiting } = multigameStore();
   const { data, isLoading, error }: UseQueryResult<MultiRoomInfo, Error> =
     // pageNumber를 의존성 변수로 추가하면 pageNumber에 따라 react-query 실행
     useQuery(["MultiRoomInfo", pageNumber], () =>
@@ -52,10 +53,11 @@ export default function GameRoomSetting() {
 
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [isWaiting, setIsWaiting] = useState(false);
   const [round, setRound] = useState(3);
+  const playClickSound = useClickSound();
 
   const handleQuickstart = () => {
+    playClickSound();
     axios.get('https://j10a207.p.ssafy.io/api/multi/1', {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
@@ -81,6 +83,9 @@ export default function GameRoomSetting() {
   const { result }: { result: ResultType | null } = data
     ? data
     : { result: null };
+  console.log(result)
+  const totalwaitRooms = result ? result.totalWaitRoomCounts : 0;
+  const totalGameRooms = result ? result.totalGameRoomCounts : 0;
   return (
     <div className="col-span-8 grid grid-rows-12 p-2">
       <div className="row-span-2 grid grid-cols-12 border items-center bg-background-1 rounded-lg shadow m-2 p-2 dark:bg-gray-800">
@@ -91,7 +96,10 @@ export default function GameRoomSetting() {
               type="checkbox"
               value=""
               checked={isWaiting == false}
-              onChange={() => setIsWaiting(false)}
+              onChange={() => {
+                playClickSound();
+                setIsWaiting(false)
+              }}
               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
             <label
@@ -107,7 +115,10 @@ export default function GameRoomSetting() {
               type="checkbox"
               value=""
               checked={isWaiting == true}
-              onChange={() => setIsWaiting(true)}
+              onChange={() =>{
+                playClickSound();
+                setIsWaiting(true)
+              }}
               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
             <label
@@ -123,7 +134,10 @@ export default function GameRoomSetting() {
               type="checkbox"
               value=""
               checked={round == 3}
-              onChange={() => setRound(3)}
+              onChange={() => {
+                playClickSound();
+                setRound(3)
+              }}
               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
             <label
@@ -139,7 +153,10 @@ export default function GameRoomSetting() {
               type="checkbox"
               value=""
               checked={round == 5}
-              onChange={() => setRound(5)}
+              onChange={() => {
+                playClickSound();
+                setRound(5)
+              }}
               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
             <label
@@ -155,7 +172,11 @@ export default function GameRoomSetting() {
               type="checkbox"
               value=""
               checked={round == 7}
-              onChange={() => setRound(7)}
+              onChange={() => {
+                playClickSound();
+                setRound(7)
+              }}
+
               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
             <label
@@ -177,6 +198,7 @@ export default function GameRoomSetting() {
         <div className="col-span-2 justify-items-center ms-2">
           <button
             onClick={() => {
+              playClickSound();
               setIsOpen(true);
             }}
             className="bg-red-500 hover:bg-red-400 px-2 py-1 rounded-md text-white"
@@ -193,17 +215,30 @@ export default function GameRoomSetting() {
       </div>
       {/* 게임방 목록 */}
       <div className="bg-background-1 row-span-8 rounded-md grid grid-cols-12 grid-rows-3 shadow-md gap-1">
-        {result?.multiGameRoomInfoList.map((room: MultiGameRoomInfoList, i: number) => (
-          <div className="col-span-6 row-span-1 p-1 m-1 rounded-md" key={i}>
-            <GameRoom
-              color={RoomColor[(pageNumber - 1 + i) % 13]}
-              room={room}
-            />
-          </div>
-        ))}
+        {
+          isWaiting ? (
+            result?.multiWaitRoomInfoList.map((room: MultiGameRoomInfoList, i: number) => (
+              <div className="col-span-6 row-span-1 p-1 m-1 rounded-md" key={i}>
+                <GameRoom
+                  color={RoomColor[(pageNumber - 1 + i) % 13]}
+                  room={room}
+                />
+              </div>
+            ))
+          ): (
+            result?.multiGameRoomInfoList.map((room: MultiGameRoomInfoList, i: number) => (
+              <div className="col-span-6 row-span-1 p-1 m-1 rounded-md" key={i}>
+                <GameRoom
+                  color={RoomColor[(pageNumber - 1 + i) % 13]}
+                  room={room}
+                />
+              </div>
+            ))
+          )
+        }
       </div>
       <section className="row-span-2 flex justify-center">
-        <Pagination />
+        <Pagination totalwaitRooms={totalwaitRooms} totalGameRooms={totalGameRooms} />
       </section>
     </div>
   );

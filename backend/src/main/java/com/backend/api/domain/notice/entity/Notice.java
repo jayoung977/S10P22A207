@@ -20,16 +20,17 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
-@Table(name = "notification")
+@Table(name = "notice")
 @NoArgsConstructor(access = PROTECTED)
 public class Notice extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "notification_id")
+    @Column(name = "notice_id")
     private Long id;
 
     @ManyToOne(fetch = LAZY)
@@ -42,6 +43,7 @@ public class Notice extends BaseEntity {
     private String content; // 내용
 
     @NotNull
+    @Setter
     private boolean isRead; // 읽었는지 여부
 
     @Enumerated(EnumType.STRING)

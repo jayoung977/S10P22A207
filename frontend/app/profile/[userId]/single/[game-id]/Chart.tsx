@@ -1,6 +1,6 @@
 "use client";
 // 현재 턴/종목에 대한 차트 정보 (main - 1)
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import anychart from "anychart";
 import SingleReviewStore from "@/public/src/stores/profile/SingleReviewStore";
 // 주어진 데이터 정제
@@ -28,8 +28,6 @@ function calculateMovingAverage(data :any, period :any) {
           const average = (sum / period).toFixed(2);
           result.push([data[i].date, parseFloat(average)]);
 
-        } else {
-          // result.push([data[i].date, 0]);
         }
     }
     return result;
@@ -56,9 +54,9 @@ export default function Chart({ data }: any) {
         // 스크롤러
         const scroller = chart.scroller();
         scroller.selectedFill({
-        src: 'https://static.anychart.com/images/beach.png',
-        mode: 'stretch',
-        opacity: 0.5
+            src: 'https://static.anychart.com/images/beach.png',
+            mode: 'stretch',
+            opacity: 0.5
         });
         
         // 툴 팁
@@ -72,8 +70,9 @@ export default function Chart({ data }: any) {
 
         // line series 생성
         const lineSeries = plot1.line(
-        purifiedData?.map((item: any) => [item.date, item.endPrice])
+            purifiedData?.map((item: any) => [item.date, item.endPrice])
         );
+          
         // line series 속성 설정
         lineSeries.name("주가");
         lineSeries.hovered().markers().enabled(true).type("circle").size(3);
@@ -172,43 +171,43 @@ export default function Chart({ data }: any) {
         }
         }) 
 
-    // const buyData = tradeList[selectedIndex]?.singleLogTradeDtoList?.filter((x :any) => x.tradeType == "BUY");
-    // const sellData = tradeList[selectedIndex]?.singleLogTradeDtoList?.filter((x :any) => x.tradeType =="SELL")
-    
-    let eventMarkerData :any = [];
-    tradeList[selectedIndex]?.singleLogTradeDtoList?.map((x :any) => {
-        if (x.tradeType == "BUY") {
-            eventMarkerData.push({
-                symbol : 'B',
-                date : x.date,
-                description : `주가 : ${x.price}` + '\n' + `수량 : ${x.amount}`,
-                normal : { fill : 'red' }
-
-            })
-        } else {
-            eventMarkerData.push({
-                symbol : 'S',
-                date : x.date,
-                description : `주가 : ${x.price}` + '\n' + `수량 : ${x.amount}`,
-                normal : { fill : 'blue' }
-            })
-        }
-    })
-
-    if (eventMarkerData.length > 0) {
-        plot1.eventMarkers({"groups": [
-            {
-            "data": eventMarkerData,
+        let eventMarkerData :any = [];
+        tradeList[selectedIndex]?.singleLogTradeDtoList?.map((x :any) => {
+            if (x.tradeType == "BUY") {
+                eventMarkerData.push({
+                    symbol : 'B',
+                    date : x.date,
+                    description : `주가 : ${x.price}` + '\n' + `수량 : ${x.amount}`,
+                    normal : { fill : 'red', stroke: "1 black" },
+                    hovered : { fill : 'red', stroke : "2 black"},
+                    selected : { fill : 'red', stroke : '2 black'}
+                })
+            } else {
+                eventMarkerData.push({
+                    symbol : 'S',
+                    date : x.date,
+                    title : '매매날짜 : ',
+                    description : `주가 : ${x.price}` + '\n' + `수량 : ${x.amount}`,
+                    normal : { fill : 'blue', stroke: "1 black" },
+                    hovered : { fill : 'blue', stroke : "2 black"},
+                    selected : { fill : 'blue', stroke : '2 black'}
+                })
             }
-        ]});
-    }
-    
-    // set the symbol of event markers
-    plot1.eventMarkers().format(function( this :any ) {
-        return this.getData("symbol");
-    });
-    
-    
+        })
+
+        if (eventMarkerData.length > 0) {
+            plot1.eventMarkers({"groups": [
+                {
+                "data": eventMarkerData,
+                }
+            ]});
+            plot1.eventMarkers().direction("up");
+        }
+        plot1.eventMarkers().format(function( this :any ) {
+            return this.getData("symbol");
+        });
+       
+        
         // 첫 번째 plot 속성 설정
         plot1.legend().title().useHtml(true);
         plot1.legend().titleFormat(<span></span>);

@@ -10,7 +10,10 @@ public record MultiGameStartRequestDto(
     @Schema(description = "라운드")
     Integer roundNumber,
 
-    @Schema(description = "방ID")
+    @Schema(description = "총 라운드 수")
+    Integer maxRoundNumber,
+
+    @Schema(description = "방 ID")
     Long roomId
 
 )

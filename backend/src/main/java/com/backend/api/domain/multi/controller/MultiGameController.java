@@ -3,6 +3,8 @@ package com.backend.api.domain.multi.controller;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.multi.dto.MultiGameResultRequestDto;
+import com.backend.api.domain.multi.dto.MultiGameSubResultRequestDto;
+import com.backend.api.domain.multi.dto.request.MultiGameChartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameRoomCreateRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameStartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiNextDayRequestDto;
@@ -10,18 +12,20 @@ import com.backend.api.domain.multi.dto.request.MultiTradeRequestDto;
 import com.backend.api.domain.multi.dto.response.*;
 import com.backend.api.domain.multi.service.MultiGameService;
 import com.backend.api.domain.multi.service.MultiGameSocketService;
+import com.backend.api.domain.single.dto.response.StockChartDataDto;
 import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.common.code.SuccessCode;
 import com.backend.api.global.exception.BaseExceptionHandler;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/multi")
@@ -54,15 +58,19 @@ public class MultiGameController {
     @Operation(summary = "멀티게임 만들기", description = "멀티게임 방을 만듭니다.", tags = {"멀티게임"})
     public ResponseEntity<BaseResponse<MultiGameRoomCreateResponseDto>> createMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameRoomCreateRequestDto dto) throws
         JsonProcessingException {
-
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.createMultiGameRoom(userDetails, dto));
     }
 
     @PostMapping("/start-game")
-    @Operation(summary = "멀티게임 시작하기 처음시작.", description = "멀티게임을 시작합니다.", tags = {"멀티게임"})
+    @Operation(summary = "멀티게임 시작하기.", description = "멀티게임을 시작합니다.", tags = {"멀티게임"})
     public ResponseEntity<BaseResponse<MultiGameStartResponseDto>> startMultiGame(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameStartRequestDto dto) {
-
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.startMultiGame(userDetails.getId(), dto));
+    }
+
+    @PostMapping("/game-chart")
+    @Operation(summary = "멀티게임 시작 후 차트 호출.", description = "멀티게임을 시작한 후에 차트 데이터를 요청합니다.", tags = {"멀티게임"})
+    public ResponseEntity<BaseResponse<StockChartDataDto>> getGameChart(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameChartRequestDto dto) {
+        return BaseResponse.success(SuccessCode.SELL_SUCCESS, multiGameService.getGameChart(userDetails.getId(), dto));
     }
 
     @PostMapping("/sell")
@@ -96,13 +104,20 @@ public class MultiGameController {
         return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.getTomorrow(dto, userDetails.getId()));
     }
 
-    @GetMapping("/round-result")
+    @GetMapping("/final-result")
     @Operation(summary = "멀티 - 최종 결과", description = "멀티게임이 끝나면 모든 결과를 보내줍니다.", tags = {"멀티게임"})
     public ResponseEntity<BaseResponse<MultiGameFinalResultDto>> getFinalResult(@RequestBody MultiGameResultRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.getFinalResult(dto));
     }
+
+    @GetMapping("/round-result")
+    @Operation(summary = "멀티 - 라운드 결과", description = "멀티게임 특정 라운드가 끝나면 결과를 보내줍니다.", tags = {"멀티복기"})
+    public ResponseEntity<BaseResponse<List<MultiGameResultDto>>> getSubResult(@RequestBody MultiGameSubResultRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.getSubResult(dto));
+    }
+
     @GetMapping("/log")
-    @Operation(summary = "멀티게임 복기", description = "멀티기록을 선택하면 해당 싱글게임기록을 가져옵니다.", tags = {"멀티게임"})
+    @Operation(summary = "멀티게임 복기", description = "멀티기록을 선택하면 해당 싱글게임기록을 가져옵니다.", tags = {"멀티복기"})
     public ResponseEntity<BaseResponse<MultiLogResponseDto>> getMultiGameLog(@RequestParam(name = "multiGameLogId") Long multiGameLogId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         MultiLogResponseDto responseDto = multiGameService.getMultiGameLog(multiGameLogId, userDetails.getId());
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, responseDto);

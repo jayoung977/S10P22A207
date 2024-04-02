@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import profileStore from "@/public/src/stores/profile/profileStore";
@@ -12,6 +13,7 @@ import {
   useMutation,
   useQueryClient,
 } from "react-query";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 interface resultType {
   memberId: number;
@@ -32,16 +34,16 @@ const fetchFriendRequests = async () => {
       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
     },
   });
+  console.log(response.data);
   return response.data;
 };
-
 export default function ProfileFriendRequest() {
-  const { isOpen, setIsOpen, isSentOpen, setIsSentOpen } = profileStore();
-
+  const { setIsOpen, isOpen, isSentOpen, setIsSentOpen } = profileStore();
   const { data, isLoading, error }: UseQueryResult<FriendRequestInfo, Error> =
     useQuery("userFriendRequestsInfo", fetchFriendRequests);
 
   const queryClient = useQueryClient();
+  const playClickSound = useClickSound();
 
   const { mutate: acceptFriendRequest } = useMutation(
     (nickname: string) =>
@@ -63,7 +65,7 @@ export default function ProfileFriendRequest() {
   const { mutate: rejectFriendRequest } = useMutation(
     (nickname: string) =>
       axios({
-        method: "get",
+        method: "delete",
         url: `https://j10a207.p.ssafy.io/api/friend-ask/reject?nickname=${nickname}`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -75,7 +77,7 @@ export default function ProfileFriendRequest() {
       },
     }
   );
-  if (!isOpen) return null;
+
   if (isLoading) {
     return <div className="rainbow"></div>;
   }
@@ -101,6 +103,7 @@ export default function ProfileFriendRequest() {
               </h3>
               <button
                 onClick={() => {
+                  playClickSound();
                   setIsSentOpen(!isSentOpen);
                 }}
                 className="w-48 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 absolute bottom-2 right-2"
@@ -111,6 +114,7 @@ export default function ProfileFriendRequest() {
                 type="button"
                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 onClick={() => {
+                  playClickSound();
                   setIsOpen(!isOpen);
                 }}
               >
@@ -152,6 +156,7 @@ export default function ProfileFriendRequest() {
                         type="button"
                         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 m-2"
                         onClick={() => {
+                          playClickSound();
                           acceptFriendRequest(item.nickname);
                           console.log("전송");
                         }}
@@ -162,6 +167,7 @@ export default function ProfileFriendRequest() {
                         type="button"
                         className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800 m-2"
                         onClick={() => {
+                          playClickSound();
                           rejectFriendRequest(item.nickname);
                         }}
                       >

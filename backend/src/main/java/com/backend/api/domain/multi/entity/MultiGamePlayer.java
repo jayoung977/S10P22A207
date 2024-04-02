@@ -54,4 +54,15 @@ public class MultiGamePlayer extends BaseEntity {
         this.finalRoi = finalRoi;
         this.finalProfit = finalProfit;
     }
+
+    public void updateFinalProfit(Integer profit){
+        this.finalProfit = profit;
+    }
+
+    public void updateFinalRoi(double roi){
+        this.finalRoi = roi;
+    }
+    public void updateRanking(Integer rank){
+        this.ranking = rank;
+    }
 }

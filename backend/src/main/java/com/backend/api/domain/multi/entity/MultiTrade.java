@@ -44,7 +44,7 @@ public class MultiTrade extends BaseEntity {
     private Long memberId;
 
     @NotNull
-    private LocalDateTime date; // 거래 시각
+    private int day; // 거래 시각
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -65,12 +65,12 @@ public class MultiTrade extends BaseEntity {
     private Integer round;
 
     @Builder
-    public MultiTrade(MultiGameLog multiGameLog, Stock stock, Long memberId, LocalDateTime date, TradeType tradeType, Integer amount, Integer price, Integer stockQuantity, Double roi,
+    public MultiTrade(MultiGameLog multiGameLog, Stock stock, Long memberId, int day, TradeType tradeType, Integer amount, Integer price, Integer stockQuantity, Double roi,
         Integer round) {
         this.multiGameLog = multiGameLog;
         this.stock = stock;
         this.memberId = memberId;
-        this.date = date;
+        this.day = day;
         this.tradeType = tradeType;
         this.amount = amount;
         this.price = price;

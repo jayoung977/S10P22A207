@@ -1,9 +1,11 @@
 'use client'
 import { useState } from 'react';
+import FundGameStore from '@/public/src/stores/fund/game/FundGameStore';
 
 // 시장 정보 컴포넌트
 import Market from "./Market"
 export default function MarketInfo () {
+    const { turn, marketInfoListData } = FundGameStore();
     const [marketData, setMarketData] = useState([
         {
             name: '금',
@@ -33,6 +35,11 @@ export default function MarketInfo () {
                     <Market key={index} data={x}/>
                 ))
             }
+            {/* {
+                marketInfoListData[300+turn].map((x, index) => (
+                    <Market key={index} data={x}/>
+                ))
+            } */}
         </div>
     )
 }

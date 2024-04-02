@@ -2,11 +2,16 @@ package com.backend.api.domain.single.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.time.LocalDateTime;
 import java.util.List;
 @Schema(name = "싱글게임기록 response Dto", description = "싱글게임기록 관련 response Dto")
 public record SingleGameLogResponseDto(
+        @Schema(description = "시작일")
+        LocalDateTime startDate,
+        @Schema(description = "종료일")
+        LocalDateTime endDate,
         @Schema(description = "종목 정보(종목수와 동일한 10개)")
-        List<StockInfoDto> stockInfoDtoList,
+        List<SingleLogStockInfoDto> stockInfoDtoList,
         @Schema(description = "종목별 차트(350개)를 담아준 리스트(종목수와 동일한 10개)")
         List<StockChartDataDto> stockChartDataList,
         @Schema(description = "그간 매매 내역")

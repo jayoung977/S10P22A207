@@ -6,6 +6,7 @@ import axios from "axios";
 import { UseMutationResult, useMutation } from "react-query";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 
 interface NewFund {
@@ -21,7 +22,7 @@ interface NewFund {
 
 const createFund = async(fund: NewFund) => {
   const token = sessionStorage.getItem('accessToken')
-  const { data } = await axios.post(`https://j10a207.p.ssafy.io/api/fund/open?loginUserId=1`,fund,{
+  const { data } = await axios.post(`https://j10a207.p.ssafy.io/api/fund/open`,fund,{
     headers: {
       'Authorization': `Bearer ${token}`
     }
@@ -31,6 +32,7 @@ const createFund = async(fund: NewFund) => {
 
 
 export default function MakeFundModal({isOpen, onClose}: any){
+  const playClickSound = useClickSound();
   const [fundNameCheck, setFundNameCheck] = useState(false)
   const router = useRouter();
   const { 
@@ -44,7 +46,6 @@ export default function MakeFundModal({isOpen, onClose}: any){
   
   useEffect(()=> {
     setFundNameCheck(false)
-    // console.log(fundNameCheck)
   },[isOpen])
   
   const funName = watch('fundName')
@@ -170,7 +171,10 @@ export default function MakeFundModal({isOpen, onClose}: any){
                       })}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="펀드 이름을 입력해주세요." />
                       <button
-                        onClick={()=> {handleFundNameCheck(funName)}}
+                        onClick={()=> {
+                          playClickSound();
+                          handleFundNameCheck(funName)
+                        }}
                         className="w-1/3 m-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">중복확인</button>
                   </div>
                      <p className="text-xs text-small-3 p-1">{errors.fundName?.message}</p>
@@ -181,9 +185,9 @@ export default function MakeFundModal({isOpen, onClose}: any){
                     type="text"
                     id="fund-industry"
                     {...register('industry', {
-                      required: '투자하려는 산업 분야를 하나 이상 작성하세요.'
+                      required: '펀드설명에 대해서 적어주세요.'
                     })}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="투자하려는 산업 분야" />
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="펀드설명" />
                     <p className="text-xs text-small-3 p-1">{errors.industry?.message}</p>
               </div>
               <div>
@@ -204,6 +208,7 @@ export default function MakeFundModal({isOpen, onClose}: any){
                         },
                         valueAsNumber: true
                       })}
+                      onChange={playClickSound}
                       className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="펀드 운영 기간을 설정해주세요." />
                   </div>
                   <p className="text-xs text-small-3 p-1">{errors.period?.message}</p>
@@ -214,6 +219,7 @@ export default function MakeFundModal({isOpen, onClose}: any){
                   <input 
                     type="number"
                     id="fund-members"
+                    
                     {...register('capacity',{
                       required: '원하는 펀드 멤버 수를 정해주세요.',
                       min: {
@@ -226,6 +232,7 @@ export default function MakeFundModal({isOpen, onClose}: any){
                       },
                       valueAsNumber: true,
                     })}
+                    onChange={playClickSound}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="펀드 인원"/>
                     <p className="text-xs text-small-3 p-1">{errors.capacity?.message}</p>
 
@@ -237,6 +244,7 @@ export default function MakeFundModal({isOpen, onClose}: any){
                    {...register('feeType',{
                       required: '펀드수수료 지급 방식을 설정해 주세요.'
                    })}
+                   onChange={playClickSound}
                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" >
                     <option value="PRE">펀드수수료 선지급</option>
                     <option value="POST">펀드수수료 후정산</option>
@@ -256,6 +264,7 @@ export default function MakeFundModal({isOpen, onClose}: any){
                       },
                       valueAsNumber: true,
                     })}
+                    onChange={playClickSound}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="최소 10,000,000원" />
                     <p className="text-xs text-small-3 p-1">{errors.targetAmount?.message}</p>
 
@@ -272,7 +281,8 @@ export default function MakeFundModal({isOpen, onClose}: any){
                       message: '최소 1,000,000원 이상으로 설정해 주세요.'
                     },
                     valueAsNumber: true,
-                   })}
+                  })}
+                  onChange={playClickSound}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="1,000,000원 ~ 최대" />
                   <p className="text-xs text-small-3 p-1">{errors.minimumAmount?.message}</p>
               </div>
@@ -280,11 +290,14 @@ export default function MakeFundModal({isOpen, onClose}: any){
               <div className="flex justify-around">
                 <button 
                   onClick={()=>{
+                    playClickSound();
                     reset()
                     onClose()
                     }}
                   type="button" className="w-1/2 m-1 text-textColor-1 bg-button-2 hover:bg-gray-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">취소</button>
-                <button type="submit" className="w-1/2 m-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">펀드 개설</button>
+                <button type="submit"
+                  onClick={playClickSound}
+                className="w-1/2 m-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">펀드 개설</button>
               </div>
             </div>
           </form>

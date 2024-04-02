@@ -3,9 +3,11 @@ import Image from "next/image";
 import kakaoLoginImg from "./../public/src/assets/images/kakao.svg";
 import { TypewriterEffectSmooth } from "../public/src/components/ui/typewriter-effect";
 import backgroundVideo from "./../static/videos/bg.mp4";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 // https://www.pixilart.com/art/blue-line-97f3322f9f26af9
 
 export default function KakaoLogin() {
+  const playClickSound = useClickSound();
   const words = [
     {
       text: "지",
@@ -60,6 +62,7 @@ export default function KakaoLogin() {
         <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-4">
           <button
             onClick={() => {
+              playClickSound();
               loginHandler();
             }}
             type="button"

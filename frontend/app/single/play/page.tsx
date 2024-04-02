@@ -41,8 +41,7 @@ export default function SinglePlay() {
     selectedStockIndex,
     setStartDate, setEndDate,
   } = SingleGameStore();
-  const { asset } = userStore();
-  console.log("asset : ", asset);
+
   const fetchSingleGameData = async () => {
     try {
       const response = await axios({
@@ -52,9 +51,7 @@ export default function SinglePlay() {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         }
       })
-
-      console.log("useEffect axios 요청 데이터 결과")
-      console.log(response.data.result);    
+ 
       if (response.data.result.day > 0) {
         setTurn(response.data.result.day);
       } else {
@@ -65,23 +62,21 @@ export default function SinglePlay() {
       setSingleGameChance(response.data.result.singleGameChance);
 
         // 사용자 총 평가 자산 데이터
-        if (response.data.result.totalAsset) {
+        if (response.data.result.totalAsset.totalAsset == 0) {
             setTotalAssetData({
               cash : response.data.result.totalAsset.cash,
-              resultProfit : response.data.result.totalAsset.resultProfit,
-              resultRoi : response.data.result.totalAsset.resultRoi,
-              totalPurchaseAmount : response.data.result.totalAsset.totalPurchaseAmount,
-              totalAsset : response.data.result.totalAsset.cash + response.data.result.totalAsset.totalPurchaseAmount,
+              resultProfit : 0,
+              resultRoi : 0, 
+              totalPurchaseAmount : 0, 
+              totalAsset : response.data.result.totalAsset.cash,
             })
         } else {
-          console.log("없어서")
-          console.log(asset);
           setTotalAssetData({
-            cash : asset as number,
-            resultProfit : 0,
-            resultRoi : 0, 
-            totalPurchaseAmount : 0, 
-            totalAsset :  asset as number,
+            cash : response.data.result.totalAsset.cash,
+            resultProfit : response.data.result.totalAsset.resultProfit,
+            resultRoi : response.data.result.totalAsset.resultRoi,
+            totalPurchaseAmount : response.data.result.totalAsset.totalPurchaseAmount,
+            totalAsset : response.data.result.totalAsset.totalAsset,
           })
         }
         // 사용자 보유 종목 주식 데이터
@@ -96,9 +91,9 @@ export default function SinglePlay() {
         setStockListData(response.data.result.stockChartDataList);
         // console.log('시작 날짜')
         const startTime = new Date(response.data.result.stockChartDataList[0].stockChartList[249].date).getTime();
-        console.log("시작 : ", startTime);
+        // console.log("시작 : ", startTime);
         const endTime = new Date(response.data.result.stockChartDataList[0].stockChartList[299].date).getTime();
-        console.log("끝 : ", endTime);
+        // console.log("끝 : ", endTime);
         // setStartDate(Date(response.data.result.stockChartDataList[0].stockChartList[299].date).getTime())
         setStartDate(startTime);
         setEndDate(endTime);

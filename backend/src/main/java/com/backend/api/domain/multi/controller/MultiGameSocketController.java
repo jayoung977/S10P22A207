@@ -63,6 +63,18 @@ public class MultiGameSocketController {
 		);
 	}
 
+	@PostMapping("/room-info")
+	@Operation(summary = "멀티게임 룸 정보 소켓 전송", description = "멀티게임 모드에서 룸정보 소켓받아오기.")
+	public ResponseEntity<BaseResponse<String>> getMultiWaitingRoomInfo(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestParam Long roomId) throws JsonProcessingException {
+		log.info("멀티게임 소켓전송 {} ", roomId);
+		multiGameSocketService.sendMultiWaitingRoomDetailDto(roomId);
+		return BaseResponse.success(
+			SuccessCode.SELECT_SUCCESS,
+			"방정보 호출 성공"
+		);
+	}
+
 	@DeleteMapping("/exit")
 	@Operation(summary = "멀티게임 대기방 나가기", description = "멀티게임 모드에서 대기방을 나갑니다.")
 	public ResponseEntity<BaseResponse<String>> exitMultiRoom(@AuthenticationPrincipal CustomUserDetails userDetails,
@@ -72,6 +84,18 @@ public class MultiGameSocketController {
 		return BaseResponse.success(
 			SuccessCode.SELECT_SUCCESS,
 			"나가기 성공"
+		);
+	}
+
+	@DeleteMapping("/kick")
+	@Operation(summary = "멀티게임 대기방 강퇴하기", description = "멀티게임 모드에서 유저를 강퇴합니다.")
+	public ResponseEntity<BaseResponse<String>> kickMultiRoom(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestParam Long roomId, @RequestParam Long kickMemberId) throws JsonProcessingException {
+		log.info("멀티게임 강퇴하기 {}방 {}강퇴", roomId, kickMemberId);
+		multiGameSocketService.kickMultiRoom(userDetails, roomId, kickMemberId);
+		return BaseResponse.success(
+			SuccessCode.SELECT_SUCCESS,
+			"추방 성공"
 		);
 	}
 }

@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
+import com.backend.api.domain.multi.dto.response.MultiWaitingRoomDetailDto;
 import com.backend.api.domain.multi.entity.MultiWaitingRoom;
 import com.backend.api.global.common.SocketBaseDtoRes;
 import com.backend.api.global.common.code.ErrorCode;
@@ -14,10 +15,8 @@ import com.backend.api.global.common.type.SocketType;
 import com.backend.api.global.exception.BaseExceptionHandler;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
 import com.backend.api.global.websocket.dto.request.FriendInviteReq;
-import com.backend.api.global.websocket.dto.request.MultiGameReadyReq;
 import com.backend.api.global.websocket.dto.request.WebSocketMessageReq;
 import com.backend.api.global.websocket.dto.response.FriendInviteRes;
-import com.backend.api.global.websocket.dto.response.MultiGameReadyRes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,7 +33,7 @@ public class MultiGameSocketService {
 	private final SimpMessageSendingOperations template;
 	private final ObjectMapper objectMapper;
 
-	public FriendInviteRes inviteFriend(FriendInviteReq friendInviteReq, Long loginMemberId){
+	public FriendInviteRes inviteFriend(FriendInviteReq friendInviteReq, Long loginMemberId) {
 		Member loginMember = memberRepository.findById(loginMemberId).orElseThrow(
 			() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)
 		);
@@ -61,9 +60,10 @@ public class MultiGameSocketService {
 		return multiWaitingRoom;
 	}
 
-	public void sendMessageToMultiWaitingRoom(Long roomId, SocketBaseDtoRes<?> socketBaseDtoRes) throws JsonProcessingException {
+	public void sendMessageToMultiWaitingRoom(Long roomId, SocketBaseDtoRes<?> socketBaseDtoRes) throws
+		JsonProcessingException {
 		MultiWaitingRoom multiWaitingRoom = getMultiWaitingRoom(roomId);
-		for(Long memberId : multiWaitingRoom.getParticipantIds()) { // 채팅방에 있는 모든 유저에게 메시지 전송
+		for (Long memberId : multiWaitingRoom.getParticipantIds()) { // 채팅방에 있는 모든 유저에게 메시지 전송
 			log.info("메시지 전송 대상: {}", memberId);
 			template.convertAndSend("/api/sub/" + memberId, socketBaseDtoRes);
 			log.info("socketBaseDtoRes : {}", socketBaseDtoRes);
@@ -71,17 +71,21 @@ public class MultiGameSocketService {
 		log.info("메시지 전송 완료");
 	}
 
-	public void enterMultiWaitingRoom(CustomUserDetails userDetails, Long roomId, String nickName) throws JsonProcessingException {
+	public void enterMultiWaitingRoom(CustomUserDetails userDetails, Long roomId, String nickName) throws
+		JsonProcessingException {
 		log.info("멀티게임 대기방 입장 {} 님이 {} 방에 입장합니다.", userDetails.getId(), roomId);
 		// 웹소켓에 연결시키는 과정
 		checkStatus(userDetails); // 내가 방에 입장해 있는지 확인
 		MultiWaitingRoom multiWaitingRoom = getMultiWaitingRoom(roomId);
-		multiWaitingRoom.getParticipantIds().add(userDetails.getId());	// 참가자 목록에 추가
+		multiWaitingRoom.getParticipantIds().add(userDetails.getId());    // 참가자 목록에 추가
 		multiWaitingRoom.getReadyState().put(userDetails.getId(), false); // 레디 상태 false로 초기화
 		redisTemplate.opsForValue().set("multiGame:" + roomId, multiWaitingRoom);
 		// 입장 메시지 전송
-		sendMessageToMultiWaitingRoom(roomId, new SocketBaseDtoRes<>(SocketType.MESSAGE, new WebSocketMessageReq(roomId, nickName, nickName+"님이 입장했습니다.")));
-		redisTemplate.opsForValue().set(userDetails.getEmail(), roomId); // 내가 방에 입장했다는 정보 저장
+		redisTemplate.opsForValue().set("enterRoomId:" + userDetails.getEmail(), roomId); // 내가 방에 입장했다는 정보 저장
+		log.info("멀티게임 방 상태 업데이트 & 소켓 전송");
+		// sendMultiWaitingRoomDetailDto(roomId);
+		sendMessageToMultiWaitingRoom(roomId,
+			new SocketBaseDtoRes<>(SocketType.ENTER, new WebSocketMessageReq(roomId, "시스템", nickName)));
 	}
 
 	public boolean readyMultiRoom(Long memberId, Long roomId) throws JsonProcessingException {
@@ -91,12 +95,7 @@ public class MultiGameSocketService {
 		multiWaitingRoom.getReadyState().put(memberId, !readyState);
 		redisTemplate.opsForValue().set("multiGame:" + roomId, multiWaitingRoom);
 		log.info("멤버 {} 레디 상태 변경 후: {}", memberId, !readyState);
-		MultiGameReadyRes multiGameReadyRes = new MultiGameReadyRes(
-			roomId,
-			!readyState,
-			memberId
-		);
-		sendMessageToMultiWaitingRoom(roomId, new SocketBaseDtoRes<>(SocketType.READY, multiGameReadyRes));
+		sendMultiWaitingRoomDetailDto(roomId);
 		return !readyState;
 	}
 
@@ -104,23 +103,94 @@ public class MultiGameSocketService {
 		log.info("멀티게임 대기방 퇴장 {} 님이 {} 방을 나갑니다.", userDetails.getId(), roomId);
 		MultiWaitingRoom multiWaitingRoom = getMultiWaitingRoom(roomId);
 		log.info("멀티게임 대기방의 참가자에서 제거합니다");
+		sendMessageToMultiWaitingRoom(roomId,
+			new SocketBaseDtoRes<>(SocketType.EXIT, new WebSocketMessageReq(roomId, "시스템",
+				userDetails.getNickname())));
 		multiWaitingRoom.getParticipantIds().remove(userDetails.getId());
 		log.info("멀티게임 대기방의 레디 상태에서 제거합니다");
 		multiWaitingRoom.getReadyState().remove(userDetails.getId());
 		redisTemplate.opsForValue().set("multiGame:" + roomId, multiWaitingRoom);
 		log.info("멀티게임 대기방 입장상태를 제거합니다");
-		redisTemplate.opsForValue().getAndDelete(userDetails.getEmail());
-		sendMessageToMultiWaitingRoom(roomId, new SocketBaseDtoRes<>(SocketType.MESSAGE, new WebSocketMessageReq(roomId, "시스템", "방을 나가셨습니다.")));
-		if(multiWaitingRoom.getParticipantIds().isEmpty()) {
+		redisTemplate.opsForValue().getAndDelete("enterRoomId:" + userDetails.getEmail());
+		if (multiWaitingRoom.getParticipantIds().isEmpty()) {
+			log.info("멀티게임 대기방이 비어있어 삭제합니다");
+			redisTemplate.delete("multiGame:" + roomId);
+			return;
+		}
+		/* 방장인지 체크 */
+		log.info("멀티게임 대기방의 방장인지 체크합니다");
+		if (multiWaitingRoom.getHostId() == userDetails.getId()) {
+			log.info("멀티게임 대기방의 방장이 변경됩니다");
+			Long nextHostId = multiWaitingRoom.getParticipantIds()
+				.stream()
+				.findFirst()
+				.orElseThrow( // 방장이 나갔을 때 방장을 다음 참가자로 변경
+					() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)
+				);
+			multiWaitingRoom.setHostId(nextHostId);
+			multiWaitingRoom.getReadyState().put(nextHostId, true); // 방장이 되면 레디 상태 true로 변경
+			redisTemplate.opsForValue().set("multiGame:" + roomId, multiWaitingRoom);
+			sendMessageToMultiWaitingRoom(roomId,
+				new SocketBaseDtoRes<>(SocketType.MESSAGE, new WebSocketMessageReq(roomId, "시스템",
+					nextHostId + "번 님이 방장이 되셨습니다.")));
+		}
+		log.info("멀티게임 방 상태 업데이트 & 소켓 전송");
+		sendMultiWaitingRoomDetailDto(roomId);
+	}
+
+	/* 내가 입장한 방이 있다면 멀티게임 대기방에서 나가기 */
+	public void checkStatus(CustomUserDetails userDetails) throws JsonProcessingException {
+		if (redisTemplate.hasKey("enterRoomId:" + userDetails.getEmail())) { // 내가 방에 입장해 있는지 확인
+			Object existingRoodId = redisTemplate.opsForValue()
+				.get("enterRoomId:" + userDetails.getEmail()); // 어떤 방에 있는지 가져옴
+			exitMultiRoom(userDetails, Long.valueOf((Integer)existingRoodId)); // 방 나가기
+		}
+	}
+
+	public void kickMultiRoom(CustomUserDetails userDetails, Long roomId, Long kickMemberId) throws
+		JsonProcessingException {
+		log.info("멀티게임 대기방 강퇴 {} 님이 {} 방에서 {}님을 추방합니다.", userDetails.getId(), roomId, kickMemberId);
+		Member kickMember = memberRepository.findById(kickMemberId).orElseThrow(
+			() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)
+		);
+		MultiWaitingRoom multiWaitingRoom = getMultiWaitingRoom(roomId);
+		/* 방장인지 체크 */
+		if (multiWaitingRoom.getHostId() != userDetails.getId()) {
+			throw new BaseExceptionHandler(ErrorCode.NOT_HOST);
+		}
+		log.info("멀티게임 대기방의 참가자에서 제거합니다");
+		multiWaitingRoom.getParticipantIds().remove(kickMember.getId());
+		log.info("멀티게임 대기방의 레디 상태에서 제거합니다");
+		multiWaitingRoom.getReadyState().remove(kickMember.getId());
+		redisTemplate.opsForValue().set("multiGame:" + roomId, multiWaitingRoom);
+		log.info("멀티게임 대기방 입장상태를 제거합니다");
+		redisTemplate.opsForValue().getAndDelete("enterRoomId:" + kickMember.getEmail());
+		sendMessageToMultiWaitingRoom(roomId,
+			new SocketBaseDtoRes<>(SocketType.KICK, new WebSocketMessageReq(roomId, "시스템", kickMember.getNickname())));
+		if (multiWaitingRoom.getParticipantIds().isEmpty()) {
 			log.info("멀티게임 대기방이 비어있어 삭제합니다");
 			redisTemplate.delete("multiGame:" + roomId);
 		}
+		template.convertAndSend("/api/sub/" + kickMember.getId(),
+			new SocketBaseDtoRes<>(SocketType.KICKED, new WebSocketMessageReq(roomId, "시스템", "강퇴당하셨습니다.")));
+		log.info("멀티게임 방 상태 업데이트 & 소켓 전송");
+		sendMultiWaitingRoomDetailDto(roomId);
 	}
-	/* 내가 입장한 방이 있다면 멀티게임 대기방에서 나가기 */
-	public void checkStatus(CustomUserDetails userDetails) throws JsonProcessingException {
-		if(redisTemplate.hasKey(userDetails.getEmail())) { // 내가 방에 입장해 있는지 확인
-			Object existingRoodId = redisTemplate.opsForValue().get(userDetails.getEmail()); // 어떤 방에 있는지 가져옴
-			exitMultiRoom(userDetails, Long.valueOf((Integer)existingRoodId)); // 방 나가기
-		}
+
+	public void sendMultiWaitingRoomDetailDto(Long roomId) throws JsonProcessingException {
+		MultiWaitingRoom multiWaitingRoom = getMultiWaitingRoom(roomId);
+		MultiWaitingRoomDetailDto multiWaitingRoomDetailDto = new MultiWaitingRoomDetailDto(
+			roomId,
+			multiWaitingRoom.getRoomTitle(),
+			multiWaitingRoom.getParticipantIds().stream().map(
+				participantId -> memberRepository.findById(participantId).orElseThrow(
+					() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)
+				).toMultiMemberRes()
+			).toList(),
+			multiWaitingRoom.getHostId(),
+			multiWaitingRoom.getReadyState(),
+			multiWaitingRoom.getMaxRound()
+		);
+		sendMessageToMultiWaitingRoom(roomId, new SocketBaseDtoRes<>(SocketType.ROOMINFO, multiWaitingRoomDetailDto));
 	}
 }

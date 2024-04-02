@@ -17,9 +17,11 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @Entity
+@ToString
 @Table(name = "multi_game_log")
 @NoArgsConstructor(access = PROTECTED)
 public class MultiGameLog extends BaseEntity {
@@ -39,6 +41,9 @@ public class MultiGameLog extends BaseEntity {
 	private Integer round;
 
 	@NotNull
+	private Long memberId;
+
+	@NotNull
 	private Long stockId; // 주식 Id값
 
 	@NotNull
@@ -48,10 +53,11 @@ public class MultiGameLog extends BaseEntity {
 	List<MultiGamePlayer> multiGamePlayers = new ArrayList<>();
 
 	@Builder
-	public MultiGameLog(List<MultiTrade> multiTrade, Long gameId, int round, Long stockId, LocalDateTime startDate, List<MultiGamePlayer> multiGamePlayers) {
+	public MultiGameLog(List<MultiTrade> multiTrade, Long gameId, Integer round, Long memberId, Long stockId, LocalDateTime startDate, List<MultiGamePlayer> multiGamePlayers) {
 		this.multiTrade = multiTrade;
 		this.gameId = gameId;
 		this.round = round;
+		this.memberId = memberId;
 		this.stockId = stockId;
 		this.startDate = startDate;
 		this.multiGamePlayers = multiGamePlayers;

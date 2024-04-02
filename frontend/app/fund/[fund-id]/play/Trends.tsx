@@ -1,8 +1,10 @@
 'use client'
 import { useState } from 'react'
-
+import FundGameStore from '@/public/src/stores/fund/game/FundGameStore'
 import Trend from "./Trend"
+
 export default function Trends () {
+    const { turn, trendListData } = FundGameStore();
     const [trendData, setTrendData] = useState([
         {
             트렌드 : '트렌드1',
@@ -27,7 +29,11 @@ export default function Trends () {
                     <Trend key={index} rank={index+1} data={x}/>
                 ))
             }
-
+            {/* {
+                trendListData[300+turn].map((x, index) => (
+                    <Trend key={index} rank={index+1} data={x}/>
+                ))
+            } */}
         </div>
     )
 }

@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import axios from "axios";
 
 type Store = {
   toggleTab: string;
@@ -15,6 +16,9 @@ type Store = {
   setUserId: (value: number) => void;
   pageNumber: number;
   setPageNumber: (value: number) => void;
+  isWaiting: boolean;
+  setIsWaiting: (value: boolean) => void;
+  getMultigameRoomInfo: (value: number) => void;
 };
 
 export interface MultiGameRoomInfoList {
@@ -27,8 +31,10 @@ export interface MultiGameRoomInfoList {
 }
 
 export interface ResultType {
+  multiWaitRoomInfoList: MultiGameRoomInfoList[];
   multiGameRoomInfoList: MultiGameRoomInfoList[];
-  totalMultiRoomCounts: number;
+  totalGameRoomCounts: number;
+  totalWaitRoomCounts: number;
 }
 export interface MultiRoomInfo {
   result: ResultType;
@@ -49,6 +55,24 @@ const multigameStore = create<Store>((set: any) => ({
   setUserId: (value) => set({ userId: value }),
   pageNumber: 1,
   setPageNumber: (value) => set({ pageNumber: value }),
+  isWaiting: false,
+  setIsWaiting: (value) => set({ isWaiting: value }),
+  getMultigameRoomInfo: (value: number) => {
+    axios({
+      method: 'post',
+      url: `https://j10a207.p.ssafy.io/api/multi/room-info?roomId=${value}`,
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
+      }
+    })
+    .then((res)=> {
+      console.log(res.data)
+    })
+    .catch((e)=> {
+      console.error(e)
+    })
+  }
+
 }));
 
 export default multigameStore;

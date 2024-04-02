@@ -1,161 +1,245 @@
 import { create } from "zustand";
 
-// 1. left side bar
-
 // 총 평가 자산
-type fundTotalAssetDataType = {
-    totalAssessedAssets: number,    // 총 평가 자산
-    cashOnHand: number,             // 보유 현금
-    totalValuationdPL: number,      // 총 평가 손익
-    totalPurchaseAmount: number,    // 총 매입 금액
-    totalAssessedAmount: number,    // 총 평가 금액
-}
+type totalAssetDataType = {
+    cash :number,
+    resultProfit :number,
+    resultRoi :number,
+    totalPurchaseAmount :number,
+    totalAsset :number,
+};
 
-// 보유 자산
-type assetHeldDataType = {
-    name: string,              // 종목명 
-    valuationPL: number,        // 평가 손익 
-    availableForSale: number,   // 매도가능(해당 종목 보유 수)
-    profitMargin: number,       // 손익률
-    averagePrice: number,       // 평균 단가   
+// 보유자산
+type assetDataType = {
+    stockId :number,
+    stockAmount :number,
+    unrealizedProfit :number,
+    averagePurchasePrice :number,
+    profitMargin :any,
 }
-// 매매 내역
-type saleHistoryDataType = {
-    name: string,          // 종목명
-    saleType: string,       // 매매 유형
-    price: number,          // 가격
-    quantity: number,       // 수량
+type assetListDataType = assetDataType[];
+
+// 매매기록
+type tradeDataType = {
+    stockId :number,
+    day :number;
+    tradeType :string,
+    amount :number,
+    price :number,
+    profit :number,
 }
+type tradeListDataType = tradeDataType[];
 
-// 2. main
-
-// 종목별 일별 주식 데이터
+// 종목별 데이터
+type stockChartType = {
+    date :string,
+    marketPrice :number,
+    highPrice :number,
+    lowPrice :number,
+    endPrice :number,
+    tradingVolume :number,
+}
 type stockDataType = {
-    date: string,   // 날짜(YYYY-MM-DD)
-    open: number,   // 시가
-    high: number,   // 고가
-    low: number,    // 저가
-    close: number,  // 종가
-    volume: number, // 거래량
+    stockId :number,
+    stockChartList :stockChartType[];
 }
-// 종목별 주식 데이터
 type stockListDataType = stockDataType[];
 
-// 증가 데이터
-type stockMarketType = {
-    date: string,   // 날짜(YYYY-MM-DD)
-    kospi: number,  // 코스피
-    kosdaq: number, // 코스닥
-    nasdaq: number, // 나스닥
-    SSEC: number,   // 상해 증시
+// 증시
+type stockMarketDataType = {
+
 }
+type stockMarketListDataType = stockMarketDataType[];
 
-// 3. right side bar
+// 오늘 종목별 현황
+type todayStockInfoDataType = {
+    stockId :number,
+    TodayEndPrice :number,
+    profitMargin :number,
+    volatility :number,
+    stockAmount :number,
+    unrealizedGain :number,
+};
 
-// 매수|매도 모달창
-type isOpenSaleModalType = boolean;
-// 싱글 게임 끝 모달창
-type isOpenEndModalType = boolean;
+type todayStockInfoListDataType = todayStockInfoDataType[];
 
 // 트렌드
-type trendType = string;
-// 날짜별 트렌드 
-type dateTrendType = {
-    date: string,
-    trendList: trendType[],
+type trendDataType = {
+
 }
+type trendListDataType = trendDataType[];
 
 // 시장 정보
-type marketInfoType = {
-    name: string,           // 이름
-    price: number,          // 가격
+type marketInfoDataType = {
+
+}
+type marketInfoListDataType = marketInfoDataType[];
+
+// 게임 종료 시 데이터
+// 실제 주식 종목
+type stockInfoDtoDataType = {
+    stockId :number,
+    stockName :string,
+};
+type stockInfoDtoListDataType = stockInfoDtoDataType[];
+
+type fundGameEndInfoDataType = {
+    initialAsset :number,
+    finalAsset :number,
+    netProfit :number,
+    profitMargin :number,
+
+    startDate :string,
+    endDate :string,
+
+    stockInfoDtoList :stockInfoDtoListDataType,
+    fundGameChance :number,
 }
 
-type dateMarketInfoType = {
-    date: string,
-    marketInfo: marketInfoType[];
-}
 
 type Store = {
-    // 총 평가 자산 상태관리 변수
-    fundTotalAssetData :fundTotalAssetDataType | null;
-    setFundTotalAssetData :(value :fundTotalAssetDataType) => void;
-    
-    // 보유 자산 상태관리 변수
-    assetHeldListData :assetHeldDataType[] | [];
-    setAssetHeldListData :(value :assetHeldDataType[]) => void;
-
-    // 매매 내역 상태관리 변수
-    saleHistoryListData :saleHistoryDataType[] | [];
-    setSaleHistoryListData :(value :saleHistoryDataType[]) => void;
-
-    // 10개의 랜덤 종목 주식 데이터 상태관리 변수
-    randomStockListData :stockListDataType[] | [];
-    setRandomStockListData :(value :stockListDataType[]) => void;
-
-    // 날짜별 증가 상태관리 변수
-    stockMarketListData :stockMarketType[] | [];
-    setStockMarketListData :(value :stockMarketType[]) => void;
+    // 해당 게임 log id
+    gameIdx :number;
+    setGameIdx :(value :number) => void;
 
     // 현재 턴 상태관리 변수
     turn :number;
     setTurn :(value :number) => void;
 
-    isOpenSaleModal :isOpenSaleModalType;
-    setIsOpenSaleModal :(value :isOpenSaleModalType) => void;
+    fundGameChance :number;
+    setFundGameChance :(value :number) => void;
 
-    isOpenEndModal :isOpenEndModalType;
-    setIsOpenEndModal :(value :isOpenEndModalType) => void;
+    // 총 평가 자산 배열 데이터 상태관리 변수
+    totalAssetData :totalAssetDataType | any;
+    setTotalAssetData :(value :totalAssetDataType) => void;
+    
+    // 보유 자산 배열 데이터 상태관리 변수
+    assetListData :assetListDataType | any;
+    setAssetListData :(value :assetListDataType) => void;
 
-    // 트렌드 목록 상태관리 변수
-    trendList :dateTrendType[] | [];
-    setTrendList :(value :dateTrendType[]) => void;
+    // 매매 내역 배열 데이터 상태관리 변수
+    tradeListData :tradeListDataType | any;
+    setTradeListData :(value :tradeListDataType) => void;
 
-    // 시장 정보 상태관리 변수
-    marketInfoList :dateMarketInfoType[] | [];
-    setMarketInfoList :(value :dateMarketInfoType[]) => void;
+    // 10개의 랜덤 종목 주식 배열 데이터 상태관리 변수
+    stockListData :stockListDataType | any;
+    setStockListData :(value :stockListDataType) => void;
 
+    // 증시 배열 데이터 상태관리 변수
+    stockMarketListData :stockMarketListDataType | any;
+    setStockMarketListData :(value :stockMarketListDataType) => void;
+
+    todayStockInfoListData :todayStockInfoListDataType | any;
+    setTodayStockInfoListData :(value :todayStockInfoListDataType) => void;
+
+    // 트렌드 목록 배열 데이터 상태관리 변수
+    trendListData :any;
+    setTrendListData :(value :any) => void;
+
+    // 시장 정보 배열 데이터 상태관리 변수
+    marketInfoListData :any;
+    setMarketInfoListData :(value :any) => void;
+
+    // 현재 선택한 주식 종목 index 상태관리 변수
+    selectedStockIndex :number;
+    setSelectedStockIndex :(value :number) => void;
+
+    isBuy :boolean;
+    setIsBuy :(value :boolean) => void;
+    
+    isBuySellModalOpen :boolean;
+    setIsBuySellModalOpen :(value :boolean) => void;
+    
+    fundGameEndInfoData :fundGameEndInfoDataType | any;
+    setFundGameEndInfoData :(value :fundGameEndInfoDataType) => void;
+    
+    isOpenEndModal :boolean;
+    setIsOpenEndModal :(value :boolean) => void;
+
+    selectedSecondaryIndicator :number;
+    setSelectedSecondaryIndicator : (value :number) => void;
+
+    startDate :any,
+    setStartDate :(value :any) => void,
+    endDate :any,
+    setEndDate :(value :any) => void,
+
+    stocks :number,
+    setStocks :(value :number) => void,
 };
 
 
 const FundGameStore = create<Store>((set: any) => ({
-    // 총 평가 자산 상태관리 변수
-    fundTotalAssetData: null,
-    setFundTotalAssetData: (value) => set({ fundTotalAssetData: value }),
-    
-    // 보유 자산 상태관리 변수
-    assetHeldListData: [],
-    setAssetHeldListData: (value) => set({ assetHeldListData: value }),
 
-    // 매매 내역 상태관리 변수
-    saleHistoryListData: [],
-    setSaleHistoryListData: (value) => set({ saleHistoryListData: value }),
-
-    // 10개의 랜덤 종목 주식 데이터 상태관리 변수
-    randomStockListData: [],
-    setRandomStockListData: (value :any) => set({ randomStockListData: value }),
-
-    // 날짜별 증가 상태관리 변수
-    stockMarketListData: [],
-    setStockMarketListData: (value) => set({ stockMarketListData: value }),
+    // 해당 게임 log id
+    gameIdx: 0,
+    setGameIdx: (value) => set({ gameIdx: value }),
 
     // 현재 턴 상태관리 변수
     turn: 1,
-    setTurn: (value) => set({ turn: value }),
-    
-    isOpenSaleModal: false,
-    setIsOpenSaleModal: (value) => set({ isOpenSaleModal: value }),
+    setTurn: (value) => set({ turn : value }),
 
-    isOpenEndModal: false,
-    setIsOpenEndModal: (value) => set({ isOpenEndModal: value }),
-    // 트렌드 목록 상태관리 변수
-    trendList: [],
-    setTrendList: (value) => set({ trendList: value }),
-
-    // 시장 정보 상태관리 변수
-    marketInfoList: [],
-    setMarketInfoList: (value) => set({ marketInfoList: value }),
+    // 현재 남은 싱글 게임 도전 기회 상태관리 변수
+    fundGameChance: 0,
+    setFundGameChance: (value) => set({ fundGameChance : value }),
  
+    // 총 평가 자산 배열 데이터 상태관리 변수
+    totalAssetData: [],
+    setTotalAssetData: (value) => set({ totalAssetData : value }),
+    
+    // 보유 자산 배열 데이터 상태관리 변수
+    assetListData: [],
+    setAssetListData: (value) => set({ assetListData : value }),
+
+    // 매매 내역 배열 데이터 상태관리 변수
+    tradeListData: [],
+    setTradeListData: (value) => set({ tradeListData : value }),
+
+    // 10개의 랜덤 종목 주식 배열 데이터 상태관리 변수
+    stockListData: [],
+    setStockListData: (value) => set({ stockListData : value }),
+
+    // 증시 배열 데이터 상태관리 변수
+    stockMarketListData: [],
+    setStockMarketListData: (value) => set({ stockMarketListData : value }),
+    
+    todayStockInfoListData: [],
+    setTodayStockInfoListData :(value) => set({ todayStockInfoListData : value }),
+    // 트렌드 목록 배열 데이터 상태관리 변수
+    trendListData: [],
+    setTrendListData: (value) => set({ trendListData : value }),
+
+    // 시장 정보 배열 데이터 상태관리 변수
+    marketInfoListData: [],
+    setMarketInfoListData: (value) => set({ marketInfoListData : value }),
+
+    // 현재 선택한 주식 종목 index 상태관리 변수
+    selectedStockIndex: 0,
+    setSelectedStockIndex: (value) => set({ selectedStockIndex : value }),
+
+    fundGameEndInfoData: [],
+    setFundGameEndInfoData: (value) => set({ fundGameEndInfoData : value }),
+
+    isBuy :false,
+    setIsBuy :(value) => set({ isBuy : value }),
+
+    isBuySellModalOpen :false,
+    setIsBuySellModalOpen :(value) => set({ isBuySellModalOpen : value }),
+
+    isOpenEndModal :false,
+    setIsOpenEndModal :(value) => set({ isOpenEndModal :value }),
+
+    selectedSecondaryIndicator : 1,
+    setSelectedSecondaryIndicator :(value) => set({ selectedSecondaryIndicator : value }),
+
+
+    startDate :null,
+    setStartDate :(value) => set({ startDate : value }),
+    endDate :null,
+    setEndDate :(value) => set({ endDate : value }),
+
+    stocks :0,
+    setStocks :(value) => set({ stocks : value }),
 }));
 
 export default FundGameStore;
