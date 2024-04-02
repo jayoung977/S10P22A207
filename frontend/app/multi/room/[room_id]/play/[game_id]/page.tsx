@@ -6,8 +6,10 @@ import Chart from "@/app/single/play/Chart";
 import Chat from "../../chat";
 import TradeHistory from "./tradeHistory";
 import { useState, useEffect } from "react";
+import { useParams } from 'next/navigation';
 import TradeButtons from "../../tradeButton";
 import GameMembers from "./GameMembers";
+import axios from "axios";
 
 export type dataType = {
   date: string;
@@ -20,7 +22,38 @@ export type dataType = {
 
 export default function page() {
   const [data, setData] = useState<dataType[]>([]);
+  const params = useParams<{ room_id: string, game_id: string }>();
+  const roomId :string = params.room_id;
+  const gameId :string = params.game_id;
 
+  const fetchMultigameData = async () => {
+    try {
+      const response = await axios({
+        method: 'post',
+        url: "https://j10a207.p.ssafy.io/api/multi/game-chart",
+        data: {
+          playerIds: [
+            3
+          ],
+          roundNumber: 1,
+          maxRoundNumber: 3,
+          gameId: gameId,
+          roomId: roomId,
+        },
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
+        }
+      })
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  
+  useEffect(() => {
+    console.log(params);
+    fetchMultigameData();
+  }, [])
   return (
     <div>
       {/* <RoundResult/> */}
