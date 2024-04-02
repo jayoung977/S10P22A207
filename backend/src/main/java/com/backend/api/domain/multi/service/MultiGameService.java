@@ -212,17 +212,17 @@ public class MultiGameService {
 
 	public MultiGameStartResponseDto startMultiGame(Long memberId, MultiGameStartRequestDto dto) {
 		log.info("MULTIGAMESTART:::");
-		MultiWaitingRoom multiwaitingRoom = getWaitingRoom(dto.roomId());
+		MultiWaitingRoom multiWaitingRoom = getWaitingRoom(dto.roomId());
 		/* 예외 처리*/
 		// if (multiwaitingRoom.getParticipantIds().size() < 2) {
 		// 	throw new BaseExceptionHandler(ErrorCode.NOT_ENOUGH_PARTICIPANTS);
 		// }
-		if(multiwaitingRoom.getIsPlaying()) {
+		if(multiWaitingRoom.getIsPlaying()) {
 			throw new BaseExceptionHandler(ErrorCode.IS_PLAYING);
 		}
-		if(!multiwaitingRoom.getIsPlaying()){
-			multiwaitingRoom.setIsPlaying(true);
-			redisTemplate.opsForValue().set("multiGame:" + dto.roomId(), multiwaitingRoom);
+		if(!multiWaitingRoom.getIsPlaying()){
+			multiWaitingRoom.setIsPlaying(true);
+			redisTemplate.opsForValue().set("multiGame:" + dto.roomId(), multiWaitingRoom);
 		}
         Long gameId = null;
         if (dto.roundNumber() == 1) {
