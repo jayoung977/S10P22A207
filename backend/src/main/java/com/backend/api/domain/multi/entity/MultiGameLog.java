@@ -17,9 +17,11 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @Entity
+@ToString
 @Table(name = "multi_game_log")
 @NoArgsConstructor(access = PROTECTED)
 public class MultiGameLog extends BaseEntity {

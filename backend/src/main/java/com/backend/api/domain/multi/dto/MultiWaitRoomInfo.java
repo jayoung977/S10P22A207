@@ -17,7 +17,11 @@ public record MultiWaitRoomInfo(
     Boolean isOpen,
 
     @Schema(description = "비밀번호")
-    Integer password
+    Integer password,
+
+    @Schema(description = "총 라운드 수")
+    Integer maxRoundNumber
+
 
 ) {
 

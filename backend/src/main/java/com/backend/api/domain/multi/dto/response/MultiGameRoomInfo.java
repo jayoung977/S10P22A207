@@ -21,25 +21,10 @@ public record MultiGameRoomInfo(
     Boolean isOpen,
 
     @Schema(description = "비밀번호")
-    Integer password
+    Integer password,
+
+    @Schema(description = "총 라운드 수")
+    Integer maxRoundNumber
 
     ) {
-    @Override
-    public int hashCode() {
-        return Objects.hash(roomId, roomTitle, roundNumber, participantsIds, isOpen, password);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MultiGameRoomInfo that = (MultiGameRoomInfo) o;
-        return Objects.equals(roomId, that.roomId) &&
-            Objects.equals(roomTitle, that.roomTitle) &&
-            Objects.equals(roundNumber, that.roundNumber) &&
-            Objects.equals(participantsIds, that.participantsIds) &&
-            Objects.equals(isOpen, that.isOpen) &&
-            Objects.equals(password, that.password);
-    }
-
 }

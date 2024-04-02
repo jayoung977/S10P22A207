@@ -16,7 +16,9 @@ public record MultiWaitingRoomDetailDto(
 	@Schema(description = "방장id")
 	Long hostId,
 	@Schema(description = "레디 상태")
-	Map<Long, Boolean> readyState
+	Map<Long, Boolean> readyState,
+	@Schema(description = "총 라운드 수")
+	Integer maxRoundNumber
 
 ) {
 }
