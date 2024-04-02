@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -74,7 +75,7 @@ public class AlarmController {
 
     @Operation(summary = "알림 삭제하기", description = "자신에게 온 알림 삭제", tags = {"알림"})
     @DeleteMapping("/delete-notification")
-    public ResponseEntity<BaseResponse<String>> deleteNotification(Long noticeId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<BaseResponse<String>> deleteNotification(@RequestParam Long noticeId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         log.info("알림을 호출합니다.");
         notificationService.deleteNotification(noticeId, userDetails.getId());
         return BaseResponse.success(
