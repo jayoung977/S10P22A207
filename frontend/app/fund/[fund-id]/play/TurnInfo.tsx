@@ -1,19 +1,22 @@
 'use client'
 // 턴 정보, 매수 + 매도 버튼 컴포넌트
-import { useEffect } from 'react';
-import FundGameStore from "@/public/src/stores/fund/game/FundGameStore"
+import { useState, useEffect } from 'react';
+import FundGameStore from '@/public/src/stores/fund/game/FundGameStore';
 import TurnNow from './TurnNow';
 import BuySellModal from './BuySellModal';
 import FundGameEndModal from './FundGameEndModal';
 import axios from 'axios';
 import useClickSound from '@/public/src/components/clickSound/DefaultClick';
+import { clear } from 'console';
 import { useParams } from 'next/navigation';
 
 export default function TurnInfo () {
     const playClickSound = useClickSound();
-    const params = useParams();
+    const [isNextTurnDisabled, setIsNextTurnDisabled] = useState(false);
     // 현재 턴
-    const { turn, setTurn, gameIdx, setTotalAssetData, setAssetListData, setTodayStockInfoListData, setFundGameEndInfoData, isBuySellModalOpen, setIsBuySellModalOpen, isBuy, setIsBuy, isOpenEndModal, setIsOpenEndModal } = FundGameStore();
+    const { turn, setTurn, gameIdx, setTotalAssetData, setAssetListData, setTodayStockInfoListData, setFundGameEndInfoData, isBuySellModalOpen, setIsBuySellModalOpen, isBuy, setIsBuy, isOpenEndModal, setIsOpenEndModal,
+            setStocks,
+    } = FundGameStore();
 
     // 매수버튼 클릭
     const handleSelectBuy = () => {
@@ -33,6 +36,7 @@ export default function TurnInfo () {
     const handleClickTurn = async () => {
         playClickSound();
         try {
+            const params = useParams()
             const response = await axios(
                 {
                     method: "post",
@@ -46,10 +50,10 @@ export default function TurnInfo () {
                         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`
                     }
                 })
-            
-            console.log(response)
+            console.log("다음턴 : ", response.data.result);
             if (turn == 50) {
                 const stockInfoDtoList = response.data.result.stockInfoDtoList;
+                console.log("끝남!", stockInfoDtoList)
                 setFundGameEndInfoData({
                     initialAsset :stockInfoDtoList.initialAsset,
                     finalAsset :stockInfoDtoList.finalAsset,
@@ -65,7 +69,6 @@ export default function TurnInfo () {
                 setIsOpenEndModal(true);
     
             } else {
-                console.log("턴 증가")
                 setTurn(turn+1);
                 setTotalAssetData({
                     cash :response.data.result.cash,
@@ -90,24 +93,26 @@ export default function TurnInfo () {
     // 키보드 입력 처리 - 매수(q), 매도(w)
     const handleBuySellTurn = (e :KeyboardEvent) => {
         if (e.key === "q") {
+            setStocks(0);
             handleSelectBuy();
         } else if (e.key === "w") {
+            setStocks(0);
             handleSelectSell();
         } else if (e.key == "r" && !isBuySellModalOpen) {
+            
             handleClickTurn();
+            console.log('r누름')
         }
     }
-
     
-
     useEffect (() => {
         window.addEventListener('keydown', handleBuySellTurn);
-    
+        
         return () => {
             window.removeEventListener("keydown", handleBuySellTurn);
-
         }
     }, [turn, isBuySellModalOpen])
+
     
     return (
         <div className="row-start-1 row-end-2 grid grid-rows-2">
@@ -132,7 +137,7 @@ export default function TurnInfo () {
                 </button>
                 <button 
                     onClick={handleClickTurn} 
-                    className="col-span-1 rounded-md scale-95 text-textColor-1 bg-textColor-2 border border-textColor-1 m-2 hover:text-textColor-2 hover:bg-textColor-1 hover:scale-105 shadow-md shadow-textColor-1"
+                    className={`col-span-1 rounded-md scale-95 text-textColor-1 bg-textColor-2 border border-textColor-1 m-2 hover:text-textColor-2 hover:bg-textColor-1 hover:scale-105 shadow-md shadow-textColor-1 ease-in-out duration-500`}
                 >   
                     다음(R)
                 </button>
@@ -142,3 +147,4 @@ export default function TurnInfo () {
         </div>
     )
 }
+
