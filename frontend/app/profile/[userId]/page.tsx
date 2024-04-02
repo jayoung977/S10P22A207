@@ -27,8 +27,6 @@ export default function page() {
             setIsBoardOpen={setIsBoardOpen}
           ></ProfileBoardDetail>
         )}
-        <ProfileSentFriendRequest></ProfileSentFriendRequest>
-        <ProfileFriendRequest></ProfileFriendRequest>
         <UserInfo></UserInfo>
       </div>
     </QueryClientProvider>
