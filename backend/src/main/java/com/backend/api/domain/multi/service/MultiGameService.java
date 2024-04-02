@@ -220,7 +220,10 @@ public class MultiGameService {
 		if(multiwaitingRoom.getIsPlaying()) {
 			throw new BaseExceptionHandler(ErrorCode.IS_PLAYING);
 		}
-
+		if(!multiwaitingRoom.getIsPlaying()){
+			multiwaitingRoom.setIsPlaying(true);
+			redisTemplate.opsForValue().set("multiGame:" + dto.roomId(), multiwaitingRoom);
+		}
         Long gameId = null;
         if (dto.roundNumber() == 1) {
             // multiGame 저장 키: multiGame:gameId:memberId:roundNumber
