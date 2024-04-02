@@ -180,7 +180,7 @@ export default function MakeFundModal({isOpen, onClose}: any){
                      <p className="text-xs text-small-3 p-1">{errors.fundName?.message}</p>
               </div>
               <div>
-                  <label  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">산업군</label>
+                  <label  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">설명</label>
                   <input 
                     type="text"
                     id="fund-industry"

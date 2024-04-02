@@ -1,11 +1,13 @@
-"use client";
+'use client'
 
-import useClickSound from "@/public/src/components/clickSound/DefaultClick";
+import useClickSound from "@/public/src/components/clickSound/DefaultClick"
 import userStore from "@/public/src/stores/user/userStore";
 import socketStore from "@/public/src/stores/websocket/socketStore";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+
+
 
 export default function RoomInfo() {
   const params = useParams();

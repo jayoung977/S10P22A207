@@ -11,7 +11,7 @@ export default function GameRoom(props: {
   room: MultiGameRoomInfoList;
 }) {
   const playClickSound = useClickSound();
-  const { getMultigameRoomInfo } = multigameStore();
+  const { getMultigameRoomInfo, isWaiting } = multigameStore();
   const { color, room } = props;
   const password = room.password;
   const router = useRouter();
@@ -83,11 +83,12 @@ export default function GameRoom(props: {
     <div
       className={`hover:-translate-y-1 transition ease-in-out duration-500 h-auto rounded-md shadow-md text-textColor-2 ${color}`}
     >
-      <div
-        onClick={() => {
-          playClickSound();
-          handleClick(room);
-        }}
+    <div 
+      onClick={ 
+        isWaiting ? () => { playClickSound(); handleClick(room); }
+         : () => {} 
+        }
+
         className="block p-2  border rounded-lg shadow hover:cursor-pointer"
       >
         <h5 className="mb-1 text-md font-bold tracking-tight">

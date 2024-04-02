@@ -10,6 +10,8 @@ import { useParams } from 'next/navigation';
 import TradeButtons from "../../tradeButton";
 import GameMembers from "./GameMembers";
 import axios from "axios";
+import socketStore from "@/public/src/stores/websocket/socketStore";
+
 
 export type dataType = {
   date: string;
@@ -22,22 +24,27 @@ export type dataType = {
 
 export default function page() {
   const [data, setData] = useState<dataType[]>([]);
-  const params = useParams<{ room_id: string, game_id: string }>();
-  const roomId :string = params.room_id;
-  const gameId :string = params.game_id;
+  const { roundNumber, maxRoundNumber, roomId, gameId, multiGameStockIds } = socketStore();
+
 
   const fetchMultigameData = async () => {
     try {
+      const data = {
+        roundNumber: roundNumber,
+        stockId: multiGameStockIds[roundNumber-1].stockId,
+        gameId: gameId,
+        firstDayStockChartId: multiGameStockIds[roundNumber-1].firstDayStockChartId,
+        roomId: roomId,
+      }
+      console.log(data)
       const response = await axios({
         method: 'post',
         url: "https://j10a207.p.ssafy.io/api/multi/game-chaSrt",
         data: {
-          playerIds: [
-            3
-          ],
-          roundNumber: 1,
-          maxRoundNumber: 3,
+          roundNumber: roundNumber,
+          stockId: multiGameStockIds[roundNumber-1].stockId,
           gameId: gameId,
+          firstDayStockChartId: multiGameStockIds[roundNumber-1].firstDayStockChartId,
           roomId: roomId,
         },
         headers: {
@@ -51,7 +58,6 @@ export default function page() {
   }
   
   useEffect(() => {
-    console.log(params);
     fetchMultigameData();
   }, [])
   return (
@@ -66,7 +72,7 @@ export default function page() {
           </aside>
           <main className="col-span-8 grid grid-rows-16">
             <div className="row-span-12"></div>
-            {/* <Chart data={data}/> */}
+            {/* <RoundChart/> */}
             <div className="border grid grid-cols-12 row-span-4">
               <Chat />
               <TradeButtons />

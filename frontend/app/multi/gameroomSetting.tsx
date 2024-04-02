@@ -95,25 +95,6 @@ export default function GameRoomSetting() {
               id="default-checkbox"
               type="checkbox"
               value=""
-              checked={isWaiting == false}
-              onChange={() => {
-                playClickSound();
-                setIsWaiting(false)
-              }}
-              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label
-              htmlFor="default-checkbox"
-              className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300"
-            >
-              전체방
-            </label>
-          </div>
-          <div className="col-span-1 flex items-center">
-            <input
-              id="default-checkbox"
-              type="checkbox"
-              value=""
               checked={isWaiting == true}
               onChange={() =>{
                 playClickSound();
@@ -126,6 +107,25 @@ export default function GameRoomSetting() {
               className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300"
             >
               대기방
+            </label>
+          </div>
+          <div className="col-span-1 flex items-center">
+            <input
+              id="default-checkbox"
+              type="checkbox"
+              value=""
+              checked={isWaiting == false}
+              onChange={() => {
+                playClickSound();
+                setIsWaiting(false)
+              }}
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <label
+              htmlFor="default-checkbox"
+              className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300"
+            >
+              진행중
             </label>
           </div>
           <div className="col-span-1 flex items-center">

@@ -16,7 +16,7 @@ export default function Header() {
   const params = useParams<{ room_id?: string }>();
   const room_id: string | undefined = params.room_id;
   const { deleteReceiveMessages, readyState } = socketStore();
-  const { roomId, roomTitle, hostId, roomNumber, maxRoundNumber } =
+  const { roomId, roomTitle, hostId, maxRoundNumber, roundNumber } =
     socketStore();
   const [allReady, setAllReady] = useState(false);
   const [ready, setReady] = useState(false);
@@ -65,7 +65,7 @@ export default function Header() {
       },
       data: {
         playerIds: numberKeys,
-        roundNumber: roomNumber,
+        roundNumber: roundNumber,
         roomId: params.room_id,
         maxRoundNumber: maxRoundNumber,
       },
@@ -153,7 +153,7 @@ export default function Header() {
           onClick={() => {
             playClickSound();
             handleExit();
-            router.back();
+            router.push('/multi');
           }}
           className="border p-2 rounded-md border-gray-400 hover:bg-gray-100 hover:border-2"
         >
