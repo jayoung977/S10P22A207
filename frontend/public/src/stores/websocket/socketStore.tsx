@@ -33,6 +33,12 @@ interface WebSocketStore {
   setRoomTitle: (roomTitle: string) => void;
   readyState: { [key: number]: boolean };
   setReadyState: (readyState: { [key: number]: boolean }) => void;
+  maxRoundNumber: number,
+  setMaxRoundNumber: (maxRoundNumber: number) => void;
+  gameId: number,
+  setGameId: (gameId: number) => void;
+  roomNumber:number,
+  setRoomNumber: (roomNumber: number) => void;
 }
 
 const socketStore = create<WebSocketStore>((set) => ({
@@ -62,6 +68,12 @@ const socketStore = create<WebSocketStore>((set) => ({
   setRoomTitle: (value) => set({ roomTitle: value }),
   readyState: {},
   setReadyState: (value) => set({ readyState: value }),
+  maxRoundNumber: 0,
+  setMaxRoundNumber: (value) => set({ maxRoundNumber: value }),
+  gameId: 0,
+  setGameId: (value) => set({ gameId: value }),
+  roomNumber:0,
+  setRoomNumber:(value) => set({ roomNumber: value }),
 }));
 
 export default socketStore;
