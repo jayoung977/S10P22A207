@@ -20,7 +20,7 @@ export default function TradeButtons(){
       setIsOpenTradeModal(true)
     } else if (e.key === 'e') {
       playClickSound();
-      setTradeType('shortSell')
+      setTradeType('short-selling')
       setIsOpenTradeModal(true)
     }
   }
@@ -66,7 +66,7 @@ export default function TradeButtons(){
         <button
           onClick={()=>{
             playClickSound();
-            setTradeType('shortSell')
+            setTradeType('short-selling')
             setIsOpenTradeModal(true)
           }}
          className='border p-1 m-2 rounded-md text-white font-bold bg-yellow-500 hover:bg-small-10'>공매도 (E)
@@ -77,7 +77,7 @@ export default function TradeButtons(){
             setTradeType('close-short')
             setIsOpenTradeModal(true)
           }}
-         className='border p-1 m-2 rounded-md text-white font-bold bg-yellow-500 hover:bg-small-10'>공매도 청산
+         className='border p-1 m-2 rounded-md text-white font-bold bg-green-500 hover:bg-small-12'>공매도 청산
         </button>
       </div>
     </div>

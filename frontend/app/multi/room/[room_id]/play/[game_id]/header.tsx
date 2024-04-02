@@ -7,6 +7,7 @@ import FinalResult from "./finalResult";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
+import socketStore from "@/public/src/stores/websocket/socketStore";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +18,7 @@ export default function Header() {
   const roundPercentage = (turn / 50) * 100;
   const allPercentage = ((50 * (round - 1) + turn) / 150) * 100;
   const playClickSound = useClickSound();
+  const { roundNumber } = socketStore();
 
   function handleTomorrow (turn: number){
     axios({
@@ -26,8 +28,9 @@ export default function Header() {
         Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
       },
       data: {
-        gameIdx: params.game_id,
+        gameId: params.game_id,
         day: turn,
+        roundNumber: roundNumber,
       }
     })
     .then((res)=> {
@@ -48,7 +51,7 @@ export default function Header() {
       } else if (turn === 50) {
         setIsOpen(true);
         // 일단 3초로 설정
-        setTimeout(() => setIsOpen(false), 10000);
+        setTimeout(() => setIsOpen(false), 5000);
         setRound(round + 1);
         setTurn(0);
       } else {
