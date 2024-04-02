@@ -1,56 +1,20 @@
 package com.backend.api.domain.multi.service;
 
-import com.backend.api.domain.multi.dto.MultiGameSubResultRequestDto;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.member.repository.MultiGamePlayerRepository;
 import com.backend.api.domain.multi.dto.MultiGameResultRequestDto;
+import com.backend.api.domain.multi.dto.MultiGameSubResultRequestDto;
 import com.backend.api.domain.multi.dto.MultiWaitRoomInfo;
 import com.backend.api.domain.multi.dto.request.MultiGameRoomCreateRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameStartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiNextDayRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiTradeRequestDto;
-import com.backend.api.domain.multi.dto.response.MultiGameFinalResultDto;
-import com.backend.api.domain.multi.dto.response.MultiGameResultDto;
-import com.backend.api.domain.multi.dto.response.MultiGameRoomCreateResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiGameRoomInfo;
-import com.backend.api.domain.multi.dto.response.MultiGameRoomsResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiGameStartResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiGameTotalResultDto;
-import com.backend.api.domain.multi.dto.response.MultiLogMemberDto;
-import com.backend.api.domain.multi.dto.response.MultiLogResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiLogTradeDto;
-import com.backend.api.domain.multi.dto.response.MultiNextDayInfoResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiNextDayResponseDto;
-import com.backend.api.domain.multi.dto.response.MultiTradeListDto;
-import com.backend.api.domain.multi.dto.response.MultiTradeResponseDto;
-import com.backend.api.domain.multi.entity.MultiGame;
-import com.backend.api.domain.multi.entity.MultiGameLog;
-import com.backend.api.domain.multi.entity.MultiGamePlayer;
-import com.backend.api.domain.multi.entity.MultiTrade;
-import com.backend.api.domain.multi.entity.MultiWaitingRoom;
+import com.backend.api.domain.multi.dto.response.*;
+import com.backend.api.domain.multi.entity.*;
 import com.backend.api.domain.multi.repository.MultiGameLogRepository;
 import com.backend.api.domain.multi.repository.MultiTradeRepository;
+import com.backend.api.domain.single.dto.response.StockChartDataDto;
 import com.backend.api.domain.single.dto.response.StockChartDto;
 import com.backend.api.domain.stock.entity.Stock;
 import com.backend.api.domain.stock.entity.StockChart;
@@ -62,9 +26,19 @@ import com.backend.api.global.exception.BaseExceptionHandler;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
@@ -90,7 +64,6 @@ public class MultiGameService {
      * 멀티게임 key :  multiGame:gameId:memberId:roundNumber
      */
 
-    // TODO : 대기방과 게임중인 방을 나눠서 보내줘야함.
     public MultiGameRoomsResponseDto getMultiGameRooms(int pageNumber) {
         Set<String> multiGameRooms = redisTemplate.keys("multiGame:*");
 
@@ -162,13 +135,10 @@ public class MultiGameService {
 
 
         // MultiGameRoomsResponseDto 객체 생성하여 반환
-        // TODO: 대기방 먼저? 정렬 조건 마련
-        return new MultiGameRoomsResponseDto(resultList.size(), resultList.subList(fromIndex, gameRoomToIndex), waitRoomInfos.subList(fromIndex, waitingRoomToIndex));
+		return new MultiGameRoomsResponseDto(resultList.size(), waitRoomInfos.size(), resultList.subList(fromIndex, gameRoomToIndex), waitRoomInfos.subList(fromIndex, waitingRoomToIndex));
     }
 
     public void enterMultiGameRoom(Long memberId, String roomId) {
-        // TODO: 구독 하게 해야함.
-        // TODO: game round 수가 0이 아니라면 못들어가게 해야함
         // 웹소켓에 연결시키는 과정
 //        redisTemplate.opsForValue().set("multiGame:" + memberId + ":" + roomId + ":0", );
 
@@ -183,7 +153,7 @@ public class MultiGameService {
 		Long roomId = redisTemplate.opsForValue().increment("roomId", 1); // Redis에서 Atomic한 증가
 		if (roomId == null || roomId == 1) {
 			roomId = 1L; // 초기값 설정
-			redisTemplate.opsForValue().set("roomId", roomId); // TODO: 필요한가?
+			redisTemplate.opsForValue().set("roomId", roomId);
 		}
 		String key = "multiGame:" + roomId; // Redis에 저장할 키
 		Set<Long> participantIds = new HashSet<>();
@@ -199,18 +169,18 @@ public class MultiGameService {
 				.readyState(new HashMap<>())
 				.hostId(userDetails.getId())
 				.build();
-		redisTemplate.opsForValue().set(key, multiWaitingRoom); // TODO : 이렇게 해도 되나?
+		redisTemplate.opsForValue().set(key, multiWaitingRoom);
+		multiGameSocketService.sendMultiWaitingRoomDetailDto(roomId);
 		return new MultiGameRoomCreateResponseDto(roomId);
 	}
 
 	public MultiGameStartResponseDto startMultiGame(Long memberId, MultiGameStartRequestDto dto) {
-		// TODO: MultiGameStartResponseDto 여기 주식 정보 추가. createSingleGame 처럼.
-		// 여기에 처음 조건을
+		log.info("MULTIGAMESTART:::");
+
 		LocalDateTime lastDate = LocalDateTime.of(2024, 3, 10, 0, 0); // 위험할수도
 		LocalDateTime startDate = LocalDateTime.of(1996, 5, 10, 0, 0);
 
 		LocalDateTime randomDateTime = generateRandomDateTime(startDate, lastDate); // 이 날짜로 조회
-
 		Long firstDayStockChartId = null;
 		Long stockId = null;
 		while (stockId == null) {
@@ -244,7 +214,27 @@ public class MultiGameService {
 			}
 		}
 
-        // TODO : 0 -> 1라운드만 이렇게 하고 나머지 라운드에서는 gameId 그대로 쓸것!
+
+		// 350일치 차트
+		List<StockChart> stockChartList = stockChartRepository.findByIdBetween(firstDayStockChartId, firstDayStockChartId + 349);
+
+		// 각 날짜에 대해 StockChartDto 생성 후 넣어주기
+		List<StockChartDto> stockChartDtoList = new ArrayList<>();
+		// 4. 350번 가져온다.
+		stockChartList.forEach((stockChart1) -> {
+			StockChartDto stockChartDto = new StockChartDto(
+
+				stockChart1.getMarketPrice(),
+				stockChart1.getHighPrice(),
+				stockChart1.getLowPrice(),
+				stockChart1.getEndPrice(),
+				stockChart1.getTradingVolume(),
+				stockChart1.getDate()
+			);
+			stockChartDtoList.add(stockChartDto);
+		});
+		StockChartDataDto stockChartData = new StockChartDataDto(stockId, stockChartDtoList);
+
         Long gameId = null;
         if (dto.roundNumber() == 1) {
             // multiGame 저장 키: multiGame:gameId:memberId:roundNumber
@@ -265,7 +255,7 @@ public class MultiGameService {
 			// 각 키에 대해 gameId를 추출하여 최대 gameId를 찾음
 			for (String key : keys) {
 				String[] parts = key.split(":");
-				long temp = Long.parseLong(parts[3]);
+				long temp = Long.parseLong(parts[1]);
 				if (maxGameId == null || temp > maxGameId) {
 					maxGameId = temp;
 				}
@@ -335,7 +325,6 @@ public class MultiGameService {
                     .ranking(beforeMultiGame.getRank())
                     .build();
 
-                // TODO : redis에서 delete - 이전게임 없애주기
                 redisTemplate.delete("multiGame:" + gameId + ":" + memberId + ":" + (dto.roundNumber() - 1));
 
             } else {
@@ -379,7 +368,7 @@ public class MultiGameService {
             multiGamePlayerRepository.save(multiGamePlayer);
         }
 
-        return new MultiGameStartResponseDto(gameId);
+        return new MultiGameStartResponseDto(gameId, stockChartData);
     }
 
 
@@ -991,6 +980,7 @@ public class MultiGameService {
 
         return new MultiLogResponseDto(
             stock.getStockName(),
+			stock.getStockCode(),
             stockChartDtoList,
             tradeList,
             multiLogMemberDtoList

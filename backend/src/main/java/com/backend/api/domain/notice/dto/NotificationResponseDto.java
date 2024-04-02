@@ -8,13 +8,10 @@ public record NotificationResponseDto(
 
     @Schema(description = "알림 타입")
     AlarmType alarmType,
-
-    @Schema(description = "방 Id")
-    Long roomId,
-
+    @Schema(description = "받는 사람")
+    String member,
     @Schema(description = "보낸 사람")
     String sender,
-
     @Schema(description = "내용")
     String content
 ) {
@@ -22,7 +19,7 @@ public record NotificationResponseDto(
     public static NotificationResponseDto to(Notice notice){
         return new NotificationResponseDto(
             notice.getAlarmType(),
-            Long.valueOf(notice.getContent()),
+            notice.getMember().getNickname(),
             notice.getSender(),
             notice.getContent())
             ;

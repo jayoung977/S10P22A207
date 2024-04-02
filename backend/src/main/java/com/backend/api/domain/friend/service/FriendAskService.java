@@ -62,10 +62,13 @@ public class FriendAskService {
 
 	@Transactional
 	public void createFriendAsk(Long senderId, String receiverNickname) {
+		log.info("::FRIEND ASK::");
 		Member sender = memberRepository.findById(senderId)
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_ERROR));
 		Member receiver = memberRepository.findByNickname(receiverNickname)
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_ERROR));
+		if (friendAskRepository.existsBySender_IdAndReceiver_Id(senderId, receiver.getId()))
+			throw new BaseExceptionHandler(ErrorCode.ALREADY_EXIST_FRIEND_REQUEST);
 		friendAskRepository.save(
 			FriendAsk.builder()
 				.sender(sender)
@@ -73,8 +76,9 @@ public class FriendAskService {
 				.build()
 		);
 		FriendAskNoticeDto friendAskNoticeDto = new FriendAskNoticeDto(sender.getId(), sender.getNickname());
-		template.convertAndSend("/api/sub" + receiver.getId(), new SocketBaseDtoRes<>(SocketType.FRIENDASK, friendAskNoticeDto));
-		//notice 저장
+		log.info("::FRIEND ASK:: {} {} {}", sender.getId(), sender.getNickname(), receiver.getId());
+		template.convertAndSend("/api/sub/" + receiver.getId(), new SocketBaseDtoRes<>(SocketType.FRIENDASK, friendAskNoticeDto));		//notice 저장
+		log.info("::FRIEND ASK:: /api/sub/" + receiver.getId());
 		Notice notice = Notice.builder()
 			.member(receiver)
 			.sender(sender.getNickname())

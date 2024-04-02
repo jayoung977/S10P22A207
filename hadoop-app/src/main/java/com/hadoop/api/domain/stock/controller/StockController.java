@@ -38,9 +38,17 @@ public class StockController {
 		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, stockResList);
 	}
 
+	@GetMapping("/get/start-end")
+	public ResponseEntity<BaseResponse<List<StockRes>>> getStockDataStartEnd(
+		@RequestParam String startDate,
+		@RequestParam String endDate, @RequestParam String stockCode){
+		List<StockRes> stockResList = stockService.getStockDataStartEnd(startDate, endDate, stockCode);
+		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, stockResList);
+	}
+
 	@GetMapping("/max-min")
-	public ResponseEntity<BaseResponse<List<MaxMinPriceDto>>> getMaxMinPrice(@RequestParam String stockCode){
-		List<MaxMinPriceDto> maxMinPriceDto = stockService.getMaxMinPrice(stockCode);
+	public ResponseEntity<BaseResponse<List<MaxMinPriceDto>>> getMaxMinPrice(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String stockCode){
+		List<MaxMinPriceDto> maxMinPriceDto = stockService.getMaxMinPrice(startDate, endDate, stockCode);
 		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, maxMinPriceDto);
 	}
 
@@ -59,6 +67,12 @@ public class StockController {
 	@GetMapping("/change-count")
 	public ResponseEntity<BaseResponse<List<ChangeRateCountDto>>> getChangeRateCount(@RequestParam String stockCode){
 		List<ChangeRateCountDto> changeRateCountDto = stockService.getChangeRateCount(stockCode);
+		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, changeRateCountDto);
+	}
+
+	@GetMapping("/change-count/start-end")
+	public ResponseEntity<BaseResponse<List<ChangeRateCountDto>>> getChangeRateCountStartEnd(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String stockCode){
+		List<ChangeRateCountDto> changeRateCountDto = stockService.getChangeRateCountStartEnd(startDate, endDate, stockCode);
 		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, changeRateCountDto);
 	}
 	@GetMapping("/partition")

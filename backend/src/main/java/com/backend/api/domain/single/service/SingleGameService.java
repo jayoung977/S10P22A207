@@ -1,5 +1,6 @@
 package com.backend.api.domain.single.service;
 
+import com.backend.api.domain.hadoop.service.HadoopService;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.single.dto.request.NextDayRequestDto;
@@ -43,6 +44,7 @@ public class SingleGameService {
     private final MemberRepository memberRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
+    private final HadoopService hadoopService;
 
     private HashMap<Long, Integer> stocks;
     private List<Long> list;
@@ -204,8 +206,7 @@ public class SingleGameService {
         // 10개 안채워지면 반복해야함.
         while (stocks.size() < 10) {
             log.info("stocks.size() - {}", stocks.size());
-            List<String> stockIds = stockChartRepository.findDistinctStockCodeByDateBetween(randomDateTime, randomDateTime.plusDays(1));
-            System.out.println("stockIds.size()" + stockIds.size());
+            List<String> stockIds = stockChartRepository.findDistinctStockCodeByDateBetween(randomDateTime.minusDays(1), randomDateTime);
             if (stockIds.isEmpty()) {
                 log.info("해당하는 날짜의 데이터가 없음.{}", randomDateTime);
                 randomDateTime = randomDateTime.plusDays(1);
@@ -215,7 +216,7 @@ public class SingleGameService {
 
             // randomStocks 리스트에서 처음 50개의 요소 검토
             List<String> selectedStocks = stockIds.subList(0, Math.min(stockIds.size(), 50));   // 이거 넘기자
-            List<StockChart> randomStockCharts = stockChartRepository.findRandomStocksInRange(randomDateTime, randomDateTime.plusDays(1), selectedStocks);
+            List<StockChart> randomStockCharts = stockChartRepository.findRandomStocksInRange(randomDateTime.minusDays(1), randomDateTime, selectedStocks);
 
             for (StockChart stockChart : randomStockCharts) {
                 log.info("350개의 데이터가 없는지 확인 {}개까지 넣었음", stocks.size());
@@ -355,18 +356,13 @@ public class SingleGameService {
                 () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
             );
             int amount = currentGame.getStockAmount()[i]; // 해당 Stock의 보유량 가져오기
-
             totalAsset += (long) (amount * todayStockChart.getEndPrice() * 0.9975); // 총 자산 계산
         }
 
         // 팔았으니 currentGame 바꿔주기
-        System.out.println("currentGame.getStockAmount()[stockIdx] = " + currentGame.getStockAmount()[stockIdx]);
         currentGame.getStockAmount()[stockIdx] -= dto.amount();
-        System.out.println("currentGame.getStockAmount()[stockIdx] = " + currentGame.getStockAmount()[stockIdx]);
-
         currentGame.updateCash(currentGame.getCash() + (long) (dto.amount() * todayChart.getEndPrice() * 0.9975));
-        currentGame.addProfit(stockIdx, (int) (dto.amount() * (currentGame.getAveragePrice()[stockIdx] - todayChart.getEndPrice()) -
-            dto.amount() * todayChart.getEndPrice() * 0.0025));
+        currentGame.addProfit(stockIdx, (int) (dto.amount() * (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx])));
         currentGame.updateTotalAsset(totalAsset);
 
         double resultRoi = 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx];
@@ -377,11 +373,12 @@ public class SingleGameService {
             .tradeType(TradeType.SELL)
             .amount(dto.amount())
             .price(todayChart.getEndPrice()) // 현재가격.
-            .stockQuantity(currentGame.getStockAmount()[stockIdx] - dto.amount())
+            .stockQuantity(currentGame.getStockAmount()[stockIdx])
             .roi(Double.parseDouble(String.format("%.2f", resultRoi)))
-            .profit((long) currentGame.getProfits()[stockIdx])
+            .profit((long) (dto.amount() * (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]))) // 이번 거래의 profit
             .build();
         singleTradeRepository.save(singleTrade);
+        hadoopService.saveSingleTradeLogHdfs(singleTrade, memberId);
         currentGame.getTradeList().add(
             new SingleTradeListDto(
                 dto.stockId(),
@@ -402,14 +399,17 @@ public class SingleGameService {
                 currentGame.getAveragePrice()[stockIdx], //평균단가
                 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx] // 수익률
             );
-        redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.gameIdx(), currentGame);
 
         long totalProfit = 0;
         for (int i = 0; i < currentGame.getProfits().length; i++) {
             totalProfit += currentGame.getProfits()[i];
         }
-        double totalRoi = 100.0 * totalProfit / currentGame.getInitial();
-        TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalProfit, totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
+        double totalRoi = 100.0 * (totalAsset - currentGame.getInitial()) / currentGame.getInitial();
+        TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalAsset - currentGame.getInitial(), totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
+
+        // TotalAsset에 들어갔으면 뺴주기
+        currentGame.updateProfit(stockIdx, dto.amount());
+        redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.gameIdx(), currentGame);
 
         // 보유자산
         List<AssetListDto> assetList = new ArrayList<>();
@@ -474,18 +474,18 @@ public class SingleGameService {
 
         // 총 roi 계산
         long totalAsset = currentGame.getCash();
-        for (Long stockId : currentGame.getStocks().keySet()) {
-            StockChart todayStockCharts = stockChartRepository.findById(stockId + 299 + dto.day()).orElseThrow(
+
+        for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
+            long firstDayChartId = currentGame.getFirstDayChartList().get(i);
+            StockChart todayStockChart = stockChartRepository.findById(firstDayChartId + 299 + dto.day()).orElseThrow(
                 () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
             );
-
-            int amount = currentGame.getStockAmount()[currentGame.getStocks().get(stockId)]; // 해당 Stock의 보유량 가져오기
-
-            totalAsset += (long) (amount * todayStockCharts.getEndPrice() * 0.9975); // 총 자산 계산
+            int amount = currentGame.getStockAmount()[i]; // 해당 Stock의 보유량 가져오기
+            totalAsset += (long) (amount * todayStockChart.getEndPrice() * 0.9975); // 총 자산 계산
         }
         // 총 구입 금액 계산
         currentGame.addTotalPurchaseAmount((long) dto.amount() * todayChart.getEndPrice());
-
+        currentGame.updateTotalAsset(totalAsset);
         double resultRoi = 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx];
         // 총 profit 계산
 
@@ -497,9 +497,10 @@ public class SingleGameService {
             .price(todayChart.getEndPrice()) // 현재가격.
             .stockQuantity(currentGame.getStockAmount()[stockIdx] + dto.amount())
             .roi(Double.parseDouble(String.format("%.2f", resultRoi)))
-            .profit((long) currentGame.getProfits()[stockIdx])
+            .profit((-1) *(long) (dto.amount() * todayChart.getEndPrice() * 0.0015))
             .build();
         singleTradeRepository.save(singleTrade);
+        hadoopService.saveSingleTradeLogHdfs(singleTrade, memberId);
         currentGame.getTradeList().add(
             new SingleTradeListDto(
                 dto.stockId(),
@@ -568,13 +569,14 @@ public class SingleGameService {
         long totalAsset = currentGame.getCash();
         List<AssetListDto> assetList = new ArrayList<>();
 
-        for (Long firstDayStockChartId : currentGame.getFirstDayChartList()) {
+        for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
+            Long firstDayStockChartId = currentGame.getFirstDayChartList().get(i);
             StockChart todayChart = stockChartRepository.findById(firstDayStockChartId + 299 + dto.day()).orElseThrow();
             StockChart yesterdayChart = stockChartRepository.findById(firstDayStockChartId + 299 + dto.day() - 1).orElseThrow();
 
-            Long startDateChartStockId = todayChart.getStock().getId();
             // 종목별 정보 담아주기
-            Integer stockIdx = currentGame.getStocks().get(startDateChartStockId);
+            Long stockId = todayChart.getStock().getId();
+            Integer stockIdx = currentGame.getStocks().get(stockId);
             int amount = currentGame.getStockAmount()[stockIdx];
             // 총 자산 가치
             totalAsset += (long) (amount * todayChart.getEndPrice() * 0.9975);
@@ -585,14 +587,15 @@ public class SingleGameService {
                     todayChart.getEndPrice(), // 오늘의 종가
                     todayChart.getEndPrice() - yesterdayChart.getEndPrice(), // 등락정도
                     currentGame.getStockAmount()[stockIdx], // 보유수량
-                    (long) currentGame.getStockAmount()[stockIdx] * (todayChart.getEndPrice()
-                        - currentGame.getAveragePrice()[stockIdx]), // 평가손익
+                    (long) (currentGame.getStockAmount()[stockIdx] * (0.9975 * todayChart.getEndPrice()
+                        - currentGame.getAveragePrice()[stockIdx])), // 평가손익
                     currentGame.getAveragePrice()[stockIdx] == 0 ? 0 :
                         1.0 * ((todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]) * 100)
                             / currentGame.getAveragePrice()[stockIdx]// 손익률
                 )
             );
-            // 보유 재산의 각
+
+            // 각 날짜의 변동에 맞게 종목의 실현손익이 변한다.
             currentGame.addProfit(stockIdx, currentGame.getStockAmount()[stockIdx] * (todayChart.getEndPrice() - yesterdayChart.getEndPrice()));
             // 보유 자산변동 보여주기
             AssetListDto assetListDto = new AssetListDto(
@@ -611,8 +614,7 @@ public class SingleGameService {
                 SingleGameStock singleGameStock = singleGameStockRepository.findBySingleGameLog_IdAndStock_Id(currentGame.getSingleGameLogId(), todayChart.getStock().getId())
                     .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
 
-                Long stockId = todayChart.getStock().getId();
-                Integer index = currentGame.getStocks().get(stockId);
+                Integer index = currentGame.getStocks().get(todayChart.getStock().getId());
 
                 // 현재 저장된것 + 아직 매도 안한거
                 singleGameStock.updateAveragePurchasePrice(currentGame.getAveragePrice()[index]);
@@ -631,6 +633,7 @@ public class SingleGameService {
         // 총 profit 계산
         long resultProfit = totalAsset - currentGame.getInitial();
         double resultRoi = 100.0 * (totalAsset - currentGame.getInitial()) / currentGame.getInitial();
+
 
         currentGame.updateTotalAsset(totalAsset);
         redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.gameIdx(), currentGame);
@@ -743,18 +746,20 @@ public class SingleGameService {
         List<SingleGameStock> singleGameStocks = singleGameStockRepository.findAllBySingleGameLog_Id(singleGameLogId).orElseThrow(
                 () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
 
-        List<StockInfoDto> stockInfoDtoList = new ArrayList<>();
+        List<SingleLogStockInfoDto> stockInfoDtoList = new ArrayList<>();
         List<StockChartDataDto> stockChartDataList = new ArrayList<>();
         List<SingleLogRankMemberListDto> rankMemberList = new ArrayList<>();
         List<SingleLogTradeListDto> tradeList = new ArrayList<>();
+
         for(SingleGameStock singleGameStock: singleGameStocks){
             //1. 종목 정보 넣기(10개)
             log.info("singleGameStock.getId():"+singleGameStock.getId());
             log.info("singleGameStock.getId():"+singleGameStock.getSingleGameLog().getId());
             log.info("singleGameStock.getStock().getId():"+singleGameStock.getStock().getId());
             log.info("singleGameStock.getStock().getStockName():"+singleGameStock.getStock().getStockName());
-            StockInfoDto stockInfoDto = new StockInfoDto(
+            SingleLogStockInfoDto stockInfoDto = new SingleLogStockInfoDto(
                     singleGameStock.getStock().getId(),
+                    singleGameStock.getStock().getStockCode(),
                     singleGameStock.getStock().getStockName()
             );
             stockInfoDtoList.add(stockInfoDto);
@@ -766,6 +771,7 @@ public class SingleGameService {
 
             LocalDateTime startDateTime = singleGameStock.getSingleGameLog().getStartDate().withHour(0).withMinute(0).withSecond(0);
             log.info("startDateTime : {}",startDateTime);
+
 
             StockChart stockChart = stockChartRepository.findByStock_StockCodeAndDateBetween(singleGameStock.getStock().getStockCode(),startDateTime,startDateTime.plusDays(1)).orElseThrow(
                     () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_LOG_STOCK_CHART)
@@ -831,8 +837,13 @@ public class SingleGameService {
                     ));
 
         }
+        List<StockChartDto> stockChartDtos = stockChartDataList.get(0).stockChartList();
+        LocalDateTime startDate = stockChartDtos.get(0).date();
+        LocalDateTime endDate = stockChartDtos.get(stockChartDtos.size()-1).date();;
 
         return new SingleGameLogResponseDto(
+                startDate,
+                endDate,
                 stockInfoDtoList,
                 stockChartDataList,
                 tradeList,

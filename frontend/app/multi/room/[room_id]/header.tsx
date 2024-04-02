@@ -5,17 +5,36 @@ import logo from "@/public/src/assets/images/logo.png"
 import penguin from "@/public/src/assets/images/penguin.png";
 import axios from "axios";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
+import socketStore from "@/public/src/stores/websocket/socketStore";
+import { useEffect, useState } from "react";
+import userStore from "@/public/src/stores/user/userStore";
+import Swal from "sweetalert2";
+
 
 export default function Header() {
+  const { memberId } = userStore();
   const playClickSound = useClickSound();
   const router = useRouter();
   const params = useParams<{ room_id?: string }>();
   const room_id: string | undefined = params.room_id;
+  const { deleteReceiveMessages, readyState } = socketStore();
+  const {roomId, roomTitle, hostId} = socketStore()
+  const [allReady, setAllReady] = useState(false)
+  const [ready, setReady] = useState(false)
+
+  useEffect(()=>{
+    Object.keys(readyState).map((item)=>{
+      if (!readyState[Number(item)]) 
+      { setAllReady(false)
+        return
+      }}) 
+    setAllReady(true)
+  }, [readyState])
 
   const handleGameReady = async() => {
     const token = sessionStorage.getItem("accessToken");
     try {
-      const response = await fetch(`https://j10a207.p.ssafy.io/api/multi/ready/${params.room_id}`,{
+      const response = await fetch(`https://j10a207.p.ssafy.io/api/multi/ready?roomId=${params.room_id}`,{
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -24,38 +43,48 @@ export default function Header() {
       })
       
       const result = await response.json();
-      console.log(result)
+      const myReady = result.result
+      setReady(myReady)
     } catch (error) {
       console.error(error)
     }
   }
 
+
   const handleGameStart = async() => {
-    const token = sessionStorage.getItem("accessToken");
-    try {
-      const response = await fetch("https://j10a207.p.ssafy.io/api/multi/start-game",{
+    const numberKeys = Object.keys(readyState).map(Number);
+    if(numberKeys.length > 1){
+      const token = sessionStorage.getItem("accessToken");
+      await axios({
+        url: "https://j10a207.p.ssafy.io/api/multi/start-game",
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          'playerIds': [1, 2, 3, 4, 5, 6],
-          'roundNumber': 3,
-          'roomId': params.room_id
-        })
+        data: {
+          playerIds: numberKeys,
+          roundNumber: 1,
+          roomId: params.room_id
+        }
       })
-      
-      const result = await response.json();
-      console.log(result)
-      const gameId = result.result.gameLogId
-      router.push(`${room_id}/play/${gameId}`);
-    } catch (error) {
-      console.error(error)
+      .then((res) => {
+        console.log(res)
+        const gameId = res.data.result.gameId
+        router.push(`${room_id}/play/${gameId}`);
+      })
+      .catch ((error) => {
+        console.error(error)
+      })
+    } else {
+      Swal.fire({
+        title: '2명 이상일 때 시작 가능합니다.',
+        icon: 'error'
+      })
+      return
     }
   }
 
-
+  const [receiveMessage, setReceiveMessage] = useState<any>([]);
   function handleExit() {
     axios({
       method: "delete",
@@ -64,7 +93,7 @@ export default function Header() {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     }).then((res) => {
-      console.log(res.data);
+      deleteReceiveMessages()
     });
   }
 
@@ -86,34 +115,57 @@ export default function Header() {
         </div>
       </div>
       <div className="col-span-8 flex justify-center font-bold text-xl">
-        <div>이겨보시던지</div>
+        <div>{roomTitle}</div>
       </div>
       <div className="col-span-2 flex justify-center gap-4">
-        <button
-          className="border p-2 rounded-md bg-red-500 text-white hover:bg-red-400"
-          onClick={() => {
-            playClickSound();
-            handleGameStart();
-          }}
-        >
-          시작하기
-        </button>
-        <button
-          className="border p-2 rounded-md bg-red-500 text-white hover:bg-red-400"
-          onClick={() => {
-            playClickSound();
-            handleGameReady();
-          }}
-        >
-          준비하기
-        </button>
+        {
+          memberId === hostId ? (
+          <button
+            className="border p-2 rounded-md bg-small-1 text-white hover:bg-blue-400"
+          disabled={!allReady}
+            onClick={() => {
+              playClickSound();
+              handleGameStart();
+            }}
+          >
+            시작하기
+          </button>
+          ) : (
+            <div>
+              {
+                ready ? (
+                    <button
+                      className="p-2 rounded-md bg-small-3 text-textColor-2 hover:bg-red-400"
+                      disabled={!allReady}
+                      onClick={() => {
+                        playClickSound();
+                        handleGameReady();
+                      }}
+                    >
+                      준비취소
+                    </button>
+                ) : (
+                  <button
+                    className="border p-2 rounded-md bg-small-1 text-white hover:bg-blue-400"
+                    onClick={() => {
+                      playClickSound();
+                      handleGameReady();
+                    }}
+                  >
+                    준비하기
+                  </button>
+                )
+              }
+            </div>
+          )
+        }
         <button
           onClick={() => {
             playClickSound();
             handleExit();
             router.back();
           }}
-          className="border p-2 rounded-md border-red-500 hover:bg-red-100 hover:border-2"
+          className="border p-2 rounded-md border-gray-400 hover:bg-gray-100 hover:border-2"
         >
           나가기
         </button>

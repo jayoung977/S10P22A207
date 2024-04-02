@@ -1,5 +1,6 @@
 package com.backend.api.global.config;
 
+import com.backend.api.domain.notice.service.RedisPubService;
 import com.backend.api.global.jwt.JwtAuthenticateFilter;
 import com.backend.api.global.jwt.service.JwtService;
 import com.backend.api.global.security.handler.CustomOAuth2FailHandler;
@@ -36,6 +37,7 @@ public class WebSecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final CustomOAuth2FailHandler customOAuth2FailHandler;
 	private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+	private final RedisPubService redisPubService;
 	private final JwtService jwtService;
 
 	@Bean
@@ -57,7 +59,7 @@ public class WebSecurityConfig {
 
 	@Bean
 	public JwtAuthenticateFilter jwtAuthenticateFilter() {
-		return new JwtAuthenticateFilter(jwtService, URL_WHITE_LIST);
+		return new JwtAuthenticateFilter(jwtService, redisPubService, URL_WHITE_LIST);
 	}
 
 	// CORS 설정
