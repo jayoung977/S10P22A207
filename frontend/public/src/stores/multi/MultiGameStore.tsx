@@ -90,7 +90,7 @@ const multigameStore = create<Store>((set: any) => ({
   setUserId: (value) => set({ userId: value }),
   pageNumber: 1,
   setPageNumber: (value) => set({ pageNumber: value }),
-  isWaiting: false,
+  isWaiting: true,
   setIsWaiting: (value) => set({ isWaiting: value }),
   // multi game state value
   stockId :0,
@@ -119,7 +119,6 @@ const multigameStore = create<Store>((set: any) => ({
       console.error(e)
     })
   }
-
 }));
 
 export default multigameStore;

@@ -5,14 +5,17 @@ import { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
+import socketStore from "@/public/src/stores/websocket/socketStore";
 
 
 // 매수, 매도 클릭 시 활성화되는 모달창
 export default function TradeModal({ tradeType, isOpen, onClose } :any) {
+  const {roundNumber, day} = socketStore()
   const params = useParams();
   const gameId = params['game_id']
   const [stocksAmount, setStocksAmount] = useState(0);
   const playClickSound = useClickSound();
+
 
   function handleStocksChange(e:React.ChangeEvent<HTMLInputElement>){
     playClickSound();
@@ -34,9 +37,9 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
         },
         data: {
           gameId: gameId,
-          roundNumber: 1,
+          roundNumber: roundNumber,
           amount: stocksAmount,
-          day: 1
+          day: day
         }
       })
       .then((res)=> {
@@ -68,8 +71,11 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
                      <span className="text-small-3">매수</span> 
                      )  : tradeType == 'sell' ? (
                      <span className="text-small-1">매도</span> 
-                 ) : (
+                 ) : tradeType == 'short-selling' ? (
                       <span className="text-small-10">공매도</span> 
+                 ) : (
+                    <span className="text-small-12">공매도 청산</span> 
+
                  )
               }
               주문
@@ -83,8 +89,10 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
                               <span className="text-small-3 mt-1">매수</span> 
                           ) : tradeType == 'sell' ?  (
                               <span className="text-small-1 mt-1">매도</span>
-                          ) : (
+                          ) : tradeType == 'short-selling' ?  (
                               <span className="text-small-10 mt-1">공매도</span>
+                          ) : (
+                            <span className="text-small-12 mt-1">공매도 청산</span>
 
                           )
                       }  
@@ -108,8 +116,11 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
                           <label htmlFor="number-input" className="mb-2 font-medium text-small-3 dark:text-textColor-2">매수 수량:</label>
                       ) : tradeType == 'sell' ? (
                           <label htmlFor="number-input" className="mb-2 font-medium text-small-1 dark:text-textColor-2">매도 수량:</label>
-                      ) : (
+                      ) : tradeType == 'short-selling' ? (
                           <label htmlFor="number-input" className="mb-2 font-medium text-small-10 dark:text-textColor-2">공매도 수량:</label>
+                      ) : (
+                           <label htmlFor="number-input" className="mb-2 font-medium text-small-12 dark:text-textColor-2">공매도 청산수량:</label>
+
                       )
                   }
               </div>
@@ -125,8 +136,10 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
                           <button onClick={() => {handleTrade(stocksAmount, 'buy')}} className="col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 bg-small-3">매수</button>
                       ) : tradeType == 'sell' ? (
                           <button onClick={() => {handleTrade(stocksAmount, 'sell')}} className="col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 bg-small-1">매도</button>
-                      ) : (
+                      ) : tradeType == 'short-selling' ? (
                           <button onClick={() => {handleTrade(stocksAmount, 'short-selling')}} className="col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 bg-small-10">공매도</button>
+                      ) : (
+                          <button onClick={() => {handleTrade(stocksAmount, 'close-short')}} className="col-start-6 col-end-8 rounded-full mr-1 text-textColor-2 bg-small-12">공매도 청산</button>
                       )
                   }
               </div>
