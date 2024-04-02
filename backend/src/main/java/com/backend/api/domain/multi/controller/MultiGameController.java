@@ -64,7 +64,6 @@ public class MultiGameController {
     @PostMapping("/start-game")
     @Operation(summary = "멀티게임 시작하기.", description = "멀티게임을 시작합니다.", tags = {"멀티게임"})
     public ResponseEntity<BaseResponse<MultiGameStartResponseDto>> startMultiGame(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameStartRequestDto dto) {
-
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.startMultiGame(userDetails.getId(), dto));
     }
 
