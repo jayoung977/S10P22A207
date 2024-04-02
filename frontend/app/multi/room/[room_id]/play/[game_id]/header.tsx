@@ -18,7 +18,14 @@ export default function Header() {
   const roundPercentage = (turn / 50) * 100;
   const allPercentage = ((50 * (round - 1) + turn) / 150) * 100;
   const playClickSound = useClickSound();
-  const { roomTitle, maxRoundNumber } = socketStore();
+  const {
+    roomTitle,
+    maxRoundNumber,
+    setDay,
+    day,
+    setRoundNumber,
+    roundNumber,
+  } = socketStore();
 
   const [remainingTime, setRemainingTime] = useState(100000); // 초기 남은 시간을 100초(100,000밀리초)로 설정
 
