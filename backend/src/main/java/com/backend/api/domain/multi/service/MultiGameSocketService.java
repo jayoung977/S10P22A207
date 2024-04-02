@@ -112,10 +112,11 @@ public class MultiGameSocketService {
 		multiWaitingRoom.getReadyState().remove(userDetails.getId());
 		redisTemplate.opsForValue().set("multiGame:" + roomId, multiWaitingRoom);
 		log.info("멀티게임 대기방 입장상태를 제거합니다");
-		redisTemplate.opsForValue().getAndDelete(userDetails.getEmail());
+		redisTemplate.opsForValue().getAndDelete("enterRoomId:"+userDetails.getEmail());
 		if (multiWaitingRoom.getParticipantIds().isEmpty()) {
 			log.info("멀티게임 대기방이 비어있어 삭제합니다");
 			redisTemplate.delete("multiGame:" + roomId);
+			return ;
 		}
 		/* 방장인지 체크 */
 		log.info("멀티게임 대기방의 방장인지 체크합니다");
@@ -140,8 +141,8 @@ public class MultiGameSocketService {
 
 	/* 내가 입장한 방이 있다면 멀티게임 대기방에서 나가기 */
 	public void checkStatus(CustomUserDetails userDetails) throws JsonProcessingException {
-		if (redisTemplate.hasKey(userDetails.getEmail())) { // 내가 방에 입장해 있는지 확인
-			Object existingRoodId = redisTemplate.opsForValue().get(userDetails.getEmail()); // 어떤 방에 있는지 가져옴
+		if (redisTemplate.hasKey("enterRoomId:"+userDetails.getEmail())) { // 내가 방에 입장해 있는지 확인
+			Object existingRoodId = redisTemplate.opsForValue().get("enterRoomId:"+userDetails.getEmail()); // 어떤 방에 있는지 가져옴
 			exitMultiRoom(userDetails, Long.valueOf((Integer)existingRoodId)); // 방 나가기
 		}
 	}
@@ -163,7 +164,7 @@ public class MultiGameSocketService {
 		multiWaitingRoom.getReadyState().remove(kickMember.getId());
 		redisTemplate.opsForValue().set("multiGame:" + roomId, multiWaitingRoom);
 		log.info("멀티게임 대기방 입장상태를 제거합니다");
-		redisTemplate.opsForValue().getAndDelete(kickMember.getEmail());
+		redisTemplate.opsForValue().getAndDelete("enterRoomId:"+kickMember.getEmail());
 		sendMessageToMultiWaitingRoom(roomId,
 			new SocketBaseDtoRes<>(SocketType.KICK, new WebSocketMessageReq(roomId, "시스템", kickMember.getNickname())));
 		if (multiWaitingRoom.getParticipantIds().isEmpty()) {
