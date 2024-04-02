@@ -39,7 +39,7 @@ export default function page() {
       console.log(data)
       const response = await axios({
         method: 'post',
-        url: "https://j10a207.p.ssafy.io/api/multi/game-chaSrt",
+        url: "https://j10a207.p.ssafy.io/api/multi/game-chart",
         data: {
           roundNumber: roundNumber,
           stockId: multiGameStockIds[roundNumber-1].stockId,
