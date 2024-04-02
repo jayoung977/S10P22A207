@@ -26,13 +26,13 @@ interface WebSocketStore {
   hostId: number;
   setHostId: (hostId: number) => void;
   participants: ParticipantsType[];
-  setParticipants:(participants: ParticipantsType[]) => void;
+  setParticipants: (participants: ParticipantsType[]) => void;
   roomId: number;
-  setRoomId:(roomId: number) => void;
+  setRoomId: (roomId: number) => void;
   roomTitle: string;
-  setRoomTitle:(roomTitle: string) => void;
-  readyState: {[key: number]: boolean};
-  setReadyState: (readyState:{[key: number]: boolean} ) => void;
+  setRoomTitle: (roomTitle: string) => void;
+  readyState: { [key: number]: boolean };
+  setReadyState: (readyState: { [key: number]: boolean }) => void;
 }
 
 const socketStore = create<WebSocketStore>((set) => ({
@@ -40,26 +40,28 @@ const socketStore = create<WebSocketStore>((set) => ({
   setClientObject: (value) => set({ clientObject: value }),
   receiveMessages: [],
   setReceiveMessages: (value) => set({ receiveMessages: value }),
-  addReceiveMessages: (value : any) => set((state) =>({
-    receiveMessages: [...state.receiveMessages, value]
-  })),
-  deleteReceiveMessages: () => set((state) =>({
-    receiveMessages: []
-  })),
+  addReceiveMessages: (value: any) =>
+    set((state) => ({
+      receiveMessages: [...state.receiveMessages, value],
+    })),
+  deleteReceiveMessages: () =>
+    set((state) => ({
+      receiveMessages: [],
+    })),
   receiveAlarm: false,
   setReceiveAlarm: (value) => set({ receiveAlarm: value }),
   roomInfo: [],
-  setRoomInfo: (value) => set({roomInfo: value}),
+  setRoomInfo: (value) => set({ roomInfo: value }),
   hostId: 0,
-  setHostId:  (value) => set({hostId: value}),
+  setHostId: (value) => set({ hostId: value }),
   participants: [],
-  setParticipants:(value) => set({participants: value}),
+  setParticipants: (value) => set({ participants: value }),
   roomId: 0,
-  setRoomId:(value) => set({roomId: value}),
+  setRoomId: (value) => set({ roomId: value }),
   roomTitle: "",
-  setRoomTitle: (value) => set({roomTitle: value}),
+  setRoomTitle: (value) => set({ roomTitle: value }),
   readyState: {},
-  setReadyState: (value) => set({readyState: value})
+  setReadyState: (value) => set({ readyState: value }),
 }));
 
 export default socketStore;
