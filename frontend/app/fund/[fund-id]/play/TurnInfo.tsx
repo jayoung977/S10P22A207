@@ -12,6 +12,7 @@ import { useParams } from 'next/navigation';
 
 export default function TurnInfo () {
     const playClickSound = useClickSound();
+    const params = useParams()
     const [isNextTurnDisabled, setIsNextTurnDisabled] = useState(false);
     // 현재 턴
     const { turn, setTurn, gameIdx, setTotalAssetData, setAssetListData, setTodayStockInfoListData, setFundGameEndInfoData, isBuySellModalOpen, setIsBuySellModalOpen, isBuy, setIsBuy, isOpenEndModal, setIsOpenEndModal,
@@ -36,7 +37,6 @@ export default function TurnInfo () {
     const handleClickTurn = async () => {
         playClickSound();
         try {
-            const params = useParams()
             const response = await axios(
                 {
                     method: "post",
