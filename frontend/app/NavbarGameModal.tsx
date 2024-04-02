@@ -42,7 +42,7 @@ export default function NavbarGameModal() {
         if (res.data.result.isExistSingleGame == true) {
           Swal.fire({
             title: "기존 기록이 있습니다",
-            text: "이이서 하시겠습니까?",
+            text: "이어서 하시겠습니까?",
             showCancelButton: true,
             confirmButtonText: "이어하기",
             confirmButtonColor: "#1454FF",
@@ -95,7 +95,7 @@ export default function NavbarGameModal() {
           className="shadow-sm cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           onClick={() => {
             playClickSound();
-            router.push("/multi")
+            router.push("/multi");
           }}
         >
           멀티 플레이
@@ -106,7 +106,7 @@ export default function NavbarGameModal() {
           className="shadow-sm cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           onClick={() => {
             playClickSound();
-            openSinglePlay()
+            openSinglePlay();
           }}
         >
           싱글 플레이
@@ -118,7 +118,7 @@ export default function NavbarGameModal() {
           className="shadow-sm cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           onClick={() => {
             playClickSound();
-            router.push("/quiz")
+            router.push("/quiz");
           }}
         >
           퀴즈

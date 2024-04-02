@@ -5,10 +5,12 @@ import { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
+import socketStore from "@/public/src/stores/websocket/socketStore";
 
 
 // 매수, 매도 클릭 시 활성화되는 모달창
 export default function TradeModal({ tradeType, isOpen, onClose } :any) {
+  const {roundNumber, day} = socketStore()
   const params = useParams();
   const gameId = params['game_id']
   const [stocksAmount, setStocksAmount] = useState(0);
@@ -34,9 +36,9 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
         },
         data: {
           gameId: gameId,
-          roundNumber: 1,
+          roundNumber: roundNumber,
           amount: stocksAmount,
-          day: 1
+          day: day
         }
       })
       .then((res)=> {
