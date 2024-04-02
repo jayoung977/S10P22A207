@@ -1,5 +1,9 @@
 import { create } from "zustand";
 
+
+
+
+
 // 내 매매기록
 type multiLogTradeDtoType = {
     date :string,
@@ -30,6 +34,8 @@ type stockChartDtoType = {
 type stockChartDtoListType = stockChartDtoType[];
 
 type Store = {
+
+
     stockName :string,
     setStockName :(value :string) => void,
 
@@ -48,6 +54,7 @@ type Store = {
 };
 
 const MultiReviewStore = create<Store>((set: any) => ({
+
 
     stockName: '',
     setStockName: (value) => set({ stockName : value }),

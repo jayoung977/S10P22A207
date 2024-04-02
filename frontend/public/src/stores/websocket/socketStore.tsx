@@ -12,6 +12,11 @@ export interface ParticipantsType {
   currentRank: number;
 }
 
+interface MultiGameStockIdsType {
+  firstDayStockChartId: number;
+  stockId: number;
+}
+
 interface WebSocketStore {
   clientObject: any;
   setClientObject: (client: any) => void;
@@ -33,6 +38,14 @@ interface WebSocketStore {
   setRoomTitle: (roomTitle: string) => void;
   readyState: { [key: number]: boolean };
   setReadyState: (readyState: { [key: number]: boolean }) => void;
+  maxRoundNumber: number,
+  setMaxRoundNumber: (maxRoundNumber: number) => void;
+  gameId: number,
+  setGameId: (gameId: number) => void;
+  roundNumber: number,
+  setRoundNumber: (roundNumber: number) => void;
+  multiGameStockIds: MultiGameStockIdsType[],
+  setMultiGameStockIds: (multiGameStockIds: MultiGameStockIdsType[]) => void;
 }
 
 const socketStore = create<WebSocketStore>((set) => ({
@@ -62,6 +75,14 @@ const socketStore = create<WebSocketStore>((set) => ({
   setRoomTitle: (value) => set({ roomTitle: value }),
   readyState: {},
   setReadyState: (value) => set({ readyState: value }),
+  maxRoundNumber: 0,
+  setMaxRoundNumber: (value) => set({ maxRoundNumber: value }),
+  gameId: 0,
+  setGameId: (value) => set({ gameId: value }),
+  roundNumber: 1,
+  setRoundNumber: (value) => set({ roundNumber: value}) ,
+  multiGameStockIds: [],
+  setMultiGameStockIds:(value) => set({ multiGameStockIds: value }),
 }));
 
 export default socketStore;
