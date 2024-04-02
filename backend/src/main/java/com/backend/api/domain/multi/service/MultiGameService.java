@@ -21,15 +21,19 @@ import com.backend.api.domain.stock.entity.Stock;
 import com.backend.api.domain.stock.entity.StockChart;
 import com.backend.api.domain.stock.repository.StockChartRepository;
 import com.backend.api.domain.stock.repository.StockRepository;
+import com.backend.api.global.common.SocketBaseDtoRes;
 import com.backend.api.global.common.code.ErrorCode;
+import com.backend.api.global.common.type.SocketType;
 import com.backend.api.global.common.type.TradeType;
 import com.backend.api.global.exception.BaseExceptionHandler;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
+import com.backend.api.global.websocket.dto.request.WebSocketMessageReq;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +64,7 @@ public class MultiGameService {
 	private final MemberRepository memberRepository;
 	private final ObjectMapper objectMapper;
 	private final MultiGameSocketService multiGameSocketService;
+	private final SimpMessageSendingOperations template;
 
     /*
      * 멀티게임 key :  multiGame:gameId:memberId:roundNumber
@@ -164,7 +169,7 @@ public class MultiGameService {
 				.build();
 		multiWaitingRoom.getReadyState().put(userDetails.getId(), true); // 방장은 레디상태 true로 초기화
 		redisTemplate.opsForValue().set(key, multiWaitingRoom);
-		multiGameSocketService.sendMultiWaitingRoomDetailDto(roomId);
+		// multiGameSocketService.sendMultiWaitingRoomDetailDto(roomId);
 		return new MultiGameRoomCreateResponseDto(roomId);
 	}
 
@@ -197,9 +202,15 @@ public class MultiGameService {
 				}
 			}
 			gameId = maxGameId;
+			for (Long playerId : dto.playerIds()) { // 채팅방에 있는 모든 유저에게 메시지 전송
+				log.info("메시지 전송 대상: {}", playerId);
+				template.convertAndSend("/api/sub/" + playerId, new SocketBaseDtoRes<>(SocketType.START,
+					new MultiGameStartResponseDto(gameId, 1)));
+				log.info("socketBaseDtoRes : gameId : {} roundNumber : {}", gameId, 1);
+			}
+			log.info("메시지 전송 완료");
 		}
-
-        return new MultiGameStartResponseDto(gameId);
+        return new MultiGameStartResponseDto(gameId, 1);
     }
 
 	public StockChartDataDto getGameChart(Long memberId, MultiGameChartRequestDto dto){

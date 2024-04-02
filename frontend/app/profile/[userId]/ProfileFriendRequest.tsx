@@ -34,12 +34,11 @@ const fetchFriendRequests = async () => {
       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
     },
   });
-  console.log(response.data)
+  console.log(response.data);
   return response.data;
 };
 export default function ProfileFriendRequest() {
-  const { isOpen, setIsOpen, isSentOpen, setIsSentOpen } = profileStore();
-
+  const { setIsOpen, isOpen, isSentOpen, setIsSentOpen } = profileStore();
   const { data, isLoading, error }: UseQueryResult<FriendRequestInfo, Error> =
     useQuery("userFriendRequestsInfo", fetchFriendRequests);
 
@@ -78,7 +77,7 @@ export default function ProfileFriendRequest() {
       },
     }
   );
-  if (!isOpen) return null;
+
   if (isLoading) {
     return <div className="rainbow"></div>;
   }
