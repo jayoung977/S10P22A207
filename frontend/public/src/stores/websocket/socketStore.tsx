@@ -42,10 +42,12 @@ interface WebSocketStore {
   setMaxRoundNumber: (maxRoundNumber: number) => void;
   gameId: number,
   setGameId: (gameId: number) => void;
-  roomNumber:number,
-  setRoomNumber: (roomNumber: number) => void;
+  roundNumber:number,
+  setRoundNumber: (roundNumber: number) => void;
   multiGameStockIds: MultiGameStockIdsType[],
   setMultiGameStockIds: (multiGameStockIds: MultiGameStockIdsType[]) => void;
+  day: number,
+  setDay: (day: number) => void;
 }
 
 const socketStore = create<WebSocketStore>((set) => ({
@@ -79,8 +81,10 @@ const socketStore = create<WebSocketStore>((set) => ({
   setMaxRoundNumber: (value) => set({ maxRoundNumber: value }),
   gameId: 0,
   setGameId: (value) => set({ gameId: value }),
-  roomNumber:0,
-  setRoomNumber:(value) => set({ roomNumber: value }),
+  roundNumber:1,
+  setRoundNumber:(value) => set({ roundNumber: value }),
+  day: 1,
+  setDay:(value) => set({ day: value }),
   multiGameStockIds: [],
   setMultiGameStockIds:(value) => set({ multiGameStockIds: value }),
 }));

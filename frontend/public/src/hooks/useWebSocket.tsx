@@ -22,7 +22,6 @@ export const useWebSocket = () => {
     addReceiveMessages,
     deleteReceiveMessages,
     setMaxRoundNumber,
-    setRoomNumber,
     setGameId,
     setMultiGameStockIds,
   } = socketStore();

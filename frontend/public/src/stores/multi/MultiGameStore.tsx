@@ -73,7 +73,6 @@ const multigameStore = create<Store>((set: any) => ({
       console.error(e)
     })
   }
-
 }));
 
 export default multigameStore;
