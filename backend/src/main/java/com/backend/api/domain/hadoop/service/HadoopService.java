@@ -80,7 +80,6 @@ public class HadoopService {
 	}
 
 	public List<MaxMinPriceDto> getMaxMinPrice(String startDate, String endDate, String stockCode){
-
 		log.info("webClient 생성 완료");
 		String uri = "/hadoop/stock/max-min";
 		//WebClient  요청
@@ -100,7 +99,7 @@ public class HadoopService {
 		return response.getResult();
 	}
 
-	public List<MaxDataDto> getMaxDate(String stockCode, int maxPrice){
+	public List<MaxDataDto> getMaxDate(String startDate, String endDate, String stockCode, int maxPrice){
 		log.info("webClient 생성 완료");
 		String uri = "/hadoop/stock/max-date";
 
@@ -108,6 +107,8 @@ public class HadoopService {
 		MaxDataResponseDto response = webClient.get()
 			.uri(uriBuilder -> uriBuilder
 				.path(uri)
+				.queryParam("startDate", startDate)
+				.queryParam("endDate", endDate)
 				.queryParam("stockCode", stockCode)
 				.queryParam("maxPrice", maxPrice)
 				.build())
@@ -120,13 +121,15 @@ public class HadoopService {
 		return response.getResult();
 	}
 
-	public List<MinDataDto> getMinDate(String stockCode, int minPrice){
+	public List<MinDataDto> getMinDate(String startDate, String endDate, String stockCode, int minPrice){
 		log.info("webClient 생성 완료");
 		String uri = "/hadoop/stock/min-date";
 		//WebClient  요청
 		MinDataResponseDto response = webClient.get()
 			.uri(uriBuilder -> uriBuilder
 				.path(uri)
+				.queryParam("startDate", startDate)
+				.queryParam("endDate", endDate)
 				.queryParam("stockCode", stockCode)
 				.queryParam("minPrice", minPrice)
 				.build())
