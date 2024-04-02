@@ -63,7 +63,11 @@ type minMaxDateType = {
     stockCode :string,
 }
 
-
+type priceDateType = {
+    date :string,
+    price :number,
+}
+type priceDateListType = priceDateType[]
 type Store = {
     selectedIndex :number,
     setSelectedIndex :(value :number | any) => void,
@@ -102,11 +106,17 @@ type Store = {
     setMinPrice :(value :number) => void,
 
     // startDate ~ endDate
-    minPriceDate :minMaxDateType[] | any,
-    setMinPriceDate :(value :minMaxDateType[]) => void;
+    // minPriceDate :any,
+    // setMinPriceDate :(value :any) => void,
 
-    maxPriceDate :minMaxDateType[] | any,
-    setMaxPriceDate :(value :minMaxDateType[]) => void;
+    minPriceDateList :priceDateListType | any,
+    setMinPriceDateList :(value :priceDateListType) => void;
+
+    // maxPriceDate :any,
+    // setMaxPriceDate :(value :any) => void;
+    maxPriceDateList :priceDateListType | any,
+    setMaxPriceDateList :(value :priceDateListType) => void;
+
 };
 
 const SingleReviewStore = create<Store>((set: any) => ({
@@ -143,11 +153,17 @@ const SingleReviewStore = create<Store>((set: any) => ({
     minPrice :0,
     setMinPrice :(value) => set({ minPrice : value }),
 
-    minPriceDate :[],
-    setMinPriceDate :(value) => set({ minPriceDate : value }),
+    // minPriceDate :[],
+    // setMinPriceDate :(value) => set({ minPriceDate : value }),
 
-    maxPriceDate :[],
-    setMaxPriceDate :(value) => set({ maxPriceDate : value }),
+    minPriceDateList:  [],
+    setMinPriceDateList: (value) => set({ minPriceDateList : value }),
+
+    // maxPriceDate :[],
+    // setMaxPriceDate :(value) => set({ maxPriceDate : value }),
+
+    maxPriceDateList: [],
+    setMaxPriceDateList: (value) => set({ maxPriceDateList : value }),
 
 }));
 
