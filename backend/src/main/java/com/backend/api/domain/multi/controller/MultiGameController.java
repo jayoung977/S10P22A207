@@ -4,6 +4,7 @@ import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.multi.dto.MultiGameResultRequestDto;
 import com.backend.api.domain.multi.dto.MultiGameSubResultRequestDto;
+import com.backend.api.domain.multi.dto.request.MultiGameChartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameRoomCreateRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameStartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiNextDayRequestDto;
@@ -69,7 +70,7 @@ public class MultiGameController {
 
     @PostMapping("/game-chart")
     @Operation(summary = "멀티게임 시작 후 차트 호출.", description = "멀티게임을 시작한 후에 차트 데이터를 요청합니다.", tags = {"멀티게임"})
-    public ResponseEntity<BaseResponse<StockChartDataDto>> getGameChart(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameStartRequestDto dto) {
+    public ResponseEntity<BaseResponse<StockChartDataDto>> getGameChart(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameChartRequestDto dto) {
         return BaseResponse.success(SuccessCode.SELL_SUCCESS, multiGameService.getGameChart(userDetails.getId(), dto));
     }
 
