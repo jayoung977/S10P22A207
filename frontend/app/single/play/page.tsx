@@ -41,7 +41,7 @@ export default function SinglePlay() {
     selectedStockIndex,
     setStartDate, setEndDate,
   } = SingleGameStore();
-  const { asset } = userStore();
+
   const fetchSingleGameData = async () => {
     try {
       const response = await axios({
@@ -51,9 +51,7 @@ export default function SinglePlay() {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         }
       })
-
-      console.log("useEffect axios 요청 데이터 결과")
-      console.log(response.data.result);    
+ 
       if (response.data.result.day > 0) {
         setTurn(response.data.result.day);
       } else {
@@ -65,7 +63,6 @@ export default function SinglePlay() {
 
         // 사용자 총 평가 자산 데이터
         if (response.data.result.totalAsset.totalAsset == 0) {
-            console.log()
             setTotalAssetData({
               cash : response.data.result.totalAsset.cash,
               resultProfit : 0,
