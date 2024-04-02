@@ -13,6 +13,7 @@ import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 import ProfileFriendRequest from "./profile/[userId]/ProfileFriendRequest";
 import ProfileSentFriendRequest from "./profile/[userId]/ProfileSentFriendRequest";
+import profileStore from "@/public/src/stores/profile/profileStore";
 
 export default function Navbar() {
   useFetchUserInfo();
@@ -54,10 +55,10 @@ export default function Navbar() {
       "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     router.push("/");
   };
-
+  const { isOpen } = profileStore();
   return (
     <nav className="row-span-1 opacity-90 bg-background-1 border-gray-200 dark:bg-gray-900 dark:border-gray-700 z-50">
-      <ProfileFriendRequest></ProfileFriendRequest>
+      {isOpen && <ProfileFriendRequest></ProfileFriendRequest>}
       <ProfileSentFriendRequest></ProfileSentFriendRequest>
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a className="flex items-center space-x-3 rtl:space-x-reverse">
@@ -184,14 +185,14 @@ export default function Navbar() {
                   </svg>
                 )}
               </button>
-              <div
-                id="alarmNavbar"
-                className={`absolute font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-auto dark:bg-gray-700 dark:divide-gray-600 ${
-                  alarmOpen ? "" : "hidden"
-                } right-5`}
-              >
-                <NavbarAlarmModal />
-              </div>
+              {alarmOpen && (
+                <div
+                  id="alarmNavbar"
+                  className={`absolute font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-auto dark:bg-gray-700 dark:divide-gray-600  right-5`}
+                >
+                  <NavbarAlarmModal />
+                </div>
+              )}
             </li>
 
             <li>
