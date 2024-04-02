@@ -14,6 +14,7 @@ import com.backend.api.domain.multi.dto.response.*;
 import com.backend.api.domain.multi.entity.*;
 import com.backend.api.domain.multi.repository.MultiGameLogRepository;
 import com.backend.api.domain.multi.repository.MultiTradeRepository;
+import com.backend.api.domain.single.dto.response.StockChartDataDto;
 import com.backend.api.domain.single.dto.response.StockChartDto;
 import com.backend.api.domain.stock.entity.Stock;
 import com.backend.api.domain.stock.entity.StockChart;
@@ -63,7 +64,6 @@ public class MultiGameService {
      * 멀티게임 key :  multiGame:gameId:memberId:roundNumber
      */
 
-    // TODO : 대기방과 게임중인 방을 나눠서 보내줘야함.
     public MultiGameRoomsResponseDto getMultiGameRooms(int pageNumber) {
         Set<String> multiGameRooms = redisTemplate.keys("multiGame:*");
 
@@ -135,13 +135,10 @@ public class MultiGameService {
 
 
         // MultiGameRoomsResponseDto 객체 생성하여 반환
-        // TODO: 대기방 먼저? 정렬 조건 마련
 		return new MultiGameRoomsResponseDto(resultList.size(), waitRoomInfos.size(), resultList.subList(fromIndex, gameRoomToIndex), waitRoomInfos.subList(fromIndex, waitingRoomToIndex));
     }
 
     public void enterMultiGameRoom(Long memberId, String roomId) {
-        // TODO: 구독 하게 해야함.
-        // TODO: game round 수가 0이 아니라면 못들어가게 해야함
         // 웹소켓에 연결시키는 과정
 //        redisTemplate.opsForValue().set("multiGame:" + memberId + ":" + roomId + ":0", );
 
@@ -156,7 +153,7 @@ public class MultiGameService {
 		Long roomId = redisTemplate.opsForValue().increment("roomId", 1); // Redis에서 Atomic한 증가
 		if (roomId == null || roomId == 1) {
 			roomId = 1L; // 초기값 설정
-			redisTemplate.opsForValue().set("roomId", roomId); // TODO: 필요한가?
+			redisTemplate.opsForValue().set("roomId", roomId);
 		}
 		String key = "multiGame:" + roomId; // Redis에 저장할 키
 		Set<Long> participantIds = new HashSet<>();
@@ -172,14 +169,13 @@ public class MultiGameService {
 				.readyState(new HashMap<>())
 				.hostId(userDetails.getId())
 				.build();
-		redisTemplate.opsForValue().set(key, multiWaitingRoom); // TODO : 이렇게 해도 되나?
+		redisTemplate.opsForValue().set(key, multiWaitingRoom);
 		return new MultiGameRoomCreateResponseDto(roomId);
 	}
 
 	public MultiGameStartResponseDto startMultiGame(Long memberId, MultiGameStartRequestDto dto) {
 		log.info("MULTIGAMESTART:::");
-		// TODO: MultiGameStartResponseDto 여기 주식 정보 추가. createSingleGame 처럼.
-		// 여기에 처음 조건을
+
 		LocalDateTime lastDate = LocalDateTime.of(2024, 3, 10, 0, 0); // 위험할수도
 		LocalDateTime startDate = LocalDateTime.of(1996, 5, 10, 0, 0);
 
@@ -217,7 +213,27 @@ public class MultiGameService {
 			}
 		}
 
-        // TODO : 0 -> 1라운드만 이렇게 하고 나머지 라운드에서는 gameId 그대로 쓸것!
+
+		// 350일치 차트
+		List<StockChart> stockChartList = stockChartRepository.findByIdBetween(firstDayStockChartId, firstDayStockChartId + 349);
+
+		// 각 날짜에 대해 StockChartDto 생성 후 넣어주기
+		List<StockChartDto> stockChartDtoList = new ArrayList<>();
+		// 4. 350번 가져온다.
+		stockChartList.forEach((stockChart1) -> {
+			StockChartDto stockChartDto = new StockChartDto(
+
+				stockChart1.getMarketPrice(),
+				stockChart1.getHighPrice(),
+				stockChart1.getLowPrice(),
+				stockChart1.getEndPrice(),
+				stockChart1.getTradingVolume(),
+				stockChart1.getDate()
+			);
+			stockChartDtoList.add(stockChartDto);
+		});
+		StockChartDataDto stockChartData = new StockChartDataDto(stockId, stockChartDtoList);
+
         Long gameId = null;
         if (dto.roundNumber() == 1) {
             // multiGame 저장 키: multiGame:gameId:memberId:roundNumber
@@ -308,7 +324,6 @@ public class MultiGameService {
                     .ranking(beforeMultiGame.getRank())
                     .build();
 
-                // TODO : redis에서 delete - 이전게임 없애주기
                 redisTemplate.delete("multiGame:" + gameId + ":" + memberId + ":" + (dto.roundNumber() - 1));
 
             } else {
@@ -352,7 +367,7 @@ public class MultiGameService {
             multiGamePlayerRepository.save(multiGamePlayer);
         }
 
-        return new MultiGameStartResponseDto(gameId);
+        return new MultiGameStartResponseDto(gameId, stockChartData);
     }
 
 
