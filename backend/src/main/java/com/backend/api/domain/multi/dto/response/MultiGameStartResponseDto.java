@@ -5,8 +5,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record MultiGameStartResponseDto(
 
     @Schema(description = "레디스에 저장된 게임 Id")
-    Long gameId
-
+    Long gameId,
+    @Schema(description = "라운드 정보")
+    Integer roundNumber
 ) {
 
 }
