@@ -15,6 +15,8 @@ type Store = {
   setUserId: (value: number) => void;
   pageNumber: number;
   setPageNumber: (value: number) => void;
+  isWaiting: boolean;
+  setIsWaiting: (value: boolean) => void;
 };
 
 export interface MultiGameRoomInfoList {
@@ -29,7 +31,8 @@ export interface MultiGameRoomInfoList {
 export interface ResultType {
   multiWaitRoomInfoList: MultiGameRoomInfoList[];
   multiGameRoomInfoList: MultiGameRoomInfoList[];
-  totalMultiRoomCounts: number;
+  totalGameRoomCounts: number;
+  totalWaitRoomCounts: number;
 }
 export interface MultiRoomInfo {
   result: ResultType;
@@ -50,6 +53,8 @@ const multigameStore = create<Store>((set: any) => ({
   setUserId: (value) => set({ userId: value }),
   pageNumber: 1,
   setPageNumber: (value) => set({ pageNumber: value }),
+  isWaiting: false,
+  setIsWaiting: (value) => set({ isWaiting: value }),
 }));
 
 export default multigameStore;

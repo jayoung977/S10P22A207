@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import axios from "axios";
@@ -7,7 +7,7 @@ import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 interface RoomInfo {
   title: string,
-  roundNumber: number,
+  roundNumber: string,
   isOpen: string,
   password: number
 }
@@ -18,14 +18,20 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
     formState: { errors },
     handleSubmit,
     watch,
-    reset
+    reset,
+    setValue 
   } = useForm<RoomInfo>({
     mode: 'onChange',
     defaultValues: {
-      roundNumber: 3,
+      roundNumber: '3',
+      isOpen: 'true'
     }
   });
 
+  useEffect(()=> {
+    setValue('roundNumber', '3')
+    setValue('isOpen', 'true')
+  }, [setValue])
 
   const playClickSound = useClickSound();
   const openRoom = watch('isOpen')
@@ -50,7 +56,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
       password: password,
     }
     
-    const token = sessionStorage.getItem("accessToken");
+  const token = sessionStorage.getItem("accessToken");
     try {
       const response = await fetch("https://j10a207.p.ssafy.io/api/multi/create-room",{
         method: 'POST',
@@ -68,8 +74,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
     } catch (error) {
       console.error(error)
     }
-    reset()
-
+  reset()
   }
 
   return (
@@ -82,7 +87,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
             <div className="space-y-4">
               <div className="grid grid-cols-12 items-center gap-y-8 gap-x-2">
                 <div className="col-span-2">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  <label className="block mb-2  font-medium text-gray-900 dark:text-white">
                     방제목
                   </label>
                 </div>
@@ -103,7 +108,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                     })}
                     placeholder="방의 제목을 입력해 주세요."
 
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                   />
                   <p className="text-xs text-small-3 p-1">{errors.title?.message}</p>
 
@@ -116,12 +121,12 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                       <input
                         id="3round"
                         type="radio"
-                        value={3}
+                        value="3"
                         {...register('roundNumber', { required: true })}
                         onChange={playClickSound}
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                       />
-                      <label htmlFor="3round" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                      <label htmlFor="3round" className="ms-2  font-medium text-gray-900 dark:text-gray-300">
                         3라운드
                       </label>
                     </div>
@@ -129,13 +134,13 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                       <input
                         id="5round"
                         type="radio"
-                        value={5}
+                        value="5"
                         {...register('roundNumber', { required: true })}
                         onChange={playClickSound}
 
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                       />
-                      <label htmlFor="5round" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                      <label htmlFor="5round" className="ms-2 font-medium text-gray-900 dark:text-gray-300">
                         5라운드
                       </label>
                     </div>
@@ -143,12 +148,12 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                       <input
                         id="7round"
                         type="radio"
-                        value={7}
+                        value="7"
                         {...register('roundNumber', { required: true })}
                         onChange={playClickSound}
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                       />
-                      <label htmlFor="7round" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                      <label htmlFor="7round" className="ms-2 font-medium text-gray-900 dark:text-gray-300">
                         7라운드
                       </label>
                     </div>
@@ -168,7 +173,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                       />
                       <label
                         htmlFor="공개"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        className="ms-2 font-medium text-gray-900 dark:text-gray-300"
                       >
                         공개
                       </label>
@@ -184,7 +189,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                       />
                       <label
                         htmlFor="비공개"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        className="ms-2 font-medium text-gray-900 dark:text-gray-300"
                       >
                         비공개
                       </label>
@@ -192,7 +197,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                   </div>
                 </div>
                 <div className="col-span-2">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  <label className="block mb-2  font-medium text-gray-900 dark:text-white">
                     비밀번호
                   </label>
                 </div>
@@ -213,7 +218,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
               <div className="grid grid-cols-2 gap-x-4">
                 <div className="col-span-1">
                   <button type="submit"
-                    className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
                     방만들기
                   </button>
@@ -225,7 +230,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                       reset()
                       onClose();
                     }}
-                    className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
                     취소
                   </button>

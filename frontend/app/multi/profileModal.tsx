@@ -68,7 +68,7 @@ export default function ProfileModal() {
     .then((response) => {
       console.log(response.data);
       Swal.fire({
-        title: "너 내 도도독!",
+        title: "친구 요청이 성공했습니다.",
         icon: 'success'
       })
     })
@@ -95,7 +95,7 @@ function deleteFriend(userId: number) {
   .then((response) => {
     console.log(response.data);
     Swal.fire({
-      title: "헤어져!",
+      title: "친구 삭제되었습니다.",
       icon: 'warning'
     })
     queryClient.invalidateQueries(['FriendCheck'])
