@@ -64,6 +64,7 @@ export default function Header() {
           Authorization: `Bearer ${token}`,
         },
         data: {
+          playerIds: numberKeys,
           maxRoundNumber: maxRoundNumber,
           roundNumber: 1,
           roomId: params.room_id
