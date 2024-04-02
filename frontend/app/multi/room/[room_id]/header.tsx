@@ -2,7 +2,6 @@
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import logo from "@/public/src/assets/images/logo.png"
-import penguin from "@/public/src/assets/images/penguin.png";
 import axios from "axios";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 import socketStore from "@/public/src/stores/websocket/socketStore";
@@ -53,7 +52,7 @@ export default function Header() {
 
   const handleGameStart = async() => {
     const numberKeys = Object.keys(readyState).map(Number);
-    if(numberKeys.length > 1){
+    // if(numberKeys.length > 1){
       const token = sessionStorage.getItem("accessToken");
       await axios({
         url: "https://j10a207.p.ssafy.io/api/multi/start-game",
@@ -75,13 +74,13 @@ export default function Header() {
       .catch ((error) => {
         console.error(error)
       })
-    } else {
-      Swal.fire({
-        title: '2명 이상일 때 시작 가능합니다.',
-        icon: 'error'
-      })
-      return
-    }
+    // } else {
+    //   Swal.fire({
+    //     title: '2명 이상일 때 시작 가능합니다.',
+    //     icon: 'error'
+    //   })
+      // return
+    // }
   }
 
   const [receiveMessage, setReceiveMessage] = useState<any>([]);

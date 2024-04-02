@@ -36,21 +36,21 @@ export default function Stock({ index, data, isSelected, onClick }: any) {
               <div className="col-span-4 flex items-end justify-end mr-1" style={{ fontSize: "13px" }}>
                 <div className="">{parseFloat(rate.toFixed(1))}%({data.volatility})</div>
               </div>
-              <div className="col-span-3 flex items-end justify-end mr-2" style={{ fontSize: "13px" }}>{data.TodayEndPrice}원</div>
+              <div className="col-span-3 flex items-end justify-end mr-2" style={{ fontSize: "13px" }}>{data.TodayEndPrice.toLocaleString()}원</div>
             </div>
           ) : rate > 0 ? (
             <div className={`${isHovered && "hidden"} col-span-7 grid grid-cols-7 text-red-500`}>
              <div className="col-span-4 flex items-end justify-end mr-1" style={{ fontSize: "13px" }}>
                 <div className="">{parseFloat(rate.toFixed(1))}%(+{data.volatility})</div>
               </div>
-              <div className="col-span-3 flex items-end justify-end mr-2" style={{ fontSize: "13px" }}>{data.TodayEndPrice}원</div>
+              <div className="col-span-3 flex items-end justify-end mr-2" style={{ fontSize: "13px" }}>{data.TodayEndPrice.toLocaleString()}원</div>
             </div>
           ) : (
             <div className={`${isHovered && "hidden"} col-span-7 grid grid-cols-7`}>
           <div className="col-span-4 flex items-end justify-end mr-1" style={{ fontSize: "13px" }}>
                 <div className="">{parseFloat(rate.toFixed(1))}%({data.volatility})</div>
               </div>
-              <div className="col-span-3 flex items-end justify-end mr-2" style={{ fontSize: "13px" }}>{data.TodayEndPrice}원</div>
+              <div className="col-span-3 flex items-end justify-end mr-2" style={{ fontSize: "13px" }}>{data.TodayEndPrice.toLocaleString()}원</div>
             </div>
           )
         }

@@ -1,11 +1,35 @@
+'use client'
+
 import useClickSound from "@/public/src/components/clickSound/DefaultClick"
 import userStore from "@/public/src/stores/user/userStore";
 import socketStore from "@/public/src/stores/websocket/socketStore";
+import axios from "axios";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function RoomInfo() {
+  const params = useParams();
   const playClickSound = useClickSound();
   const { memberId } = userStore();
   const { hostId } = socketStore();
+  const [ totalRound, setTotalRound ] = useState(3)
+  
+  useEffect(() => {
+    axios({
+      method: 'post',
+      url: `https://j10a207.p.ssafy.io/api/multi/room-info?roomId=${params.room_id}`,
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
+      }
+    })
+    .then((res)=> {
+      console.log(res.data)
+    })
+    .catch((e)=> {
+      console.error(e)
+    })
+  },[])
+
   return (
     <div className="border row-span-1 grid grid-rows-3">
       <div className='row-span-1 bg-small-11 text-textColor-2 text-lg font-bold'>게임규칙</div>
