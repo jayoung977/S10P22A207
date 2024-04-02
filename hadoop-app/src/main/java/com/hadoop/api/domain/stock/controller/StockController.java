@@ -53,14 +53,14 @@ public class StockController {
 	}
 
 	@GetMapping("/max-date")
-	public ResponseEntity<BaseResponse<List<MaxDataDto>>> getMaxDate(@RequestParam String stockCode, @RequestParam int maxPrice){
-		List<MaxDataDto> maxMinPriceDto = stockService.getMaxDate(stockCode, maxPrice);
+	public ResponseEntity<BaseResponse<List<MaxDataDto>>> getMaxDate(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String stockCode, @RequestParam int maxPrice){
+		List<MaxDataDto> maxMinPriceDto = stockService.getMaxDate(startDate, endDate, stockCode, maxPrice);
 		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, maxMinPriceDto);
 	}
 
 	@GetMapping("/min-date")
-	public ResponseEntity<BaseResponse<List<MinDataDto>>> getMinDate(@RequestParam String stockCode, @RequestParam int minPrice){
-		List<MinDataDto> maxMinPriceDto = stockService.getMinDate(stockCode, minPrice);
+	public ResponseEntity<BaseResponse<List<MinDataDto>>> getMinDate(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String stockCode, @RequestParam int minPrice){
+		List<MinDataDto> maxMinPriceDto = stockService.getMinDate(startDate, endDate, stockCode, minPrice);
 		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, maxMinPriceDto);
 	}
 
