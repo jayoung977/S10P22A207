@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import userStore from "@/public/src/stores/user/userStore";
 import Swal from "sweetalert2";
 
+import Swal from "sweetalert2";
+
 
 export default function Header() {
   const { memberId } = userStore();

@@ -12,41 +12,82 @@ export default function SingleGameEndModal ({ isOpen, onClose } :any) {
             window.location.href = window.location.href;
         }
     }
+    const bgColor = singleGameEndInfoData?.profitMargin > 0 ? "red-700" : (singleGameEndInfoData?.profitMargin < 0 ? "blue-700" : "black") 
+    const borderColor = singleGameEndInfoData?.profitMargin > 0 ? "red-300" : (singleGameEndInfoData?.profitMargin < 0 ? "blue-300" : "black") 
     if (!isOpen) return null;
     
     
     return (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="text-center bg-white rounded shadow-lg grid grid-rows-12" style={{ width: '500px', height: '300px' }}>
-                <div className="row-span-2">게임 종료</div>
-                <div className="row-span-6 m-3">
-                    <div className="flex justify-between mt-2 mb-1">
-                        <div>시작 금액</div>
-                        <div>{singleGameEndInfoData?.initialAsset}</div>
+        <div className={`fixed inset-0 flex items-center justify-center z-50`}>
+            <div className={`text-center bg-white rounded grid grid-rows-12  border-2 border-${bgColor} shadow-lg shadow-${borderColor}`} style={{ width: '700px', height: '500px' }}>
+                <div className="row-span-1 flex items-center justify-center">싱글 게임 종료</div>
+                <div className="row-span-1 flex items-center justify-center">{singleGameEndInfoData?.startDate.split('T')[0]} ~ {singleGameEndInfoData?.endDate.split('T')[0]} (남은 기회 : {singleGameEndInfoData.singleGameChance})</div>
+                
+                <div className="row-span-8 grid grid-cols-12">
+                    <div className="col-span-5">
+                        <div className="text-center">선택 종목 명</div>
+                        <hr></hr>
+                        <div className="text-start">
+                            {
+                                singleGameEndInfoData?.stockInfoDtoList.map((item :any, index :number) => (
+                                    <div className="m-1.5">{item.stockName}</div>
+                                ))
+                            }
+
+                        </div>
                     </div>
-                    <div className="flex justify-between mt-1 mb-2">
-                        <div>종료 금액</div>
-                        <div>{singleGameEndInfoData?.finalAsset}</div>
-                    </div>
-                    <hr></hr>
-                    <div className="flex justify-between mt-2 mb-1">
-                        <div>순이익</div>
-                        <div>{singleGameEndInfoData?.netProfit}원</div>
-                    </div>
-                    <div className="flex justify-between mt-1 mb-2">
-                        <div>수익률</div>
-                        <div>{parseFloat(singleGameEndInfoData?.profitMargin).toFixed(4)}%</div>
+
+                    <div className="col-span-7">
+                        <div className="text-center">게임 결과</div>
+                        <hr></hr>
+                        <div className="">
+                            <div className="flex items-center justify-between m-3">
+                                <div className="flex items-center justify-start">시작 금액</div>
+                                <div className="flex items-center justify-end">{singleGameEndInfoData?.initialAsset}</div>
+                            </div>
+                            <hr></hr>
+                            <div className="flex items-center justify-between m-3">
+                                <div className="flex items-center justify-start">종료 금액</div>
+                                <div className="flex items-center justify-end">{singleGameEndInfoData?.finalAsset}</div>
+                            </div>
+                            <hr></hr>
+                            <div className="flex items-center justify-between m-3">
+                                <div className="flex items-center justify-start">순이익</div>
+                                {
+                                    singleGameEndInfoData?.netProfit < 0 ? (
+                                        <div className="flex items-center justify-end text-blue-700">{singleGameEndInfoData?.netProfit}</div>
+                                    ) : (singleGameEndInfoData?.netProfit > 0 ? (
+                                        <div className="flex items-center justify-end text-red-700">+{singleGameEndInfoData?.netProfit}</div>
+                                    ) : (
+                                        <div className="flex items-center justify-end">+{singleGameEndInfoData?.netProfit}</div>
+                                    ))
+                                }
+                            </div>
+                            <hr></hr>
+
+                            <div className="flex items-center justify-between m-3">
+                                <div className="flex items-center justify-start">수익률</div>
+                                {
+                                    singleGameEndInfoData?.netProfit < 0 ? (
+                                        <div className="flex items-center justify-end text-blue-700">{parseFloat(singleGameEndInfoData?.profitMargin).toFixed(4)}%</div>
+                                    ) : (singleGameEndInfoData?.netProfit > 0 ? (
+                                        <div className="flex items-center justify-end text-red-700">+{parseFloat(singleGameEndInfoData?.profitMargin).toFixed(4)}%</div>
+                                    ) : (
+                                        <div className="flex items-center justify-end">{parseFloat(singleGameEndInfoData?.profitMargin).toFixed(4)}%</div>
+                                    ))
+                                }
+                            </div>
+                            <hr></hr>
+                        </div>
                     </div>
                 </div>
-                <div className="row-span-4 grid grid-rows-4">
-                    <div className="row-span-1 text-center mb-2">현재 남은 기회 : {singleGameEndInfoData?.singleGameChance}</div>
-                    <div className="row-span-3 grid grid-cols-6">
+                
+                <div className="row-span-2 grid grid-cols-6">
                         <button onClick={() => {
                             setSelectedStockIndex(0);
                             onClose();
                             router.push('/multi')
-                            
-                            }} className="col-span-3 rounded-full mx-16 my-8 text-white bg-gray-500"
+                            }} className="col-span-3 rounded-full ml-40 mr-16  my-10 text-white bg-gray-500"
                         >
                             나가기
                         </button>
@@ -56,11 +97,10 @@ export default function SingleGameEndModal ({ isOpen, onClose } :any) {
                                 singleGameAgainHandler();
                             }} 
                             disabled={singleGameEndInfoData?.singleGameChance == 0}
-                            className="col-span-3 rounded-full mx-16 my-8 text-white bg-gray-500"
+                            className={`col-span-3 rounded-full mr-40 ml-16  my-10 text-white bg-${bgColor}`}
                         >
                             한번 더!
                         </button>
-                    </div>
                 </div>
             </div>
         </div>

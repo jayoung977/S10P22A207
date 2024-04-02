@@ -15,7 +15,7 @@ export default function Stock({ index, data, isSelected, onClick }: any) {
   };
   const rate: number = (data.volatility / data.TodayEndPrice * 100);
 
-  const bgColor = isSelected ? "small-10" : "small-14";
+  const bgColor = isSelected ? "small-10" : "yellow-200";
   const textColor = rate > 0 ? "small-3" : (rate < 0 ? "small-1" : rate == 0 && "textColor-1")
   return (
     <div
@@ -24,7 +24,7 @@ export default function Stock({ index, data, isSelected, onClick }: any) {
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
     >
-      <div className="col-span-1 text-center ml-1">
+      <div className="col-span-1 text-center ml-1" style={{ fontSize: "13px" }}>
         {index + 1}.
       </div>
       <div className={`${!isHovered && "hidden"} col-span-7 flex items-center justify-center`}>
@@ -33,24 +33,24 @@ export default function Stock({ index, data, isSelected, onClick }: any) {
         {
           rate < 0 ? (
             <div className={`${isHovered && "hidden"} col-span-7 grid grid-cols-7 text-blue-500`}>
-              <div className="col-span-4 text-end">
-                <div>{parseFloat(rate.toFixed(1))}%({data.volatility})</div>
+              <div className="col-span-4 flex items-end justify-end mr-1" style={{ fontSize: "13px" }}>
+                <div className="">{parseFloat(rate.toFixed(1))}%({data.volatility})</div>
               </div>
-              <div className="col-span-3 text-end mr-2">{data.TodayEndPrice}원</div>
+              <div className="col-span-3 flex items-end justify-end mr-2" style={{ fontSize: "13px" }}>{data.TodayEndPrice}원</div>
             </div>
           ) : rate > 0 ? (
             <div className={`${isHovered && "hidden"} col-span-7 grid grid-cols-7 text-red-500`}>
-              <div className="col-span-4 text-end">
-                <div>{parseFloat(rate.toFixed(1))}%(+{data.volatility})</div>
-              </div>              
-              <div className="col-span-3 text-end mr-2">{data.TodayEndPrice}원</div>
+             <div className="col-span-4 flex items-end justify-end mr-1" style={{ fontSize: "13px" }}>
+                <div className="">{parseFloat(rate.toFixed(1))}%(+{data.volatility})</div>
+              </div>
+              <div className="col-span-3 flex items-end justify-end mr-2" style={{ fontSize: "13px" }}>{data.TodayEndPrice}원</div>
             </div>
           ) : (
             <div className={`${isHovered && "hidden"} col-span-7 grid grid-cols-7`}>
-              <div className="col-span-4 text-end">
-                <div>{parseFloat(rate.toFixed(1))}%({data.volatility})</div>
+          <div className="col-span-4 flex items-end justify-end mr-1" style={{ fontSize: "13px" }}>
+                <div className="">{parseFloat(rate.toFixed(1))}%({data.volatility})</div>
               </div>
-              <div className="col-span-3 text-end mr-2">{data.TodayEndPrice}원</div>
+              <div className="col-span-3 flex items-end justify-end mr-2" style={{ fontSize: "13px" }}>{data.TodayEndPrice}원</div>
             </div>
           )
         }
