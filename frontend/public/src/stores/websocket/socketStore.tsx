@@ -13,7 +13,7 @@ export interface ParticipantsType {
 }
 
 interface MultiGameStockIdsType {
-  firstDayStockId: number;
+  firstDayStockChartId: number;
   stockId: number;
 }
 
