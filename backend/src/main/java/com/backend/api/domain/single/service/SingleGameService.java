@@ -6,10 +6,8 @@ import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.single.dto.request.NextDayRequestDto;
 import com.backend.api.domain.single.dto.request.SingleTradeRequestDto;
 import com.backend.api.domain.single.dto.response.*;
-import com.backend.api.domain.single.entity.SingleGame;
-import com.backend.api.domain.single.entity.SingleGameLog;
-import com.backend.api.domain.single.entity.SingleGameStock;
-import com.backend.api.domain.single.entity.SingleTrade;
+import com.backend.api.domain.single.entity.*;
+import com.backend.api.domain.single.repository.RawMaterialRepository;
 import com.backend.api.domain.single.repository.SingleGameLogRepository;
 import com.backend.api.domain.single.repository.SingleGameStockRepository;
 import com.backend.api.domain.single.repository.SingleTradeRepository;
@@ -42,6 +40,7 @@ public class SingleGameService {
     private final SingleTradeRepository singleTradeRepository;
     private final StockChartRepository stockChartRepository;
     private final MemberRepository memberRepository;
+    private final RawMaterialRepository rawMaterialRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
     private final HadoopService hadoopService;
@@ -179,7 +178,22 @@ public class SingleGameService {
                     )
                 );
             }
-            return new SingleGameCreateResponseDto(maxNumber, currentGame.getDay(), me.getSingleGameChance(), stockChartDataList, totalAssetDto, assetList, currentGame.getTradeList(), stockSummaries);
+            List<StockChartDto> stockChartDtos = stockChartDataList.get(0).stockChartList();
+            LocalDate chartStartDate = LocalDate.from(stockChartDtos.get(0).date());
+            LocalDate chartEndDate = LocalDate.from(stockChartDtos.get(stockChartDtos.size()-1).date());
+            List<RawMaterial> rawMaterialList = rawMaterialRepository.findByDateBetween(chartStartDate,chartEndDate);
+            List<RawMaterialRes> rawMaterials = rawMaterialList.stream().map(
+                    rawMaterial -> new RawMaterialRes(
+                            rawMaterial.getDate(),
+                            rawMaterial.getWti(),
+                            rawMaterial.getCopper(),
+                            rawMaterial.getGold(),
+                            rawMaterial.getWheat(),
+                            rawMaterial.getSilver(),
+                            rawMaterial.getGas()
+                    )
+            ).toList();
+            return new SingleGameCreateResponseDto(maxNumber, currentGame.getDay(), me.getSingleGameChance(), stockChartDataList, totalAssetDto, assetList, currentGame.getTradeList(), stockSummaries, rawMaterials);
         }
 
         if (me.getSingleGameChance() <= 0) {
@@ -324,7 +338,22 @@ public class SingleGameService {
             );
         }
         TotalAssetDto totalAssetDto = new TotalAssetDto(me.getAsset(), 0, 0, 0, me.getAsset());
-        return new SingleGameCreateResponseDto(nextId, 1, me.getSingleGameChance(), stockChartDataList, totalAssetDto, null, null, stockSummaries);
+        List<StockChartDto> stockChartDtos = stockChartDataList.get(0).stockChartList();
+        LocalDate chartStartDate = LocalDate.from(stockChartDtos.get(0).date());
+        LocalDate chartEndDate = LocalDate.from(stockChartDtos.get(stockChartDtos.size()-1).date());
+        List<RawMaterial> rawMaterialList = rawMaterialRepository.findByDateBetween(chartStartDate,chartEndDate);
+        List<RawMaterialRes> rawMaterials = rawMaterialList.stream().map(
+                rawMaterial -> new RawMaterialRes(
+                        rawMaterial.getDate(),
+                        rawMaterial.getWti(),
+                        rawMaterial.getCopper(),
+                        rawMaterial.getGold(),
+                        rawMaterial.getWheat(),
+                        rawMaterial.getSilver(),
+                        rawMaterial.getGas()
+                )
+        ).toList();
+        return new SingleGameCreateResponseDto(nextId, 1, me.getSingleGameChance(), stockChartDataList, totalAssetDto, null, null, stockSummaries, rawMaterials);
     }
 
     public SingleTradeResponseDto sell(SingleTradeRequestDto dto, Long memberId) {
@@ -839,7 +868,7 @@ public class SingleGameService {
         }
         List<StockChartDto> stockChartDtos = stockChartDataList.get(0).stockChartList();
         LocalDateTime startDate = stockChartDtos.get(0).date();
-        LocalDateTime endDate = stockChartDtos.get(stockChartDtos.size()-1).date();;
+        LocalDateTime endDate = stockChartDtos.get(stockChartDtos.size()-1).date();
 
         return new SingleGameLogResponseDto(
                 startDate,
