@@ -19,6 +19,7 @@ type Store = {
   isWaiting: boolean;
   setIsWaiting: (value: boolean) => void;
   getMultigameRoomInfo: (value: number) => void;
+  
 };
 
 export interface MultiGameRoomInfoList {

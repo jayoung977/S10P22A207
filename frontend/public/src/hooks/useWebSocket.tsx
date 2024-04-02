@@ -7,8 +7,10 @@ import userStore from "../stores/user/userStore";
 import socketStore from "../stores/websocket/socketStore";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 export const useWebSocket = () => {
   const router = useRouter();
+  const params = useParams();
   const client = useRef<CompatClient>({} as CompatClient);
   const { setClientObject, clientObject } = socketStore();
   const { memberId, nickname } = userStore();
@@ -20,17 +22,20 @@ export const useWebSocket = () => {
     addReceiveMessages,
     deleteReceiveMessages,
     setMaxRoundNumber,
-    setGameId,
     setRoomNumber,
+    setGameId,
+    setMultiGameStockIds,
   } = socketStore();
-  // gameId: 0,
-  // setGameId: (value) => set({ gameId: value }),
-  // roomNumber:0,
-  // setRoomNumber:(value) => set({ roomNumber: value }),
+
   const { receiveAlarm, setReceiveAlarm, roomInfo, setRoomInfo } =
     socketStore();
-  const { setHostId, setParticipants, setRoomId, setRoomTitle, setReadyState } =
-    socketStore();
+  const {
+    setHostId,
+    setParticipants,
+    setRoomId,
+    setRoomTitle,
+    setReadyState,
+  } = socketStore();
 
   const fetchAlarmData = async () => {
     try {
@@ -123,8 +128,11 @@ export const useWebSocket = () => {
 
           if (parsedMessage.type === "START") {
             setGameId(parsedMessage.result.gameId);
-            setRoomNumber(parsedMessage.result.roundNumber);
-            router.push(`/play/${parsedMessage.result.gameId}`);
+            setMultiGameStockIds(parsedMessage.result.multiGameStockIds);
+            setRoomId(parsedMessage.result.roomId);
+            router.push(
+              `${parsedMessage.result.roomId}/play/${parsedMessage.result.gameId}`
+            );
           }
         });
       });
