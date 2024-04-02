@@ -1,5 +1,6 @@
 package com.backend.api.domain.fund.service;
 
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,9 @@ import com.backend.api.domain.fund.repository.FundMemberRepository;
 import com.backend.api.domain.fund.repository.FundRepository;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
+import com.backend.api.domain.notice.entity.Notice;
+import com.backend.api.domain.notice.service.NotificationService;
+import com.backend.api.domain.notice.type.AlarmType;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.exception.BaseExceptionHandler;
 
@@ -24,6 +28,8 @@ public class FundAndFundMemberService {
 	private final FundRepository fundRepository;
 	private final FundMemberRepository fundMemberRepository;
 	private final MemberRepository memberRepository;
+	private final SimpMessageSendingOperations template;
+	private final NotificationService noticeService;
 
 	@Transactional
 	public Long registerFund(Long loginUserId, FundRegisterReq fundRegisterReq) {
@@ -58,6 +64,18 @@ public class FundAndFundMemberService {
 		fundRepository.save(fund);
 		member.addAsset(-fundRegisterReq.investmentAmount());
 		memberRepository.save(member);
+		// 펀드 가입 알림
+		log.info("펀드 가입: {}", fund.getFundName());
+		log.info("펀드 가입 알림: {}", member.getNickname());
+		template.convertAndSend("/api/sub/" + fund.getManager().getId(), member.getNickname()+"님이 펀드에 가입했습니다.");
+		Notice notice = Notice.builder()
+			.member(fund.getManager())
+			.sender(member.getNickname())
+			.isRead(false)
+			.alarmType(AlarmType.FUNDJOIN)
+			.content(member.getNickname()+"님이 펀드에 가입했습니다.")
+			.build();
+		noticeService.createNotification(notice);
 		return fund.getId();
 	}
 }

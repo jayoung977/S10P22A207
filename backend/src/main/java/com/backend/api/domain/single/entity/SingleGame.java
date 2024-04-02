@@ -66,4 +66,8 @@ public class SingleGame {
     public void updateTotalAsset(long totalAsset) {
         this.totalAsset = totalAsset;
     }
+
+    public void updateProfit(Integer stockIdx, int amount) {
+        this.profits[stockIdx] = this.profits[stockIdx] * this.stockAmount[stockIdx] / (this.stockAmount[stockIdx] + amount);
+    }
 }
