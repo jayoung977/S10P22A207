@@ -50,6 +50,7 @@ export default function TurnInfo () {
             console.log("다음턴 : ", response.data.result);
             if (turn == 50) {
                 const stockInfoDtoList = response.data.result.stockInfoDtoList;
+                console.log("끝남!", stockInfoDtoList)
                 setSingleGameEndInfoData({
                     initialAsset :stockInfoDtoList.initialAsset,
                     finalAsset :stockInfoDtoList.finalAsset,

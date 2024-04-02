@@ -31,6 +31,7 @@ export default function SingleRanking() {
         stockChartList: response.data.result.stockChartList,
         tradeList: response.data.result.tradeList,
       };
+      console.log(res);
       setRankingUserData(res);
       handleOpenModal();
     } catch (error) {

@@ -12,10 +12,16 @@ export const useWebSocket = () => {
   const { memberId, nickname } = userStore();
   const [receiveMessage, setReceiveMessage] = useState<any>([]);
   const [receiveInvitation, setReceiveInvitation] = useState<any>([]);
-  const { receiveMessages, setReceiveMessages, addReceiveMessages, deleteReceiveMessages } = socketStore();
-  const { receiveAlarm, setReceiveAlarm, roomInfo, setRoomInfo } = socketStore();
-  const { setHostId, setParticipants, setRoomId, setRoomTitle, setReadyState } = socketStore();
-
+  const {
+    receiveMessages,
+    setReceiveMessages,
+    addReceiveMessages,
+    deleteReceiveMessages,
+  } = socketStore();
+  const { receiveAlarm, setReceiveAlarm, roomInfo, setRoomInfo } =
+    socketStore();
+  const { setHostId, setParticipants, setRoomId, setRoomTitle, setReadyState } =
+    socketStore();
 
   useEffect(() => {
     if (memberId) {
@@ -32,7 +38,7 @@ export const useWebSocket = () => {
           console.log(parsedMessage);
           Swal.fire(`${parsedMessage.type} 신호 감지!`);
           if (parsedMessage.type === "MESSAGE") {
-            addReceiveMessages(parsedMessage)
+            addReceiveMessages(parsedMessage);
           }
 
           if (parsedMessage.type === "EXIT") {
@@ -40,19 +46,22 @@ export const useWebSocket = () => {
             //   setReceiveMessages([]);
             //   return [];--
             // });
-            console.log(parsedMessage)
-
+            console.log(parsedMessage);
           }
 
-          if(parsedMessage.type === 'ROOMINFO'){
-            setHostId(parsedMessage.result.hostId)
-            setParticipants(parsedMessage.result.participants)
-            setRoomId(parsedMessage.result.roomId)
-            setRoomTitle(parsedMessage.result.roomTitle)
-            setReadyState(parsedMessage.result.readyState)
+          if (parsedMessage.type === "ROOMINFO") {
+            setHostId(parsedMessage.result.hostId);
+            setParticipants(parsedMessage.result.participants);
+            setRoomId(parsedMessage.result.roomId);
+            setRoomTitle(parsedMessage.result.roomTitle);
+            setReadyState(parsedMessage.result.readyState);
           }
 
           if (parsedMessage.type === "INVITE") {
+            setReceiveAlarm(true);
+          }
+
+          if (parsedMessage.type === "FRIENDASK") {
             setReceiveAlarm(true);
           }
         });

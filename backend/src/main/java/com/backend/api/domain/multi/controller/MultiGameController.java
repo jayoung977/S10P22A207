@@ -11,6 +11,7 @@ import com.backend.api.domain.multi.dto.request.MultiTradeRequestDto;
 import com.backend.api.domain.multi.dto.response.*;
 import com.backend.api.domain.multi.service.MultiGameService;
 import com.backend.api.domain.multi.service.MultiGameSocketService;
+import com.backend.api.domain.single.dto.response.StockChartDataDto;
 import com.backend.api.global.common.BaseResponse;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.common.code.SuccessCode;
@@ -60,10 +61,16 @@ public class MultiGameController {
     }
 
     @PostMapping("/start-game")
-    @Operation(summary = "멀티게임 시작하기 처음시작.", description = "멀티게임을 시작합니다.", tags = {"멀티게임"})
+    @Operation(summary = "멀티게임 시작하기.", description = "멀티게임을 시작합니다.", tags = {"멀티게임"})
     public ResponseEntity<BaseResponse<MultiGameStartResponseDto>> startMultiGame(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameStartRequestDto dto) {
 
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.startMultiGame(userDetails.getId(), dto));
+    }
+
+    @PostMapping("/game-chart")
+    @Operation(summary = "멀티게임 시작 후 차트 호출.", description = "멀티게임을 시작한 후에 차트 데이터를 요청합니다.", tags = {"멀티게임"})
+    public ResponseEntity<BaseResponse<StockChartDataDto>> getGameChart(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameStartRequestDto dto) {
+        return BaseResponse.success(SuccessCode.SELL_SUCCESS, multiGameService.getGameChart(userDetails.getId(), dto));
     }
 
     @PostMapping("/sell")

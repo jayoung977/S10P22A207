@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import profileStore from "@/public/src/stores/profile/profileStore";
@@ -33,9 +34,9 @@ const fetchFriendRequests = async () => {
       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
     },
   });
+  console.log(response.data)
   return response.data;
 };
-
 export default function ProfileFriendRequest() {
   const { isOpen, setIsOpen, isSentOpen, setIsSentOpen } = profileStore();
 
