@@ -9,7 +9,10 @@ public record MultiGameStartResponseDto(
     Long gameId,
 
     @Schema(description = "해당 방의 게임 Id DTO들")
-    List<MultiGameStockIdDto> multiGameStockIds
+    List<MultiGameStockIdDto> multiGameStockIds,
+
+    @Schema(description = "방 Id")
+    Long roomId
 
 ) {
 
