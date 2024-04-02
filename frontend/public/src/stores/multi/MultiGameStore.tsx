@@ -31,6 +31,7 @@ type Store = {
   setTurn :(value :number) => void;
   
   getMultigameRoomInfo: (value: number) => void;
+  
 };
 
 export interface MultiGameRoomInfoList {

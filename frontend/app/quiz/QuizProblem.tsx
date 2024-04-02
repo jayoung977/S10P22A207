@@ -106,7 +106,7 @@ export default function QuizProblem() {
         if (success >= 2) {
           Swal.fire({
             title: "축하합니다!",
-            text: `정답입니다! 3문제 이상 맞추셨습니다! ${
+            text: `정답입니다! ${success}개 맞추셨습니다! ${
               asset != null && asset <= 5000000
                 ? `100만원의 상금이 지급됩니다!`
                 : ``
@@ -121,9 +121,9 @@ export default function QuizProblem() {
           });
         } else {
           Swal.fire({
-            title: "저런!",
-            text: "정답입니다! 안타깝게도 3문제 이상 못 맞추셨습니다!",
-            icon: "error",
+            title: "수고하셨습니다!",
+            text: `정답입니다! ${success}개 맞추셨습니다!`,
+            icon: "info",
             confirmButtonText: "확인",
           }).then((result) => {
             if (result.isConfirmed) {
@@ -135,12 +135,12 @@ export default function QuizProblem() {
         if (success >= 3) {
           Swal.fire({
             title: "축하합니다!",
-            text: `3문제 이상 맞추셨습니다! ${
+            text: `${success}개 맞추셨습니다! ${
               asset != null && asset <= 5000000
                 ? `100만원의 상금이 지급됩니다!`
                 : ``
             }`,
-            icon: "success",
+            icon: "info",
             confirmButtonText: "확인",
           }).then((result) => {
             if (result.isConfirmed) {
@@ -150,9 +150,9 @@ export default function QuizProblem() {
           });
         } else {
           Swal.fire({
-            title: "저런!",
-            text: "3문제 이상 못 맞추셨습니다!",
-            icon: "error",
+            title: "수고하셨습니다!",
+            text: `${success}개 맞추셨습니다!`,
+            icon: "info",
             confirmButtonText: "확인",
           }).then((result) => {
             if (result.isConfirmed) {
