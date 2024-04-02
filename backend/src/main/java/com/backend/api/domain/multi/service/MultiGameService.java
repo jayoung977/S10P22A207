@@ -11,8 +11,26 @@ import com.backend.api.domain.multi.dto.request.MultiGameRoomCreateRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameStartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiNextDayRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiTradeRequestDto;
-import com.backend.api.domain.multi.dto.response.*;
-import com.backend.api.domain.multi.entity.*;
+import com.backend.api.domain.multi.dto.response.MultiGameFinalResultDto;
+import com.backend.api.domain.multi.dto.response.MultiGameResultDto;
+import com.backend.api.domain.multi.dto.response.MultiGameRoomCreateResponseDto;
+import com.backend.api.domain.multi.dto.response.MultiGameRoomInfo;
+import com.backend.api.domain.multi.dto.response.MultiGameRoomsResponseDto;
+import com.backend.api.domain.multi.dto.response.MultiGameStartResponseDto;
+import com.backend.api.domain.multi.dto.response.MultiGameStockIdDto;
+import com.backend.api.domain.multi.dto.response.MultiGameTotalResultDto;
+import com.backend.api.domain.multi.dto.response.MultiLogMemberDto;
+import com.backend.api.domain.multi.dto.response.MultiLogResponseDto;
+import com.backend.api.domain.multi.dto.response.MultiLogTradeDto;
+import com.backend.api.domain.multi.dto.response.MultiNextDayInfoResponseDto;
+import com.backend.api.domain.multi.dto.response.MultiNextDayResponseDto;
+import com.backend.api.domain.multi.dto.response.MultiTradeListDto;
+import com.backend.api.domain.multi.dto.response.MultiTradeResponseDto;
+import com.backend.api.domain.multi.entity.MultiGame;
+import com.backend.api.domain.multi.entity.MultiGameLog;
+import com.backend.api.domain.multi.entity.MultiGamePlayer;
+import com.backend.api.domain.multi.entity.MultiTrade;
+import com.backend.api.domain.multi.entity.MultiWaitingRoom;
 import com.backend.api.domain.multi.repository.MultiGameLogRepository;
 import com.backend.api.domain.multi.repository.MultiTradeRepository;
 import com.backend.api.domain.single.dto.response.StockChartDataDto;
@@ -27,23 +45,29 @@ import com.backend.api.global.common.type.SocketType;
 import com.backend.api.global.common.type.TradeType;
 import com.backend.api.global.exception.BaseExceptionHandler;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
-import com.backend.api.global.websocket.dto.request.WebSocketMessageReq;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
@@ -169,7 +193,6 @@ public class MultiGameService {
 				.build();
 		multiWaitingRoom.getReadyState().put(userDetails.getId(), true); // 방장은 레디상태 true로 초기화
 		redisTemplate.opsForValue().set(key, multiWaitingRoom);
-		// multiGameSocketService.sendMultiWaitingRoomDetailDto(roomId);
 		return new MultiGameRoomCreateResponseDto(roomId);
 	}
 
@@ -193,34 +216,27 @@ public class MultiGameService {
 
 			Long maxGameId = null;
 
-			// 각 키에 대해 gameId를 추출하여 최대 gameId를 찾음
+			// 각 키에 대해 gameId를 추출하여 최대 gameId를 찾음(가장 최근 게임. 없애주긴 하지만 에러 방지)
 			for (String key : keys) {
 				String[] parts = key.split(":");
-				long temp = Long.parseLong(parts[1]);
-				if (maxGameId == null || temp > maxGameId) {
-					maxGameId = temp;
+				long tempGameId = Long.parseLong(parts[1]);
+				if (maxGameId == null || tempGameId > maxGameId) {
+					maxGameId = tempGameId;
 				}
 			}
 			gameId = maxGameId;
-			for (Long playerId : dto.playerIds()) { // 채팅방에 있는 모든 유저에게 메시지 전송
-				log.info("메시지 전송 대상: {}", playerId);
-				template.convertAndSend("/api/sub/" + playerId, new SocketBaseDtoRes<>(SocketType.START,
-					new MultiGameStartResponseDto(gameId, 1)));
-				log.info("socketBaseDtoRes : gameId : {} roundNumber : {}", gameId, 1);
-			}
-			log.info("메시지 전송 완료");
-		}
-        return new MultiGameStartResponseDto(gameId, 1);
-    }
 
-	public StockChartDataDto getGameChart(Long memberId, MultiGameChartRequestDto dto){
-		LocalDateTime lastDate = LocalDateTime.of(2024, 3, 10, 0, 0); // 위험할수도
+		}
+
+
+		// 가능한 날짜를 찾는다. -> 동일한 날짜의 데이터 주기 위함.
+		LocalDateTime lastDate = LocalDateTime.of(2024, 3, 10, 0, 0);
 		LocalDateTime startDate = LocalDateTime.of(1996, 5, 10, 0, 0);
 
 		LocalDateTime randomDateTime = generateRandomDateTime(startDate, lastDate); // 이 날짜로 조회
-		Long firstDayStockChartId = null;
-		Long stockId = null;
-		while (stockId == null) {
+		List<MultiGameStockIdDto> firstDayStockChartIds = new ArrayList<>();
+		while (firstDayStockChartIds.size() < dto.maxRoundNumber()) {
+
 			List<String> stockIds = stockChartRepository.findDistinctStockCodeByDateBetween(randomDateTime, randomDateTime.plusDays(1));
 			if (stockIds.isEmpty()) {
 				log.info("해당하는 날짜의 데이터가 없음.{}", randomDateTime);
@@ -245,121 +261,129 @@ public class MultiGameService {
 				}
 
 				// 350일간의 차트가 있으면 추가.
-				stockId = stockChart.getStock().getId();
-				firstDayStockChartId = stockChart.getId();
-				break;
+				firstDayStockChartIds.add(new MultiGameStockIdDto(stockChart.getStock().getId(), stockChart.getId()));
+				if (firstDayStockChartIds.size() == dto.maxRoundNumber()) {
+					break;
+				}
 			}
 		}
+
+		for (Long playerId : dto.playerIds()) { // 채팅방에 있는 모든 유저에게 메시지 전송
+			log.info("메시지 전송 대상: {}", playerId);
+			template.convertAndSend("/api/sub/" + playerId, new SocketBaseDtoRes<>(SocketType.START,
+				new MultiGameStartResponseDto(gameId, firstDayStockChartIds)));
+				log.info("socketBaseDtoRes : gameId : {} roundNumber : {}", gameId, 1);
+			}
+			log.info("메시지 전송 완료");
+
+        return new MultiGameStartResponseDto(gameId, firstDayStockChartIds);
+    }
+
+	public StockChartDataDto getGameChart(Long memberId, MultiGameChartRequestDto dto){
+		StockChart firstDayStockChart = stockChartRepository.findById(dto.firstDayStockChartId()).orElseThrow(
+			() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
+		);
 		Long gameLogId = null;
 		MultiGameLog multiGameLog
 			= MultiGameLog.builder()
 			.memberId(memberId)
 			.gameId(dto.gameId())
-			.stockId(stockId)
-			.startDate(randomDateTime)
+			.stockId(dto.stockId())
+			.startDate(firstDayStockChart.getDate())
 			.round(dto.roundNumber())
 			.build();
 		gameLogId = multiGameLogRepository.save(multiGameLog).getId();
 
-		Map<Long, Integer> rankMap = new HashMap<>();
 		// 게임아이디를 줄것이 아니라, roomId를 줘야한다.
 		MultiWaitingRoom multiWaitingRoom = getWaitingRoom(dto.roomId());
 
-		log.info("dto.playerIds.size() - {}", dto.playerIds().size());
-		for (Long playerId : dto.playerIds()) {
-			Member member = memberRepository.findById(playerId).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
-			// 첫 게임이 아니라면 이전 게임 결과를 가져오고, 이전 게임을 삭제한다.
-			MultiGame multiGame = null;
-			MultiGame beforeMultiGame = null;
-			MultiGamePlayer multiGamePlayer = null;
-			if (dto.roundNumber() != 1) {
-				try {
-					String key = "multiGame:" + dto.gameId() + ":" + playerId + ":" + (dto.roundNumber() - 1);
-					String jsonStr = objectMapper.writeValueAsString(redisTemplate.opsForValue().get(key));
-					beforeMultiGame = objectMapper.readValue(jsonStr, MultiGame.class);
-				} catch (JsonProcessingException e) {
-					throw new RuntimeException(e);
-				}
-
-				multiGame = MultiGame.builder()
-					.multiGameLogId(gameLogId)
-					.memberId(playerId)
-					.tradeList(new ArrayList<>())
-					.roomId(dto.roomId())
-					.firstDayStockChartId(firstDayStockChartId)
-					.roomTitle(multiWaitingRoom.getRoomTitle())
-					.password(multiWaitingRoom.getPassword())
-					.isOpen(multiWaitingRoom.getIsOpen())
-					.cash(beforeMultiGame.getCash())
-					.initial(beforeMultiGame.getCash())
-					.stockAmount(0)
-					.totalAsset(beforeMultiGame.getCash())
-					.totalPurchaseAmount(0L)
-					.averagePrice(0)
-					.profit(0)
-					.maxRound(dto.maxRoundNumber())
-					.shortAveragePrice(0)
-					.shortStockAmount(0)
-					.rank(rankMap.get(playerId))
-					.day(1)
-					.round(dto.roundNumber())
-					.build();
-
-				multiGamePlayer = MultiGamePlayer.builder()
-					.multiGameLog(multiGameLog)
-					.member(member)
-					.finalProfit(beforeMultiGame.getProfit())
-					.finalRoi(100.0 * beforeMultiGame.getProfit() / beforeMultiGame.getInitial())
-					.ranking(beforeMultiGame.getRank())
-					.build();
-
-				redisTemplate.delete("multiGame:" + dto.gameId() + ":" + memberId + ":" + (dto.roundNumber() - 1));
-
-			} else {
-
-				// 첫게임일때
-				multiGame = MultiGame.builder()
-					.multiGameLogId(gameLogId)
-					.memberId(playerId)
-					.firstDayStockChartId(firstDayStockChartId)
-					.roomTitle(multiWaitingRoom.getRoomTitle())
-					.password(multiWaitingRoom.getPassword())
-					.isOpen(multiWaitingRoom.getIsOpen())
-					.tradeList(new ArrayList<>())
-					.roomId(dto.roomId())
-					.cash(1_000_000_0L)
-					.initial(1_000_000_0L)
-					.stockAmount(0)
-					.totalAsset(1_000_000_0L)
-					.totalPurchaseAmount(0L)
-					.averagePrice(0)
-					.profit(0)
-					.maxRound(dto.maxRoundNumber())
-					.shortAveragePrice(0)
-					.shortStockAmount(0)
-					.rank(1)
-					.day(1)
-					.round(dto.roundNumber())
-					.build();
-
-				multiGamePlayer = MultiGamePlayer.builder()
-					.multiGameLog(multiGameLog)
-					.member(member)
-					.finalProfit(0)
-					.finalRoi(0.0)
-					.ranking(1)
-					.build();
+		Member member = memberRepository.findById(memberId).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+		// 첫 게임이 아니라면 이전 게임 결과를 가져오고, 이전 게임을 삭제한다.
+		MultiGame multiGame = null;
+		MultiGame beforeMultiGame = null;
+		MultiGamePlayer multiGamePlayer = null;
+		if (dto.roundNumber() != 1) {
+			try {
+				String key = "multiGame:" + dto.gameId() + ":" + memberId + ":" + (dto.roundNumber() - 1);
+				String jsonStr = objectMapper.writeValueAsString(redisTemplate.opsForValue().get(key));
+				beforeMultiGame = objectMapper.readValue(jsonStr, MultiGame.class);
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
 			}
-			// 각 플레이어의 게임 정보를 Redis에 저장.
-			String key = "multiGame:" + dto.gameId() + ":" + playerId + ":" + dto.roundNumber(); // Redis에 저장할 키
-			redisTemplate.opsForValue().set(key, multiGame);
 
-			multiGamePlayerRepository.save(multiGamePlayer);
+		multiGame = MultiGame.builder()
+			.multiGameLogId(gameLogId)
+			.memberId(memberId)
+			.tradeList(new ArrayList<>())
+			.firstDayStockChartId(dto.firstDayStockChartId())
+			.roomTitle(multiWaitingRoom.getRoomTitle())
+			.password(multiWaitingRoom.getPassword())
+			.isOpen(multiWaitingRoom.getIsOpen())
+			.cash(beforeMultiGame.getCash())
+			.initial(beforeMultiGame.getCash())
+			.stockAmount(0)
+			.totalAsset(beforeMultiGame.getCash())
+			.totalPurchaseAmount(0L)
+			.averagePrice(0)
+			.profit(0)
+			.shortAveragePrice(0)
+			.shortStockAmount(0)
+			.rank(0) //TODO: rank 구현해야함.
+			.day(1)
+			.round(dto.roundNumber())
+			.build();
+
+		multiGamePlayer = MultiGamePlayer.builder()
+			.multiGameLog(multiGameLog)
+			.member(member)
+			.finalProfit(beforeMultiGame.getProfit())
+			.finalRoi(100.0 * beforeMultiGame.getProfit() / beforeMultiGame.getInitial())
+			.ranking(beforeMultiGame.getRank())
+			.build();
+
+		redisTemplate.delete("multiGame:" + dto.gameId() + ":" + memberId + ":" + (dto.roundNumber() - 1));
+
+		} else {
+
+			// 첫게임일때
+			multiGame = MultiGame.builder()
+				.multiGameLogId(gameLogId)
+				.memberId(memberId)
+				.firstDayStockChartId(dto.firstDayStockChartId())
+				.roomTitle(multiWaitingRoom.getRoomTitle())
+				.password(multiWaitingRoom.getPassword())
+				.isOpen(multiWaitingRoom.getIsOpen())
+				.tradeList(new ArrayList<>())
+				.cash(1_000_000_0L)
+				.initial(1_000_000_0L)
+				.stockAmount(0)
+				.totalAsset(1_000_000_0L)
+				.totalPurchaseAmount(0L)
+				.averagePrice(0)
+				.profit(0)
+				.shortAveragePrice(0)
+				.shortStockAmount(0)
+				.rank(1)
+				.day(1)
+				.round(dto.roundNumber())
+				.build();
+
+			multiGamePlayer = MultiGamePlayer.builder()
+				.multiGameLog(multiGameLog)
+				.member(member)
+				.finalProfit(0)
+				.finalRoi(0.0)
+				.ranking(1)
+				.build();
 		}
+		// 각 플레이어의 게임 정보를 Redis에 저장.
+		String key = "multiGame:" + dto.gameId() + ":" + memberId + ":" + dto.roundNumber(); // Redis에 저장할 키
+		redisTemplate.opsForValue().set(key, multiGame);
+		multiGamePlayerRepository.save(multiGamePlayer);
 
 
 		// 350일치 차트
-		List<StockChart> stockChartList = stockChartRepository.findByIdBetween(firstDayStockChartId, firstDayStockChartId + 349);
+		List<StockChart> stockChartList = stockChartRepository.findByIdBetween(dto.firstDayStockChartId(), dto.firstDayStockChartId() + 349);
 
 		// 각 날짜에 대해 StockChartDto 생성 후 넣어주기
 		List<StockChartDto> stockChartDtoList = new ArrayList<>();
@@ -376,7 +400,7 @@ public class MultiGameService {
 			);
 			stockChartDtoList.add(stockChartDto);
 		});
-        return new StockChartDataDto(stockId, stockChartDtoList);
+        return new StockChartDataDto(dto.stockId(), stockChartDtoList);
 	}
 
 
@@ -703,7 +727,7 @@ public class MultiGameService {
                 ).getDate(),
                 (long) currentGame.getProfit(), roi, dto.roundNumber()
             );
-			//TODO:
+
 			MultiGameLog multiGameLog = multiGameLogRepository.findByMemberIdAndGameIdAndRound(memberId, dto.gameId(), dto.roundNumber())
 				.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
             MultiGamePlayer memberGamePlayer = multiGamePlayerRepository.findByMultiGameLog_IdAndMember_Id(multiGameLog.getId(), memberId)
@@ -711,6 +735,11 @@ public class MultiGameService {
 
             memberGamePlayer.updateFinalProfit(currentGame.getProfit());
             memberGamePlayer.updateFinalRoi(100.0 * currentGame.getProfit() / currentGame.getInitial());
+
+			if (currentGame.getMaxRound() == dto.roundNumber()) {
+				redisTemplate.delete("multiGame:" + dto.gameId() + ":" + memberId + ":" + dto.roundNumber());
+			}
+
 			return new MultiNextDayResponseDto(multiNextDayInfoResponseDto, multiGameResult);
         }
 
