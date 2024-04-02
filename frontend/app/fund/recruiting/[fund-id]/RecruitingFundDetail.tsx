@@ -182,8 +182,15 @@ export default function RecruitingFundDetail() {
     <div className="bg-big-1 p-2 rounded-md row-span-11 grid grid-rows-12 gap-2 mx-auto xl:max-w-screen-xl">
       {/* 펀드 소개 */}
       <div className="row-span-4 p-4 bg-small-1 rounded-lg text-textColor-2 border grid grid-rows-4">
-        <div className="row-span-1 items-center text-center">
-          <div className="text-xl font-bold">{fundDetail?.fundName}</div>
+        <div className="relative row-span-1 w-full grid grid-cols-3 items-center text-center">
+            <div className="absolute left-0 top-0 col-span-1">
+              <button onClick={()=> {
+                playClickSound();
+                router.back()
+                }} className="py-1 px-2 bg-small-14 text-textColor-1 font-bold rounded-md hover:bg-gray-300">뒤로가기</button>
+            </div>
+            <div className="col-start-2 col-end-3 text-xl font-bold">{fundDetail?.fundName}</div>
+          <div></div>
         </div>
         <div className="row-span-3 grid grid-cols-6 items-center">
           <div className="col-span-3 grid grid-rows-3 items-center">

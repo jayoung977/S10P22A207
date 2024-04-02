@@ -5,7 +5,7 @@ export default function FundGameEndModal ({ isOpen, onClose } :any) {
     const { fundGameEndInfoData, setSelectedStockIndex } = FundGameStore();
     const router = useRouter();
     
-    const singleGameAgainHandler = () => {
+    const fundGameAgainHandler = () => {
         onClose();
         if (typeof window != undefined) {
             // window.location.replace("https://j10a207.p.ssafy.io/api/single/play");
@@ -39,7 +39,7 @@ export default function FundGameEndModal ({ isOpen, onClose } :any) {
                     </div>
                 </div>
                 <div className="row-span-4 grid grid-rows-4">
-                    <div className="row-span-1 text-center mb-2">현재 남은 기회 : {fundGameEndInfoData?.singleGameChance}</div>
+                    <div className="row-span-1 text-center mb-2">현재 남은 기회 : {fundGameEndInfoData?.fundGameChance}</div>
                     <div className="row-span-3 grid grid-cols-6">
                         <button onClick={() => {
                             setSelectedStockIndex(0);
@@ -53,9 +53,9 @@ export default function FundGameEndModal ({ isOpen, onClose } :any) {
                         <button 
                             onClick={() => {
                                 setSelectedStockIndex(0);
-                                singleGameAgainHandler();
+                                fundGameAgainHandler();
                             }} 
-                            disabled={fundGameEndInfoData?.singleGameChance == 0}
+                            disabled={fundGameEndInfoData?.fundGameChance == 0}
                             className="col-span-3 rounded-full mx-16 my-8 text-white bg-gray-500"
                         >
                             한번 더!
