@@ -87,6 +87,19 @@ const socketStore = create<WebSocketStore>((set) => ({
   setDay:(value) => set({ day: value }),
   multiGameStockIds: [],
   setMultiGameStockIds:(value) => set({ multiGameStockIds: value }),
+  // initialAsset
+  // totalAsset
+  // profitMargin
+  // unrealizedGain
+  // cash
+  // stockAmount
+  // totalPurchaseAmount
+  // averagePurchasePrice
+  // TodayEndPrice * amount?
+  // TodayEndPrice
+  // 거래내역
+
+
 }));
 
 export default socketStore;
