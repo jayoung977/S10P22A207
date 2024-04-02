@@ -271,12 +271,12 @@ public class MultiGameService {
 		for (Long playerId : dto.playerIds()) { // 채팅방에 있는 모든 유저에게 메시지 전송
 			log.info("메시지 전송 대상: {}", playerId);
 			template.convertAndSend("/api/sub/" + playerId, new SocketBaseDtoRes<>(SocketType.START,
-				new MultiGameStartResponseDto(gameId, firstDayStockChartIds)));
+				new MultiGameStartResponseDto(gameId, firstDayStockChartIds, dto.roomId())));
 				log.info("socketBaseDtoRes : gameId : {} roundNumber : {}", gameId, 1);
 			}
 			log.info("메시지 전송 완료");
 
-        return new MultiGameStartResponseDto(gameId, firstDayStockChartIds);
+        return new MultiGameStartResponseDto(gameId, firstDayStockChartIds, dto.roomId());
     }
 
 	public StockChartDataDto getGameChart(Long memberId, MultiGameChartRequestDto dto){
