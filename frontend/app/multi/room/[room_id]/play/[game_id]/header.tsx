@@ -11,7 +11,7 @@ import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isGameover, setIsGameover] = useState(false);
-  const [turn, setTurn] = useState<number>(0);
+  const [turn, setTurn] = useState<number>(1);
   const [round, setRound] = useState<number>(1);
   const params = useParams();
   const roundPercentage = (turn / 50) * 100;
@@ -42,13 +42,13 @@ export default function Header() {
     if (e.key === "r") {
       playClickSound();
       handleTomorrow(turn)
-      if (round == 3 && turn == 49) {
+      if (round == 3 && turn == 50) {
         console.log("경기 종료");
         setIsGameover(true);
-      } else if (turn === 49) {
+      } else if (turn === 50) {
         setIsOpen(true);
         // 일단 3초로 설정
-        setTimeout(() => setIsOpen(false), 30000);
+        setTimeout(() => setIsOpen(false), 10000);
         setRound(round + 1);
         setTurn(0);
       } else {
@@ -100,17 +100,17 @@ export default function Header() {
       </div>
       <div className="col-span-1 flex justify-center font-bold">
         <button
-          disabled={turn === 50}
+          disabled={turn === 51}
           // turn이 50이면 disabled 속성이 true가 됩니다.
           onClick={() => {
             playClickSound();
             handleTomorrow(turn)
-            if (round == 3 && turn == 49) {
+            if (round == 3 && turn == 50) {
               console.log("경기 종료");
               setIsGameover(true);
-            } else if (turn === 49) {
+            } else if (turn === 50) {
               setIsOpen(true);
-              setTimeout(() => setIsOpen(false), 30000);
+              setTimeout(() => setIsOpen(false), 10000);
               setRound(round + 1);
               setTurn(0);
             } else {

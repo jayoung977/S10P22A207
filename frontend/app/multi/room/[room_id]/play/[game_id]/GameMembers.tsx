@@ -9,12 +9,11 @@ interface GameMember {
 
 export default function GameMembers(){
   const gameMembers = [
-    { rank: 1, nickname: '권권영', memberId: 1, progress: 22 },
-    { rank: 2, nickname: '제헌법연구소',  memberId: 2, progress: 20 },
-    { rank: 3, nickname: '최강창호',  memberId: 3, progress: 29 },
-    { rank: 4, nickname: '용수리',  memberId: 4, progress: 28 },
-    { rank: 5, nickname: '자영안자영',  memberId: 5, progress: 22 },
-    { rank: 6, nickname: '김민규소',  memberId: 6, progress: 24 },
+    { rank: 1, nickname: '권권영', memberId: 1, progress: 0 },
+    { rank: 2, nickname: '제헌법연구소',  memberId: 2, progress: 0 },
+    { rank: 3, nickname: '최강창호',  memberId: 3, progress: 0 },
+    { rank: 4, nickname: '용수리',  memberId: 4, progress: 0 },
+    { rank: 5, nickname: '자영안자영',  memberId: 5, progress: 0 },
   ]
   type RankColor = { [key: number]: string };
   const rank: RankColor = {
