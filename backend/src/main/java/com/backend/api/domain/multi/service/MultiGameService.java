@@ -6,6 +6,7 @@ import com.backend.api.domain.member.repository.MultiGamePlayerRepository;
 import com.backend.api.domain.multi.dto.MultiGameResultRequestDto;
 import com.backend.api.domain.multi.dto.MultiGameSubResultRequestDto;
 import com.backend.api.domain.multi.dto.MultiWaitRoomInfo;
+import com.backend.api.domain.multi.dto.request.MultiGameChartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameRoomCreateRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameStartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiNextDayRequestDto;
@@ -111,12 +112,12 @@ public class MultiGameService {
 					roomTitle = waitingRoom.getRoomTitle();
 					isOpen = waitingRoom.getIsOpen();
 					password = waitingRoom.getPassword();
-					waitRoomInfoMap.put((long) waitingRoomKey, new MultiWaitRoomInfo((long) waitingRoomKey, roomTitle, waitRoomParticipantsIds.get(waitingRoomKey), isOpen, password));
+					waitRoomInfoMap.put((long) waitingRoomKey, new MultiWaitRoomInfo((long) waitingRoomKey, roomTitle, waitRoomParticipantsIds.get(waitingRoomKey), isOpen, password, waitingRoom.getMaxRound()));
 				} else {
 					// MultiGameRoomInfo 객체 생성 후 리스트에 추가
 					MultiGame currentGame = getGame(Long.parseLong(parts[2]), Long.parseLong(parts[1]));
 
-					resultSetMap.put(roomId, new MultiGameRoomInfo(roomId, currentGame.getRoomTitle(), currentGame.getRound(), gameParticipantsIds.get(Integer.parseInt(parts[1])), currentGame.getIsOpen(), currentGame.getPassword()));
+					resultSetMap.put(roomId, new MultiGameRoomInfo(roomId, currentGame.getRoomTitle(), currentGame.getRound(), gameParticipantsIds.get(Integer.parseInt(parts[1])), currentGame.getIsOpen(), currentGame.getPassword(), currentGame.getMaxRound()));
 				}
 
 			}
@@ -157,7 +158,7 @@ public class MultiGameService {
 				.participantIds(participantIds)
 				.password(dto.password())
 				.isOpen(dto.isOpen())
-				.round(0)
+				.maxRound(dto.maxRoundNumber())
 				.readyState(new HashMap<>())
 				.hostId(userDetails.getId())
 				.build();
@@ -201,7 +202,7 @@ public class MultiGameService {
         return new MultiGameStartResponseDto(gameId);
     }
 
-	public StockChartDataDto getGameChart(Long memberId, MultiGameStartRequestDto dto){
+	public StockChartDataDto getGameChart(Long memberId, MultiGameChartRequestDto dto){
 		LocalDateTime lastDate = LocalDateTime.of(2024, 3, 10, 0, 0); // 위험할수도
 		LocalDateTime startDate = LocalDateTime.of(1996, 5, 10, 0, 0);
 
@@ -285,6 +286,7 @@ public class MultiGameService {
 					.totalPurchaseAmount(0L)
 					.averagePrice(0)
 					.profit(0)
+					.maxRound(dto.maxRoundNumber())
 					.shortAveragePrice(0)
 					.shortStockAmount(0)
 					.rank(rankMap.get(playerId))
@@ -321,6 +323,7 @@ public class MultiGameService {
 					.totalPurchaseAmount(0L)
 					.averagePrice(0)
 					.profit(0)
+					.maxRound(dto.maxRoundNumber())
 					.shortAveragePrice(0)
 					.shortStockAmount(0)
 					.rank(1)
@@ -689,15 +692,15 @@ public class MultiGameService {
                 ).getDate(),
                 (long) currentGame.getProfit(), roi, dto.roundNumber()
             );
-            MultiGameLog multiGameLog = multiGameLogRepository.findByMemberIdAndGameIdAndRound(memberId, dto.gameId(), dto.roundNumber())
-                .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
+			//TODO:
+			MultiGameLog multiGameLog = multiGameLogRepository.findByMemberIdAndGameIdAndRound(memberId, dto.gameId(), dto.roundNumber())
+				.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
             MultiGamePlayer memberGamePlayer = multiGamePlayerRepository.findByMultiGameLog_IdAndMember_Id(multiGameLog.getId(), memberId)
-                .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+				.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
 
             memberGamePlayer.updateFinalProfit(currentGame.getProfit());
             memberGamePlayer.updateFinalRoi(100.0 * currentGame.getProfit() / currentGame.getInitial());
-
-            return new MultiNextDayResponseDto(multiNextDayInfoResponseDto, multiGameResult);
+			return new MultiNextDayResponseDto(multiNextDayInfoResponseDto, multiGameResult);
         }
 
 		return new MultiNextDayResponseDto(multiNextDayInfoResponseDto, null);
