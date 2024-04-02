@@ -83,6 +83,9 @@ public class MultiGameSocketService {
 		if(multiWaitingRoom.getParticipantIds().size() >= 4) {
 			throw new BaseExceptionHandler(ErrorCode.FULL_ROOM);
 		}
+		if(multiWaitingRoom.getIsPlaying()) {
+			throw new BaseExceptionHandler(ErrorCode.IS_PLAYING);
+		}
 		multiWaitingRoom.getParticipantIds().add(userDetails.getId());    // 참가자 목록에 추가
 		multiWaitingRoom.getReadyState().put(userDetails.getId(), false); // 레디 상태 false로 초기화
 		redisTemplate.opsForValue().set("multiGame:" + roomId, multiWaitingRoom);
