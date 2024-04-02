@@ -28,7 +28,8 @@ export default function FundMainComponent() {
         </div>
         <div className="col-span-4 grid grid-rows-4 border text-center p-2">
           <div className="row-start-2 row-span-3">
-            <div>"안정적인 미래를 위해 펀드를 개설하세요"</div>
+            <div className="text-lg">"안정적인 미래를 위해</div>
+            <div className="text-lg">펀드를 개설하세요"</div> 
             <button
               onClick={() => {
                 playClickSound();
