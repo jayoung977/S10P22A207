@@ -46,8 +46,16 @@ import com.backend.api.global.common.type.SocketType;
 import com.backend.api.global.common.type.TradeType;
 import com.backend.api.global.exception.BaseExceptionHandler;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
+import com.backend.api.global.websocket.dto.request.WebSocketMessageReq;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -139,10 +147,14 @@ public class MultiGameService {
 				if (parts.length == 2) {
 					int waitingRoomKey = Integer.parseInt(parts[1]);
 					MultiWaitingRoom waitingRoom = getWaitingRoom(waitingRoomKey);
-					roomTitle = waitingRoom.getRoomTitle();
-					isOpen = waitingRoom.getIsOpen();
-					password = waitingRoom.getPassword();
-					waitRoomInfoMap.put((long) waitingRoomKey, new MultiWaitRoomInfo((long) waitingRoomKey, roomTitle, waitRoomParticipantsIds.get(waitingRoomKey), isOpen, password, waitingRoom.getMaxRound()));
+					// 진행중이 아닌 방만 추가
+					if(!waitingRoom.getIsPlaying()) {
+						roomTitle = waitingRoom.getRoomTitle();
+						isOpen = waitingRoom.getIsOpen();
+						password = waitingRoom.getPassword();
+						waitRoomInfoMap.put((long)waitingRoomKey, new MultiWaitRoomInfo((long)waitingRoomKey, roomTitle,
+							waitRoomParticipantsIds.get(waitingRoomKey), isOpen, password, waitingRoom.getMaxRound()));
+					}
 				} else {
 					// MultiGameRoomInfo 객체 생성 후 리스트에 추가
 					MultiGame currentGame = getGame(Long.parseLong(parts[2]), Long.parseLong(parts[1]));
@@ -191,6 +203,7 @@ public class MultiGameService {
 				.maxRound(dto.maxRoundNumber())
 				.readyState(new HashMap<>())
 				.hostId(userDetails.getId())
+				.isPlaying(false)
 				.build();
 		multiWaitingRoom.getReadyState().put(userDetails.getId(), true); // 방장은 레디상태 true로 초기화
 		redisTemplate.opsForValue().set(key, multiWaitingRoom);
@@ -199,6 +212,14 @@ public class MultiGameService {
 
 	public MultiGameStartResponseDto startMultiGame(Long memberId, MultiGameStartRequestDto dto) {
 		log.info("MULTIGAMESTART:::");
+		MultiWaitingRoom multiwaitingRoom = getWaitingRoom(dto.roomId());
+		/* 예외 처리*/
+		// if (multiwaitingRoom.getParticipantIds().size() < 2) {
+		// 	throw new BaseExceptionHandler(ErrorCode.NOT_ENOUGH_PARTICIPANTS);
+		// }
+		if(multiwaitingRoom.getIsPlaying()) {
+			throw new BaseExceptionHandler(ErrorCode.IS_PLAYING);
+		}
 
         Long gameId = null;
         if (dto.roundNumber() == 1) {

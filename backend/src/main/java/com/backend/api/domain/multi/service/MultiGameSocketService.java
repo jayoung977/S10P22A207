@@ -73,10 +73,16 @@ public class MultiGameSocketService {
 
 	public void enterMultiWaitingRoom(CustomUserDetails userDetails, Long roomId, String nickName) throws
 		JsonProcessingException {
+		if(redisTemplate.opsForValue().get("multiGame:" + roomId) == null) {
+			throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_ERROR);
+		}
 		log.info("멀티게임 대기방 입장 {} 님이 {} 방에 입장합니다.", userDetails.getId(), roomId);
 		// 웹소켓에 연결시키는 과정
 		checkStatus(userDetails); // 내가 방에 입장해 있는지 확인
 		MultiWaitingRoom multiWaitingRoom = getMultiWaitingRoom(roomId);
+		if(multiWaitingRoom.getParticipantIds().size() >= 4) {
+			throw new BaseExceptionHandler(ErrorCode.FULL_ROOM);
+		}
 		multiWaitingRoom.getParticipantIds().add(userDetails.getId());    // 참가자 목록에 추가
 		multiWaitingRoom.getReadyState().put(userDetails.getId(), false); // 레디 상태 false로 초기화
 		redisTemplate.opsForValue().set("multiGame:" + roomId, multiWaitingRoom);
