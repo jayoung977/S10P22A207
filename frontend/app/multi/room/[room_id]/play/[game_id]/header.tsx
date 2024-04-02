@@ -1,5 +1,5 @@
 "use client";
-import logo from "@/public/src/assets/images/logo.png"
+import logo from "@/public/src/assets/images/logo.png";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import RoundResult from "./roundResult";
@@ -18,33 +18,64 @@ export default function Header() {
   const roundPercentage = (turn / 50) * 100;
   const allPercentage = ((50 * (round - 1) + turn) / 150) * 100;
   const playClickSound = useClickSound();
-  const { roundNumber } = socketStore();
+  const {
+    roomTitle,
+    maxRoundNumber,
+    setDay,
+    day,
+    setRoundNumber,
+    roundNumber,
+  } = socketStore();
 
-  function handleTomorrow (turn: number){
+  const [remainingTime, setRemainingTime] = useState(100000); // 초기 남은 시간을 100초(100,000밀리초)로 설정
+
+  useEffect(() => {
+    const targetTime = new Date().getTime() + remainingTime; // 타이머 만료 시간 계산
+
+    const interval = setInterval(() => {
+      const currentTime = new Date().getTime();
+      const remaining = targetTime - currentTime;
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+        console.log("Countdown finished!");
+      } else {
+        setRemainingTime(remaining); // 상태 업데이트
+      }
+    }, 1000); // 1초마다 실행
+
+    return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 정리
+  }, []);
+
+  const formatTime = (time: any) => {
+    const seconds = Math.floor(time / 1000);
+    return `${seconds}초`;
+  };
+
+  function handleTomorrow(turn: number) {
     axios({
-      method: 'post',
-      url: 'https://j10a207.p.ssafy.io/api/multi/tomorrow',
+      method: "post",
+      url: "https://j10a207.p.ssafy.io/api/multi/tomorrow",
       headers: {
-        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
       data: {
         gameId: params.game_id,
         day: turn,
-        roundNumber: roundNumber,
       }
     })
-    .then((res)=> {
-      console.log(res.data)
-    })
-    .catch((error)=> {
-      console.error(error)
-    })
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
-  const handleTradeTurn = (e :KeyboardEvent) => {
+  const handleTradeTurn = (e: KeyboardEvent) => {
     if (e.key === "r") {
       playClickSound();
-      handleTomorrow(turn)
+      handleTomorrow(turn);
       if (round == 3 && turn == 50) {
         console.log("경기 종료");
         setIsGameover(true);
@@ -58,17 +89,15 @@ export default function Header() {
         setTurn(turn + 1);
       }
     }
-  }
+  };
 
-
-  useEffect (() => {
-    window.addEventListener('keydown', handleTradeTurn);
+  useEffect(() => {
+    window.addEventListener("keydown", handleTradeTurn);
 
     return () => {
-        window.removeEventListener("keydown", handleTradeTurn);
-
-    }
-  }, [turn])
+      window.removeEventListener("keydown", handleTradeTurn);
+    };
+  }, [turn]);
 
   return (
     <header className="row-span-1 grid grid-cols-12 border gap-2 items-center">
@@ -86,20 +115,14 @@ export default function Header() {
       />
       <div className="col-start-2 col-end-3 flex items-center">
         <div className="flex gap-2 items-center">
-          <Image
-            src={logo}
-            alt="Logo"
-            className="h-8"
-            width={32}
-            height={32}
-          />
+          <Image src={logo} alt="Logo" className="h-8" width={32} height={32} />
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
             지금이니
           </span>
         </div>
       </div>
       <div className="col-start-5 col-end-9 flex justify-center text-xl font-bold">
-        <div>이겨보시던지</div>
+        <div>{roomTitle}</div>
       </div>
       <div className="col-span-1 flex justify-center font-bold">
         <button
@@ -140,7 +163,7 @@ export default function Header() {
         </div>
       </div>
       <div className="col-span-1 items-center m-1">라운드: {round}/3</div>
-      <div className="col-span-1">시간: 150초</div>
+      <div className="col-span-1">{formatTime(remainingTime)}</div>
     </header>
   );
 }

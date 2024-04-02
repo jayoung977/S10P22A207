@@ -10,12 +10,11 @@ import socketStore from "@/public/src/stores/websocket/socketStore";
 
 // 매수, 매도 클릭 시 활성화되는 모달창
 export default function TradeModal({ tradeType, isOpen, onClose } :any) {
+  const {roundNumber, day} = socketStore()
   const params = useParams();
   const gameId = params['game_id']
   const [stocksAmount, setStocksAmount] = useState(0);
   const playClickSound = useClickSound();
-  const { roundNumber } = socketStore();
-  const day = 1;
 
 
   function handleStocksChange(e:React.ChangeEvent<HTMLInputElement>){
@@ -40,7 +39,7 @@ export default function TradeModal({ tradeType, isOpen, onClose } :any) {
           gameId: gameId,
           roundNumber: roundNumber,
           amount: stocksAmount,
-          day: day,
+          day: day
         }
       })
       .then((res)=> {
