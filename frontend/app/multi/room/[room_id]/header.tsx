@@ -8,6 +8,8 @@ import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 import socketStore from "@/public/src/stores/websocket/socketStore";
 import { useEffect, useState } from "react";
 import userStore from "@/public/src/stores/user/userStore";
+import Swal from "sweetalert2";
+
 
 export default function Header() {
   const { memberId } = userStore();
@@ -23,11 +25,9 @@ export default function Header() {
   useEffect(()=>{
     Object.keys(readyState).map((item)=>{
       if (!readyState[Number(item)]) 
-      {
-        setAllReady(false)
+      { setAllReady(false)
         return
-      }
-    }) 
+      }}) 
     setAllReady(true)
   }, [readyState])
 
@@ -53,8 +53,8 @@ export default function Header() {
 
   const handleGameStart = async() => {
     const numberKeys = Object.keys(readyState).map(Number);
-    console.log([...numberKeys, hostId])
-    const token = sessionStorage.getItem("accessToken");
+    if(numberKeys.length > 1){
+      const token = sessionStorage.getItem("accessToken");
       await axios({
         url: "https://j10a207.p.ssafy.io/api/multi/start-game",
         method: 'POST',
@@ -62,7 +62,7 @@ export default function Header() {
           Authorization: `Bearer ${token}`,
         },
         data: {
-          playerIds: [...numberKeys, hostId],
+          playerIds: numberKeys,
           roundNumber: 1,
           roomId: params.room_id
         }
@@ -75,7 +75,14 @@ export default function Header() {
       .catch ((error) => {
         console.error(error)
       })
+    } else {
+      Swal.fire({
+        title: '2명 이상일 때 시작 가능합니다.',
+        icon: 'error'
+      })
+      return
     }
+  }
 
   const [receiveMessage, setReceiveMessage] = useState<any>([]);
   function handleExit() {
