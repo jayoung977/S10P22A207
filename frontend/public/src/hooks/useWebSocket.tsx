@@ -5,8 +5,12 @@ import SockJS from "sockjs-client";
 import Swal from "sweetalert2";
 import userStore from "../stores/user/userStore";
 import socketStore from "../stores/websocket/socketStore";
-
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 export const useWebSocket = () => {
+  const router = useRouter();
+  const params = useParams();
   const client = useRef<CompatClient>({} as CompatClient);
   const { setClientObject, clientObject } = socketStore();
   const { memberId, nickname } = userStore();
@@ -17,21 +21,52 @@ export const useWebSocket = () => {
     setReceiveMessages,
     addReceiveMessages,
     deleteReceiveMessages,
+    setMaxRoundNumber,
+    setRoundNumber,
+    setGameId,
+    setMultiGameStockIds,
   } = socketStore();
+
   const { receiveAlarm, setReceiveAlarm, roomInfo, setRoomInfo } =
     socketStore();
-  const { setHostId, setParticipants, setRoomId, setRoomTitle, setReadyState } =
-    socketStore();
+  const {
+    setHostId,
+    setParticipants,
+    setRoomId,
+    setRoomTitle,
+    setReadyState,
+  } = socketStore();
+
+  const fetchAlarmData = async () => {
+    try {
+      const response = await axios({
+        method: "get",
+        url: "https://j10a207.p.ssafy.io/api/alarm/unread-notification-count",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
+
+      // 요청이 성공적으로 완료되면 여기에서 응답을 처리합니다.
+      if (Number(response.data.result) > 0) {
+        setReceiveAlarm(true);
+      }
+    } catch (error) {
+      // 요청이 실패하면 오류를 처리합니다.
+      console.error(error);
+      // 오류에 따른 추가적인 처리를 할 수 있습니다.
+    }
+  };
 
   useEffect(() => {
     if (memberId) {
+      fetchAlarmData();
       client.current = Stomp.over(() => {
         const sock = new SockJS("https://j10a207.p.ssafy.io/ws");
         return sock;
       });
       Swal.fire(`${nickname}님 환영합니다.`);
       setClientObject(client);
-
       client.current.connect({}, () => {
         client.current.subscribe(`/api/sub/${memberId}`, (message: any) => {
           const parsedMessage = JSON.parse(message.body);
@@ -42,10 +77,6 @@ export const useWebSocket = () => {
           }
 
           if (parsedMessage.type === "EXIT") {
-            // setReceiveMessage((prevReceiveMessage: any) => {
-            //   setReceiveMessages([]);
-            //   return [];--
-            // });
             console.log(parsedMessage);
           }
 
@@ -55,14 +86,53 @@ export const useWebSocket = () => {
             setRoomId(parsedMessage.result.roomId);
             setRoomTitle(parsedMessage.result.roomTitle);
             setReadyState(parsedMessage.result.readyState);
+            setMaxRoundNumber(parsedMessage.result.maxRoundNumber);
           }
 
           if (parsedMessage.type === "INVITE") {
-            setReceiveAlarm(true);
+            Swal.fire({
+              title: "친구 초대",
+              text: `${parsedMessage.result.inviterNickname}님이 초대하셨습니다.`,
+              icon: "info",
+              showCancelButton: true,
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "네",
+              cancelButtonText: "아니오",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                Swal.fire({
+                  icon: "success",
+                });
+                axios({
+                  url: `https://j10a207.p.ssafy.io/api/multi/${parsedMessage.result.roomId}`,
+                  method: "get",
+                  headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem(
+                      "accessToken"
+                    )}`,
+                  },
+                });
+                router.push(`/multi/room/${parsedMessage.result.roomId}`);
+              }
+            });
           }
 
           if (parsedMessage.type === "FRIENDASK") {
             setReceiveAlarm(true);
+          }
+
+          if (parsedMessage.type === "KICKED") {
+            router.push(`/multi`);
+          }
+
+          if (parsedMessage.type === "START") {
+            setGameId(parsedMessage.result.gameId);
+            setMultiGameStockIds(parsedMessage.result.multiGameStockIds);
+            setRoomId(parsedMessage.result.roomId);
+            router.push(
+              `${parsedMessage.result.roomId}/play/${parsedMessage.result.gameId}`
+            );
           }
         });
       });

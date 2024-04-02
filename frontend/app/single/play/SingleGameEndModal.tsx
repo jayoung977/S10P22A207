@@ -33,7 +33,6 @@ export default function SingleGameEndModal ({ isOpen, onClose } :any) {
                                     <div className="m-1.5">{item.stockName}</div>
                                 ))
                             }
-
                         </div>
                     </div>
 
@@ -43,21 +42,21 @@ export default function SingleGameEndModal ({ isOpen, onClose } :any) {
                         <div className="">
                             <div className="flex items-center justify-between m-3">
                                 <div className="flex items-center justify-start">시작 금액</div>
-                                <div className="flex items-center justify-end">{singleGameEndInfoData?.initialAsset}</div>
+                                <div className="flex items-center justify-end">{singleGameEndInfoData?.initialAsset.toLocaleString()}</div>
                             </div>
                             <hr></hr>
                             <div className="flex items-center justify-between m-3">
                                 <div className="flex items-center justify-start">종료 금액</div>
-                                <div className="flex items-center justify-end">{singleGameEndInfoData?.finalAsset}</div>
+                                <div className="flex items-center justify-end">{singleGameEndInfoData?.finalAsset.toLocaleString()}</div>
                             </div>
                             <hr></hr>
                             <div className="flex items-center justify-between m-3">
                                 <div className="flex items-center justify-start">순이익</div>
                                 {
                                     singleGameEndInfoData?.netProfit < 0 ? (
-                                        <div className="flex items-center justify-end text-blue-700">{singleGameEndInfoData?.netProfit}</div>
+                                        <div className="flex items-center justify-end text-blue-700">{singleGameEndInfoData?.netProfit.toLocaleString()}</div>
                                     ) : (singleGameEndInfoData?.netProfit > 0 ? (
-                                        <div className="flex items-center justify-end text-red-700">+{singleGameEndInfoData?.netProfit}</div>
+                                        <div className="flex items-center justify-end text-red-700">+{singleGameEndInfoData?.netProfit.toLocaleString()}</div>
                                     ) : (
                                         <div className="flex items-center justify-end">+{singleGameEndInfoData?.netProfit}</div>
                                     ))
