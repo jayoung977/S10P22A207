@@ -2,6 +2,8 @@
 import axios from "axios";
 import { useQuery, UseQueryResult } from "react-query";
 import { useRouter } from "next/navigation";
+import userStore from "@/public/src/stores/user/userStore";
+import socketStore from "@/public/src/stores/websocket/socketStore";
 interface IsSignUpInfo {
   result: [string];
 }

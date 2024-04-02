@@ -5,20 +5,50 @@ import SockJS from "sockjs-client";
 import Swal from "sweetalert2";
 import userStore from "../stores/user/userStore";
 import socketStore from "../stores/websocket/socketStore";
-
+import axios from "axios";
+import { useRouter } from "next/navigation";
 export const useWebSocket = () => {
+  const router = useRouter()
   const client = useRef<CompatClient>({} as CompatClient);
   const { setClientObject, clientObject } = socketStore();
   const { memberId, nickname } = userStore();
   const [receiveMessage, setReceiveMessage] = useState<any>([]);
   const [receiveInvitation, setReceiveInvitation] = useState<any>([]);
-  const { receiveMessages, setReceiveMessages, addReceiveMessages, deleteReceiveMessages } = socketStore();
-  const { receiveAlarm, setReceiveAlarm, roomInfo, setRoomInfo } = socketStore();
-  const { setHostId, setParticipants, setRoomId, setRoomTitle, setReadyState } = socketStore();
+  const {
+    receiveMessages,
+    setReceiveMessages,
+    addReceiveMessages,
+    deleteReceiveMessages,
+  } = socketStore();
+  const { receiveAlarm, setReceiveAlarm, roomInfo, setRoomInfo } =
+    socketStore();
+  const { setHostId, setParticipants, setRoomId, setRoomTitle, setReadyState } =
+    socketStore();
 
+  const fetchAlarmData = async () => {
+    try {
+      const response = await axios({
+        method: "get",
+        url: "https://j10a207.p.ssafy.io/api/alarm/unread-notification-count",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
+
+      // 요청이 성공적으로 완료되면 여기에서 응답을 처리합니다.
+      if (Number(response.data.result) > 0) {
+        setReceiveAlarm(true);
+      }
+    } catch (error) {
+      // 요청이 실패하면 오류를 처리합니다.
+      console.error(error);
+      // 오류에 따른 추가적인 처리를 할 수 있습니다.
+    }
+  };
 
   useEffect(() => {
     if (memberId) {
+      fetchAlarmData();
       client.current = Stomp.over(() => {
         const sock = new SockJS("https://j10a207.p.ssafy.io/ws");
         return sock;
@@ -32,7 +62,7 @@ export const useWebSocket = () => {
           console.log(parsedMessage);
           Swal.fire(`${parsedMessage.type} 신호 감지!`);
           if (parsedMessage.type === "MESSAGE") {
-            addReceiveMessages(parsedMessage)
+            addReceiveMessages(parsedMessage);
           }
 
           if (parsedMessage.type === "EXIT") {
@@ -40,20 +70,27 @@ export const useWebSocket = () => {
             //   setReceiveMessages([]);
             //   return [];--
             // });
-            console.log(parsedMessage)
-
+            console.log(parsedMessage);
           }
 
-          if(parsedMessage.type === 'ROOMINFO'){
-            setHostId(parsedMessage.result.hostId)
-            setParticipants(parsedMessage.result.participants)
-            setRoomId(parsedMessage.result.roomId)
-            setRoomTitle(parsedMessage.result.roomTitle)
-            setReadyState(parsedMessage.result.readyState)
+          if (parsedMessage.type === "ROOMINFO") {
+            setHostId(parsedMessage.result.hostId);
+            setParticipants(parsedMessage.result.participants);
+            setRoomId(parsedMessage.result.roomId);
+            setRoomTitle(parsedMessage.result.roomTitle);
+            setReadyState(parsedMessage.result.readyState);
           }
 
           if (parsedMessage.type === "INVITE") {
             setReceiveAlarm(true);
+          }
+
+          if (parsedMessage.type === "FRIENDASK") {
+            setReceiveAlarm(true);
+          }
+
+          if (parsedMessage.type === "KICKED") {
+            router.push(`/multi`)
           }
         });
       });

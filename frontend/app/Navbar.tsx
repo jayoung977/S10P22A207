@@ -11,6 +11,9 @@ import fundCrudStore from "@/public/src/stores/fund/crud/FundCrudStore";
 import socketStore from "@/public/src/stores/websocket/socketStore";
 import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
+import ProfileFriendRequest from "./profile/[userId]/ProfileFriendRequest";
+import ProfileSentFriendRequest from "./profile/[userId]/ProfileSentFriendRequest";
+import profileStore from "@/public/src/stores/profile/profileStore";
 
 export default function Navbar() {
   useFetchUserInfo();
@@ -52,22 +55,19 @@ export default function Navbar() {
       "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     router.push("/");
   };
-
+  const { isOpen } = profileStore();
   return (
     <nav className="row-span-1 opacity-90 bg-background-1 border-gray-200 dark:bg-gray-900 dark:border-gray-700 z-50">
+      {isOpen && <ProfileFriendRequest></ProfileFriendRequest>}
+      <ProfileSentFriendRequest></ProfileSentFriendRequest>
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a className="flex items-center space-x-3 rtl:space-x-reverse">
-          <Image
-            src={logo}
-            alt="Logo"
-            className="bg-background-1"
-            width={25}
-          />
+          <Image src={logo} alt="Logo" className="bg-background-1" width={25} />
           <span
             className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white hover:cursor-pointer"
             onClick={() => {
               playClickSound();
-              router.push("/multi")
+              router.push("/multi");
             }}
           >
             지금이니
@@ -79,11 +79,10 @@ export default function Navbar() {
               <button
                 id="dropdownNavbarLink"
                 className="cursor-pointer flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
-                onClick={()=>{
+                onClick={() => {
                   playClickSound();
-                  toggleDropdown()
-                }
-              }
+                  toggleDropdown();
+                }}
               >
                 게임
                 <svg
@@ -101,14 +100,14 @@ export default function Navbar() {
                   />
                 </svg>
               </button>
-              <div
-                id="dropdownNavbar"
-                className={`fixed font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 ${
-                  dropdownOpen ? "" : "hidden"
-                }`}
-              >
-                <NavbarGameModal></NavbarGameModal>
-              </div>
+              {dropdownOpen && (
+                <div
+                  id="dropdownNavbar"
+                  className={`fixed font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600`}
+                >
+                  <NavbarGameModal></NavbarGameModal>
+                </div>
+              )}
             </li>
             <li>
               <a
@@ -126,9 +125,9 @@ export default function Navbar() {
               <a
                 className="cursor-pointer block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 onClick={() => {
-                    playClickSound();
-                    router.push("/board")
-                  }}
+                  playClickSound();
+                  router.push("/board");
+                }}
               >
                 커뮤니티
               </a>
@@ -137,22 +136,22 @@ export default function Navbar() {
               <a
                 className="cursor-pointer block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray -700 dark:hover:text-white md:dark:hover:bg-transparent"
                 onClick={() => {
-                    playClickSound();
-                    router.push(`/profile/${memberId}`)
-                  }}
+                  playClickSound();
+                  router.push(`/profile/${memberId}`);
+                }}
               >
                 프로필
               </a>
             </li>
             {/*NavBar에 시간 넣을까 ? 말까 ? 의견 주세요 ~_~*/}
-            {/* <li className="">
+            <li className="text-gray-400">
               <p suppressHydrationWarning>{currentTime.toLocaleTimeString()}</p>
-            </li> */}
+            </li>
             <li>
               <button
                 id="dropdownNotificationButton"
                 data-dropdown-toggle="dropdownNotification"
-                className="relative inline-flex items-center text-sm font-medium text-center text-gray-500 hover:text-gray-900 focus:outline-none dark:hover:text-white dark:text-gray-400"
+                className="relative inline-flex items-center text-sm font-medium text-center text-gray-400 hover:text-gray-900 focus:outline-none dark:hover:text-white dark:text-gray-400 "
                 type="button"
                 onClick={toggleAlarm}
               >
@@ -186,14 +185,14 @@ export default function Navbar() {
                   </svg>
                 )}
               </button>
-              <div
-                id="alarmNavbar"
-                className={`absolute font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-auto dark:bg-gray-700 dark:divide-gray-600 ${
-                  alarmOpen ? "" : "hidden"
-                }`}
-              >
-                <NavbarAlarmModal />
-              </div>
+              {alarmOpen && (
+                <div
+                  id="alarmNavbar"
+                  className={`absolute font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-auto dark:bg-gray-700 dark:divide-gray-600  right-5`}
+                >
+                  <NavbarAlarmModal />
+                </div>
+              )}
             </li>
 
             <li>

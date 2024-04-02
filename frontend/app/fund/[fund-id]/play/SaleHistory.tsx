@@ -1,8 +1,8 @@
 // 매매 내역 컴포넌트
-import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
+import FundGameStore from "@/public/src/stores/fund/game/FundGameStore";
 
 export default function SaleHistory ({ data } :any) {
-    const { stockListData } = SingleGameStore(); 
+    const { stockListData } = FundGameStore(); 
     const idx = stockListData.findIndex((x :any) => x?.stockId == data?.stockId);
     return (
         <tr className="row-span-1 bg-small-5 grid grid-cols-6 text-center rounded-lg m-1">
