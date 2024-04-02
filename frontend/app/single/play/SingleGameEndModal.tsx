@@ -80,27 +80,42 @@ export default function SingleGameEndModal ({ isOpen, onClose } :any) {
                         </div>
                     </div>
                 </div>
-                
-                <div className="row-span-2 grid grid-cols-6">
-                        <button onClick={() => {
-                            setSelectedStockIndex(0);
-                            onClose();
-                            router.push('/multi')
-                            }} className="col-span-3 rounded-full ml-40 mr-16  my-10 text-white bg-gray-500"
-                        >
-                            나가기
-                        </button>
-                        <button 
-                            onClick={() => {
+                {
+                    singleGameEndInfoData.singleGameChance > 0 ? (
+                        <div className="row-span-2 grid grid-cols-6">
+                            <button onClick={() => {
                                 setSelectedStockIndex(0);
-                                singleGameAgainHandler();
-                            }} 
-                            disabled={singleGameEndInfoData?.singleGameChance == 0}
-                            className={`col-span-3 rounded-full mr-40 ml-16  my-10 text-white bg-${bgColor}`}
-                        >
-                            한번 더!
-                        </button>
-                </div>
+                                onClose();
+                                router.push('/multi')
+                                }} className="col-span-3 rounded-full ml-40 mr-16  my-10 text-white bg-gray-500"
+                            >
+                                나가기
+                            </button>
+                            <button 
+                                onClick={() => {
+                                    setSelectedStockIndex(0);
+                                    singleGameAgainHandler();
+                                }} 
+                                disabled={singleGameEndInfoData?.singleGameChance == 0}
+                                className={`col-span-3 rounded-full mr-40 ml-16  my-10 text-white bg-${bgColor}`}
+                            >
+                                한번 더!
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="row-span-2 grid grid-cols-6">
+                            <button onClick={() => {
+                                setSelectedStockIndex(0);
+                                onClose();
+                                router.push('/multi')
+                                }} className="col-start-2 col-end-5 rounded-full ml-40 mr-16  my-10 text-white bg-gray-500"
+                            >
+                                나가기
+                            </button>
+                        </div>
+                    )
+                }
+                
             </div>
         </div>
     )

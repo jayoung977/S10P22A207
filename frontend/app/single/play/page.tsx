@@ -89,60 +89,22 @@ export default function SinglePlay() {
           }
           // 10개 랜덤 종목 데이터
           setStockListData(response.data.result.stockChartDataList);
-          // console.log('시작 날짜')
           const startTime = new Date(response.data.result.stockChartDataList[0].stockChartList[249].date).getTime();
-          // console.log("시작 : ", startTime);
           const endTime = new Date(response.data.result.stockChartDataList[0].stockChartList[299].date).getTime();
-          // console.log("끝 : ", endTime);
-          // setStartDate(Date(response.data.result.stockChartDataList[0].stockChartList[299].date).getTime())
           setStartDate(startTime);
           setEndDate(endTime);
-          // console.log('끝 날짜')
-          // setEndDate(response.data.result.stockChartDataList[0].stockChartList[349].date)
-
 
           // 증시 데이터
           setStockMarketListData(response.data.result.stockMarketList);
-
           // 트렌드, 시장 데이터
           setTrendListData(response.data.result.trendList);
-          // const filteredRawMaterialList :any = [];
-          // const notFilteredRawMaterialList :any = [];
-          // response.data.result.rawMaterialList.map((item :any, index :number) => {
-          //     const date = new Date(item.date)
-          //     const day = date.getDay();
-          //     if (day !== 0 && day !== 6) {
-          //         filteredRawMaterialList.push(item);
-          //     }
-          // })
-          // response.data.result.rawMaterialList.map((x, index) => {
-          //   console.log(x.date);
-          // })
-
-          // for (let i = 0; i < response.data.result.rawMaterialList.length; i++) {
-          //   const data1 = response.data.result.rawMaterialList[i];
-          //   const date1 = data1.date; 
-          //   // console.log(typeof date1);
-          //   let flag :boolean = false
-          //   for (let j = 0; j < response.data.result.stockChartDataList[0].stockChartList.length; j++) {
-          //     const data2 = response.data.result.stockChartDataList[0].stockChartList[j];
-          //     const date2 = data2.date.split('T')[0];
-          //     // console.log(typeof date2);
-          //     if (date1 == date2) {
-          //       filteredRawMaterialList.push(data1)
-          //       flag = true;
-          //     } 
-          //   }
-          //   if (!flag) {
-          //     console.log(data1);
-          //     notFilteredRawMaterialList.push(data1);
-          //   }
-
-          // }
-          
-          // console.log("걸러진 원자재 데이터 : ", filteredRawMaterialList);
-          // console.log("안걸러진 원자재 데이터 : ", notFilteredRawMaterialList);
-          setRawMaterialListData(response.data.result.rawMaterialList);
+          if (response.data.result.rawMaterialList.length >= 350) {
+            setRawMaterialListData(response.data.result.rawMaterialList);
+          } else {
+            const ordinary = [...response.data.result.rawMaterialList];
+            const concatenated = ordinary.concat(ordinary);
+            setRawMaterialListData(concatenated);
+          }
           setTodayStockInfoListData(response.data.result.nextDayInfos);
 
           setIsLoading(false)

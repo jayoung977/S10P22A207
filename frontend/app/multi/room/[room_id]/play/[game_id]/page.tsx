@@ -2,7 +2,7 @@
 
 import Header from "./header";
 import GameStatus from "./gameStatus";
-import Chart from "@/app/single/play/Chart";
+import Chart from "./roundChart";
 import Chat from "../../chat";
 import TradeHistory from "./tradeHistory";
 import { useState, useEffect } from "react";
@@ -30,7 +30,7 @@ export default function page() {
     try {
       const response = await axios({
         method: 'post',
-        url: "https://j10a207.p.ssafy.io/api/multi/game-chart",
+        url: "https://j10a207.p.ssafy.io/api/multi/game-chaSrt",
         data: {
           playerIds: [
             3
