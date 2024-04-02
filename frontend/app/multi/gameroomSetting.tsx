@@ -28,7 +28,7 @@ const fetchMultiRoomInfo = async (pageNumber: number) => {
 
 export default function GameRoomSetting() {
   const [rooms, setRooms] = useState<MultiGameRoomInfoList[]>([]);
-  const { pageNumber } = multigameStore();
+  const { pageNumber, isWaiting, setIsWaiting } = multigameStore();
   const { data, isLoading, error }: UseQueryResult<MultiRoomInfo, Error> =
     // pageNumber를 의존성 변수로 추가하면 pageNumber에 따라 react-query 실행
     useQuery(["MultiRoomInfo", pageNumber], () =>
@@ -53,7 +53,6 @@ export default function GameRoomSetting() {
 
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [isWaiting, setIsWaiting] = useState(true);
   const [round, setRound] = useState(3);
   const playClickSound = useClickSound();
 
@@ -84,12 +83,32 @@ export default function GameRoomSetting() {
   const { result }: { result: ResultType | null } = data
     ? data
     : { result: null };
-  // console.log(result)
-  const totalRooms = result ? result.totalMultiRoomCounts : 0;
+  console.log(result)
+  const totalwaitRooms = result ? result.totalWaitRoomCounts : 0;
+  const totalGameRooms = result ? result.totalGameRoomCounts : 0;
   return (
     <div className="col-span-8 grid grid-rows-12 p-2">
       <div className="row-span-2 grid grid-cols-12 border items-center bg-background-1 rounded-lg shadow m-2 p-2 dark:bg-gray-800">
         <div className="col-span-8 grid grid-cols-5 gap-2 justify-center items-center text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
+          <div className="col-span-1 flex items-center">
+            <input
+              id="default-checkbox"
+              type="checkbox"
+              value=""
+              checked={isWaiting == false}
+              onChange={() => {
+                playClickSound();
+                setIsWaiting(false)
+              }}
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <label
+              htmlFor="default-checkbox"
+              className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300"
+            >
+              전체방
+            </label>
+          </div>
           <div className="col-span-1 flex items-center">
             <input
               id="default-checkbox"
@@ -107,25 +126,6 @@ export default function GameRoomSetting() {
               className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300"
             >
               대기방
-            </label>
-          </div>
-          <div className="col-span-1 flex items-center">
-            <input
-              id="default-checkbox"
-              type="checkbox"
-              value=""
-              checked={isWaiting == false}
-              onChange={() => {
-                playClickSound();
-                setIsWaiting(false)
-              }}
-              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label
-              htmlFor="default-checkbox"
-              className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300"
-            >
-              게임중
             </label>
           </div>
           <div className="col-span-1 flex items-center">
@@ -238,7 +238,7 @@ export default function GameRoomSetting() {
         }
       </div>
       <section className="row-span-2 flex justify-center">
-        <Pagination totalRooms={totalRooms} />
+        <Pagination totalwaitRooms={totalwaitRooms} totalGameRooms={totalGameRooms} />
       </section>
     </div>
   );
