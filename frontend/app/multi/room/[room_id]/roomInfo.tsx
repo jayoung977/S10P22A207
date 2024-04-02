@@ -6,9 +6,7 @@ import socketStore from "@/public/src/stores/websocket/socketStore";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+
 
 export default function RoomInfo() {
   const params = useParams();
