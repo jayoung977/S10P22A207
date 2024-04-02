@@ -164,7 +164,7 @@ public class MultiGameService {
 				.build();
 		multiWaitingRoom.getReadyState().put(userDetails.getId(), true); // 방장은 레디상태 true로 초기화
 		redisTemplate.opsForValue().set(key, multiWaitingRoom);
-		multiGameSocketService.sendMultiWaitingRoomDetailDto(roomId);
+		// multiGameSocketService.sendMultiWaitingRoomDetailDto(roomId);
 		return new MultiGameRoomCreateResponseDto(roomId);
 	}
 
@@ -198,7 +198,6 @@ public class MultiGameService {
 			}
 			gameId = maxGameId;
 		}
-
         return new MultiGameStartResponseDto(gameId);
     }
 
