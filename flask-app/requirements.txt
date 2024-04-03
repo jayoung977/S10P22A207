@@ -1,0 +1,8 @@
+flask
+schedule
+pykrx
+sqlalchemy
+pandas
+pyspark
+PyMySQL
+python-dotenv
