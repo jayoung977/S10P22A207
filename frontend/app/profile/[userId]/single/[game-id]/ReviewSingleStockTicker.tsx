@@ -7,17 +7,34 @@ export default function SingleStockTicker() {
           setPositiveCount, setNegativeCount, setMaxPrice, setMinPrice, startDate, endDate } =
     SingleReviewStore();
   const playClickSound = useClickSound();
-
-
+  
+  // 해당 stockCode 값을 가진 주식 종목의 등락률 개수
+  const fetchPositiveNegativeCount = async (stockCode :string, startDate :string, endDate :string) => {
+    try {
+      const response = await axios({
+        method: "get",
+        url: `https://j10a207.p.ssafy.io/hadoop/stock/change-count/start-end?startDate=${startDate}&endDate=${endDate}&stockCode=${stockCode}`,
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        }
+      })
+      console.log("posneg : ", response.data.result);
+      setPositiveCount(response.data.result[0].positiveCount);
+      setNegativeCount(response.data.result[0].negativeCount);
+      
+    } catch (error) {
+      console.log("pos neg error : ", error);
+    }
+  }  
   const handleClickStock = async (index :number, stockCode :string) => {
     setSelectedIndex(index);
-    // try {
-    //   fetchPositiveNegativeCount(stockCode);
-    //   fetchMaxMin(stockCode)
+    try {
+      fetchPositiveNegativeCount(stockCode, startDate, endDate);
+      // fetchMaxMin(stockCode)
 
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    } catch (error) {
+      console.log(error);
+    }
   }
   // 해당 stockCode 값을 가진 주식 종목의 등락률 개수
 

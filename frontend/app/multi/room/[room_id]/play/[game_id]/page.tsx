@@ -2,7 +2,7 @@
 
 import Header from "./header";
 import GameStatus from "./gameStatus";
-import Chart from "./roundChart";
+import RoundChart from "./roundChart";
 import Chat from "../../chat";
 import TradeHistory from "./tradeHistory";
 import { useState, useEffect } from "react";
@@ -11,7 +11,7 @@ import TradeButtons from "../../tradeButton";
 import GameMembers from "./GameMembers";
 import axios from "axios";
 import socketStore from "@/public/src/stores/websocket/socketStore";
-
+import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 
 export type dataType = {
   date: string;
@@ -24,8 +24,8 @@ export type dataType = {
 
 export default function page() {
   const [data, setData] = useState<dataType[]>([]);
-  const { roundNumber, maxRoundNumber, roomId, gameId, multiGameStockIds } = socketStore();
-
+  const { day, roundNumber, maxRoundNumber, roomId, gameId, multiGameStockIds } = socketStore();
+  const { stockId, setStockId, stockChartList, setStockChartList } = multigameStore();
 
   const fetchMultigameData = async () => {
     try {
@@ -51,7 +51,10 @@ export default function page() {
           Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
         }
       })
-      console.log(response);
+      console.log("stockId : ", response.data.result.stockId);
+      console.log("stockChartList : ", response.data.result.stockChartList);
+      setStockId(response.data.result.stockId);
+      setStockChartList(response.data.result.stockChartList);
     } catch (error) {
       console.log(error);
     }
@@ -72,7 +75,7 @@ export default function page() {
           </aside>
           <main className="col-span-8 grid grid-rows-16">
             <div className="row-span-12"></div>
-            {/* <RoundChart/> */}
+            <RoundChart data={stockChartList?.slice(0, 300+day)}/>
             <div className="border grid grid-cols-12 row-span-4">
               <Chat />
               <TradeButtons />
