@@ -356,7 +356,7 @@ public class SingleGameService {
         return new SingleGameCreateResponseDto(nextId, 1, me.getSingleGameChance(), stockChartDataList, totalAssetDto, null, null, stockSummaries, rawMaterials);
     }
 
-    public SingleTradeResponseDto sell(SingleTradeRequestDto dto, Long memberId) {
+    public synchronized SingleTradeResponseDto sell(SingleTradeRequestDto dto, Long memberId) {
 
         SingleGame currentGame = this.getGame(memberId, dto.gameIdx());
         SingleGameStock singleGameStock = singleGameStockRepository.findBySingleGameLog_IdAndStock_Id(currentGame.getSingleGameLogId(), dto.stockId())
@@ -474,7 +474,7 @@ public class SingleGameService {
         );
     }
 
-    public SingleTradeResponseDto buy(SingleTradeRequestDto dto, Long memberId) {
+    public synchronized SingleTradeResponseDto buy(SingleTradeRequestDto dto, Long memberId) {
 
         SingleGame currentGame = this.getGame(memberId, dto.gameIdx());
         SingleGameStock singleGameStock = singleGameStockRepository.findBySingleGameLog_IdAndStock_Id(currentGame.getSingleGameLogId(),
@@ -594,7 +594,7 @@ public class SingleGameService {
         );
     }
 
-    public NextDayResponseDto getTomorrow(NextDayRequestDto dto, Long memberId) {
+    public synchronized NextDayResponseDto getTomorrow(NextDayRequestDto dto, Long memberId) {
         SingleGame currentGame = this.getGame(memberId, dto.gameIdx());
 
         currentGame.updateDay(dto.day());
