@@ -59,7 +59,7 @@ export default function Header() {
         gameId: gameId,
         roundNumber: roundNumber,
         day: day,
-      }
+      },
     })
       .then((res) => {
         console.log(res.data);
@@ -69,19 +69,18 @@ export default function Header() {
       });
   }
 
-
   const handleTradeDay = (e: KeyboardEvent) => {
     if (e.key === "r") {
-      if(day == 51){
-        setIsGameover(true)
+      if (day == 51) {
+        setIsGameover(true);
         setDay(1);
-          return
-        }
+        return;
+      }
       playClickSound();
-      handleTomorrow(day)
+      handleTomorrow(day);
       setDay(day + 1);
-    };
-  }
+    }
+  };
 
   useEffect(() => {
     window.addEventListener("keydown", handleTradeDay);
@@ -121,13 +120,13 @@ export default function Header() {
           disabled={day === 51}
           // day이 50이면 disabled 속성이 true가 됩니다.
           onClick={() => {
-            if(day == 51){
-              setIsGameover(true)
+            if (day == 51) {
+              setIsGameover(true);
               setDay(1);
-                return
-              }
+              return;
+            }
             playClickSound();
-            handleTomorrow(day)
+            handleTomorrow(day);
             setDay(day + 1);
           }}
           className={`bg-teal-400 hover:bg-teal-300 px-2 py-1 m-1 text-white rounded-md ${
@@ -149,7 +148,9 @@ export default function Header() {
           </div>
         </div>
       </div>
-      <div className="col-span-1 items-center m-1">라운드: {roundNumber}/{maxRoundNumber}</div>
+      <div className="col-span-1 items-center m-1">
+        라운드: {roundNumber}/{maxRoundNumber}
+      </div>
       <div className="col-span-1">{formatTime(remainingTime)}</div>
     </header>
   );
