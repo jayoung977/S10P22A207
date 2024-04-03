@@ -10,6 +10,22 @@ import socketStore from "@/public/src/stores/websocket/socketStore";
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 
 export default function Header() {
+  const {
+    setAveragePrice,
+    setCash,
+    setInitialAsset,
+    setProfitMargin,
+    setShortAveragePrice,
+    setShortStockAmount,
+    setStockAmount,
+    setStockValue,
+    setTodayEndPrice,
+    setTotalAsset,
+    setTotalPurchaseAmount,
+    setTradeList,
+    setUnrealizedGain,
+  } = socketStore();
+
   const [isOpen, setIsOpen] = useState(false);
   const [isGameover, setIsGameover] = useState(false);
   const {
@@ -60,38 +76,46 @@ export default function Header() {
         gameId: gameId,
         roundNumber: roundNumber,
         day: day,
-      }
+      },
     })
       .then((res) => {
         console.log("다음턴! : ", res.data);
+        if (res.data.result.nextDayInfo != undefined) {
+          setAveragePrice(res.data.result.nextDayInfo.averagePrice);
+          setCash(res.data.result.nextDayInfo.cash);
+          setInitialAsset(res.data.result.nextDayInfo.initialAsset);
+          setProfitMargin(res.data.result.nextDayInfo.profitMargin);
+          setShortAveragePrice(res.data.result.nextDayInfo.shortAveragePrice);
+          setShortStockAmount(res.data.result.nextDayInfo.shortStockAmount);
+          setStockAmount(res.data.result.nextDayInfo.stockAmount);
+          setStockValue(res.data.result.nextDayInfo.stockValue);
+          setTodayEndPrice(res.data.result.nextDayInfo.todayEndPrice);
+          setTotalAsset(res.data.result.nextDayInfo.totalAsset);
+          setTotalPurchaseAmount(res.data.result.nextDayInfo.totalPurchaseAmount);
+          setTradeList(res.data.result.nextDayInfo.tradeList);
+          if (res.data.result.nextDayInfo.unrealizedGain != undefined) {
+            setUnrealizedGain(res.data.result.nextDayInfo.unrealizedGain);
+          }
+        }
       })
       .catch((error) => {
         console.error(error);
       });
   }
 
-
   const handleTradeDay = (e: KeyboardEvent) => {
     if (e.key === "r") {
       handleTomorrow(day);
       if (day === 50) {
-        setDay(1)
-        setRoundNumber(1)
-        setIsGameover(true)
-        setIsDisabled(true)
-      } else {
-        setDay(day+1)
-      }
-      handleTomorrow(day)
-      if(day == 51){
-        setIsGameover(true)
         setDay(1);
-          return
-        }
-      playClickSound();
-      setDay(day + 1);
-    };
-  }
+        setRoundNumber(1);
+        setIsGameover(true);
+        setIsDisabled(true);
+      } else {
+        setDay(day + 1);
+      }
+    }
+  };
 
   useEffect(() => {
     window.addEventListener("keydown", handleTradeDay);
@@ -131,20 +155,14 @@ export default function Header() {
           disabled={day === 51}
           // day이 50이면 disabled 속성이 true가 됩니다.
           onClick={() => {
-            if(day == 51){
-              setIsGameover(true)
+            handleTomorrow(day);
+            if (day === 50) {
               setDay(1);
-                return
-              }
-            playClickSound();
-            handleTomorrow(day)
-            //day == 50이면
-            if(day === 50){
-              setDay(1);
-              setIsDisabled(true)
-              setIsGameover(true)
+              setRoundNumber(1);
+              setIsGameover(true);
+              setIsDisabled(true);
             } else {
-              setDay(day+1)
+              setDay(day + 1);
             }
           }}
           className={`bg-teal-400 hover:bg-teal-300 px-2 py-1 m-1 text-white rounded-md ${
@@ -166,7 +184,9 @@ export default function Header() {
           </div>
         </div>
       </div>
-      <div className="col-span-1 items-center m-1">라운드: {roundNumber}/{maxRoundNumber}</div>
+      <div className="col-span-1 items-center m-1">
+        라운드: {roundNumber}/{maxRoundNumber}
+      </div>
       <div className="col-span-1">{formatTime(remainingTime)}</div>
     </header>
   );
