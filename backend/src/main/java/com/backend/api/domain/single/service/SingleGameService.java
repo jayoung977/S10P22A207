@@ -407,7 +407,10 @@ public class SingleGameService {
             .profit((long) (dto.amount() * (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]))) // 이번 거래의 profit
             .build();
         singleTradeRepository.save(singleTrade);
-        hadoopService.saveSingleTradeLogHdfs(singleTrade, memberId);
+        try{
+            hadoopService.saveSingleTradeLogHdfs(singleTrade, memberId);
+        } catch (Exception e){
+        }
         currentGame.getTradeList().add(
             new SingleTradeListDto(
                 dto.stockId(),
@@ -529,7 +532,10 @@ public class SingleGameService {
             .profit((-1) *(long) (dto.amount() * todayChart.getEndPrice() * 0.0015))
             .build();
         singleTradeRepository.save(singleTrade);
-        hadoopService.saveSingleTradeLogHdfs(singleTrade, memberId);
+        try{
+            hadoopService.saveSingleTradeLogHdfs(singleTrade, memberId);
+        } catch (Exception e){
+        }
         currentGame.getTradeList().add(
             new SingleTradeListDto(
                 dto.stockId(),
@@ -669,7 +675,7 @@ public class SingleGameService {
 
         if (dto.day() == 51) {
             // 결과 저장.
-            singleGameResultSave(memberId, 1.0 * resultProfit / currentGame.getInitial() * 100, totalAsset);
+            singleGameResultSave(memberId, 1.0 * resultProfit / currentGame.getInitial() * 100, totalAsset, dto.gameIdx());
 
             LocalDateTime startDate = null, endDate = null;
             List<StockInfoDto> stockInfoDtoList = new ArrayList<>();
@@ -716,7 +722,7 @@ public class SingleGameService {
             totalAsset, assetList,  null);
     }
 
-    private void singleGameResultSave(Long memberId, double avgRoi, long totalAsset) {
+    private void singleGameResultSave(Long memberId, double avgRoi, long totalAsset, long gameId) {
         Member me = memberRepository.findById(memberId)
             .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
 
@@ -729,7 +735,9 @@ public class SingleGameService {
         } else if (avgRoi < 0) {
             me.increaseLose();
         }
-        me.updateAsset(totalAsset);
+        SingleGame game = getGame(memberId, gameId);
+//        me.updateAsset(totalAsset);
+        me.addAsset(totalAsset - game.getInitial());
     }
 
     // 시작날짜, 끝 날짜 사이의 랜덤한 날을 가져온다.
