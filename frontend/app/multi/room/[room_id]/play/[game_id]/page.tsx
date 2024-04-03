@@ -26,6 +26,7 @@ export default function page() {
   const [data, setData] = useState<dataType[]>([]);
   const {
     day,
+    setDay,
     roundNumber,
     maxRoundNumber,
     roomId,
@@ -39,6 +40,7 @@ export default function page() {
   const [isError, setIsError] = useState(false);
 
   const fetchMultigameData = async () => {
+    setDay(1);
     try {
       const data = {
         roundNumber: roundNumber,
