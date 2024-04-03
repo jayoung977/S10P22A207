@@ -10,7 +10,7 @@ import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
 import useGetProfileRank from "@/public/src/hooks/useGetProfileRank";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 import Swal from "sweetalert2";
-
+import { useRouter } from "next/navigation";
 
 const fetchProfile = async (userId: number) => {
   const token = sessionStorage.getItem("accessToken");
@@ -21,36 +21,37 @@ const fetchProfile = async (userId: number) => {
         Authorization: `Bearer ${token}`,
       },
     }
-    );
-    return response.json();
-  };
-  
-  const checkFriend = async(followingId: number) => {
-    const response = await fetch(
-    `https://j10a207.p.ssafy.io/api/friend/check-friend?followingId=${followingId}`,{
+  );
+  return response.json();
+};
+
+const checkFriend = async (followingId: number) => {
+  const response = await fetch(
+    `https://j10a207.p.ssafy.io/api/friend/check-friend?followingId=${followingId}`,
+    {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     }
-    )
-    return response.json();
-  }
-  
+  );
+  return response.json();
+};
+
 export default function ProfileModal() {
   const { lobbyModal, setLobbyModal, userId, setUserId } = multigameStore();
   const { data, isLoading, error }: UseQueryResult<UserInfo, Error> = useQuery(
     "OtherProfile",
     () => fetchProfile(userId)
-    );
-    
-  const { data: isFriend, 
+  );
+
+  const {
+    data: isFriend,
     isLoading: friendCheckLoading,
-    error: friendCheckError 
-  }: UseQueryResult<any, Error> = useQuery(
-    "FriendCheck",
-    () => checkFriend(userId)
-    );
-  
+    error: friendCheckError,
+  }: UseQueryResult<any, Error> = useQuery("FriendCheck", () =>
+    checkFriend(userId)
+  );
+
   const queryClient = useQueryClient();
 
   function requestFriend(nickname: string) {
@@ -65,178 +66,176 @@ export default function ProfileModal() {
         nickname: nickname,
       },
     })
-    .then((response) => {
-      const data = response.data
-      if(data.status == 409){
-        Swal.fire({
-          title: "이미 보낸 요청입니다.",
-          icon: 'error'
-        })
-      } else {
-        Swal.fire({
-          title: "친구 요청이 성공했습니다.",
-          icon: 'success'
-        })
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+      .then((response) => {
+        const data = response.data;
+        if (data.status == 409) {
+          Swal.fire({
+            title: "이미 보낸 요청입니다.",
+            icon: "error",
+          });
+        } else {
+          Swal.fire({
+            title: "친구 요청이 성공했습니다.",
+            icon: "success",
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
-      
-const playClickSound = useClickSound();
 
-function handleClose() {
-  setLobbyModal(false);
-}
+  const playClickSound = useClickSound();
 
-function deleteFriend(userId: number) {
-  const token = sessionStorage.getItem("accessToken");
-  axios({
-    method: "delete",
-    url: `https://j10a207.p.ssafy.io/api/friend/delete?followingId=${userId}`,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-  .then((response) => {
-    console.log(response.data);
-    Swal.fire({
-      title: "친구 삭제되었습니다.",
-      icon: 'warning'
+  function handleClose() {
+    setLobbyModal(false);
+  }
+
+  function deleteFriend(userId: number) {
+    const token = sessionStorage.getItem("accessToken");
+    axios({
+      method: "delete",
+      url: `https://j10a207.p.ssafy.io/api/friend/delete?followingId=${userId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
-    queryClient.invalidateQueries(['FriendCheck'])
-    queryClient.invalidateQueries(['friendUserRankingInfo'])
-    console.log(isFriend.result)
+      .then((response) => {
+        console.log(response.data);
+        Swal.fire({
+          title: "친구 삭제되었습니다.",
+          icon: "warning",
+        });
+        queryClient.invalidateQueries(["FriendCheck"]);
+        queryClient.invalidateQueries(["friendUserRankingInfo"]);
+        console.log(isFriend.result);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
 
-  })
-  .catch((error) => {
-    console.error(error);
-  });
-}
+  if (isLoading || friendCheckLoading) {
+    return <div className="rainbow"></div>;
+  }
 
+  if (error || friendCheckError) {
+    return <div>Error: {error?.message}</div>;
+  }
 
+  const { result }: { result: UserProfile | null } = data
+    ? data
+    : { result: null };
+  // console.table(result)
 
-if (isLoading || friendCheckLoading) {
-  return <div className="rainbow"></div>;
-}
+  const router = useRouter();
 
-if (error || friendCheckError ) {
-  return <div>Error: {error?.message}</div>;
-}
-
-const { result }: { result: UserProfile | null } = data
-? data
-: { result: null };
-// console.table(result)
-
-
-return (
-  <div className="bg-slate-100 w-[500px] h-[250px] fixed -translate-x-1/2 translate-y-1/2 inset-0 left-1/2 border items-center justify-center rounded-md grid grid-cols-4 gap-2 z-30">
-    <div className="col-span-3">
-      <div className="col-span-4 bg-background-1 rounded-md grid grid-rows-5 gap-2 shadow-md m-2">
-        {/* 프로필 상단 */}
-        <div className="row-span-3 bg-big-1 m-1 grid grid-cols-6">
-          <div className="col-span-3 border grid grid-rows-4 justify-items-center">
-            <div className="row-span-3 m-2">
-              <Image
-                src={useGetProfileImage(result?.asset)}
-                alt="Profile-image"
-                width={80}
-              />
+  return (
+    <div className="bg-slate-100 w-[500px] h-[250px] fixed -translate-x-1/2 translate-y-1/2 inset-0 left-1/2 border items-center justify-center rounded-md grid grid-cols-4 gap-2 z-30">
+      <div className="col-span-3">
+        <div className="col-span-4 bg-background-1 rounded-md grid grid-rows-5 gap-2 shadow-md m-2">
+          {/* 프로필 상단 */}
+          <div className="row-span-3 bg-big-1 m-1 grid grid-cols-6">
+            <div className="col-span-3 border grid grid-rows-4 justify-items-center">
+              <div className="row-span-3 m-2">
+                <Image
+                  src={useGetProfileImage(result?.asset)}
+                  alt="Profile-image"
+                  width={80}
+                />
+              </div>
+              <div className="row-span-1">{result?.nickname}</div>
             </div>
-            <div className="row-span-1">{result?.nickname}</div>
-          </div>
-          <div className="col-span-3 border grid grid-rows-4 justify-items-center">
-            <div className="row-span-3 m-2">
-              <Image
-                src={useGetProfileRank(result?.rankPoint)}
-                alt="Tier-image"
-                width={80}
-              />
+            <div className="col-span-3 border grid grid-rows-4 justify-items-center">
+              <div className="row-span-3 m-2">
+                <Image
+                  src={useGetProfileRank(result?.rankPoint)}
+                  alt="Tier-image"
+                  width={80}
+                />
+              </div>
+              <div className="row-span-1">
+                {result?.rankPoint != null ? result?.rankPoint : `브론즈`}점
+              </div>
             </div>
-            <div className="row-span-1">
-              {result?.rankPoint != null ? result?.rankPoint : `브론즈`}점
+          </div>
+          {/* 프로필 하단 */}
+          <div className="row-span-2 bg-small-1 rounded-md p-1 text-textColor-2 text-center grid grid-cols-8">
+            <div className="col-span-8">
+              {result?.win != null ? result?.win : 0}승{" "}
+              {result?.lose != null ? result?.lose : 0} 패 (
+              {result?.win != null && result?.lose != null
+                ? result?.win + result?.lose > 0
+                  ? (
+                      (result?.win / (result?.win + result?.lose)) *
+                      100
+                    ).toFixed(1)
+                  : 0
+                : 0}
+              %)
             </div>
-          </div>
-        </div>
-        {/* 프로필 하단 */}
-        <div className="row-span-2 bg-small-1 rounded-md p-1 text-textColor-2 text-center grid grid-cols-8">
-          <div className="col-span-8">
-            {result?.win != null ? result?.win : 0}승{" "}
-            {result?.lose != null ? result?.lose : 0} 패 (
-            {result?.win != null && result?.lose != null
-              ? result?.win + result?.lose > 0
-                ? (
-                    (result?.win / (result?.win + result?.lose)) *
-                    100
-                  ).toFixed(1)
-                : 0
-              : 0}
-            %)
-          </div>
-          <div className="col-span-4">
-            <div>시드머니</div>
-            <div>평균수익률</div>
-          </div>
-          <div className="col-span-4">
-            <div>{result?.asset?.toLocaleString()}원</div>
-            <div>
-              +{result?.multiAvgRoi != null ? result?.multiAvgRoi : 0}%
+            <div className="col-span-4">
+              <div>시드머니</div>
+              <div>평균수익률</div>
+            </div>
+            <div className="col-span-4">
+              <div>{result?.asset?.toLocaleString()}원</div>
+              <div>
+                +{result?.multiAvgRoi != null ? result?.multiAvgRoi : 0}%
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div className="col-span-1 justify-items-center">
-      <div>
-        <button
-        onClick={()=>{
-          playClickSound();
-        }}
-        className="bg-blue-500 m-2 p-2 text-white rounded-md">
-          같이하기
-        </button>
-      </div>
-      <div>
-        {
-          isFriend.result ? (
-            <button
-            onClick={() => {
-              playClickSound();
-              deleteFriend(userId);
-            }}
-            className="bg-blue-500 m-2 p-2 text-white rounded-md"
-          >
-            친구삭제
-          </button>
-          ): (
+      <div className="col-span-1 justify-items-center">
+        <div>
           <button
             onClick={() => {
               playClickSound();
-              if (result) requestFriend(result?.nickname);
+              router.push(`/profile/${result?.memberId}`);
+              handleClose();
             }}
             className="bg-blue-500 m-2 p-2 text-white rounded-md"
           >
-            친구신청
+            상세정보
           </button>
-
-          )
-        }
-      </div>
-      <div>
-        <button
-          onClick={() => {
-            playClickSound();
-            handleClose();
-          }}
-          type="button"
-          className="bg-red-500 m-2 p-2 text-white rounded-md hover:bg-small-3"
-        >
-          뒤로가기
-        </button>
+        </div>
+        <div>
+          {isFriend.result ? (
+            <button
+              onClick={() => {
+                playClickSound();
+                deleteFriend(userId);
+              }}
+              className="bg-blue-500 m-2 p-2 text-white rounded-md"
+            >
+              친구삭제
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                playClickSound();
+                if (result) requestFriend(result?.nickname);
+              }}
+              className="bg-blue-500 m-2 p-2 text-white rounded-md"
+            >
+              친구신청
+            </button>
+          )}
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              playClickSound();
+              handleClose();
+            }}
+            type="button"
+            className="bg-red-500 m-2 p-2 text-white rounded-md hover:bg-small-3"
+          >
+            뒤로가기
+          </button>
+        </div>
       </div>
     </div>
-  </div>
   );
 }

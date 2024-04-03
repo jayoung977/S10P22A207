@@ -8,15 +8,14 @@ import { useParams, useRouter } from "next/navigation";
 import RoundResult from "./roundResult";
 import { useState } from "react";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
+import socketStore from "@/public/src/stores/websocket/socketStore";
 
-export default function FinalResult({ isOpen, onClose }: any) {
+export default function FinalResult() {
   const router = useRouter();
   const [isRound, setIsRound] = useState(false);
   const playClickSound = useClickSound();
   const params = useParams();
-
-  if (!isOpen) return null;
-
+  const { isGameOver, setIsGameOver } = socketStore();
   return (
     <div className="fixed -translate-x-1/2 translate-y-1/5 z-50 h-4/5 w-2/3 inset-0 left-1/2 border-2 bg-big-1 rounded-lg grid grid-rows-8">
       <div className="row-span-1 text-4xl rounded-t-lg text-white text-center p-4 bg-small-3">
@@ -56,27 +55,26 @@ export default function FinalResult({ isOpen, onClose }: any) {
       </div>
       <div className="row-span-7 grid grid-cols-12 gap-2 m-2">
         <div className="col-span-10 ms-2">
-
-        <div className="row-span-5 rounded-md bg-background-1">
-          <div
-            className="px-4 overflow-auto"
-            style={{ height: "calc(52vh)" }}
-          >
-            <FinalUser />
-            <FinalUser />
-            <FinalUser />
-            <FinalUser />
-            <FinalUser />
-            <FinalUser />
+          <div className="row-span-5 rounded-md bg-background-1">
+            <div
+              className="px-4 overflow-auto"
+              style={{ height: "calc(52vh)" }}
+            >
+              <FinalUser />
+              <FinalUser />
+              <FinalUser />
+              <FinalUser />
+              <FinalUser />
+              <FinalUser />
+            </div>
           </div>
-        </div>
         </div>
         <div className="col-span-2 flex flex-col justify-end items-center my-2">
           <div>
             <button
               onClick={() => {
                 playClickSound();
-                onclose;
+                setIsGameOver(!isGameOver);
                 router.push(`/multi/room/${params.room_id}`);
               }}
               className="border py-1 px-5 m-2 text-2xl rounded-md font-bold bg-button-1 text-textColor-2 hover:bg-gray-300"
@@ -88,7 +86,7 @@ export default function FinalResult({ isOpen, onClose }: any) {
             <button
               onClick={() => {
                 playClickSound();
-                onclose;
+                setIsGameOver(!isGameOver);
                 router.push("/multi");
               }}
               className="border py-1 px-5 m-2 text-2xl rounded-md text-textColor-1 font-bold bg-button-2 hover:bg-gray-300"
