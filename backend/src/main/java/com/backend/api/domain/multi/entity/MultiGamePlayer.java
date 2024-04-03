@@ -30,6 +30,7 @@ public class MultiGamePlayer extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
+    @JoinColumn(name="multi_game_log_id")
     private MultiGameLog multiGameLog;
 
     @ManyToOne(fetch = LAZY)

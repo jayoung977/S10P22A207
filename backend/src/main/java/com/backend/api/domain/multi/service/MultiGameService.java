@@ -280,9 +280,9 @@ public class MultiGameService {
 		);
 		Long gameLogId = null;
 
+		// 게시글 - 사람
 		MultiGameLog multiGameLog
 				= MultiGameLog.builder()
-				.memberId(memberId)
 				.gameId(dto.gameId())
 				.stockId(dto.stockId())
 				.startDate(firstDayStockChart.getDate())
@@ -464,7 +464,9 @@ public class MultiGameService {
 		currentGame.increaseStockAmount(dto.amount());
 		currentGame.updateCash(currentGame.getCash() - (long) (dto.amount() * todayChart.getEndPrice() * 1.0015));
 		currentGame.addProfit((-1) * dto.amount() * todayChart.getEndPrice() * 0.0015);
-		long totalAsset = currentGame.getCash() + (long) (currentGame.getStockAmount() + currentGame.getShortStockAmount()) * todayChart.getEndPrice();
+		long totalAsset = (long) (currentGame.getCash()
+                    + (long) (currentGame.getStockAmount() - currentGame.getShortStockAmount()) * todayChart.getEndPrice() + currentGame.getShortStockAmount() * currentGame.getShortAveragePrice() * 0.9975);
+		currentGame.updateTotalAsset(totalAsset);
 
 		currentGame.addPurchaseAmount((long) dto.amount() * todayChart.getEndPrice());
 		currentGame.updateTotalAsset(totalAsset);
@@ -541,7 +543,8 @@ public class MultiGameService {
 		currentGame.addProfit(dto.amount() * (todayChart.getEndPrice() * 0.9975 - currentGame.getAveragePrice()));
 
 		// 총 자산 -> 현금 + 주식 + 공매도주식
-		long totalAsset = (long) (currentGame.getCash() + ((long) (currentGame.getShortStockAmount() + currentGame.getStockAmount()) * todayChart.getEndPrice() * 0.9975));
+		long totalAsset = (long) (currentGame.getCash()
+			+ (long) (currentGame.getStockAmount() - currentGame.getShortStockAmount()) * todayChart.getEndPrice() + currentGame.getShortStockAmount() * currentGame.getShortAveragePrice() * 0.9975);
 		currentGame.updateTotalAsset(totalAsset);
 
 		double resultRoi = 100.0 * (currentGame.getTotalAsset() - currentGame.getInitial()) / currentGame.getInitial();
@@ -616,7 +619,8 @@ public class MultiGameService {
             ((dto.amount() * todayChart.getEndPrice() + currentGame.getShortAveragePrice() * currentGame.getShortStockAmount()) / (dto.amount() + currentGame.getStockAmount())));
         currentGame.updateCash(currentGame.getCash() - (long) (dto.amount() * todayChart.getEndPrice() * 1.0025));
         currentGame.addProfit((-1) * dto.amount() * todayChart.getEndPrice() * 0.0025);
-		long totalAsset = (long) (currentGame.getTotalAsset() - dto.amount() * todayChart.getEndPrice() * 0.0025);
+		long totalAsset = currentGame.getCash()
+			+ (long) (currentGame.getStockAmount() - currentGame.getShortStockAmount()) * todayChart.getEndPrice() + (long) currentGame.getShortStockAmount() * currentGame.getShortAveragePrice();
 		currentGame.updateTotalAsset(totalAsset);
 		currentGame.addPurchaseAmount((long)dto.amount() * todayChart.getEndPrice());
 		currentGame.increaseShortStockAmount(dto.amount());
@@ -688,9 +692,8 @@ public class MultiGameService {
 			throw new BaseExceptionHandler(ErrorCode.NOT_ENOUGH_STOCK_AMOUNT);
 		}
 		// 현재 총 자산 -> 현금 + 현재가 * (주식 + 공매도) //수수료제외
-		long totalAsset = currentGame.getCash()
-			+ (long)((currentGame.getStockAmount() + currentGame.getShortStockAmount()) * todayChart.getEndPrice()
-			* 0.9975);
+		long totalAsset = (long) (currentGame.getCash()
+			+ (long) (currentGame.getStockAmount() - currentGame.getShortStockAmount()) * todayChart.getEndPrice() + currentGame.getShortStockAmount() * currentGame.getShortAveragePrice() * 0.9975);
 
         // 공매도 처분 - currentGame 바꿔주기
         currentGame.updateCash(currentGame.getCash() + (long) (dto.amount() * todayChart.getEndPrice() * 0.9975));
@@ -763,10 +766,9 @@ public class MultiGameService {
         // 어제에 비해서 얼마나 바뀌었는지. 매수 수량은 더해주고
         // 공매도는 반대.
 		currentGame.addProfit((currentGame.getStockAmount() - currentGame.getShortStockAmount()) * (todayChart.getEndPrice() - yesterdayChart.getEndPrice()));
-
 		// 오늘의 가치 -> 현금 + 주식의 가치
 		long totalAssets = currentGame.getCash()
-			+ (long) (currentGame.getStockAmount() + currentGame.getShortStockAmount()) * todayChart.getEndPrice();
+			+ (long) (currentGame.getStockAmount() - currentGame.getShortStockAmount()) * todayChart.getEndPrice() + (long) currentGame.getShortStockAmount() * currentGame.getShortAveragePrice();
 		currentGame.updateTotalAsset(totalAssets);
 
         if (dto.day() == 51) {
@@ -945,10 +947,13 @@ public class MultiGameService {
     public List<MultiGameResultDto> getSubResult(Long memberId, MultiGameSubResultRequestDto dto) {
 		MultiGameLog multiGameLog = multiGameLogRepository.findById(dto.multiGameLogId())
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
+		log.info("[MultiGameResult] - multiGameLog :{}", multiGameLog.getId());
 
 		String stockName = stockRepository.findById(multiGameLog.getStockId()).orElseThrow(
             () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
         ).getStockName();
+
+		log.info("[MultiGameResult] - stockName :{}", multiGameLog.getId());
 
         StockChart firstDayStockChart = stockChartRepository.findByStock_IdAndDate(multiGameLog.getStockId(), multiGameLog.getStartDate())
             .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_LOG_STOCK_CHART));
@@ -957,14 +962,17 @@ public class MultiGameService {
 
         List<MultiGameResultDto> result = new ArrayList<>();
 		List<Long> userRanksByTotalAsset = multiGameRankService.getUserRanksByTotalAsset(dto.gameId(), dto.roundNumber());
+		log.info("[MultiGameResult] - userRanksByTotalAsset.size() : {}", userRanksByTotalAsset.size());
 
         // 결과를 보여달라고 할 때 MultiGamePlayer 내의 랭크를 설정
 		List<MultiGamePlayer> multiGameLogMultiGamePlayers = multiGameLog.getMultiGamePlayers();
+		log.info("[MultiGameResult] - multiGameLogMultiGamePlayers.size() : {}", multiGameLogMultiGamePlayers.size());
 
 		for (int i = 0; i < userRanksByTotalAsset.size(); i++) {
             for (MultiGamePlayer multiGameLogMultiGamePlayer : multiGameLogMultiGamePlayers) {
                 if (Objects.equals(userRanksByTotalAsset.get(i), multiGameLogMultiGamePlayer.getMember().getId())) {
                     int rank = i + 1;
+					log.info("[MultiGameResult] - id : {}의 rank : {}", userRanksByTotalAsset.get(i), rank);
                     MultiGameResultDto multiGameResultDto = new MultiGameResultDto(
                         multiGameLogMultiGamePlayer.getMember().getId(),
                         multiGameLogMultiGamePlayer.getMember().getNickname(),
@@ -981,6 +989,7 @@ public class MultiGameService {
 
             }
 		}
+		log.info("[MultiGameResult] - result.size() : {}", result.size());
 
 		// 대기방 isPlaying -> false로
 		MultiWaitingRoom waitingRoom = getWaitingRoom(dto.roomId());
@@ -990,6 +999,7 @@ public class MultiGameService {
 		// 모두에게 결과 보내기
 		for(MultiGameResultDto resultDto : result){
 			Long participantId = resultDto.memberId();
+			log.info("[MultiGameResult] - participantId : {}", participantId);
 			redisTemplate.delete("multiGame:" + dto.gameId() + ":" + participantId + ":" + dto.roundNumber());
 			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIRESULT, result));
 		}
