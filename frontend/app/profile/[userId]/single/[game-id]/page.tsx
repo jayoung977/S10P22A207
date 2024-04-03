@@ -42,6 +42,10 @@ export default function page() {
     setEndDate,
     minPriceDateList,
     maxPriceDateList,
+    positiveCount,
+    setPositiveCount,
+    negativeCount,
+    setNegativeCount,
 
   } = SingleReviewStore();
 
@@ -60,7 +64,7 @@ export default function page() {
       setRankMemberList(response.data.result.rankMemberList);
       setStockChartDataList(response.data.result.stockChartDataList);
       setStockInfoDtoList(response.data.result.stockInfoDtoList);
-      
+      fetchPositiveNegativeCount(response.data.result.stockInfoDtoList[0].stockCode, response.data.result.startDate.split("T")[0], response.data.result.endDate.split("T")[0])
       setTradeList(response.data.result.tradeList);
       setIsLoading(false);
     } catch (error) {
@@ -68,7 +72,24 @@ export default function page() {
       setIsError(true);
     }
   };
-
+  // 해당 stockCode 값을 가진 주식 종목의 등락률 개수
+  const fetchPositiveNegativeCount = async (stockCode :string, startDate :string, endDate :string) => {
+    try {
+      const response = await axios({
+        method: "get",
+        url: `https://j10a207.p.ssafy.io/hadoop/stock/change-count/start-end?startDate=${startDate}&endDate=${endDate}&stockCode=${stockCode}`,
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        }
+      })
+      console.log("posneg : ", response.data.result);
+      setPositiveCount(response.data.result[0].positiveCount);
+      setNegativeCount(response.data.result[0].negativeCount);
+      
+    } catch (error) {
+      console.log("pos neg error : ", error);
+    }
+  }
   useEffect(() => {
     setSelectedIndex(0);
     fetchSingleGameRecord();
@@ -102,6 +123,8 @@ export default function page() {
                   <div>{item.date}</div>
                 ))
               }
+              <div>posneg</div>
+              <div>{positiveCount} {negativeCount}</div>
               
             </div>
             {/* <SingleStock /> */}
