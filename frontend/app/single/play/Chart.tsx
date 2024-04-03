@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import anychart from "anychart";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
-import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 
@@ -24,25 +23,6 @@ function filteringLowPriceZero(data :any) {
     return newData;
 }
 
-function CheckAvgPrice (tradeListData :any, stockId :number) {
-    let sumPrice = 0;
-    let sumNumber = 0;
-    tradeListData?.map((item :any, index :number) => {
-        if (item?.stockId == stockId) {
-            if (item?.tradeType == 'BUY') {
-                sumNumber += item?.amount;
-                sumPrice += item?.amount * item?.price;
-            } else if (item?.tradeType == 'SELL') {
-                sumNumber -= item?.amount;
-                sumPrice -= item?.amount * item?.price;
-            }
-        }
-    })
-    if (sumNumber > 0) {
-        return sumPrice/sumNumber;
-    }
-    return 0
-}
 
 // 이동평균선 데이터 생성 함수
 function calculateMovingAverage(data :any, period :any) {
@@ -179,7 +159,6 @@ export default function Chart({ data }: any) {
         // 스크롤러
         const scroller = chart.scroller();
         scroller.xAxis(false);
-       
         scroller.selectedFill({
             src: 'https://static.anychart.com/images/beach.png',
             mode: 'stretch',
@@ -284,8 +263,6 @@ export default function Chart({ data }: any) {
         } else {
             console.log(0);
         }
-
-        
 
         // line series 생성
         const lineSeries = plot1.line(
