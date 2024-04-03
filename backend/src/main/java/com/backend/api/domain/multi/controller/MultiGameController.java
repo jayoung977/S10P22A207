@@ -4,12 +4,7 @@ import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.multi.dto.MultiGameResultRequestDto;
 import com.backend.api.domain.multi.dto.MultiGameSubResultRequestDto;
-import com.backend.api.domain.multi.dto.request.MultiGameChartRequestDto;
-import com.backend.api.domain.multi.dto.request.MultiGameRoomCreateRequestDto;
-import com.backend.api.domain.multi.dto.request.MultiGameStartRequestDto;
-import com.backend.api.domain.multi.dto.request.MultiNextDayRequestDto;
-import com.backend.api.domain.multi.dto.request.MultiPlayerInfoRequestDto;
-import com.backend.api.domain.multi.dto.request.MultiTradeRequestDto;
+import com.backend.api.domain.multi.dto.request.*;
 import com.backend.api.domain.multi.dto.response.*;
 import com.backend.api.domain.multi.service.MultiGameService;
 import com.backend.api.domain.multi.service.MultiGameSocketService;
@@ -121,7 +116,7 @@ public class MultiGameController {
     }
 
     @GetMapping("/log")
-    @Operation(summary = "멀티게임 복기", description = "멀티기록을 선택하면 해당 싱글게임기록을 가져옵니다.", tags = {"멀티복기"})
+    @Operation(summary = "멀티게임 복기", description = "멀티기록을 선택하면 해당 멀티게임기록을 가져옵니다.", tags = {"멀티복기"})
     public ResponseEntity<BaseResponse<MultiLogResponseDto>> getMultiGameLog(@RequestParam(name = "multiGameLogId") Long multiGameLogId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         MultiLogResponseDto responseDto = multiGameService.getMultiGameLog(multiGameLogId, userDetails.getId());
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, responseDto);
