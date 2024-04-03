@@ -160,7 +160,7 @@ export default function UserInfo() {
                   handleFriendRequest();
                 }}
               >
-                친구 하기
+                친구 요청
               </button>
             ) : (
               <button
@@ -171,7 +171,7 @@ export default function UserInfo() {
                   sendNoFriendRequest();
                 }}
               >
-                친구 안하기
+                친구 삭제
               </button>
             )
           ) : (
