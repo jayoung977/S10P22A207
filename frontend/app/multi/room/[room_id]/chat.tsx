@@ -50,9 +50,9 @@ export default function Chat() {
   }, [receiveMessages]);
 
   return (
-    <div className="col-span-10 border relative">
+    <div className="grid grid-rows-3 border relative">
       <div
-        className="h-[calc(25vh)] overflow-auto gap p-2"
+        className="h-[calc(14vh)] overflow-auto row-span-2 gap p-2"
         ref={messageContainerRef}
       >
         {receiveMessages.map((item: any, i: any) => {
@@ -63,7 +63,7 @@ export default function Chat() {
           );
         })}
       </div>
-      <div className="mt-2 w-full border bg-gray-200 flex justify-between">
+      <div className="row-span-1 mt-2 w-full border bg-gray-200 flex justify-between">
         <input
           className="w-4/5 p-1 m-1"
           type="text"
