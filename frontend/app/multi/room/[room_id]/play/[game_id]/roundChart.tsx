@@ -2,7 +2,7 @@
 // 현재 턴/종목에 대한 차트 정보 (main - 1)
 import { useState, useEffect } from "react";
 import anychart from "anychart";
-import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
+import socketStore from "@/public/src/stores/websocket/socketStore";
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
@@ -22,6 +22,26 @@ function filteringLowPriceZero(data :any) {
     });
 
     return newData;
+}
+
+function CheckAvgPrice (tradeListData :any, stockId :number) {
+    let sumPrice = 0;
+    let sumNumber = 0;
+    tradeListData?.map((item :any, index :number) => {
+        if (item?.stockId == stockId) {
+            if (item?.tradeType == 'BUY') {
+                sumNumber += item?.amount;
+                sumPrice += item?.amount * item?.price;
+            } else if (item?.tradeType == 'SELL') {
+                sumNumber -= item?.amount;
+                sumPrice -= item?.amount * item?.price;
+            }
+        }
+    })
+    if (sumNumber > 0) {
+        return sumPrice/sumNumber;
+    }
+    return 0
 }
 
 // 이동평균선 데이터 생성 함수
@@ -140,12 +160,12 @@ function calculateHist(macdData :any, signalData :any) {
 }
 
 
-export default function RoundChart({ data }: any) {
-    // const { turn } = multigameStore();
-    const { selectedStockIndex, turn, startDate, setStartDate, endDate, setEndDate, isBuySellModalOpen } = SingleGameStore();
+export default function Chart({ data }: any) {
+    const { day } = socketStore();
     const [selectedSecondaryIndicator, setSelectedSecondaryIndicator] = useState<number>(1);
     useEffect(() => {
         const purifiedData = filteringLowPriceZero(data);
+        
         // 차트 생성
         const chart = anychart.stock();
         // 차트를 담을 컨테이너 생성
@@ -159,21 +179,7 @@ export default function RoundChart({ data }: any) {
         // 스크롤러
         const scroller = chart.scroller();
         scroller.xAxis(false);
-        // console.log("startDate : ", anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd')); // 콘솔 결과 : 2020-09-15
-        // console.log("endDate : ",  anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd')); //  콘솔 결과 : 2020-11-30
-        // Store에 저장해놓은 범위를 chart에서 스크롤바가 선택된 범위로 바꿈
-        // chart.selectRange(anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd'), anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd'));
-        // chart.selectRange(startDate, endDate);
-
-        // var range = chart.getSelectedRange();
-        // console.log("차트 선택된 범위 시작 : ", anychart.format.dateTime(range.firstSelected, 'yyyy-MM-dd'));
-        // console.log("차트 선택된 범위 끝 : ", anychart.format.dateTime(range.lastSelected, 'yyyy-MM-dd'));
-        
-        // chart.scroller().listen('scrollerChange', function () {
-        //   var range = chart.getSelectedRange();
-        //   setStartDate(range.firstSelected);
-        //   setEndDate(range.lastSelected);
-        // })
+       
         scroller.selectedFill({
             src: 'https://static.anychart.com/images/beach.png',
             mode: 'stretch',
@@ -191,24 +197,44 @@ export default function RoundChart({ data }: any) {
         plot1.yAxis().labels().fontSize(20)
 
         // 가장 최근 종가 Line
-        const todayEndPriceLineMarker = plot1.lineMarker();
-        todayEndPriceLineMarker.value(purifiedData[299+turn]?.endPrice);
+        const todayEndPriceLineMarker = plot1.lineMarker(0);
+        todayEndPriceLineMarker.value(purifiedData[299+day]?.endPrice);
         todayEndPriceLineMarker.stroke({
             thickness: 2,
             color: "pink",
             dash: "5 5",
         });    
         // 가장 최근 종가 가격 Text
-        const todayEndPriceTextMarker = plot1.textMarker();
-        todayEndPriceTextMarker.value(purifiedData[299+turn]?.endPrice);
-        todayEndPriceTextMarker.text(purifiedData[299+turn]?.endPrice)
+        const todayEndPriceTextMarker = plot1.textMarker(0);
+        todayEndPriceTextMarker.value(purifiedData[299+day]?.endPrice);
+        todayEndPriceTextMarker.text(purifiedData[299+day]?.endPrice)
         todayEndPriceTextMarker.fontColor("pink");
         todayEndPriceTextMarker.background().enabled(true);
         todayEndPriceTextMarker.background().stroke("2 pink");
         todayEndPriceTextMarker.padding(3);
         todayEndPriceTextMarker.align("right");
-        todayEndPriceTextMarker.offsetX(-60);
+        todayEndPriceTextMarker.offsetX(-65);
         todayEndPriceTextMarker.fontSize(15);
+
+        // textMarker에 hover 효과 부여
+        todayEndPriceTextMarker.listen("mouseOver", function() {
+            todayEndPriceTextMarker.background().enabled(true);
+            todayEndPriceTextMarker.background().fill("lightpink");
+            todayEndPriceTextMarker.fontColor("white");
+        });
+        todayEndPriceTextMarker.listen("mouseOut", function() {
+            todayEndPriceTextMarker.fontColor("pink");
+            todayEndPriceTextMarker.background().stroke("2 pink");
+            todayEndPriceTextMarker.background().enabled(false);
+        });
+
+        // lineMarker에 hover 효과 부여
+        todayEndPriceLineMarker.listen("mouseOver", function() {
+            todayEndPriceLineMarker.stroke({thickness: 3, color: "pink"});
+        });
+        todayEndPriceLineMarker.listen("mouseOut", function() {
+            todayEndPriceLineMarker.stroke({thickness: 2, color: "pink"});
+        });
 
         // line series 생성
         const lineSeries = plot1.line(
@@ -476,14 +502,14 @@ export default function RoundChart({ data }: any) {
             }
         };
         const handleShowAll = () => {
-            chart.selectRange(purifiedData[0].date.split('T')[0], purifiedData[turn+299].date.split('T')[0])
+            chart.selectRange(purifiedData[0].date.split('T')[0], purifiedData[day+299].date.split('T')[0])
         }
         const handleShowPlot = (plotNumber :number) => {
             showPlot(plotNumber);
             setSelectedSecondaryIndicator(plotNumber);
         }
         const handleKeyPress = (event :KeyboardEvent) => {
-            if (event.key == "`" && !isBuySellModalOpen) {
+            if (event.key == "`") {
                 handleShowAll();
             }
         }
@@ -493,13 +519,8 @@ export default function RoundChart({ data }: any) {
         (window as any).handleShowPlot = handleShowPlot;
         handleShowPlot(selectedSecondaryIndicator);
         // console.log("purifiedData", purifiedData[turn+249].date.split('T')[0]);
-        chart.selectRange(purifiedData[turn+249].date.split('T')[0], purifiedData[turn+299].date.split('T')[0])
-        // chart.selectRange(anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd'), anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd'))  
-        // chart.scroller().listen('scrollerChange', function () {
-        //   var range = chart.getSelectedRange();
-        //   setStartDate(range.firstSelected);
-        //   setEndDate(range.lastSelected);
-        // })
+        chart.selectRange(purifiedData[day+249].date.split('T')[0], purifiedData[day+299].date.split('T')[0])
+
         return () => {
             document.removeEventListener('keypress', handleKeyPress);
             // setStartDate(chart.getSelectedRange().firstSelected);
@@ -509,14 +530,14 @@ export default function RoundChart({ data }: any) {
             (window as any).handleShowPlot = null;
         };
     
-    }, [data]);
+    }, [day]);
 
     const playClickSound = useClickSound();
   
     return (
         <div className="row-span-12 grid grid-rows-12">
             <div className="row-span-1 grid grid-cols-8 items-center">
-                <div className="text-center">종목 {selectedStockIndex+1}</div>
+                <div className="text-center">종목</div>
                 <button 
                     onClick={() => {
                         playClickSound();

@@ -1,6 +1,8 @@
 "use client";
 
-import multigameStore, { MultiGameRoomInfoList } from "@/public/src/stores/multi/MultiGameStore";
+import multigameStore, {
+  MultiGameRoomInfoList,
+} from "@/public/src/stores/multi/MultiGameStore";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -11,6 +13,7 @@ export default function GameRoom(props: {
   room: MultiGameRoomInfoList;
 }) {
   const playClickSound = useClickSound();
+
   const { getMultigameRoomInfo, isWaiting } = multigameStore();
   const { color, room } = props;
   const password = room.password;
@@ -48,8 +51,6 @@ export default function GameRoom(props: {
               .then((res) => {
                 console.log(res.data);
                 router.push(`multi/room/${room.roomId}`);
-                getMultigameRoomInfo(room.roomId)
-
               })
               .catch((error) => {
                 console.error(error);
@@ -64,31 +65,34 @@ export default function GameRoom(props: {
       });
     } else {
       axios
-      .get(`https://j10a207.p.ssafy.io/api/multi/${room.roomId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+        .get(`https://j10a207.p.ssafy.io/api/multi/${room.roomId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
       router.push(`multi/room/${room.roomId}`);
-      getMultigameRoomInfo(room.roomId)
+      getMultigameRoomInfo(room.roomId);
     }
   };
   return (
     <div
       className={`hover:-translate-y-1 transition ease-in-out duration-500 h-auto rounded-md shadow-md text-textColor-2 ${color}`}
     >
-    <div 
-      onClick={ 
-        isWaiting ? () => { playClickSound(); handleClick(room); }
-         : () => {} 
+      <div
+        onClick={
+          isWaiting
+            ? () => {
+                playClickSound();
+                handleClick(room);
+              }
+            : () => {}
         }
-
         className="block p-2  border rounded-lg shadow hover:cursor-pointer"
       >
         <h5 className="mb-1 text-md font-bold tracking-tight">

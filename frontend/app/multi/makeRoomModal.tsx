@@ -29,7 +29,6 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
   });
 
   useEffect(()=> {
-    setValue('roundNumber', '3')
     setValue('isOpen', 'true')
   }, [setValue])
 
@@ -51,7 +50,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
     const password = Number(data.password) || null;
     const formData = {
       roomTitle: data.title,
-      maxRoundNumber: Number(data.roundNumber), 
+      maxRoundNumber: 1, 
       isOpen: data.isOpen === 'true' ? true : false,
       password: password,
     }
@@ -112,52 +111,6 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
                   />
                   <p className="text-xs text-small-3 p-1">{errors.title?.message}</p>
 
-                </div>
-                <div className="col-span-12">라운드</div>
-                {/* 라운드 */}
-                <div className="col-span-12">
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="col-span-1 flex items-center h-5">
-                      <input
-                        id="3round"
-                        type="radio"
-                        value="3"
-                        {...register('roundNumber', { required: true })}
-                        onChange={playClickSound}
-                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                      />
-                      <label htmlFor="3round" className="ms-2  font-medium text-gray-900 dark:text-gray-300">
-                        3라운드
-                      </label>
-                    </div>
-                    <div className="col-span-1 flex items-center h-5">
-                      <input
-                        id="5round"
-                        type="radio"
-                        value="5"
-                        {...register('roundNumber', { required: true })}
-                        onChange={playClickSound}
-
-                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                      />
-                      <label htmlFor="5round" className="ms-2 font-medium text-gray-900 dark:text-gray-300">
-                        5라운드
-                      </label>
-                    </div>
-                    <div className="col-span-1 flex items-center h-5">
-                      <input
-                        id="7round"
-                        type="radio"
-                        value="7"
-                        {...register('roundNumber', { required: true })}
-                        onChange={playClickSound}
-                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                      />
-                      <label htmlFor="7round" className="ms-2 font-medium text-gray-900 dark:text-gray-300">
-                        7라운드
-                      </label>
-                    </div>
-                  </div>
                 </div>
                 <div className="col-span-12">공개 여부</div>
                 <div className="col-span-12">
