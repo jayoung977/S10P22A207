@@ -124,7 +124,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
 
     const handleBuy = async () => {
         // console.log("stocks : ", stocks);
-        console.log('zz', stockListData[selectedStockIndex].stockChartList[299+turn].endPrice);
+        console.log(stockListData[selectedStockIndex].stockChartList[299+turn].endPrice);
         console.log({
             fundId: Number(params['fund-id']),
             gameIdx: gameIdx,
@@ -147,10 +147,10 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                     Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
                 },
             });
-            console.log("매수 : ", response.data.result);
-            setAssetListData(response.data.result.assetList);
-            setTotalAssetData(response.data.result.totalAsset);
-            setTradeListData(response.data.result.tradeList);
+            console.log("매수 : ", response.data);
+            // setAssetListData(response.data.result.assetList);
+            // setTotalAssetData(response.data.result.totalAsset);
+            // setTradeListData(response.data.result.tradeList);
             handleEscape();
         
         } catch (error) {

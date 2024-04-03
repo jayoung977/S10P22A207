@@ -39,12 +39,11 @@ export default function FundPlay() {
     turn, setTurn, gameIdx, setGameIdx, setFundGameChance,
     setTotalAssetData, setAssetListData, setTradeListData,
     stockListData, setStockListData, setStockMarketListData, 
-    setTrendListData, setMarketInfoListData, setTodayStockInfoListData,
+    setTrendListData, setRawMaterialListData, setTodayStockInfoListData,
     selectedStockIndex,
     setStartDate, setEndDate,
   } = FundGameStore();
-  const { asset } = userStore();
-  console.log("asset : ", asset);
+
   const fetchFundGameData = async () => {
     try {
       const response = await axios({
@@ -55,68 +54,68 @@ export default function FundPlay() {
         }
       })
 
-      console.log("useEffect axios 요청 데이터 결과")
-      console.log(response.data.result);    
-      if (response.data.result.day > 0) {
-        setTurn(response.data.result.day);
-      } else {
-        setTurn(1);
-      }
-
+      console.log("response : ", response.data.result);    
+      // if (response.data.result.day > 0) {
+      //   setTurn(response.data.result.day);
+      // } else {
+      //   setTurn(1);
+      // }
+      setTurn(1);
       setGameIdx(response.data.result.gameIdx);      
       setFundGameChance(response.data.result.fundGameChance);
 
-        // 사용자 총 평가 자산 데이터
-        if (response.data.result.totalAsset) {
-            setTotalAssetData({
-              cash : response.data.result.totalAsset.cash,
-              resultProfit : response.data.result.totalAsset.resultProfit,
-              resultRoi : response.data.result.totalAsset.resultRoi,
-              totalPurchaseAmount : response.data.result.totalAsset.totalPurchaseAmount,
-              totalAsset : response.data.result.totalAsset.cash + response.data.result.totalAsset.totalPurchaseAmount,
-            })
-        } else {
-          console.log("없어서")
-          console.log(asset);
-          setTotalAssetData({
-            cash : asset as number,
-            resultProfit : 0,
-            resultRoi : 0, 
-            totalPurchaseAmount : 0, 
-            totalAsset :  asset as number,
-          })
-        }
-        // 사용자 보유 종목 주식 데이터
-        if (response.data.result.assetList != null) {
-          setAssetListData(response.data.result.assetList);
-        }
-        // 사용자 매매 기록 데이터
-        if (response.data.result.tradeList != null) {
-          setTradeListData(response.data.result.tradeList);
-        }
-        // 10개 랜덤 종목 데이터
-        setStockListData(response.data.result.stockChartDataList);
-        // console.log('시작 날짜')
-        const startTime = new Date(response.data.result.stockChartDataList[0].stockChartList[249].date).getTime();
-        console.log("시작 : ", startTime);
-        const endTime = new Date(response.data.result.stockChartDataList[0].stockChartList[299].date).getTime();
-        console.log("끝 : ", endTime);
-        // setStartDate(Date(response.data.result.stockChartDataList[0].stockChartList[299].date).getTime())
-        setStartDate(startTime);
-        setEndDate(endTime);
-        // console.log('끝 날짜')
-        // setEndDate(response.data.result.stockChartDataList[0].stockChartList[349].date)
+      // 사용자 총 평가 자산 데이터
+      setTotalAssetData(response.data.result.totalAsset);
+      // if (response.data.result.totalAsset.totalAsset == 0) {
+      //     setTotalAssetData({
+      //         cash : response.data.result.totalAsset.cash,
+      //         resultProfit : 0,
+      //         resultRoi : 0, 
+      //         totalPurchaseAmount : 0, 
+      //         totalAsset : response.data.result.totalAsset.cash,
+      //     })
+      // } else {
+      //       setTotalAssetData({
+      //           cash : response.data.result.totalAsset.cash,
+      //           resultProfit : response.data.result.totalAsset.resultProfit,
+      //           resultRoi : response.data.result.totalAsset.resultRoi,
+      //           totalPurchaseAmount : response.data.result.totalAsset.totalPurchaseAmount,
+      //           totalAsset : response.data.result.totalAsset.totalAsset,
+      //       })
+      //   }
+      // 사용자 보유 종목 주식 데이터
+      // if (response.data.result.assetList != null) {
+      //   setAssetListData(response.data.result.assetList);
+      // }
+      setAssetListData([]);
+      // 사용자 매매 기록 데이터
+      setTradeListData([]);
+      // if (response.data.result.tradeList != null) {
+      //   setTradeListData(response.data.result.tradeList);
+      // }
+      // 10개 랜덤 종목 데이터
+      setStockListData(response.data.result.stockChartDataList);
+      // console.log('시작 날짜')
+      const startTime = new Date(response.data.result.stockChartDataList[0].stockChartList[249].date).getTime();
+      const endTime = new Date(response.data.result.stockChartDataList[0].stockChartList[299].date).getTime();
+      setStartDate(startTime);
+      setEndDate(endTime);
+      setTodayStockInfoListData(response.data.result.nextDayInfos);
+      // 증시 데이터
+      // setStockMarketListData(response.data.result.stockMarketList);
+      // 트렌드, 시장 데이터
+      // setTrendListData(response.data.result.trendList);
+      // if (response.data.result.rawMaterialList.length >= 350) {
+      //   setRawMaterialListData(response.data.result.rawMaterialList);
+      // } else {
+      //   const ordinary = [...response.data.result.rawMaterialList];
+      //   const concatenated = ordinary.concat(ordinary);
+      //   setRawMaterialListData(concatenated);
+      // }
+      // setTodayStockInfoListData(response.data.result.nextDayInfos);
 
+      setIsLoading(false)
 
-        // 증시 데이터
-        setStockMarketListData(response.data.result.stockMarketList);
-
-        // 트렌드, 시장 데이터
-        setTrendListData(response.data.result.trendList);
-        setMarketInfoListData(response.data.result.marketInfo);
-        setTodayStockInfoListData(response.data.result.nextDayInfos);
-
-        setIsLoading(false)
 
     } catch (error) {
       console.log(error)
@@ -162,7 +161,7 @@ export default function FundPlay() {
           <aside className="col-span-2 grid grid-rows-6">
             <TurnInfo/>
             <StockList />
-            <MarketAndTrends />
+            {/* <MarketAndTrends /> */}
           </aside>
         </div>
       </div>

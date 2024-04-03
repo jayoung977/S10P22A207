@@ -42,10 +42,7 @@ export default function Chart({ data }: any) {
     const { selectedIndex, tradeList, setMaxPriceDateList, setMinPriceDateList  } = SingleReviewStore();
 
     useEffect(() => {
-
-
         const purifiedData = filteringLowPriceZero(data);
-        console.log("purifiedData : ", purifiedData)
         
         const minLowPriceList = purifiedData.reduce((acc :any, current :any) => {
             if (!acc.length) {

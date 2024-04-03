@@ -39,8 +39,58 @@ function calculateMovingAverage(data :any, period :any) {
 export default function Chart({ data }: any) {
     const { selectedTradeList } = MultiReviewStore();
     useEffect(() => {
-
         const purifiedData = filteringLowPriceZero(data);
+
+        const minLowPriceList = purifiedData.reduce((acc :any, current :any) => {
+            if (!acc.length) {
+              acc.push(current);
+            } else {
+              const minLow = acc[0].lowPrice;
+              if (current.lowPrice < minLow) {
+                acc.length = 0;
+                acc.push(current);
+              } else if (current.lowPrice === minLow) {
+                acc.push(current);
+              }
+            }
+            return acc;
+          }, []);
+
+        const maxHighPriceList = purifiedData.reduce((acc :any, current :any) => {
+        if (!acc.length) {
+            acc.push(current);
+        } else {
+            const maxHigh = acc[0].highPrice;
+            if (current.highPrice > maxHigh) {
+            acc.length = 0;
+            acc.push(current);
+            } else if (current.highPrice === maxHigh) {
+            acc.push(current);
+            }
+        }
+        return acc;
+        }, []);
+
+        const maxHighPriceListData :any = []
+        maxHighPriceList.map((item :any, index :number) => {
+            maxHighPriceListData.push(
+                {
+                    date : item.date.split('T')[0],
+                    price : item.highPrice,
+                }
+            ) 
+        })
+
+        const minLowPriceListData :any = [];
+        minLowPriceList.map((item :any, index :number) => {
+            minLowPriceListData.push(
+                {
+                    date : item.date.split('T')[0],
+                    price : item.lowPrice,
+                }
+            ) 
+        })
+        
         // 차트 생성
         const chart = anychart.stock();
         // 차트를 담을 컨테이너 생성
@@ -67,6 +117,46 @@ export default function Chart({ data }: any) {
         plot1.title("주가, OHLC, 이동평균선")
         plot1.yAxis().orientation("right");
         plot1.yAxis().labels().fontSize(15);
+
+        // 최저가 Line
+        const minPriceLineMarker = plot1.lineMarker(0);
+        minPriceLineMarker.value(minLowPriceListData[0]?.price);
+        minPriceLineMarker.stroke({
+            thickness: 2,
+            color: "blue",
+            dash: "1 0",
+        });    
+        // 최저가 Text
+        const minPriceTextMarker = plot1.textMarker(0);
+        minPriceTextMarker.value(minLowPriceListData[0]?.price);
+        minPriceTextMarker.text(minLowPriceListData[0]?.price)
+        minPriceTextMarker.fontColor("blue");
+        minPriceTextMarker.background().enabled(true);
+        minPriceTextMarker.background().stroke("2 blue");
+        minPriceTextMarker.padding(3);
+        minPriceTextMarker.align("right");
+        minPriceTextMarker.offsetX(-60);
+        minPriceTextMarker.fontSize(15);
+
+        // 최고가 Line
+        const maxPriceLineMarker = plot1.lineMarker(1);
+        maxPriceLineMarker.value(maxHighPriceListData[0]?.price);
+        maxPriceLineMarker.stroke({
+            thickness: 2,
+            color: "red",
+            dash: "1 0",
+        });    
+        // 최고가 Text
+        const maxPriceTextMarker = plot1.textMarker(1);
+        maxPriceTextMarker.value(maxHighPriceListData[0]?.price);
+        maxPriceTextMarker.text(maxHighPriceListData[0]?.price)
+        maxPriceTextMarker.fontColor("red");
+        maxPriceTextMarker.background().enabled(true);
+        maxPriceTextMarker.background().stroke("2 red");
+        maxPriceTextMarker.padding(3);
+        maxPriceTextMarker.align("right");
+        maxPriceTextMarker.offsetX(-60);
+        maxPriceTextMarker.fontSize(15);
 
         // line series 생성
         const lineSeries = plot1.line(

@@ -21,7 +21,7 @@ export default function UserRecordInfoMulti() {
   const router = useRouter();
   const params = useParams<{ userId?: string }>();
   const id: string | undefined = params.userId;
-
+  console.log('id : ', id);
   const fetchUserMultiGame = async () => {
     const response = await axios({
       method: "get",
@@ -30,6 +30,7 @@ export default function UserRecordInfoMulti() {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     });
+    console.log(response.data.result);
     return response.data;
   };
 
