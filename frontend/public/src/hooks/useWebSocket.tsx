@@ -9,7 +9,6 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 export const useWebSocket = () => {
-  const router = useRouter();
   const params = useParams();
   const client = useRef<CompatClient>({} as CompatClient);
   const { setClientObject, clientObject } = socketStore();
@@ -36,8 +35,10 @@ export const useWebSocket = () => {
     setRoomTitle,
     setReadyState,
     setPlayers,
+    setMultiGameLogId,
+    setIsGameOver,
   } = socketStore();
-
+  const router = useRouter();
   const fetchAlarmData = async () => {
     try {
       const response = await axios({
@@ -139,6 +140,10 @@ export const useWebSocket = () => {
           if (parsedMessage.type === "MULTIGAMEINFO") {
             setPlayers(parsedMessage.result);
           }
+
+          if (parsedMessage.type === "MULTIRESULT") {
+            setIsGameOver(true);
+          }
         });
       });
       return () => {
@@ -149,4 +154,29 @@ export const useWebSocket = () => {
       };
     }
   }, [memberId]);
+
+  const preventClose = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = ""; // for chrome. deprectaed.
+  };
+
+  // useEffect(() => {
+  //   window.addEventListener("beforeunload", preventClose);
+  //   return () => {
+  //     window.removeEventListener("beforeunload", preventClose);
+  //   };
+  // }, []);
+  // 새로고침 방지 로직
+
+  const preventGoBack = () => {
+    history.pushState(null, "", location.href);
+  };
+  useEffect(() => {
+    history.pushState(null, "", location.href);
+    window.addEventListener("popstate", preventGoBack);
+    return () => {
+      window.removeEventListener("popstate", preventGoBack);
+    };
+  }, []);
+  //  뒤로가기 방지 로직
 };

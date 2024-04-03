@@ -27,10 +27,13 @@ export default function SingleGameEndModal ({ isOpen, onClose } :any) {
                     <div className="col-span-5">
                         <div className="text-center">선택 종목 명</div>
                         <hr></hr>
-                        <div className="text-start">
+                        <div className="">
                             {
                                 singleGameEndInfoData?.stockInfoDtoList.map((item :any, index :number) => (
-                                    <div className="m-1.5">{item.stockName}</div>
+                                    <div className="grid grid-cols-10 text-center">
+                                        <div className="col-span-1">{index+1}.</div>
+                                        <div className="col-span-8">{item.stockName}</div>
+                                    </div>
                                 ))
                             }
                         </div>

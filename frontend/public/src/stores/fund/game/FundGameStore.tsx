@@ -70,10 +70,16 @@ type trendDataType = {
 type trendListDataType = trendDataType[];
 
 // 시장 정보
-type marketInfoDataType = {
-
+type rawMaterialType = {
+    date :string | null,
+    wti :string | null,
+    copper :string | null,
+    gold :string | null,
+    wheat :string | null,
+    silver :string | null,
+    gas :string | null,
 }
-type marketInfoListDataType = marketInfoDataType[];
+type rawMaterialListType = rawMaterialType[];
 
 // 게임 종료 시 데이터
 // 실제 주식 종목
@@ -137,8 +143,8 @@ type Store = {
     setTrendListData :(value :any) => void;
 
     // 시장 정보 배열 데이터 상태관리 변수
-    marketInfoListData :any;
-    setMarketInfoListData :(value :any) => void;
+    rawMaterialListData :rawMaterialListType;
+    setRawMaterialListData :(value :rawMaterialListType) => void;
 
     // 현재 선택한 주식 종목 index 상태관리 변수
     selectedStockIndex :number;
@@ -205,13 +211,14 @@ const FundGameStore = create<Store>((set: any) => ({
     
     todayStockInfoListData: [],
     setTodayStockInfoListData :(value) => set({ todayStockInfoListData : value }),
+    
     // 트렌드 목록 배열 데이터 상태관리 변수
     trendListData: [],
     setTrendListData: (value) => set({ trendListData : value }),
 
-    // 시장 정보 배열 데이터 상태관리 변수
-    marketInfoListData: [],
-    setMarketInfoListData: (value) => set({ marketInfoListData : value }),
+     // 시장 정보 배열 데이터 상태관리 변수
+     rawMaterialListData :[],
+     setRawMaterialListData :(value) => set({ rawMaterialListData : value }),
 
     // 현재 선택한 주식 종목 index 상태관리 변수
     selectedStockIndex: 0,
@@ -232,9 +239,9 @@ const FundGameStore = create<Store>((set: any) => ({
     selectedSecondaryIndicator : 1,
     setSelectedSecondaryIndicator :(value) => set({ selectedSecondaryIndicator : value }),
 
-
     startDate :null,
     setStartDate :(value) => set({ startDate : value }),
+
     endDate :null,
     setEndDate :(value) => set({ endDate : value }),
 
