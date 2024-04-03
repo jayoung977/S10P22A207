@@ -2,8 +2,8 @@
 // 현재 턴/종목에 대한 차트 정보 (main - 1)
 import { useState, useEffect } from "react";
 import anychart from "anychart";
-import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
-import multigameStore from "@/public/src/stores/multi/MultiGameStore";
+import socketStore from "@/public/src/stores/websocket/socketStore";
+// import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 
@@ -38,7 +38,6 @@ function calculateMovingAverage(data :any, period :any) {
     return result;
 }
 
-
 // rsi 데이터 생성 함수
 function calculateRSI(data :any, period :number) {
     const result = [];
@@ -49,7 +48,7 @@ function calculateRSI(data :any, period :number) {
         for (let j = i - period; j < i; j++) {
             let change;
             if (j > 0) {
-                change = data[j].endPrice - data[j - 1].endPrice;
+                change = data[j]?.endPrice - data[j - 1]?.endPrice;
                 if (change > 0) {
                     avgGain += change;
                 } else {
@@ -67,7 +66,7 @@ function calculateRSI(data :any, period :number) {
             rs = avgGain / avgLoss;
         }
         let rsi = parseFloat((100 - (100 / (1 + rs))).toFixed(2));
-        result.push([data[i].date, rsi]);
+        result.push([data[i]?.date, rsi]);
         } 
     }
 
@@ -79,22 +78,22 @@ function calculateEMA(data :any, period :number) {
     const emaValues = [];
     let sum = 0;
     // 초기 EMA 값은 첫 번째 날짜의 종가로 설정
-    let initialEMA = data[0].endPrice;
-    emaValues.push([data[0].date, parseFloat(initialEMA.toFixed(2))]);
+    let initialEMA = data[0]?.endPrice;
+    emaValues.push([data[0]?.date, parseFloat(initialEMA)]);
 
     // 첫 번째 EMA를 제외한 나머지 EMA 값을 계산
     for (let i = 1; i < period; i++) {
         let k = 2 / (i + 1);
-        let ema :any = data[i].endPrice * k + emaValues[i-1][1] * (1 - k);
-        emaValues.push([data[i].date, parseFloat(ema.toFixed(2))]);
-        sum += data[i].endPrice;
+        let ema :any = data[i]?.endPrice * k + emaValues[i-1][1] * (1 - k);
+        emaValues.push([data[i]?.date, parseFloat(ema)]);
+        sum += data[i]?.endPrice;
     }
 
     // 나머지 날짜에 대한 EMA 값을 계산
     for (let i = period; i < data.length; i++) {
         let k = 2 / (period + 1);
-        let ema :any = (data[i].endPrice - emaValues[i-1][1]) * k + emaValues[i-1][1];
-        emaValues.push([data[i].date, parseFloat(ema.toFixed(2))]);
+        let ema :any = (data[i]?.endPrice - emaValues[i-1][1]) * k + emaValues[i-1][1];
+        emaValues.push([data[i]?.date, parseFloat(ema)]);
     }
 
     return emaValues;
@@ -105,7 +104,7 @@ function calculateMACD(data :any, shortPeriod :number, longPeriod :number) {
     const longEMA = calculateEMA(data, longPeriod);
     const result = []
     for (let i = 0; i < data.length; i++) {
-        result.push([data[i].date, shortEMA[i][1] - longEMA[i][1]])
+        result.push([data[i]?.date, shortEMA[i][1] - longEMA[i][1]])
     }
 
     return result;
@@ -132,6 +131,7 @@ function calculateSignal(macdData :any, signalPeriod :number) {
 
 function calculateHist(macdData :any, signalData :any) {
     const result = [];
+    console.log(macdData)
     for (let i = 0; i < macdData.length; i++) {
         result.push([macdData[i][0], macdData[i][1] - signalData[i][1]]);
     }
@@ -140,12 +140,13 @@ function calculateHist(macdData :any, signalData :any) {
 }
 
 
-export default function Chart({ data }: any) {
-    // const { turn } = multigameStore();
-    const { selectedStockIndex, turn, startDate, setStartDate, endDate, setEndDate, isBuySellModalOpen } = SingleGameStore();
+export default function RoundChart({ data }: any) {
+    const { day } = socketStore();
+    // const { selectedStockIndex, turn, startDate, setStartDate, endDate, setEndDate, isBuySellModalOpen } = SingleGameStore();
     const [selectedSecondaryIndicator, setSelectedSecondaryIndicator] = useState<number>(1);
     useEffect(() => {
         const purifiedData = filteringLowPriceZero(data);
+        console.log("purifiedData : ", purifiedData)
         // 차트 생성
         const chart = anychart.stock();
         // 차트를 담을 컨테이너 생성
@@ -159,21 +160,7 @@ export default function Chart({ data }: any) {
         // 스크롤러
         const scroller = chart.scroller();
         scroller.xAxis(false);
-        // console.log("startDate : ", anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd')); // 콘솔 결과 : 2020-09-15
-        // console.log("endDate : ",  anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd')); //  콘솔 결과 : 2020-11-30
-        // Store에 저장해놓은 범위를 chart에서 스크롤바가 선택된 범위로 바꿈
-        // chart.selectRange(anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd'), anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd'));
-        // chart.selectRange(startDate, endDate);
 
-        // var range = chart.getSelectedRange();
-        // console.log("차트 선택된 범위 시작 : ", anychart.format.dateTime(range.firstSelected, 'yyyy-MM-dd'));
-        // console.log("차트 선택된 범위 끝 : ", anychart.format.dateTime(range.lastSelected, 'yyyy-MM-dd'));
-        
-        // chart.scroller().listen('scrollerChange', function () {
-        //   var range = chart.getSelectedRange();
-        //   setStartDate(range.firstSelected);
-        //   setEndDate(range.lastSelected);
-        // })
         scroller.selectedFill({
             src: 'https://static.anychart.com/images/beach.png',
             mode: 'stretch',
@@ -192,7 +179,7 @@ export default function Chart({ data }: any) {
 
         // 가장 최근 종가 Line
         const todayEndPriceLineMarker = plot1.lineMarker();
-        todayEndPriceLineMarker.value(purifiedData[299+turn]?.endPrice);
+        todayEndPriceLineMarker.value(purifiedData[299+day]?.endPrice);
         todayEndPriceLineMarker.stroke({
             thickness: 2,
             color: "pink",
@@ -200,8 +187,8 @@ export default function Chart({ data }: any) {
         });    
         // 가장 최근 종가 가격 Text
         const todayEndPriceTextMarker = plot1.textMarker();
-        todayEndPriceTextMarker.value(purifiedData[299+turn]?.endPrice);
-        todayEndPriceTextMarker.text(purifiedData[299+turn]?.endPrice)
+        todayEndPriceTextMarker.value(purifiedData[299+day]?.endPrice);
+        todayEndPriceTextMarker.text(purifiedData[299+day]?.endPrice)
         todayEndPriceTextMarker.fontColor("pink");
         todayEndPriceTextMarker.background().enabled(true);
         todayEndPriceTextMarker.background().stroke("2 pink");
@@ -388,7 +375,7 @@ export default function Chart({ data }: any) {
         plot3.legend().useHtml(true);
         plot3.legend().title().useHtml(true);
         plot3.legend().titleFormat(<span></span>);
-
+        console.log(calculateRSI(purifiedData, 14))
         const rsiSeries = plot3.line(calculateRSI(purifiedData, 14));
         rsiSeries.name("RSI");
         rsiSeries.hovered().markers().enabled(true).type("circle").size(2);
@@ -476,34 +463,30 @@ export default function Chart({ data }: any) {
             }
         };
         const handleShowAll = () => {
-            chart.selectRange(purifiedData[0].date.split('T')[0], purifiedData[turn+299].date.split('T')[0])
+            chart.selectRange(purifiedData[0]?.date.split('T')[0], purifiedData[day+299]?.date.split('T')[0])
         }
         const handleShowPlot = (plotNumber :number) => {
             showPlot(plotNumber);
             setSelectedSecondaryIndicator(plotNumber);
         }
         const handleKeyPress = (event :KeyboardEvent) => {
-            if (event.key == "`" && !isBuySellModalOpen) {
+            if (event.key == "`") {
                 handleShowAll();
             }
+            // if (event.key == "`" && !isBuySellModalOpen) {
+            //     handleShowAll();
+            // }
         }
         document.addEventListener('keypress', handleKeyPress);
 
         (window as any).handleShowAll = handleShowAll;
         (window as any).handleShowPlot = handleShowPlot;
         handleShowPlot(selectedSecondaryIndicator);
-        // console.log("purifiedData", purifiedData[turn+249].date.split('T')[0]);
-        chart.selectRange(purifiedData[turn+249].date.split('T')[0], purifiedData[turn+299].date.split('T')[0])
-        // chart.selectRange(anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd'), anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd'))  
-        // chart.scroller().listen('scrollerChange', function () {
-        //   var range = chart.getSelectedRange();
-        //   setStartDate(range.firstSelected);
-        //   setEndDate(range.lastSelected);
-        // })
+        // chart.selectRange(purifiedData[day+249]?.date.split('T')[0], purifiedData[day+299]?.date.split('T')[0])
+
         return () => {
             document.removeEventListener('keypress', handleKeyPress);
-            // setStartDate(chart.getSelectedRange().firstSelected);
-            // setEndDate(chart.getSelectedRange().lastSelected);
+
             chart.dispose();
             (window as any).handleShowAll = null;
             (window as any).handleShowPlot = null;
@@ -516,7 +499,7 @@ export default function Chart({ data }: any) {
     return (
         <div className="row-span-12 grid grid-rows-12">
             <div className="row-span-1 grid grid-cols-8 items-center">
-                <div className="text-center">종목 {selectedStockIndex+1}</div>
+                <div className="text-center">종목</div>
                 <button 
                     onClick={() => {
                         playClickSound();

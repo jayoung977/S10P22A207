@@ -17,6 +17,23 @@ interface MultiGameStockIdsType {
   stockId: number;
 }
 
+interface TradeListType {
+  amount: number;
+  day: number;
+  price: number;
+  profit: number;
+  round: number;
+  stockId: number;
+  tradeType: String;
+}
+
+interface PlayersType {
+  nickName: string;
+  day: number;
+  rank: number;
+  totalAsset: number;
+}
+
 interface WebSocketStore {
   clientObject: any;
   setClientObject: (client: any) => void;
@@ -38,16 +55,44 @@ interface WebSocketStore {
   setRoomTitle: (roomTitle: string) => void;
   readyState: { [key: number]: boolean };
   setReadyState: (readyState: { [key: number]: boolean }) => void;
-  maxRoundNumber: number,
+  maxRoundNumber: number;
   setMaxRoundNumber: (maxRoundNumber: number) => void;
-  gameId: number,
+  gameId: number;
   setGameId: (gameId: number) => void;
-  roundNumber:number,
+  roundNumber: number;
   setRoundNumber: (roundNumber: number) => void;
-  multiGameStockIds: MultiGameStockIdsType[],
+  multiGameStockIds: MultiGameStockIdsType[];
   setMultiGameStockIds: (multiGameStockIds: MultiGameStockIdsType[]) => void;
-  day: number,
+  day: number;
   setDay: (day: number) => void;
+  averagePrice: number;
+  setAveragePrice: (averagePrice: number) => void;
+  cash: number;
+  setCash: (cash: number) => void;
+  initialAsset: number;
+  setInitialAsset: (initialAsset: number) => void;
+  profitMargin: number;
+  setProfitMargin: (profitMargin: number) => void;
+  shortAveragePrice: number;
+  setShortAveragePrice: (shortAveragePrice: number) => void;
+  shortStockAmount: number;
+  setShortStockAmount: (shortStockAmount: number) => void;
+  stockAmount: number;
+  setStockAmount: (stockAmount: number) => void;
+  stockValue: number;
+  setStockValue: (stockValue: number) => void;
+  todayEndPrice: number;
+  setTodayEndPrice: (todayEndPrice: number) => void;
+  totalAsset: number;
+  setTotalAsset: (totalAsset: number) => void;
+  totalPurchaseAmount: number;
+  setTotalPurchaseAmount: (totalPurchaseAmount: number) => void;
+  tradeList: TradeListType[];
+  setTradeList: (tradeList: TradeListType[]) => void;
+  unrealizedGain: number;
+  setUnrealizedGain: (unrealizedGain: number) => void;
+  players: PlayersType[];
+  setPlayers: (players: PlayersType[]) => void;
 }
 
 const socketStore = create<WebSocketStore>((set) => ({
@@ -63,6 +108,7 @@ const socketStore = create<WebSocketStore>((set) => ({
     set((state) => ({
       receiveMessages: [],
     })),
+
   receiveAlarm: false,
   setReceiveAlarm: (value) => set({ receiveAlarm: value }),
   roomInfo: [],
@@ -81,25 +127,40 @@ const socketStore = create<WebSocketStore>((set) => ({
   setMaxRoundNumber: (value) => set({ maxRoundNumber: value }),
   gameId: 0,
   setGameId: (value) => set({ gameId: value }),
-  roundNumber:1,
-  setRoundNumber:(value) => set({ roundNumber: value }),
+  roundNumber: 1,
+  setRoundNumber: (value) => set({ roundNumber: value }),
   day: 1,
-  setDay:(value) => set({ day: value }),
+  setDay: (value) => set({ day: value }),
   multiGameStockIds: [],
-  setMultiGameStockIds:(value) => set({ multiGameStockIds: value }),
-  // initialAsset
-  // totalAsset
-  // profitMargin
-  // unrealizedGain
-  // cash
-  // stockAmount
-  // totalPurchaseAmount
-  // averagePurchasePrice
-  // TodayEndPrice * amount?
-  // TodayEndPrice
-  // 거래내역
-
-
+  setMultiGameStockIds: (value) => set({ multiGameStockIds: value }),
+  averagePrice: 0,
+  setAveragePrice: (value) => set({ averagePrice: value }),
+  cash: 10000000,
+  setCash: (value) => set({ cash: value }),
+  initialAsset: 10000000,
+  setInitialAsset: (value) => set({ initialAsset: value }),
+  profitMargin: 0,
+  setProfitMargin: (value) => set({ profitMargin: value }),
+  shortAveragePrice: 0,
+  setShortAveragePrice: (value) => set({ shortAveragePrice: value }),
+  shortStockAmount: 0,
+  setShortStockAmount: (value) => set({ shortStockAmount: value }),
+  stockAmount: 0,
+  setStockAmount: (value) => set({ stockAmount: value }),
+  stockValue: 0,
+  setStockValue: (value) => set({ stockValue: value }),
+  todayEndPrice: 0,
+  setTodayEndPrice: (value) => set({ todayEndPrice: value }),
+  totalAsset: 10000000,
+  setTotalAsset: (value) => set({ totalAsset: value }),
+  totalPurchaseAmount: 0,
+  setTotalPurchaseAmount: (value) => set({ totalPurchaseAmount: value }),
+  tradeList: [],
+  setTradeList: (value) => set({ tradeList: value }),
+  unrealizedGain: 0,
+  setUnrealizedGain: (value) => set({ unrealizedGain: value }),
+  players: [],
+  setPlayers: (value) => set({ players: value }),
 }));
 
 export default socketStore;
