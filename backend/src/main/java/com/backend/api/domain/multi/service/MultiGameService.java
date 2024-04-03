@@ -985,6 +985,7 @@ public class MultiGameService {
 		// 대기방 isPlaying -> false로
 		MultiWaitingRoom waitingRoom = getWaitingRoom(dto.roomId());
 		waitingRoom.setIsPlaying(false);
+		redisTemplate.opsForValue().set("multiGame:" + dto.roomId(), waitingRoom);
 
 		// 모두에게 결과 보내기
 		for(MultiGameResultDto resultDto : result){
