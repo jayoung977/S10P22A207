@@ -146,7 +146,7 @@ export default function RoundChart({ data }: any) {
     const [selectedSecondaryIndicator, setSelectedSecondaryIndicator] = useState<number>(1);
     useEffect(() => {
         const purifiedData = filteringLowPriceZero(data);
-        console.log("purifiedData : ", purifiedData)
+        // console.log("purifiedData : ", purifiedData)
         // 차트 생성
         const chart = anychart.stock();
         // 차트를 담을 컨테이너 생성
@@ -375,7 +375,7 @@ export default function RoundChart({ data }: any) {
         plot3.legend().useHtml(true);
         plot3.legend().title().useHtml(true);
         plot3.legend().titleFormat(<span></span>);
-        console.log(calculateRSI(purifiedData, 14))
+        // console.log(calculateRSI(purifiedData, 14))
         const rsiSeries = plot3.line(calculateRSI(purifiedData, 14));
         rsiSeries.name("RSI");
         rsiSeries.hovered().markers().enabled(true).type("circle").size(2);
