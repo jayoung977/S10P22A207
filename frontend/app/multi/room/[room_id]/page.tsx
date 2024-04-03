@@ -29,6 +29,7 @@ export default function page() {
         <PeacefulBgm></PeacefulBgm>
         <Header />
         <div className="row-start-2 row-end-13 grid grid-cols-12 border">
+        <PeacefulBgm></PeacefulBgm>
           <aside className="col-span-3 grid grid-rows-6 text-center">
             <FriendSearch />
             <GameRule />
