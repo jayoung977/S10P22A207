@@ -109,7 +109,7 @@ public class MultiGameController {
 
 
     @PostMapping("/round-result")
-    @Operation(summary = "멀티 - 라운드 결과", description = "멀티게임 특정 라운드가 끝나면 결과를 보내줍니다.", tags = {"멀티게임"})
+    @Operation(summary = "멀티 - 라운드결과", description = "멀티게임 특정 라운드가 끝나면 결과를 보내줍니다.", tags = {"멀티게임"})
     public ResponseEntity<BaseResponse<List<MultiGameResultDto>>> getResult(@RequestBody MultiGameSubResultRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.getSubResult(userDetails.getId(), dto));
     }
@@ -117,7 +117,7 @@ public class MultiGameController {
     @PostMapping("/player-info")
     @Operation(summary = "멀티 - 방 참여자 정보", description = "멀티게임 특정 시각의 멤버 정보를 보여줍니다.", tags = {"멀티게임"})
     public ResponseEntity<BaseResponse<List<PlayerRankInfo>>> getResult(@RequestBody MultiPlayerInfoRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.sendResultToRest(dto.gameId(), dto.roundNumber()));
+        return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.sendResultToRest(dto.gameId(), dto.roundNumber(), dto.roomId()));
     }
 
     @GetMapping("/log")

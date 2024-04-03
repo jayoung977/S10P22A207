@@ -443,13 +443,18 @@ public class MultiGameService {
 		}
 	}
 
-	public List<PlayerRankInfo> sendResultToRest(Long gameId, int roundNumber){
+	public List<PlayerRankInfo> sendResultToRest(Long gameId, int roundNumber, long roomId){
 		List<Long> memberIdRank = multiGameRankService.getUserRanksByTotalAsset(gameId, roundNumber);
 		List<PlayerRankInfo> playerRankInfos = new ArrayList<>();
 		for (int i = 0; i < memberIdRank.size(); i++) {
 			Member player = memberRepository.findById(memberIdRank.get(i)).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
 			MultiGame playerGame = getGame(memberIdRank.get(i), gameId);
 			playerRankInfos.add(new PlayerRankInfo(player.getNickname(), playerGame.getDay(), (i + 1), playerGame.getTotalAsset()));
+		}
+		MultiWaitingRoom multiWaitingRoom = getWaitingRoom(roomId);
+
+		for(Long participantId : multiWaitingRoom.getParticipantIds()){
+			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIGAMEINFO, playerRankInfos));
 		}
 
 		return playerRankInfos;

@@ -7,7 +7,11 @@ public record MultiPlayerInfoRequestDto(
     Long gameId,
 
     @Schema(description = "라운드")
-    int roundNumber
+    int roundNumber,
+
+    @Schema(description = "방 Id")
+    long roomId
+
 
 )
 
