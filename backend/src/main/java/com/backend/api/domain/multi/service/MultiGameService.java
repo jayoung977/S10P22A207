@@ -11,7 +11,6 @@ import com.backend.api.domain.multi.dto.response.*;
 import com.backend.api.domain.multi.entity.*;
 import com.backend.api.domain.multi.repository.MultiGameLogRepository;
 import com.backend.api.domain.multi.repository.MultiTradeRepository;
-import com.backend.api.domain.single.dto.response.StockChartDataDto;
 import com.backend.api.domain.single.dto.response.StockChartDto;
 import com.backend.api.domain.stock.entity.Stock;
 import com.backend.api.domain.stock.entity.StockChart;
@@ -45,7 +44,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -276,7 +274,7 @@ public class MultiGameService {
 		return new MultiGameStartResponseDto(gameId, firstDayStockChartIds, dto.roomId());
 	}
 
-	public StockChartDataDto getGameChart(Long memberId, MultiGameChartRequestDto dto) {
+	public MultiStockChartDataDto getGameChart(Long memberId, MultiGameChartRequestDto dto) {
 		StockChart firstDayStockChart = stockChartRepository.findById(dto.firstDayStockChartId()).orElseThrow(
 			() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
 		);
@@ -407,7 +405,7 @@ public class MultiGameService {
 			stockChartDtoList.add(stockChartDto);
 		});
 
-		return new StockChartDataDto(dto.stockId(), gameLogId, stockChartDtoList);
+		return new MultiStockChartDataDto(dto.stockId(), gameLogId, stockChartDtoList);
 	}
 
 	public void sendResultToSocket(Long gameId, int roundNumber, Long roomId){

@@ -66,7 +66,7 @@ public class MultiGameController {
 
     @PostMapping("/game-chart")
     @Operation(summary = "멀티게임 시작 후 차트 호출.", description = "멀티게임을 시작한 후에 차트 데이터를 요청합니다.", tags = {"멀티게임"})
-    public ResponseEntity<BaseResponse<StockChartDataDto>> getGameChart(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameChartRequestDto dto) {
+    public ResponseEntity<BaseResponse<MultiStockChartDataDto>> getGameChart(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameChartRequestDto dto) {
         return BaseResponse.success(SuccessCode.SELL_SUCCESS, multiGameService.getGameChart(userDetails.getId(), dto));
     }
 
