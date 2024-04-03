@@ -535,7 +535,7 @@ export default function Chart({ data }: any) {
     const playClickSound = useClickSound();
   
     return (
-        <div className="row-span-12 grid grid-rows-12">
+        <div className="row-span-9 grid grid-rows-12">
             <div className="row-span-1 grid grid-cols-8 items-center">
                 <div className="text-center">종목</div>
                 <button 
@@ -575,7 +575,7 @@ export default function Chart({ data }: any) {
                 전체보기(`)
             </button>
         </div>    
-        <div id="multi-chart-container" className="row-span-12 flex items-center justify-center"></div>
+        <div id="multi-chart-container" className="row-span-11 flex items-center justify-center"></div>
     </div>
 
   );
