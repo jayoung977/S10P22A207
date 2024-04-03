@@ -36,7 +36,7 @@ export default function TradeButtons(){
   }, [isOpenTradeModal])
 
   return(
-    <div className='col-span-2'>
+    <div className='row-span-2 grid grid-cols-2 gap-1'>
       <TradeModal 
         tradeType={tradeType} 
         isOpen={isOpenTradeModal} 
@@ -46,42 +46,48 @@ export default function TradeButtons(){
           setTradeType('')
         }}
        />
-      <div className="gap-1 grid grid-rows-4">
+      <div className="col-span-1">
         <button
           onClick={() => {
             playClickSound();
             setTradeType("buy");
             setIsOpenTradeModal(true);
           }}
-          className="border p-1 m-2 rounded-md text-white font-bold bg-red-500 hover:bg-red-400"
+          className=" w-full border p-1 rounded-md text-white font-bold bg-red-500 hover:bg-red-400"
         >
           매수 (Q)
         </button>
+      </div>
+      <div className="col-span-1">
         <button
           onClick={()=>{
             playClickSound();
             setTradeType("sell");
             setIsOpenTradeModal(true);
           }}
-          className="border p-1 m-2 rounded-md text-white font-bold bg-blue-500 hover:bg-small-1"
+          className="w-full border p-1 rounded-md text-white font-bold bg-blue-500 hover:bg-small-1"
         >
           매도 (W)
         </button>
+      </div>
+      <div className="col-span-1">
         <button
           onClick={()=>{
             playClickSound();
             setTradeType('short-selling')
             setIsOpenTradeModal(true)
           }}
-         className='border p-1 m-2 rounded-md text-white font-bold bg-yellow-500 hover:bg-small-10'>공매도 (E)
+         className='w-full border p-1 rounded-md text-white font-bold bg-yellow-500 hover:bg-small-10'>공매도 (E)
         </button>
+      </div>
+      <div className="col-span-1">
         <button
           onClick={()=>{
             playClickSound();
             setTradeType('close-short')
             setIsOpenTradeModal(true)
           }}
-         className='border p-1 m-2 rounded-md text-white font-bold bg-small-12 hover:bg-small-12'>공매도 청산
+         className='w-full border p-1 rounded-md text-white font-bold bg-small-12 hover:bg-small-12'>공매도 청산
         </button>
       </div>
     </div>

@@ -14,6 +14,7 @@ export default function GameMembers(){
     { rank: 3, nickname: '최강창호',  memberId: 3, progress: 0 },
     { rank: 4, nickname: '용수리',  memberId: 4, progress: 0 },
     { rank: 5, nickname: '자영안자영',  memberId: 5, progress: 0 },
+    { rank: 6, nickname: 'aaaaa',  memberId: 6, progress: 0 },
   ]
   type RankColor = { [key: number]: string };
   const rank: RankColor = {
@@ -26,12 +27,12 @@ export default function GameMembers(){
   };
 
   return (
-    <div className="col-span-2 grid grid-rows-6 text-sm">
+    <div className="row-span-10 grid grid-rows-6 text-sm">
       {
         gameMembers.map((user: GameMember, i: number)=> {
           const color = rank[user.rank]
           return(
-            <div key={i}  className="border gap-1 row-span-1 grid grid-rows-2">
+            <div key={i}  className="border row-span-1 grid grid-rows-2">
               <div className='row-span-1 grid grid-cols-12 text-center items-center'>
                 <div 
                   className={`col-span-3 border p-1 m-1 ${color} rounded-lg`}>{user.rank}위</div>

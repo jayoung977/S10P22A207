@@ -19,14 +19,11 @@ export default function page() {
             <FriendSearch />
             <GameRule />
           </aside>
-          <main className="col-span-6 grid grid-rows-8">
-            <div className="row-span-5">
+          <main className="col-span-6 grid grid-rows-12">
               <ChartImage />
-            </div>
-            <div className="border grid grid-cols-12 row-span-4">
+              <div className="row-span-3">
               <Chat />
-              <div className="col-span-2 text-white text-center"></div>
-            </div>
+              </div>
           </main>
           <GameMembers />
         </div>
