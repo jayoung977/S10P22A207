@@ -443,6 +443,18 @@ public class MultiGameService {
 		}
 	}
 
+	public List<PlayerRankInfo> sendResultToRest(Long gameId, int roundNumber){
+		List<Long> memberIdRank = multiGameRankService.getUserRanksByTotalAsset(gameId, roundNumber);
+		List<PlayerRankInfo> playerRankInfos = new ArrayList<>();
+		for (int i = 0; i < memberIdRank.size(); i++) {
+			Member player = memberRepository.findById(memberIdRank.get(i)).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+			MultiGame playerGame = getGame(memberIdRank.get(i), gameId);
+			playerRankInfos.add(new PlayerRankInfo(player.getNickname(), playerGame.getDay(), (i + 1), playerGame.getTotalAsset()));
+		}
+
+		return playerRankInfos;
+	}
+
 
     // 공매도 청산
     public MultiTradeResponseDto buy(MultiTradeRequestDto dto, Long memberId) {
@@ -833,7 +845,7 @@ public class MultiGameService {
 				for (Long playerId : waitingRoom.getParticipantIds()) { // 채팅방에 있는 모든 유저에게 메시지 전송
 					log.info("메시지 전송 대상: {}", playerId);
 					template.convertAndSend("/api/sub/" + playerId, new SocketBaseDtoRes<>(SocketType.ROUNDFINISHED,
-						getSubResult(memberId, new MultiGameSubResultRequestDto(dto.gameId(), dto.roundNumber()))));
+						getSubResult(memberId, new MultiGameSubResultRequestDto(dto.gameId(), dto.roundNumber(), currentGame.getRoomId()))));
 					log.info("socketBaseDtoRes : gameId : {} roundNumber : {}", dto.gameId(), 1);
 				}
 				log.info("메시지 전송 완료");
@@ -982,6 +994,17 @@ public class MultiGameService {
                 }
 
             }
+		}
+
+		// 대기방 isPlaying -> false로
+		MultiWaitingRoom waitingRoom = getWaitingRoom(dto.roomId());
+		waitingRoom.setIsPlaying(false);
+
+		// 모두에게 결과 보내기
+		for(MultiGameResultDto resultDto : result){
+			Long participantId = resultDto.memberId();
+			redisTemplate.delete("multiGame:" + dto.gameId() + ":" + participantId + ":" + dto.roundNumber());
+			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIRESULT, result));
 		}
         return result;
     }
