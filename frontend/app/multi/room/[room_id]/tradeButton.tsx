@@ -70,12 +70,20 @@ export default function TradeButtons() {
         <button
           onClick={() => {
             playClickSound();
-            setTradeType("shortSell");
-            setIsOpenTradeModal(true);
+            setTradeType('short-selling')
+            setIsOpenTradeModal(true)
           }}
           className="border p-1 m-2 rounded-md text-white font-bold bg-yellow-500 hover:bg-small-10"
         >
           공매도 (E)
+        </button>
+        <button
+          onClick={()=>{
+            playClickSound();
+            setTradeType('close-short')
+            setIsOpenTradeModal(true)
+          }}
+         className='border p-1 m-2 rounded-md text-white font-bold bg-small-12 hover:bg-small-12'>공매도 청산
         </button>
       </div>
     </div>
