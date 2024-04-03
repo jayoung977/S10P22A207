@@ -349,8 +349,6 @@ public class FundService {
 		String key = "fundGame:" + fundId + ":" + nextId; // Redis에 저장할 키
 		redisTemplate.opsForValue().set(key, fundGame);
 
-
-
 		//[4] 주식차트 350개 가져오기
 		List<StockChartDataDto> stockChartDataList = new ArrayList<>();
 		int cnt = 0;
@@ -479,7 +477,7 @@ public class FundService {
 				.tradePrice(todayChart.getEndPrice()) // 현재가격.
 				.stockQuantity(currentGame.getStockAmount()[stockIdx])
 				.roi(Double.parseDouble(String.format("%.2f", resultRoi)))
-				.profit((long) currentGame.getProfits()[stockIdx])
+				.profit((long) (dto.amount() * (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]))) // 이번 거래의 profit
 				.build();
 		fundTradeRepository.save(fundTrade);
 		/* 하둡저장 */
@@ -510,9 +508,9 @@ public class FundService {
 		for (int i = 0; i < currentGame.getProfits().length; i++) {
 			totalProfit += currentGame.getProfits()[i];
 		}
-		double totalRoi = 100.0 * totalProfit / currentGame.getInitial();
-		TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalProfit, totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
-
+		double totalRoi = 100.0 * (totalAsset - currentGame.getInitial()) / currentGame.getInitial();
+		TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalAsset - currentGame.getInitial(), totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
+		currentGame.updateProfit(stockIdx, dto.amount());
 		// 보유자산
 		List<AssetListDto> assetList = new ArrayList<>();
 		for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
@@ -584,17 +582,19 @@ public class FundService {
 
 		// 총 roi 계산
 		long totalAsset = currentGame.getCash();
-		for (Long stockId : currentGame.getStocks().keySet()) {
-			StockChart todayStockCharts = stockChartRepository.findById(stockId + 299 + dto.day()).orElseThrow(
+		for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
+			long firstDayChartId = currentGame.getFirstDayChartList().get(i);
+			StockChart todayStockCharts = stockChartRepository.findById(firstDayChartId + 299 + dto.day()).orElseThrow(
 					() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK)
 			);
 
-			int amount = currentGame.getStockAmount()[currentGame.getStocks().get(stockId)]; // 해당 Stock의 보유량 가져오기
+			int amount = currentGame.getStockAmount()[currentGame.getStocks().get(firstDayChartId)]; // 해당 Stock의 보유량 가져오기
 
 			totalAsset += (long) (amount * todayStockCharts.getEndPrice() * 0.9975); // 총 자산 계산
 		}
 		// 총 구입 금액 계산
 		currentGame.addTotalPurchaseAmount((long) dto.amount() * todayChart.getEndPrice());
+		currentGame.updateTotalAsset(totalAsset);
 
 		double resultRoi = 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx];
 		// 총 profit 계산
@@ -607,7 +607,7 @@ public class FundService {
 				.tradePrice(todayChart.getEndPrice()) // 현재가격.
 				.stockQuantity(currentGame.getStockAmount()[stockIdx])
 				.roi(Double.parseDouble(String.format("%.2f", resultRoi)))
-				.profit((long) currentGame.getProfits()[stockIdx])
+				.profit((-1) *(long) (dto.amount() * todayChart.getEndPrice() * 0.0015))
 				.build();
 		fundTradeRepository.save(fundTrade);
 		hadoopService.saveFundTradeLogHdfs(fundTrade, managerId);
@@ -696,8 +696,8 @@ public class FundService {
 							todayChart.getEndPrice(), // 오늘의 종가
 							todayChart.getEndPrice() - yesterdayChart.getEndPrice(), // 등락정도
 							currentGame.getStockAmount()[stockIdx], // 보유수량
-							(long) currentGame.getStockAmount()[stockIdx] * (todayChart.getEndPrice()
-									- currentGame.getAveragePrice()[stockIdx]), // 평가손익
+							(long) (currentGame.getStockAmount()[stockIdx] * (0.9975 * todayChart.getEndPrice()
+									- currentGame.getAveragePrice()[stockIdx])), // 평가손익
 							currentGame.getAveragePrice()[stockIdx] == 0 ? 0 :
 									1.0 * ((todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]) * 100)
 											/ currentGame.getAveragePrice()[stockIdx]// 손익률
