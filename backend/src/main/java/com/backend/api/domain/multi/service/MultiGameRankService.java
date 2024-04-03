@@ -32,7 +32,7 @@ public class MultiGameRankService {
 
         Set<ZSetOperations.TypedTuple<Object>> tuples = zSetOperations.reverseRangeWithScores(key, 0, -1);
         for (ZSetOperations.TypedTuple<Object> tuple : tuples) {
-            Long memberId = (Long) tuple.getValue(); // 사용자 ID 가져오기
+            Long memberId = tuple.getValue() instanceof Integer ? ((Integer) tuple.getValue()).longValue() : (Long) tuple.getValue();
             userRanks.add(memberId);
         }
 
