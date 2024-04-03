@@ -12,6 +12,7 @@ import GameMembers from "./GameMembers";
 import axios from "axios";
 import socketStore from "@/public/src/stores/websocket/socketStore";
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
+import InGameBgm from "@/public/src/components/bgm/InGameBgm";
 
 export type dataType = {
   date: string;
@@ -23,9 +24,35 @@ export type dataType = {
 };
 
 export default function page() {
+  const preventClose = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = ""; // for chrome. deprectaed.
+  };
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", preventClose);
+    return () => {
+      window.removeEventListener("beforeunload", preventClose);
+    };
+  }, []);
+  // 새로고침 방지 로직
+
+  const preventGoBack = () => {
+    history.pushState(null, "", location.href);
+  };
+  useEffect(() => {
+    history.pushState(null, "", location.href);
+    window.addEventListener("popstate", preventGoBack);
+    return () => {
+      window.removeEventListener("popstate", preventGoBack);
+    };
+  }, []);
+  //  뒤로가기 방지 로직
+
   const [data, setData] = useState<dataType[]>([]);
   const {
     day,
+    setDay,
     roundNumber,
     maxRoundNumber,
     roomId,
@@ -39,6 +66,7 @@ export default function page() {
   const [isError, setIsError] = useState(false);
 
   const fetchMultigameData = async () => {
+    setDay(1);
     try {
       const data = {
         roundNumber: roundNumber,
@@ -93,6 +121,7 @@ export default function page() {
       {/* <RoundResult/> */}
       <div className="grid grid-rows-12 h-screen border-separate">
         <Header />
+        <InGameBgm></InGameBgm>
         <div className="row-span-11 grid grid-cols-12 border">
           <aside className="col-span-2 text-center border p-2 grid grid-rows-12">
             <GameStatus />

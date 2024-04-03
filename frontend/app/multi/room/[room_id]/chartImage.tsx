@@ -1,14 +1,18 @@
-import Image from 'next/image'
-import chartImage from '@/public/src/assets/images/chart-sample-image.png'
+"use client";
+import React from "react";
+import StockImage from "@/public/src/assets/images/stockPixel2.png"
+import Image from "next/image";
 
-export default function ChartImage(){
-  return(
-    <div className='row-span-9'>
+export function ChartImage() {
+  return (
+    <div className="relative row-span-9">
       <Image
-        src={chartImage}
-        alt='chartimage'
-        height={400}
-      />
+          src={StockImage}
+          alt="background-image"
+          layout="fill"
+          objectFit="cover"
+          objectPosition="center"
+        />
     </div>
-  )
+  );
 }
