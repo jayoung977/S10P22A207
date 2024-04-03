@@ -282,9 +282,7 @@ public class MultiGameService {
 		);
 		Long gameLogId = null;
 
-		MultiGameLog multiGameLog = null;
-		if(multiGameLogRepository.findByMemberIdAndGameIdAndRound(memberId, dto.gameId(), dto.roundNumber()).isEmpty()) {
-			 multiGameLog
+		MultiGameLog multiGameLog
 				= MultiGameLog.builder()
 				.memberId(memberId)
 				.gameId(dto.gameId())
@@ -292,9 +290,8 @@ public class MultiGameService {
 				.startDate(firstDayStockChart.getDate())
 				.round(dto.roundNumber())
 				.build();
-			log.info("multiGameLog.id() - {}", multiGameLog.getId());
-			gameLogId = multiGameLogRepository.save(multiGameLog).getId();
-		}
+
+		gameLogId = multiGameLogRepository.save(multiGameLog).getId();
 
 		// 게임아이디를 줄것이 아니라, roomId를 줘야한다.
 		MultiWaitingRoom multiWaitingRoom = getWaitingRoom(dto.roomId());
@@ -410,7 +407,7 @@ public class MultiGameService {
 			stockChartDtoList.add(stockChartDto);
 		});
 
-		return new StockChartDataDto(dto.stockId(), stockChartDtoList);
+		return new StockChartDataDto(dto.stockId(), gameLogId, stockChartDtoList);
 	}
 
 	public void sendResultToSocket(Long gameId, int roundNumber, Long roomId){
