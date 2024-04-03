@@ -6,10 +6,21 @@ import GameRule from "./gameRule";
 import Header from "./header";
 import GameMembers from "./GameMembers";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { useEffect } from "react";
+import multigameStore from "@/public/src/stores/multi/MultiGameStore";
+import { useParams } from "next/navigation";
 
 const queryClient = new QueryClient();
 
 export default function page() {
+  const params = useParams<{ room_id?: string }>();
+  const room_id: string | undefined = params.room_id;
+  const { getMultigameRoomInfo } = multigameStore();
+
+  useEffect(() => {
+    getMultigameRoomInfo(Number(room_id));
+  }, [room_id]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className="grid grid-rows-12 h-screen border-separate">

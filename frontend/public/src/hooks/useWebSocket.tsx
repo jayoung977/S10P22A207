@@ -35,6 +35,7 @@ export const useWebSocket = () => {
     setRoomId,
     setRoomTitle,
     setReadyState,
+    setPlayers,
   } = socketStore();
 
   const fetchAlarmData = async () => {
@@ -133,6 +134,10 @@ export const useWebSocket = () => {
             router.push(
               `${parsedMessage.result.roomId}/play/${parsedMessage.result.gameId}`
             );
+          }
+
+          if (parsedMessage.type === "MULTIGAMEINFO") {
+            setPlayers(parsedMessage.result);
           }
         });
       });
