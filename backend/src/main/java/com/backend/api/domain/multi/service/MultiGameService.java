@@ -945,10 +945,13 @@ public class MultiGameService {
     public List<MultiGameResultDto> getSubResult(Long memberId, MultiGameSubResultRequestDto dto) {
 		MultiGameLog multiGameLog = multiGameLogRepository.findById(dto.multiGameLogId())
 			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
+		log.info("[MultiGameResult] - multiGameLog :{}", multiGameLog.getId());
 
 		String stockName = stockRepository.findById(multiGameLog.getStockId()).orElseThrow(
             () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
         ).getStockName();
+
+		log.info("[MultiGameResult] - stockName :{}", multiGameLog.getId());
 
         StockChart firstDayStockChart = stockChartRepository.findByStock_IdAndDate(multiGameLog.getStockId(), multiGameLog.getStartDate())
             .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_LOG_STOCK_CHART));
@@ -957,14 +960,17 @@ public class MultiGameService {
 
         List<MultiGameResultDto> result = new ArrayList<>();
 		List<Long> userRanksByTotalAsset = multiGameRankService.getUserRanksByTotalAsset(dto.gameId(), dto.roundNumber());
+		log.info("[MultiGameResult] - userRanksByTotalAsset.size() : {}", userRanksByTotalAsset.size());
 
         // 결과를 보여달라고 할 때 MultiGamePlayer 내의 랭크를 설정
 		List<MultiGamePlayer> multiGameLogMultiGamePlayers = multiGameLog.getMultiGamePlayers();
+		log.info("[MultiGameResult] - multiGameLogMultiGamePlayers.size() : {}", multiGameLogMultiGamePlayers.size());
 
 		for (int i = 0; i < userRanksByTotalAsset.size(); i++) {
             for (MultiGamePlayer multiGameLogMultiGamePlayer : multiGameLogMultiGamePlayers) {
                 if (Objects.equals(userRanksByTotalAsset.get(i), multiGameLogMultiGamePlayer.getMember().getId())) {
                     int rank = i + 1;
+					log.info("[MultiGameResult] - id : {}의 rank : {}", userRanksByTotalAsset.get(i), rank);
                     MultiGameResultDto multiGameResultDto = new MultiGameResultDto(
                         multiGameLogMultiGamePlayer.getMember().getId(),
                         multiGameLogMultiGamePlayer.getMember().getNickname(),
@@ -981,6 +987,7 @@ public class MultiGameService {
 
             }
 		}
+		log.info("[MultiGameResult] - result.size() : {}", result.size());
 
 		// 대기방 isPlaying -> false로
 		MultiWaitingRoom waitingRoom = getWaitingRoom(dto.roomId());
@@ -990,6 +997,7 @@ public class MultiGameService {
 		// 모두에게 결과 보내기
 		for(MultiGameResultDto resultDto : result){
 			Long participantId = resultDto.memberId();
+			log.info("[MultiGameResult] - participantId : {}", participantId);
 			redisTemplate.delete("multiGame:" + dto.gameId() + ":" + participantId + ":" + dto.roundNumber());
 			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIRESULT, result));
 		}
