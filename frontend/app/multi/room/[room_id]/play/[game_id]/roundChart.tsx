@@ -140,7 +140,7 @@ function calculateHist(macdData :any, signalData :any) {
 }
 
 
-export default function RoundChart({ data }: any) {
+export default function Chart({ data }: any) {
     // const { turn } = multigameStore();
     const { selectedStockIndex, turn, startDate, setStartDate, endDate, setEndDate, isBuySellModalOpen } = SingleGameStore();
     const [selectedSecondaryIndicator, setSelectedSecondaryIndicator] = useState<number>(1);

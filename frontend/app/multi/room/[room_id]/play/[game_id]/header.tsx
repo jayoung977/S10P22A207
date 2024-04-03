@@ -62,10 +62,10 @@ export default function Header() {
       }
     })
       .then((res) => {
-        // console.log(res.data);
+        console.log(res.data);
       })
       .catch((error) => {
-        // console.error(error);
+        console.error(error);
       });
   }
 
@@ -73,17 +73,10 @@ export default function Header() {
   const handleTradeDay = (e: KeyboardEvent) => {
     if (e.key === "r") {
       if(day == 51){
-        if (roundNumber === maxRoundNumber) {
-          console.log("경기 종료");
-          setDay(1)
-          setRoundNumber(1)
-          setIsGameover(true)
+        setIsGameover(true)
+        setDay(1);
           return
         }
-        setRoundNumber(roundNumber + 1);
-        setDay(1)
-        return
-      }
       playClickSound();
       handleTomorrow(day)
       setDay(day + 1);
@@ -129,17 +122,10 @@ export default function Header() {
           // day이 50이면 disabled 속성이 true가 됩니다.
           onClick={() => {
             if(day == 51){
-              if (roundNumber === maxRoundNumber) {
-                console.log("경기 종료");
-                setDay(1)
-                setRoundNumber(1)
-                setIsGameover(true)
+              setIsGameover(true)
+              setDay(1);
                 return
               }
-              setRoundNumber(roundNumber + 1);
-              setDay(1)
-              return
-            }
             playClickSound();
             handleTomorrow(day)
             setDay(day + 1);

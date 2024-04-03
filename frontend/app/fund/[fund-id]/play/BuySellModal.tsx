@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
     const { gameIdx, stockListData, selectedStockIndex, turn, assetListData, setAssetListData, totalAssetData, setTotalAssetData, setTradeListData, isBuySellModalOpen, setIsBuySellModalOpen,
             stocks, setStocks } = FundGameStore();
-
+    const params = useParams();
     const [disabled, setDisabled] = useState<boolean>(true);
     const [alertMessage, setAlertMessage] = useState<string>("");
     const foundAsset = assetListData?.find((x :any) => x.stockId === stockListData[selectedStockIndex].stockId);
@@ -125,9 +125,8 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
     const handleBuy = async () => {
         // console.log("stocks : ", stocks);
         console.log('zz', stockListData[selectedStockIndex].stockChartList[299+turn].endPrice);
-        const params = useParams();
         console.log({
-            fundId: params['fund-id'],
+            fundId: Number(params['fund-id']),
             gameIdx: gameIdx,
             stockId: stockListData[selectedStockIndex]?.stockId,
             amount: stocks,
@@ -138,7 +137,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                 method: "post",
                 url: "https://j10a207.p.ssafy.io/api/fund/game/buy",
                 data: {
-                    fundId: params['fund-id'],
+                    fundId: Number(params['fund-id']),
                     gameIdx: gameIdx,
                     stockId: stockListData[selectedStockIndex]?.stockId,
                     amount: stocks,
@@ -161,13 +160,12 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
 
     const handleSell = async () => {
         console.log("stocks : ", stocks);
-        const params = useParams();
         try {
             const response = await axios({
                 method: "post",
                 url: "https://j10a207.p.ssafy.io/api/fund/game/sell",
                 data: {
-                    fundId: params['fund-id'],
+                    fundId: Number(params['fund-id']),
                     gameIdx: gameIdx,
                     stockId: stockListData[selectedStockIndex]?.stockId,
                     amount: stocks,
