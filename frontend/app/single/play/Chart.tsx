@@ -216,8 +216,8 @@ export default function Chart({ data }: any) {
         });
 
 
-        if (assetListData[selectedStockIndex].stockAmount > 0) {
-            const avgPrice = assetListData[selectedStockIndex].averagePurchasePrice;
+        if (assetListData &&  assetListData[selectedStockIndex]?.stockAmount > 0) {
+            const avgPrice = assetListData[selectedStockIndex]?.averagePurchasePrice;
             const avgPriceLineMarker = plot1.lineMarker(1);
             avgPriceLineMarker.value(avgPrice);
             avgPriceLineMarker.stroke({
@@ -232,7 +232,6 @@ export default function Chart({ data }: any) {
             avgPriceLineMarker.listen("mouseOut", function() {
                 avgPriceLineMarker.stroke({thickness: 2, color: "black"});
             });
-            console.log(assetListData[selectedStockIndex].averagePurchasePrice)
             
             const avgPriceTextMarker = plot1.textMarker(1);
             avgPriceTextMarker.value(avgPrice);
@@ -546,18 +545,11 @@ export default function Chart({ data }: any) {
         (window as any).handleShowAll = handleShowAll;
         (window as any).handleShowPlot = handleShowPlot;
         handleShowPlot(selectedSecondaryIndicator);
-        // console.log("purifiedData", purifiedData[turn+249].date.split('T')[0]);
+
         chart.selectRange(purifiedData[turn+249].date.split('T')[0], purifiedData[turn+299].date.split('T')[0])
-        // chart.selectRange(anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd'), anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd'))  
-        // chart.scroller().listen('scrollerChange', function () {
-        //   var range = chart.getSelectedRange();
-        //   setStartDate(range.firstSelected);
-        //   setEndDate(range.lastSelected);
-        // })
         return () => {
             document.removeEventListener('keypress', handleKeyPress);
-            // setStartDate(chart.getSelectedRange().firstSelected);
-            // setEndDate(chart.getSelectedRange().lastSelected);
+
             chart.dispose();
             (window as any).handleShowAll = null;
             (window as any).handleShowPlot = null;
