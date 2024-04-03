@@ -52,6 +52,7 @@ public class FundService {
 	private final SimpMessageSendingOperations template;
 	private final NotificationService noticeService;
 	private final HadoopService hadoopService;
+	private final FundAndMemberService fundAndMemberService;
 	private HashMap<Long, Integer> stocks;
 	private List<Long> list;
 
@@ -793,7 +794,22 @@ public class FundService {
 
 			// 레디스에서 삭제해주기
 			redisTemplate.delete("fundGame:" + dto.fundId() + ":" + dto.gameIdx());
-
+			// 펀드 종료
+			fund.updateFundStatus(FundStatus.CLOSED);
+			// 펀드 종료 알림
+			for (Member member : fund.getFundMemberList().stream().map(FundMember::getMember).toList()) {
+				log.info("펀드 종료 알림: {}", member.getNickname());
+				template.convertAndSend("/api/sub/" + member.getId(), "펀드가 종료되었습니다.");
+				Notice notice = Notice.builder()
+						.member(member)
+						.sender(fund.getManager().getNickname())
+						.isRead(false)
+						.alarmType(AlarmType.FUNDCLOSED)
+						.content(fund.getFundName() + "펀드가 종료되었습니다.")
+						.build();
+				noticeService.createNotification(notice);
+			}
+			fundAndMemberService.closeFund(managerId, fund.getId());
 			return new NextDayResponseDto(stockSummaries, currentGame.getCash(), resultProfit, resultRoi, currentGame.getTotalPurchaseAmount(),
 					totalAsset, assetList, fundGameResultDto);
 		}
