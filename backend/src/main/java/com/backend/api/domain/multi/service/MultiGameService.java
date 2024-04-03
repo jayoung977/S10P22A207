@@ -805,7 +805,7 @@ public class MultiGameService {
                 (long) currentGame.getProfit(), roi, dto.roundNumber()
             );
 
-			MultiGameLog multiGameLog = multiGameLogRepository.findByMemberIdAndGameIdAndRound(memberId, dto.gameId(), dto.roundNumber())
+			MultiGameLog multiGameLog = multiGameLogRepository.findById(dto.multiGameLogId())
 				.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
             MultiGamePlayer memberGamePlayer = multiGamePlayerRepository.findByMultiGameLog_IdAndMember_Id(multiGameLog.getId(), memberId)
 				.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
@@ -831,7 +831,7 @@ public class MultiGameService {
 				for (Long playerId : waitingRoom.getParticipantIds()) { // 채팅방에 있는 모든 유저에게 메시지 전송
 					log.info("메시지 전송 대상: {}", playerId);
 					template.convertAndSend("/api/sub/" + playerId, new SocketBaseDtoRes<>(SocketType.ROUNDFINISHED,
-						getSubResult(memberId, new MultiGameSubResultRequestDto(dto.gameId(), dto.roundNumber(), currentGame.getRoomId()))));
+						getSubResult(memberId, new MultiGameSubResultRequestDto(dto.gameId(), dto.roundNumber(), currentGame.getRoomId(), dto.multiGameLogId()))));
 					log.info("socketBaseDtoRes : gameId : {} roundNumber : {}", dto.gameId(), 1);
 				}
 				log.info("메시지 전송 완료");
@@ -943,8 +943,8 @@ public class MultiGameService {
 	}
 
     public List<MultiGameResultDto> getSubResult(Long memberId, MultiGameSubResultRequestDto dto) {
-        MultiGameLog multiGameLog = multiGameLogRepository.findByMemberIdAndGameIdAndRound(memberId, dto.gameId(), dto.roundNumber())
-            .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
+		MultiGameLog multiGameLog = multiGameLogRepository.findById(dto.multiGameLogId())
+			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
 
 		String stockName = stockRepository.findById(multiGameLog.getStockId()).orElseThrow(
             () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
