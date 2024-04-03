@@ -3,6 +3,7 @@ package com.backend.api.domain.multi.entity;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.backend.api.domain.multi.dto.response.MultiTradeListDto;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
@@ -12,7 +13,7 @@ import lombok.Setter;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class MultiGame {
+public class MultiGame implements Serializable {
     private Long multiGameLogId;
     private Long memberId;
     private Long firstDayStockChartId;
@@ -115,4 +116,7 @@ public class MultiGame {
     public void updateRank(Integer rank){
         this.rank = rank;}
 
+    public void updateStockProfit(int amount) {
+        this.profit = this.profit * this.stockAmount/ (this.stockAmount + amount);
+    }
 }
