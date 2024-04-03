@@ -39,7 +39,7 @@ export default function page() {
         firstDayStockChartId: multiGameStockIds[roundNumber-1].firstDayStockChartId,
         roomId: roomId,
       }
-      console.log(data)
+      // console.log(data)
       const response = await axios({
         method: 'post',
         url: "https://j10a207.p.ssafy.io/api/multi/game-chart",
@@ -54,7 +54,7 @@ export default function page() {
           Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
         }
       })
-      console.log("zz")
+      // console.log("zz")
       // console.log("stockId : ", response.data.result.stockId);
       // console.log("stockChartList : ", response.data.result.stockChartList);
       setStockId(response.data.result.stockId);
