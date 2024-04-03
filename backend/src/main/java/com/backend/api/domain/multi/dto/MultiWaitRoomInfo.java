@@ -9,7 +9,6 @@ public record MultiWaitRoomInfo(
     Long roomId,
     @Schema(description = "방 이름")
     String roomTitle,
-
     @Schema(description = "참가자 Id")
     Set<Long> participantsIds,
 
@@ -17,7 +16,11 @@ public record MultiWaitRoomInfo(
     Boolean isOpen,
 
     @Schema(description = "비밀번호")
-    Integer password
+    Integer password,
+
+    @Schema(description = "총 라운드 수")
+    Integer maxRoundNumber
+
 
 ) {
 

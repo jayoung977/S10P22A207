@@ -3,6 +3,7 @@ package com.backend.api.domain.multi.entity;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.backend.api.domain.multi.dto.response.MultiTradeListDto;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
@@ -12,7 +13,7 @@ import lombok.Setter;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class MultiGame {
+public class MultiGame implements Serializable {
     private Long multiGameLogId;
     private Long memberId;
     private Long firstDayStockChartId;
@@ -32,17 +33,15 @@ public class MultiGame {
     private Integer averagePrice = 0; // 일반 주식 평균가
     private Integer shortAveragePrice = 0; // 공매도 주식 평균가
     private Integer shortStockAmount = 0;
-
-    // 혹시 몰라 추가함
-    private Long socketId;
+    private Integer maxRound;
     private Integer round;
     private Integer rank;
 
     @Builder
     public MultiGame(Long multiGameLogId, Long memberId, Long firstDayStockChartId, List<MultiTradeListDto> tradeList, Integer stockAmount, String roomTitle, Long roomId, Integer password,
         Boolean isOpen,
-        Long cash, Long initial, Long totalPurchaseAmount, Integer profit, Integer day, Long totalAsset, Integer averagePrice, Integer shortAveragePrice,
-        Integer shortStockAmount, Long socketId, Integer round, Integer rank) {
+        Long cash, Long initial, Long totalPurchaseAmount, Integer profit, Integer day, Long totalAsset, Integer averagePrice, Integer shortAveragePrice, Integer shortStockAmount, Integer maxRound,
+        Integer round, Integer rank) {
         this.multiGameLogId = multiGameLogId;
         this.memberId = memberId;
         this.firstDayStockChartId = firstDayStockChartId;
@@ -61,18 +60,21 @@ public class MultiGame {
         this.averagePrice = averagePrice;
         this.shortAveragePrice = shortAveragePrice;
         this.shortStockAmount = shortStockAmount;
-        this.socketId = socketId;
+        this.maxRound = maxRound;
         this.round = round;
         this.rank = rank;
     }
 
+    public void updateCash(long cash) {
+        this.cash = cash;
+    }
+
+
+
+
 
     public void decreaseStockAmount(int stockAmount) {
         this.stockAmount -= stockAmount;
-    }
-
-    public void updateCash(long cash) {
-        this.cash = cash;
     }
 
     public void addProfit(double profit) {
@@ -114,4 +116,7 @@ public class MultiGame {
     public void updateRank(Integer rank){
         this.rank = rank;}
 
+    public void updateStockProfit(int amount) {
+        this.profit = this.profit * this.stockAmount/ (this.stockAmount + amount);
+    }
 }

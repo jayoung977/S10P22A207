@@ -35,7 +35,6 @@ export default function KakaoLogin() {
     },
   ];
   const loginHandler = () => {
-    playClickSound();
     if (typeof window !== "undefined") {
       const API_URL = "https://j10a207.p.ssafy.io";
       const KAKAO_AUTH_URL = `${API_URL}/oauth2/authorization/kakao`;
@@ -63,6 +62,7 @@ export default function KakaoLogin() {
         <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-4">
           <button
             onClick={() => {
+              playClickSound();
               loginHandler();
             }}
             type="button"

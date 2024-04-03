@@ -11,8 +11,12 @@ import com.backend.api.domain.fund.repository.FundMemberRepository;
 import com.backend.api.domain.fund.repository.FundRepository;
 import com.backend.api.domain.fund.repository.FundStockRepository;
 import com.backend.api.domain.fund.repository.FundTradeRepository;
+import com.backend.api.domain.hadoop.service.HadoopService;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
+import com.backend.api.domain.notice.entity.Notice;
+import com.backend.api.domain.notice.service.NotificationService;
+import com.backend.api.domain.notice.type.AlarmType;
 import com.backend.api.domain.stock.entity.StockChart;
 import com.backend.api.domain.stock.repository.StockChartRepository;
 import com.backend.api.global.common.code.ErrorCode;
@@ -23,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +49,10 @@ public class FundService {
     private final FundStockRepository fundStockRepository;
 	private final ObjectMapper objectMapper;
 	private final FundTradeRepository fundTradeRepository;
+	private final SimpMessageSendingOperations template;
+	private final NotificationService noticeService;
+	private final HadoopService hadoopService;
+	private final FundAndMemberService fundAndMemberService;
 	private HashMap<Long, Integer> stocks;
 	private List<Long> list;
 
@@ -249,6 +258,20 @@ public class FundService {
 		fund.updateFundStatus(FundStatus.RUNNING);
 		fund.updateFundStart();
 		fundRepository.save(fund);
+		// 펀드 시작 알림
+		log.info("펀드 시작: {}", fund.getFundName());
+		for(Member member : fund.getFundMemberList().stream().map(FundMember::getMember).toList()){
+			log.info("펀드 시작 알림: {}", member.getNickname());
+			template.convertAndSend("/api/sub/" + member.getId(), "펀드가 시작되었습니다.");
+			Notice notice = Notice.builder()
+				.member(member)
+				.sender(fund.getManager().getNickname())
+				.isRead(false)
+				.alarmType(AlarmType.FUNDSTARTED)
+				.content(fund.getFundName()+"펀드가 시작되었습니다.")
+				.build();
+			noticeService.createNotification(notice);
+		}
 		return fund.getId();
 	}
 
@@ -326,8 +349,6 @@ public class FundService {
 		}
 		String key = "fundGame:" + fundId + ":" + nextId; // Redis에 저장할 키
 		redisTemplate.opsForValue().set(key, fundGame);
-
-
 
 		//[4] 주식차트 350개 가져오기
 		List<StockChartDataDto> stockChartDataList = new ArrayList<>();
@@ -457,9 +478,16 @@ public class FundService {
 				.tradePrice(todayChart.getEndPrice()) // 현재가격.
 				.stockQuantity(currentGame.getStockAmount()[stockIdx])
 				.roi(Double.parseDouble(String.format("%.2f", resultRoi)))
-				.profit((long) currentGame.getProfits()[stockIdx])
+				.profit((long) (dto.amount() * (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]))) // 이번 거래의 profit
 				.build();
 		fundTradeRepository.save(fundTrade);
+		/* 하둡저장 */
+		try{
+			hadoopService.saveFundTradeLogHdfs(fundTrade, managerId);
+		} catch (Exception e){
+
+		}
+
 		//Redis - 매매내역 추가 및 값 변경
 		currentGame.getTradeList().add(
 				new FundTradeListDto(
@@ -486,9 +514,9 @@ public class FundService {
 		for (int i = 0; i < currentGame.getProfits().length; i++) {
 			totalProfit += currentGame.getProfits()[i];
 		}
-		double totalRoi = 100.0 * totalProfit / currentGame.getInitial();
-		TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalProfit, totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
-
+		double totalRoi = 100.0 * (totalAsset - currentGame.getInitial()) / currentGame.getInitial();
+		TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalAsset - currentGame.getInitial(), totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
+		currentGame.updateProfit(stockIdx, dto.amount());
 		// 보유자산
 		List<AssetListDto> assetList = new ArrayList<>();
 		for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
@@ -560,17 +588,19 @@ public class FundService {
 
 		// 총 roi 계산
 		long totalAsset = currentGame.getCash();
-		for (Long stockId : currentGame.getStocks().keySet()) {
-			StockChart todayStockCharts = stockChartRepository.findById(stockId + 299 + dto.day()).orElseThrow(
+		for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
+			long firstDayChartId = currentGame.getFirstDayChartList().get(i);
+			StockChart todayStockCharts = stockChartRepository.findById(firstDayChartId + 299 + dto.day()).orElseThrow(
 					() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK)
 			);
 
-			int amount = currentGame.getStockAmount()[currentGame.getStocks().get(stockId)]; // 해당 Stock의 보유량 가져오기
+			int amount = currentGame.getStockAmount()[currentGame.getStocks().get(firstDayChartId)]; // 해당 Stock의 보유량 가져오기
 
 			totalAsset += (long) (amount * todayStockCharts.getEndPrice() * 0.9975); // 총 자산 계산
 		}
 		// 총 구입 금액 계산
 		currentGame.addTotalPurchaseAmount((long) dto.amount() * todayChart.getEndPrice());
+		currentGame.updateTotalAsset(totalAsset);
 
 		double resultRoi = 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx];
 		// 총 profit 계산
@@ -583,9 +613,14 @@ public class FundService {
 				.tradePrice(todayChart.getEndPrice()) // 현재가격.
 				.stockQuantity(currentGame.getStockAmount()[stockIdx])
 				.roi(Double.parseDouble(String.format("%.2f", resultRoi)))
-				.profit((long) currentGame.getProfits()[stockIdx])
+				.profit((-1) *(long) (dto.amount() * todayChart.getEndPrice() * 0.0015))
 				.build();
 		fundTradeRepository.save(fundTrade);
+		try{
+			hadoopService.saveFundTradeLogHdfs(fundTrade, managerId);
+		} catch (Exception e){
+
+		}
 		//Redis - 매매내역 추가 및 값 변경
 		currentGame.getTradeList().add(
 				new FundTradeListDto(
@@ -671,8 +706,8 @@ public class FundService {
 							todayChart.getEndPrice(), // 오늘의 종가
 							todayChart.getEndPrice() - yesterdayChart.getEndPrice(), // 등락정도
 							currentGame.getStockAmount()[stockIdx], // 보유수량
-							(long) currentGame.getStockAmount()[stockIdx] * (todayChart.getEndPrice()
-									- currentGame.getAveragePrice()[stockIdx]), // 평가손익
+							(long) (currentGame.getStockAmount()[stockIdx] * (0.9975 * todayChart.getEndPrice()
+									- currentGame.getAveragePrice()[stockIdx])), // 평가손익
 							currentGame.getAveragePrice()[stockIdx] == 0 ? 0 :
 									1.0 * ((todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]) * 100)
 											/ currentGame.getAveragePrice()[stockIdx]// 손익률
@@ -759,7 +794,22 @@ public class FundService {
 
 			// 레디스에서 삭제해주기
 			redisTemplate.delete("fundGame:" + dto.fundId() + ":" + dto.gameIdx());
-
+			// 펀드 종료
+			fund.updateFundStatus(FundStatus.CLOSED);
+			// 펀드 종료 알림
+			for (Member member : fund.getFundMemberList().stream().map(FundMember::getMember).toList()) {
+				log.info("펀드 종료 알림: {}", member.getNickname());
+				template.convertAndSend("/api/sub/" + member.getId(), "펀드가 종료되었습니다.");
+				Notice notice = Notice.builder()
+						.member(member)
+						.sender(fund.getManager().getNickname())
+						.isRead(false)
+						.alarmType(AlarmType.FUNDCLOSED)
+						.content(fund.getFundName() + "펀드가 종료되었습니다.")
+						.build();
+				noticeService.createNotification(notice);
+			}
+			fundAndMemberService.closeFund(managerId, fund.getId());
 			return new NextDayResponseDto(stockSummaries, currentGame.getCash(), resultProfit, resultRoi, currentGame.getTotalPurchaseAmount(),
 					totalAsset, assetList, fundGameResultDto);
 		}

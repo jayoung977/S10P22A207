@@ -1,14 +1,13 @@
 package com.backend.api.domain.single.service;
 
+import com.backend.api.domain.hadoop.service.HadoopService;
 import com.backend.api.domain.member.entity.Member;
 import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.single.dto.request.NextDayRequestDto;
 import com.backend.api.domain.single.dto.request.SingleTradeRequestDto;
 import com.backend.api.domain.single.dto.response.*;
-import com.backend.api.domain.single.entity.SingleGame;
-import com.backend.api.domain.single.entity.SingleGameLog;
-import com.backend.api.domain.single.entity.SingleGameStock;
-import com.backend.api.domain.single.entity.SingleTrade;
+import com.backend.api.domain.single.entity.*;
+import com.backend.api.domain.single.repository.RawMaterialRepository;
 import com.backend.api.domain.single.repository.SingleGameLogRepository;
 import com.backend.api.domain.single.repository.SingleGameStockRepository;
 import com.backend.api.domain.single.repository.SingleTradeRepository;
@@ -41,8 +40,10 @@ public class SingleGameService {
     private final SingleTradeRepository singleTradeRepository;
     private final StockChartRepository stockChartRepository;
     private final MemberRepository memberRepository;
+    private final RawMaterialRepository rawMaterialRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
+    private final HadoopService hadoopService;
 
     private HashMap<Long, Integer> stocks;
     private List<Long> list;
@@ -177,7 +178,22 @@ public class SingleGameService {
                     )
                 );
             }
-            return new SingleGameCreateResponseDto(maxNumber, currentGame.getDay(), me.getSingleGameChance(), stockChartDataList, totalAssetDto, assetList, currentGame.getTradeList(), stockSummaries);
+            List<StockChartDto> stockChartDtos = stockChartDataList.get(0).stockChartList();
+            LocalDate chartStartDate = LocalDate.from(stockChartDtos.get(0).date());
+            LocalDate chartEndDate = LocalDate.from(stockChartDtos.get(stockChartDtos.size()-1).date());
+            List<RawMaterial> rawMaterialList = rawMaterialRepository.findByDateBetween(chartStartDate,chartEndDate);
+            List<RawMaterialRes> rawMaterials = rawMaterialList.stream().map(
+                    rawMaterial -> new RawMaterialRes(
+                            rawMaterial.getDate(),
+                            rawMaterial.getWti(),
+                            rawMaterial.getCopper(),
+                            rawMaterial.getGold(),
+                            rawMaterial.getWheat(),
+                            rawMaterial.getSilver(),
+                            rawMaterial.getGas()
+                    )
+            ).toList();
+            return new SingleGameCreateResponseDto(maxNumber, currentGame.getDay(), me.getSingleGameChance(), stockChartDataList, totalAssetDto, assetList, currentGame.getTradeList(), stockSummaries, rawMaterials);
         }
 
         if (me.getSingleGameChance() <= 0) {
@@ -322,7 +338,22 @@ public class SingleGameService {
             );
         }
         TotalAssetDto totalAssetDto = new TotalAssetDto(me.getAsset(), 0, 0, 0, me.getAsset());
-        return new SingleGameCreateResponseDto(nextId, 1, me.getSingleGameChance(), stockChartDataList, totalAssetDto, null, null, stockSummaries);
+        List<StockChartDto> stockChartDtos = stockChartDataList.get(0).stockChartList();
+        LocalDate chartStartDate = LocalDate.from(stockChartDtos.get(0).date());
+        LocalDate chartEndDate = LocalDate.from(stockChartDtos.get(stockChartDtos.size()-1).date());
+        List<RawMaterial> rawMaterialList = rawMaterialRepository.findByDateBetween(chartStartDate,chartEndDate);
+        List<RawMaterialRes> rawMaterials = rawMaterialList.stream().map(
+                rawMaterial -> new RawMaterialRes(
+                        rawMaterial.getDate(),
+                        rawMaterial.getWti(),
+                        rawMaterial.getCopper(),
+                        rawMaterial.getGold(),
+                        rawMaterial.getWheat(),
+                        rawMaterial.getSilver(),
+                        rawMaterial.getGas()
+                )
+        ).toList();
+        return new SingleGameCreateResponseDto(nextId, 1, me.getSingleGameChance(), stockChartDataList, totalAssetDto, null, null, stockSummaries, rawMaterials);
     }
 
     public SingleTradeResponseDto sell(SingleTradeRequestDto dto, Long memberId) {
@@ -359,7 +390,6 @@ public class SingleGameService {
 
         // 팔았으니 currentGame 바꿔주기
         currentGame.getStockAmount()[stockIdx] -= dto.amount();
-
         currentGame.updateCash(currentGame.getCash() + (long) (dto.amount() * todayChart.getEndPrice() * 0.9975));
         currentGame.addProfit(stockIdx, (int) (dto.amount() * (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx])));
         currentGame.updateTotalAsset(totalAsset);
@@ -377,6 +407,10 @@ public class SingleGameService {
             .profit((long) (dto.amount() * (0.9975 * todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]))) // 이번 거래의 profit
             .build();
         singleTradeRepository.save(singleTrade);
+        try{
+            hadoopService.saveSingleTradeLogHdfs(singleTrade, memberId);
+        } catch (Exception e){
+        }
         currentGame.getTradeList().add(
             new SingleTradeListDto(
                 dto.stockId(),
@@ -397,14 +431,17 @@ public class SingleGameService {
                 currentGame.getAveragePrice()[stockIdx], //평균단가
                 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx] // 수익률
             );
-        redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.gameIdx(), currentGame);
 
         long totalProfit = 0;
         for (int i = 0; i < currentGame.getProfits().length; i++) {
             totalProfit += currentGame.getProfits()[i];
         }
-        double totalRoi = 100.0 * totalProfit / currentGame.getInitial();
-        TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalProfit, totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
+        double totalRoi = 100.0 * (totalAsset - currentGame.getInitial()) / currentGame.getInitial();
+        TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalAsset - currentGame.getInitial(), totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
+
+        // TotalAsset에 들어갔으면 뺴주기
+        currentGame.updateProfit(stockIdx, dto.amount());
+        redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.gameIdx(), currentGame);
 
         // 보유자산
         List<AssetListDto> assetList = new ArrayList<>();
@@ -495,6 +532,10 @@ public class SingleGameService {
             .profit((-1) *(long) (dto.amount() * todayChart.getEndPrice() * 0.0015))
             .build();
         singleTradeRepository.save(singleTrade);
+        try{
+            hadoopService.saveSingleTradeLogHdfs(singleTrade, memberId);
+        } catch (Exception e){
+        }
         currentGame.getTradeList().add(
             new SingleTradeListDto(
                 dto.stockId(),
@@ -563,13 +604,14 @@ public class SingleGameService {
         long totalAsset = currentGame.getCash();
         List<AssetListDto> assetList = new ArrayList<>();
 
-        for (Long firstDayStockChartId : currentGame.getFirstDayChartList()) {
+        for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
+            Long firstDayStockChartId = currentGame.getFirstDayChartList().get(i);
             StockChart todayChart = stockChartRepository.findById(firstDayStockChartId + 299 + dto.day()).orElseThrow();
             StockChart yesterdayChart = stockChartRepository.findById(firstDayStockChartId + 299 + dto.day() - 1).orElseThrow();
 
-            Long startDateChartStockId = todayChart.getStock().getId();
             // 종목별 정보 담아주기
-            Integer stockIdx = currentGame.getStocks().get(startDateChartStockId);
+            Long stockId = todayChart.getStock().getId();
+            Integer stockIdx = currentGame.getStocks().get(stockId);
             int amount = currentGame.getStockAmount()[stockIdx];
             // 총 자산 가치
             totalAsset += (long) (amount * todayChart.getEndPrice() * 0.9975);
@@ -580,14 +622,15 @@ public class SingleGameService {
                     todayChart.getEndPrice(), // 오늘의 종가
                     todayChart.getEndPrice() - yesterdayChart.getEndPrice(), // 등락정도
                     currentGame.getStockAmount()[stockIdx], // 보유수량
-                    (long) currentGame.getStockAmount()[stockIdx] * (todayChart.getEndPrice()
-                        - currentGame.getAveragePrice()[stockIdx]), // 평가손익
+                    (long) (currentGame.getStockAmount()[stockIdx] * (0.9975 * todayChart.getEndPrice()
+                        - currentGame.getAveragePrice()[stockIdx])), // 평가손익
                     currentGame.getAveragePrice()[stockIdx] == 0 ? 0 :
                         1.0 * ((todayChart.getEndPrice() - currentGame.getAveragePrice()[stockIdx]) * 100)
                             / currentGame.getAveragePrice()[stockIdx]// 손익률
                 )
             );
-            // 보유 재산의 각
+
+            // 각 날짜의 변동에 맞게 종목의 실현손익이 변한다.
             currentGame.addProfit(stockIdx, currentGame.getStockAmount()[stockIdx] * (todayChart.getEndPrice() - yesterdayChart.getEndPrice()));
             // 보유 자산변동 보여주기
             AssetListDto assetListDto = new AssetListDto(
@@ -606,8 +649,7 @@ public class SingleGameService {
                 SingleGameStock singleGameStock = singleGameStockRepository.findBySingleGameLog_IdAndStock_Id(currentGame.getSingleGameLogId(), todayChart.getStock().getId())
                     .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK));
 
-                Long stockId = todayChart.getStock().getId();
-                Integer index = currentGame.getStocks().get(stockId);
+                Integer index = currentGame.getStocks().get(todayChart.getStock().getId());
 
                 // 현재 저장된것 + 아직 매도 안한거
                 singleGameStock.updateAveragePurchasePrice(currentGame.getAveragePrice()[index]);
@@ -627,12 +669,13 @@ public class SingleGameService {
         long resultProfit = totalAsset - currentGame.getInitial();
         double resultRoi = 100.0 * (totalAsset - currentGame.getInitial()) / currentGame.getInitial();
 
+
         currentGame.updateTotalAsset(totalAsset);
         redisTemplate.opsForValue().set("singleGame:" + memberId + ":" + dto.gameIdx(), currentGame);
 
         if (dto.day() == 51) {
             // 결과 저장.
-            singleGameResultSave(memberId, 1.0 * resultProfit / currentGame.getInitial() * 100, totalAsset);
+            singleGameResultSave(memberId, 1.0 * resultProfit / currentGame.getInitial() * 100, totalAsset, dto.gameIdx());
 
             LocalDateTime startDate = null, endDate = null;
             List<StockInfoDto> stockInfoDtoList = new ArrayList<>();
@@ -679,7 +722,7 @@ public class SingleGameService {
             totalAsset, assetList,  null);
     }
 
-    private void singleGameResultSave(Long memberId, double avgRoi, long totalAsset) {
+    private void singleGameResultSave(Long memberId, double avgRoi, long totalAsset, long gameId) {
         Member me = memberRepository.findById(memberId)
             .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
 
@@ -692,7 +735,9 @@ public class SingleGameService {
         } else if (avgRoi < 0) {
             me.increaseLose();
         }
-        me.updateAsset(totalAsset);
+        SingleGame game = getGame(memberId, gameId);
+//        me.updateAsset(totalAsset);
+        me.addAsset(totalAsset - game.getInitial());
     }
 
     // 시작날짜, 끝 날짜 사이의 랜덤한 날을 가져온다.
@@ -831,7 +876,7 @@ public class SingleGameService {
         }
         List<StockChartDto> stockChartDtos = stockChartDataList.get(0).stockChartList();
         LocalDateTime startDate = stockChartDtos.get(0).date();
-        LocalDateTime endDate = stockChartDtos.get(stockChartDtos.size()-1).date();;
+        LocalDateTime endDate = stockChartDtos.get(stockChartDtos.size()-1).date();
 
         return new SingleGameLogResponseDto(
                 startDate,

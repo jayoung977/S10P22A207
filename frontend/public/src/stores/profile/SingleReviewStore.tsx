@@ -37,6 +37,7 @@ type stockChartDataListType = stockChartDataType[];
 // 실제 주식 이름 목록
 type stockInfoDtoType = {
     stockId :number,
+    stockCode :string,
     stockName :string,
 }
 type stockInfoDtoListType = stockInfoDtoType[];
@@ -56,27 +57,72 @@ type tradeType = {
 }
 type tradeListType = tradeType[];
 
+type minMaxDateType = {
+    date :string,
+    value :number,
+    stockCode :string,
+}
+
+type priceDateType = {
+    date :string,
+    price :number,
+}
+type priceDateListType = priceDateType[]
 type Store = {
-    selectedIndex :number | any;
-    setSelectedIndex :(value :number | any) => void;
+    selectedIndex :number,
+    setSelectedIndex :(value :number | any) => void,
 
-    rankMemberList :rankMemberListType | any;
-    setRankMemberList :(value :rankMemberListType | any) => void;
+    rankMemberList :rankMemberListType | any,
+    setRankMemberList :(value :rankMemberListType | any) => void,
 
-    stockChartDataList :any;
-    setStockChartDataList :(value :any) => void;
+    stockChartDataList :any,
+    setStockChartDataList :(value :any) => void,
     
-    stockInfoDtoList :stockInfoDtoListType | any;
-    setStockInfoDtoList :(value :stockInfoDtoListType | any) => void;
+    stockInfoDtoList :stockInfoDtoListType | any,
+    setStockInfoDtoList :(value :stockInfoDtoListType | any) => void,
 
-    tradeList :tradeListType | any;
-    setTradeList :(value :tradeListType | any) => void;
+    tradeList :tradeListType | any,
+    setTradeList :(value :tradeListType | any) => void,
+
+    // 시작 날짜
+    startDate :string,
+    setStartDate :(value :string) => void,
+    // 끝 날짜
+    endDate :string,
+    setEndDate :(value :string) => void,
+
+    // 등락 count
+    positiveCount :number,
+    setPositiveCount :(value :number) => void,
+
+    negativeCount :number,
+    setNegativeCount :(value :number) => void,
+
+    // 최대 최소 price count
+    maxPrice :number,
+    setMaxPrice :(value :number) => void,
+
+    minPrice :number,
+    setMinPrice :(value :number) => void,
+
+    // startDate ~ endDate
+    // minPriceDate :any,
+    // setMinPriceDate :(value :any) => void,
+
+    minPriceDateList :priceDateListType | any,
+    setMinPriceDateList :(value :priceDateListType) => void;
+
+    // maxPriceDate :any,
+    // setMaxPriceDate :(value :any) => void;
+    maxPriceDateList :priceDateListType | any,
+    setMaxPriceDateList :(value :priceDateListType) => void;
+
 };
 
 const SingleReviewStore = create<Store>((set: any) => ({
     selectedIndex: 0,
     setSelectedIndex: (value) => set({ selectedIndex : value }),
-    
+
     rankMemberList: [],
     setRankMemberList: (value) => set({ rankMemberList : value }),
 
@@ -88,6 +134,37 @@ const SingleReviewStore = create<Store>((set: any) => ({
 
     tradeList: [],
     setTradeList :(value) => set({ tradeList : value }),
+
+    startDate : "",
+    setStartDate :(value) => set({ startDate : value }),
+
+    endDate : "",
+    setEndDate :(value) => set({ endDate : value }),
+
+    positiveCount :0,
+    setPositiveCount :(value) => set({ positiveCount : value }),
+
+    negativeCount :0,
+    setNegativeCount :(value) => set({ negativeCount : value }),
+
+    maxPrice :0,
+    setMaxPrice :(value) => set({ maxPrice : value }),
+
+    minPrice :0,
+    setMinPrice :(value) => set({ minPrice : value }),
+
+    // minPriceDate :[],
+    // setMinPriceDate :(value) => set({ minPriceDate : value }),
+
+    minPriceDateList:  [],
+    setMinPriceDateList: (value) => set({ minPriceDateList : value }),
+
+    // maxPriceDate :[],
+    // setMaxPriceDate :(value) => set({ maxPriceDate : value }),
+
+    maxPriceDateList: [],
+    setMaxPriceDateList: (value) => set({ maxPriceDateList : value }),
+
 }));
 
 export default SingleReviewStore;

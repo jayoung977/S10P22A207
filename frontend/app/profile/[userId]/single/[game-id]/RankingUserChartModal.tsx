@@ -170,21 +170,27 @@ function Chart({ tradeList, data }: any) {
 
     let eventMarkerData: any = [];
     tradeList?.map((x: any) => {
-      if (x.tradeType == "BUY") {
-        eventMarkerData.push({
-          symbol: "B",
-          date: x.date,
-          description: `주가 : ${x.price}` + "\n" + `수량 : ${x.amount}`,
-          normal: { fill: "red" },
-        });
-      } else {
-        eventMarkerData.push({
-          symbol: "S",
-          date: x.date,
-          description: `주가 : ${x.price}` + "\n" + `수량 : ${x.amount}`,
-          normal: { fill: "blue" },
-        });
-      }
+        if (x.tradeType == "BUY") {
+            eventMarkerData.push({
+                symbol : 'B',
+                date : x.date,
+                description : `주가 : ${x.price}` + '\n' + `수량 : ${x.amount}`,
+                short_desc : `${x.date.split("T")[0]}(매수)`,
+                normal : { fill : 'red', stroke: "1 black" },
+                hovered : { fill : 'red', stroke : "2 black"},
+                selected : { fill : 'red', stroke : '2 black'}
+            })
+        } else {
+            eventMarkerData.push({
+                symbol : 'S',
+                date : x.date,
+                short_desc : `${x.date.split("T")[0]}(매도)`,
+                description : `주가 : ${x.price}` + '\n' + `수량 : ${x.amount}`,
+                normal : { fill : 'blue', stroke: "1 black" },
+                hovered : { fill : 'blue', stroke : "2 black"},
+                selected : { fill : 'blue', stroke : '2 black'}
+            })
+        }
     });
 
     if (eventMarkerData.length > 0) {
@@ -192,15 +198,17 @@ function Chart({ tradeList, data }: any) {
         groups: [
           {
             data: eventMarkerData,
+            position: "high",
           },
         ],
       });
+      plot1.eventMarkers().tooltip().titleFormat("{%short_desc}")
     }
 
     // set the symbol of event markers
-    plot1.eventMarkers().format(function (this: any) {
-      return this.getData("symbol");
-    });
+    // plot1.eventMarkers().format(function (this: any) {
+    //   return this.getData("symbol");
+    // });
 
     // 첫 번째 plot 속성 설정
     plot1.legend().title().useHtml(true);
@@ -240,26 +248,26 @@ function Chart({ tradeList, data }: any) {
         );
       }
     });
-
-        return () => {
-            chart.dispose();
-        };
-    }, [tradeList, data]); 
+    chart.draw();
+    return () => {
+        chart.dispose();
+    };
+}, [tradeList, data]); 
   
   return (
-    <div className="row-span-11 grid grid-rows-12">
-      <div
-        id="container"
-        className="row-span-12 flex items-center justify-center"
-      ></div>
+      <div className="row-span-11 grid grid-rows-12">
+        <div
+          id="container"
+          className="row-span-12 flex items-center justify-center"
+        >
+        </div>
     </div>
   );
 }
 
 export default function RankingUserChartModal({ isOpen, onClose, data }: any) {
-  console.log(data);
   if (!isOpen) return null;
-  const playClickSound = useClickSound();
+//   const playClickSound = useClickSound();
   return (
     <div
       className="grid grid-rows-12 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-3 mt-9 rounded-lg z-20 border border-black"
@@ -271,9 +279,9 @@ export default function RankingUserChartModal({ isOpen, onClose, data }: any) {
         </div>
         <div
           className="col-start-12 col-end-13 flex items-center text-center justify-center"
-          onClick={() => {
-            playClickSound();
-          }}
+        //   onClick={() => {
+        //     playClickSound();
+        //   }}
         >
           <FontAwesomeIcon
             icon={faCircleXmark}

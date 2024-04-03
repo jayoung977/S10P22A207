@@ -3,9 +3,11 @@ package com.backend.api.domain.hadoop.service;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.backend.api.domain.fund.entity.FundTrade;
 import com.backend.api.domain.hadoop.dto.ApiTradeLogDto;
 import com.backend.api.domain.hadoop.dto.ChangeRateCountDto;
 import com.backend.api.domain.hadoop.dto.ChangeRateResponseDto;
@@ -19,7 +21,11 @@ import com.backend.api.domain.hadoop.dto.StockRes;
 import com.backend.api.domain.hadoop.dto.StockResponseDto;
 import com.backend.api.domain.hadoop.dto.TradeLogDto;
 import com.backend.api.domain.hadoop.dto.TradeLogResponseDto;
+import com.backend.api.domain.member.entity.Member;
+import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.single.entity.SingleTrade;
+import com.backend.api.global.common.code.ErrorCode;
+import com.backend.api.global.exception.BaseExceptionHandler;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +37,7 @@ import lombok.extern.log4j.Log4j2;
 public class HadoopService {
 
 	private final WebClient webClient;
+	private final MemberRepository memberRepository;
 
 	public List<StockRes> getStockData(int page, int pageSize, String stockCode){
 		// WebClient webClient = WebClient.create();
@@ -74,7 +81,6 @@ public class HadoopService {
 	}
 
 	public List<MaxMinPriceDto> getMaxMinPrice(String startDate, String endDate, String stockCode){
-
 		log.info("webClient 생성 완료");
 		String uri = "/hadoop/stock/max-min";
 		//WebClient  요청
@@ -94,7 +100,7 @@ public class HadoopService {
 		return response.getResult();
 	}
 
-	public List<MaxDataDto> getMaxDate(String stockCode, int maxPrice){
+	public List<MaxDataDto> getMaxDate(String startDate, String endDate, String stockCode, int maxPrice){
 		log.info("webClient 생성 완료");
 		String uri = "/hadoop/stock/max-date";
 
@@ -102,6 +108,8 @@ public class HadoopService {
 		MaxDataResponseDto response = webClient.get()
 			.uri(uriBuilder -> uriBuilder
 				.path(uri)
+				.queryParam("startDate", startDate)
+				.queryParam("endDate", endDate)
 				.queryParam("stockCode", stockCode)
 				.queryParam("maxPrice", maxPrice)
 				.build())
@@ -114,13 +122,15 @@ public class HadoopService {
 		return response.getResult();
 	}
 
-	public List<MinDataDto> getMinDate(String stockCode, int minPrice){
+	public List<MinDataDto> getMinDate(String startDate, String endDate, String stockCode, int minPrice){
 		log.info("webClient 생성 완료");
 		String uri = "/hadoop/stock/min-date";
 		//WebClient  요청
 		MinDataResponseDto response = webClient.get()
 			.uri(uriBuilder -> uriBuilder
 				.path(uri)
+				.queryParam("startDate", startDate)
+				.queryParam("endDate", endDate)
 				.queryParam("stockCode", stockCode)
 				.queryParam("minPrice", minPrice)
 				.build())
@@ -183,10 +193,11 @@ public class HadoopService {
 		return response.getResult();
 	}
 
-	public void saveSingleTradeLogHdfs(SingleTrade trade, CustomUserDetails userDetails) {
+	@Async
+	public void saveSingleTradeLogHdfs(SingleTrade trade, Long loginUserId) {
 
 		//거래 내역 생성
-		TradeLogDto tradeLogDto = convertToTradeLogDto(trade, userDetails);
+		TradeLogDto tradeLogDto = convertSingleToTradeLogDto(trade, loginUserId);
 		// ApiTradeLogDto 생성
 		ApiTradeLogDto apiTradeDto = ApiTradeLogDto.builder()
 			.tradeLogList(List.of(tradeLogDto))
@@ -205,8 +216,33 @@ public class HadoopService {
 		log.info("service result mono: {}", result);
 	}
 
-	private TradeLogDto convertToTradeLogDto(SingleTrade trade, CustomUserDetails userDetails) {
-		log.info("convertToTradeLogDto : userDetails : {} {}", userDetails.getId(), userDetails.getNickname());
+	public void saveFundTradeLogHdfs(FundTrade trade, Long loginUserId) {
+		//거래 내역 생성
+		TradeLogDto tradeLogDto = convertFundToTradeLogDto(trade, loginUserId);
+		// ApiTradeLogDto 생성
+		ApiTradeLogDto apiTradeDto = ApiTradeLogDto.builder()
+			.tradeLogList(List.of(tradeLogDto))
+			.build();
+
+		// WebClient webClient = WebClient.create();
+		log.info("webClient 생성 완료");
+		//WebClient  요청
+		String uri = "/hadoop/trade/save";
+		String result = webClient.post()
+			.uri(uri)
+			.bodyValue(apiTradeDto)
+			.retrieve()
+			.bodyToMono(String.class)
+			.block();
+		log.info("service result mono: {}", result);
+	}
+
+
+	private TradeLogDto convertSingleToTradeLogDto(SingleTrade trade, Long loginUserId) {
+		Member member = memberRepository.findById(loginUserId).orElseThrow(
+			() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_ERROR)
+		);
+		log.info("convertToTradeLogDto : userDetails : {} {}", member.getId(), member.getNickname());
 		return TradeLogDto.builder()
 			.stockCode(trade.getSingleGameStock().getStock().getStockCode())
 			.stockName(trade.getSingleGameStock().getStock().getStockName())
@@ -217,8 +253,28 @@ public class HadoopService {
 			.stockQuantity(trade.getStockQuantity())
 			.roi(trade.getRoi())
 			.profit(trade.getProfit())
-			.memberId(userDetails.getId())
-			.memberName(userDetails.getNickname())
+			.memberId(member.getId())
+			.memberName(member.getNickname())
+			.build();
+	}
+
+	private TradeLogDto convertFundToTradeLogDto(FundTrade trade, Long loginUserId) {
+		Member member = memberRepository.findById(loginUserId).orElseThrow(
+			() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_ERROR)
+		);
+		log.info("convertToTradeLogDto : userDetails : {} {}", member.getId(), member.getNickname());
+		return TradeLogDto.builder()
+			.stockCode(trade.getStock().getStockCode())
+			.stockName(trade.getStock().getStockName())
+			.price(trade.getTradePrice())
+			.date(trade.getTradeDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+			.tradeType(trade.getTradeType().toString())
+			.amount(trade.getTradeAmount())
+			.stockQuantity(trade.getStockQuantity())
+			.roi(trade.getRoi())
+			.profit(trade.getProfit())
+			.memberId(member.getId())
+			.memberName(member.getNickname())
 			.build();
 	}
 }

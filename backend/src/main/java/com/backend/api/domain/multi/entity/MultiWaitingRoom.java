@@ -17,20 +17,22 @@ public class MultiWaitingRoom {
 	private String roomTitle;
 	private Integer password;
 	private Boolean isOpen;
-	private Integer round;
+	private Integer maxRound;
 	private Map<Long, Boolean> readyState;
 	@Setter
 	private Long hostId;
+	@Setter
+	Boolean isPlaying;
 
 	@Builder
-
-	public MultiWaitingRoom(Set<Long> participantIds, String roomTitle, Integer password, Boolean isOpen, Integer round, Map<Long, Boolean> readyState, Long hostId) {
+	public MultiWaitingRoom(Set<Long> participantIds, String roomTitle, Integer password, Boolean isOpen, Integer maxRound, Map<Long, Boolean> readyState, Long hostId, Boolean isPlaying) {
 		this.participantIds = participantIds;
 		this.roomTitle = roomTitle;
 		this.password = password;
 		this.isOpen = isOpen;
-		this.round = round;
+		this.maxRound = maxRound;
 		this.readyState = readyState;
 		this.hostId = hostId;
+		this.isPlaying = isPlaying;
 	}
 }

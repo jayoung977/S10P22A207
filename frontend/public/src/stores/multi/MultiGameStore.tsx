@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import axios from "axios";
 
 type Store = {
   toggleTab: string;
@@ -15,6 +16,28 @@ type Store = {
   setUserId: (value: number) => void;
   pageNumber: number;
   setPageNumber: (value: number) => void;
+  isWaiting: boolean;
+  setIsWaiting: (value: boolean) => void;
+
+  stockId :number,
+  setStockId :(value :number) => void;
+  stockChartList :stockChartInterface[] | any;
+  setStockChartList :(value :stockChartInterface[]) => void;
+  roundNumber :number;
+  setRoundNumber :(value :number) => void;
+  maxRoundNumber :number;
+  setMaxRoundNumber :(value :number) => void;
+  day :number;
+  setDay :(value :number) => void;
+  getMultigameRoomInfo: (value: number) => void;
+  tradeStocksAmount: number;
+  setTradeStocksAmount:(value: number) => void;
+  isAvailableTradeStocks: number;
+  setIsAvailableTradeStocks:(value: number) => void;
+  fee: number;
+  setFee:(value: number) => void;
+  tradeType: string;
+  setTradeType: (value: string) => void;
 };
 
 export interface MultiGameRoomInfoList {
@@ -29,10 +52,33 @@ export interface MultiGameRoomInfoList {
 export interface ResultType {
   multiWaitRoomInfoList: MultiGameRoomInfoList[];
   multiGameRoomInfoList: MultiGameRoomInfoList[];
-  totalMultiRoomCounts: number;
+  totalGameRoomCounts: number;
+  totalWaitRoomCounts: number;
 }
 export interface MultiRoomInfo {
   result: ResultType;
+}
+
+// 종목의 각 날짜별 금액 데이터(OHLC, Volume)
+export interface stockChartInterface {
+  date :string;
+  markerPrice :number;
+  highPrice :number;
+  lowPrice :number;
+  endPrice :number;
+  tradingVolume :number;
+}
+
+// stockId값을 종목 id로 가지는 종목의 350일 간의 차트 데이터
+export interface stockChartDataInterface {
+  stockId :number,
+  stockChartList :stockChartInterface[];
+}
+
+// 게임 페이지 렌더링 시 api 요청으로 받는 response.data.result
+export interface stockInfoDataInterface {
+  gameId :number;
+  stockChartData :stockChartDataInterface;
 }
 
 const multigameStore = create<Store>((set: any) => ({
@@ -50,6 +96,43 @@ const multigameStore = create<Store>((set: any) => ({
   setUserId: (value) => set({ userId: value }),
   pageNumber: 1,
   setPageNumber: (value) => set({ pageNumber: value }),
+  isWaiting: true,
+  setIsWaiting: (value) => set({ isWaiting: value }),
+  // multi game state value
+  stockId :0,
+  setStockId: (value) => set({ stockId: value }),
+  stockChartList: [],
+  setStockChartList: (value) => set({ stockChartList: value }),
+  roundNumber: 0,
+  setRoundNumber :(value) => set({ roundNumber: value }),
+  maxRoundNumber :0,
+  setMaxRoundNumber: (value) => set({ maxRoundNumber: value }),
+  day: 1,
+  setDay: (value) => set({ day: value }),
+  
+  getMultigameRoomInfo: (value: number) => {
+    axios({
+      method: 'post',
+      url: `https://j10a207.p.ssafy.io/api/multi/room-info?roomId=${value}`,
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
+      }
+    })
+    .then((res)=> {
+      console.log(res.data)
+    })
+    .catch((e)=> {
+      console.error(e)
+    })
+  },
+  tradeStocksAmount: 0,
+  setTradeStocksAmount: (value) => set({ tradeStocksAmount: value}),
+  isAvailableTradeStocks: 0,
+  setIsAvailableTradeStocks: (value) => set({ isAvailableTradeStocks: value }),
+  fee: 1,
+  setFee: (value) => set({ fee: value }),
+  tradeType: "",
+  setTradeType: (value) => set({ tradeType: value})
 }));
 
 export default multigameStore;

@@ -8,6 +8,7 @@ import java.util.List;
 public record StockChartDataDto(
     @Schema(description = "종목 Id")
     Long stockId,
+
     @Schema(description = "종목별 차트(350개)")
     List<StockChartDto> stockChartList
 ) {

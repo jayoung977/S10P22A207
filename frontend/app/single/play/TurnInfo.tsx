@@ -50,6 +50,7 @@ export default function TurnInfo () {
             console.log("다음턴 : ", response.data.result);
             if (turn == 50) {
                 const stockInfoDtoList = response.data.result.stockInfoDtoList;
+                console.log("끝남!", stockInfoDtoList)
                 setSingleGameEndInfoData({
                     initialAsset :stockInfoDtoList.initialAsset,
                     finalAsset :stockInfoDtoList.finalAsset,
@@ -94,18 +95,23 @@ export default function TurnInfo () {
         } else if (e.key === "w") {
             setStocks(0);
             handleSelectSell();
-        } else if (e.key == "r" && !isBuySellModalOpen) {
-            
+        } 
+    }
+    const handleNextTurn = (e :KeyboardEvent) => {
+        if (e.key == 'r' && !isBuySellModalOpen) {
             handleClickTurn();
-            console.log('r누름')
+            console.log('누름')
         }
     }
     
     useEffect (() => {
         window.addEventListener('keydown', handleBuySellTurn);
+        window.addEventListener('keyup', handleNextTurn);
         
         return () => {
             window.removeEventListener("keydown", handleBuySellTurn);
+            window.removeEventListener('keyup', handleNextTurn);
+
         }
     }, [turn, isBuySellModalOpen])
 
