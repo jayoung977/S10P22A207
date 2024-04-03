@@ -481,7 +481,12 @@ public class FundService {
 				.build();
 		fundTradeRepository.save(fundTrade);
 		/* 하둡저장 */
-		hadoopService.saveFundTradeLogHdfs(fundTrade, managerId);
+		try{
+			hadoopService.saveFundTradeLogHdfs(fundTrade, managerId);
+		} catch (Exception e){
+
+		}
+
 		//Redis - 매매내역 추가 및 값 변경
 		currentGame.getTradeList().add(
 				new FundTradeListDto(
@@ -610,7 +615,11 @@ public class FundService {
 				.profit((-1) *(long) (dto.amount() * todayChart.getEndPrice() * 0.0015))
 				.build();
 		fundTradeRepository.save(fundTrade);
-		hadoopService.saveFundTradeLogHdfs(fundTrade, managerId);
+		try{
+			hadoopService.saveFundTradeLogHdfs(fundTrade, managerId);
+		} catch (Exception e){
+
+		}
 		//Redis - 매매내역 추가 및 값 변경
 		currentGame.getTradeList().add(
 				new FundTradeListDto(
