@@ -67,13 +67,13 @@ export default function FriendSearch() {
   }
   // console.log(result);
   return (
-    <div className="row-span-3 border-e grid grid-rows-8">
+    <div className="row-span-4 border-e grid grid-rows-12">
       <div className="row-span-1 flex justify-center bg-small-6 text-xl text-textColor-2 border-b gap-2 items-center">
         <div>친구초대</div>
       </div>
       <div
-        className="overflow-auto row-span-7"
-        style={{ height: "calc(35vh)" }}
+        className="overflow-auto row-span-11"
+        style={{ height: "calc(40vh)" }}
       >
         {result.map((friend: Friend, i: number) => {
           return (
