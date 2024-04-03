@@ -133,12 +133,6 @@ export default function Header() {
           setIsGameover(false);
         }}
       />
-      <RoundResult
-        isOpen={isOpen}
-        onClose={() => {
-          setIsOpen(false);
-        }}
-      />
       <div className="col-start-2 col-end-3 flex items-center">
         <div className="flex gap-2 items-center">
           <Image src={logo} alt="Logo" className="h-8" width={32} height={32} />
@@ -152,7 +146,7 @@ export default function Header() {
       </div>
       <div className="col-span-1 flex justify-center font-bold">
         <button
-          disabled={day === 51}
+          disabled={isDisabled}
           // day이 50이면 disabled 속성이 true가 됩니다.
           onClick={() => {
             handleTomorrow(day);

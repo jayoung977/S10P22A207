@@ -86,15 +86,16 @@ export default function page() {
             <GameStatus />
             <TradeHistory />
           </aside>
-          <main className="col-span-8 grid grid-rows-16">
-            <div className="row-span-12"></div>
+          <main className="col-span-8 grid grid-rows-12">
             <RoundChart data={stockChartList?.slice(0, 300+day)}/>
-            <div className="border grid grid-cols-12 row-span-4">
+            <div className="row-span-3 border">
               <Chat />
-              <TradeButtons />
             </div>
           </main>
-          <GameMembers />
+          <div className="col-span-2 grid grid-rows-12">
+            <TradeButtons />
+            <GameMembers />
+          </div>
         </div>
       </div>
     </div>
