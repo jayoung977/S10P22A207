@@ -580,3 +580,4 @@ export default function Chart({ data }: any) {
 
   );
 }
+
