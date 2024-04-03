@@ -16,6 +16,7 @@ export default function FinalResult() {
   const playClickSound = useClickSound();
   const params = useParams();
   const { isGameOver, setIsGameOver } = socketStore();
+  const { players } = socketStore();
   return (
     <div className="fixed -translate-x-1/2 translate-y-1/5 z-50 h-4/5 w-2/3 inset-0 left-1/2 border-2 bg-big-1 rounded-lg grid grid-rows-8">
       <div className="row-span-1 text-4xl rounded-t-lg text-white text-center p-4 bg-small-3">
@@ -59,13 +60,14 @@ export default function FinalResult() {
             <div
               className="px-4 overflow-auto"
               style={{ height: "calc(52vh)" }}
-            >
-              <FinalUser />
-              <FinalUser />
-              <FinalUser />
-              <FinalUser />
-              <FinalUser />
-              <FinalUser />
+            >{
+              players.map((player, i ) => {
+                return ( 
+                  
+                  <FinalUser player={player}/>
+                )
+              })
+            }
             </div>
           </div>
         </div>
