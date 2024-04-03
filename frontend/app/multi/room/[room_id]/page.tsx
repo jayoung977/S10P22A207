@@ -1,7 +1,6 @@
 "use client";
 import ChartImage from "./chartImage";
 import Chat from "./chat";
-import RoomInfo from "./roomInfo";
 import FriendSearch from "./friendSearch";
 import GameRule from "./gameRule";
 import Header from "./header";
@@ -17,7 +16,6 @@ export default function page() {
         <Header />
         <div className="row-start-2 row-end-13 grid grid-cols-12 border">
           <aside className="col-span-3 grid grid-rows-6 text-center">
-            <RoomInfo />
             <FriendSearch />
             <GameRule />
           </aside>
