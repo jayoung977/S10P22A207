@@ -63,11 +63,7 @@ export default function Header() {
       }
     })
       .then((res) => {
-<<<<<<< HEAD
         console.log("다음턴! : ", res.data);
-=======
-        console.log(res.data);
->>>>>>> 02c09d70d57b86a2e60ef8375975da73b8fe0a90
       })
       .catch((error) => {
         console.error(error);
