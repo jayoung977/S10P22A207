@@ -26,6 +26,7 @@ export default function page() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="grid grid-rows-12 h-screen border-separate">
+        <PeacefulBgm></PeacefulBgm>
         <Header />
         <div className="row-start-2 row-end-13 grid grid-cols-12 border">
         <PeacefulBgm></PeacefulBgm>
