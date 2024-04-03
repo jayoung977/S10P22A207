@@ -39,104 +39,105 @@ function calculateMovingAverage(data :any, period :any) {
 }
 
 // rsi 데이터 생성 함수
-// function calculateRSI(data :any, period :number) {
-//     const result = [];
-//     for (let i = 0; i < data.length; i++) {
-//         if (i >= period) {
-//         let avgGain = 0;
-//         let avgLoss = 0;
-//         for (let j = i - period; j < i; j++) {
-//             let change;
-//             if (j > 0) {
-//                 change = data[j]?.endPrice - data[j - 1]?.endPrice;
-//                 if (change > 0) {
-//                     avgGain += change;
-//                 } else {
-//                     avgLoss -= change;
-//                 }
-//             }
-//         }
+function calculateRSI(data :any, period :number) {
+    const result = [];
+    for (let i = 0; i < data.length; i++) {
+        if (i >= period) {
+        let avgGain = 0;
+        let avgLoss = 0;
+        for (let j = i - period; j < i; j++) {
+            let change;
+            if (j > 0) {
+                change = data[j]?.endPrice - data[j - 1]?.endPrice;
+                if (change > 0) {
+                    avgGain += change;
+                } else {
+                    avgLoss -= change;
+                }
+            }
+        }
 
-//         avgGain /= period;
-//         avgLoss /= period;
-//         let rs;
-//         if (avgLoss === 0) {
-//             rs = 1; // avgLoss가 0인 경우에 대비하여 rs를 1로 설정
-//         } else {
-//             rs = avgGain / avgLoss;
-//         }
-//         let rsi = parseFloat((100 - (100 / (1 + rs))).toFixed(2));
-//         result.push([data[i]?.date, rsi]);
-//         } 
-//     }
+        avgGain /= period;
+        avgLoss /= period;
+        let rs;
+        if (avgLoss === 0) {
+            rs = 1; // avgLoss가 0인 경우에 대비하여 rs를 1로 설정
+        } else {
+            rs = avgGain / avgLoss;
+        }
+        let rsi = parseFloat((100 - (100 / (1 + rs))).toFixed(2));
+        result.push([data[i]?.date, rsi]);
+        } 
+    }
 
-//     return result;
-// }
-
-
-// function calculateEMA(data :any, period :number) {
-//     const emaValues = [];
-//     let sum = 0;
-//     // 초기 EMA 값은 첫 번째 날짜의 종가로 설정
-//     let initialEMA = data[0]?.endPrice;
-//     emaValues.push([data[0]?.date, parseFloat(initialEMA.toFixed(2))]);
-
-//     // 첫 번째 EMA를 제외한 나머지 EMA 값을 계산
-//     for (let i = 1; i < period; i++) {
-//         let k = 2 / (i + 1);
-//         let ema :any = data[i]?.endPrice * k + emaValues[i-1][1] * (1 - k);
-//         emaValues.push([data[i]?.date, parseFloat(ema.toFixed(2))]);
-//         sum += data[i]?.endPrice;
-//     }
-
-//     // 나머지 날짜에 대한 EMA 값을 계산
-//     for (let i = period; i < data.length; i++) {
-//         let k = 2 / (period + 1);
-//         let ema :any = (data[i]?.endPrice - emaValues[i-1][1]) * k + emaValues[i-1][1];
-//         emaValues.push([data[i]?.date, parseFloat(ema.toFixed(2))]);
-//     }
-
-//     return emaValues;
-// }
-
-// function calculateMACD(data :any, shortPeriod :number, longPeriod :number) {
-//     const shortEMA = calculateEMA(data, shortPeriod);
-//     const longEMA = calculateEMA(data, longPeriod);
-//     const result = []
-//     for (let i = 0; i < data.length; i++) {
-//         result.push([data[i]?.date, shortEMA[i][1] - longEMA[i][1]])
-//     }
-
-//     return result;
-// }
+    return result;
+}
 
 
-// function calculateSignal(macdData :any, signalPeriod :number) {
-//     const result = [];
-//     for (let i = 0; i < signalPeriod - 1; i++) {
-//         result.push([macdData[i][0], NaN]);
-//     }
+function calculateEMA(data :any, period :number) {
+    const emaValues = [];
+    let sum = 0;
+    // 초기 EMA 값은 첫 번째 날짜의 종가로 설정
+    let initialEMA = data[0]?.endPrice;
+    emaValues.push([data[0]?.date, parseFloat(initialEMA)]);
 
-//     for (let i = signalPeriod - 1; i < macdData.length; i++) {
-//         const slice = macdData.slice(i - signalPeriod + 1, i + 1);
-//         let sum = 0;
-//         for (let j = 0; j < slice.length; j++) {
-//             sum += slice[j][1]; 
-//         }
-//         const signalEMA = sum / signalPeriod; 
-//         result.push([macdData[i][0], parseFloat(signalEMA.toFixed(2))]); 
-//     }
-//     return result;
-// }
+    // 첫 번째 EMA를 제외한 나머지 EMA 값을 계산
+    for (let i = 1; i < period; i++) {
+        let k = 2 / (i + 1);
+        let ema :any = data[i]?.endPrice * k + emaValues[i-1][1] * (1 - k);
+        emaValues.push([data[i]?.date, parseFloat(ema)]);
+        sum += data[i]?.endPrice;
+    }
 
-// function calculateHist(macdData :any, signalData :any) {
-//     const result = [];
-//     for (let i = 0; i < macdData.length; i++) {
-//         result.push([macdData[i][0], macdData[i][1] - signalData[i][1]]);
-//     }
+    // 나머지 날짜에 대한 EMA 값을 계산
+    for (let i = period; i < data.length; i++) {
+        let k = 2 / (period + 1);
+        let ema :any = (data[i]?.endPrice - emaValues[i-1][1]) * k + emaValues[i-1][1];
+        emaValues.push([data[i]?.date, parseFloat(ema)]);
+    }
+
+    return emaValues;
+}
+
+function calculateMACD(data :any, shortPeriod :number, longPeriod :number) {
+    const shortEMA = calculateEMA(data, shortPeriod);
+    const longEMA = calculateEMA(data, longPeriod);
+    const result = []
+    for (let i = 0; i < data.length; i++) {
+        result.push([data[i]?.date, shortEMA[i][1] - longEMA[i][1]])
+    }
+
+    return result;
+}
+
+
+function calculateSignal(macdData :any, signalPeriod :number) {
+    const result = [];
+    for (let i = 0; i < signalPeriod - 1; i++) {
+        result.push([macdData[i][0], NaN]);
+    }
+
+    for (let i = signalPeriod - 1; i < macdData.length; i++) {
+        const slice = macdData.slice(i - signalPeriod + 1, i + 1);
+        let sum = 0;
+        for (let j = 0; j < slice.length; j++) {
+            sum += slice[j][1]; 
+        }
+        const signalEMA = sum / signalPeriod; 
+        result.push([macdData[i][0], parseFloat(signalEMA.toFixed(2))]); 
+    }
+    return result;
+}
+
+function calculateHist(macdData :any, signalData :any) {
+    const result = [];
+    console.log(macdData)
+    for (let i = 0; i < macdData.length; i++) {
+        result.push([macdData[i][0], macdData[i][1] - signalData[i][1]]);
+    }
     
-//     return result;
-// }
+    return result;
+}
 
 
 export default function RoundChart({ data }: any) {
@@ -374,24 +375,24 @@ export default function RoundChart({ data }: any) {
         plot3.legend().useHtml(true);
         plot3.legend().title().useHtml(true);
         plot3.legend().titleFormat(<span></span>);
+        console.log(calculateRSI(purifiedData, 14))
+        const rsiSeries = plot3.line(calculateRSI(purifiedData, 14));
+        rsiSeries.name("RSI");
+        rsiSeries.hovered().markers().enabled(true).type("circle").size(2);
+        rsiSeries.stroke("blue", 1);
 
-        // const rsiSeries = plot3.line(calculateRSI(purifiedData, 14));
-        // rsiSeries.name("RSI");
-        // rsiSeries.hovered().markers().enabled(true).type("circle").size(2);
-        // rsiSeries.stroke("blue", 1);
-
-        // rsiSeries.tooltip().useHtml(true);
-        // rsiSeries.tooltip().format(function (this :any) {
-        //     if (this.value) {
-        //         return (
-        //             "RSI : " + this.value
-        //         ) 
-        //     } else {
-        //         return (
-        //             "RSI : " + 0
-        //         )
-        //     }
-        // }) 
+        rsiSeries.tooltip().useHtml(true);
+        rsiSeries.tooltip().format(function (this :any) {
+            if (this.value) {
+                return (
+                    "RSI : " + this.value
+                ) 
+            } else {
+                return (
+                    "RSI : " + 0
+                )
+            }
+        }) 
 
         // RSI 상한선, 하한선
         const rsi70LineMarker = plot3.lineMarker(0);
@@ -416,16 +417,16 @@ export default function RoundChart({ data }: any) {
         plot4.legend().title().useHtml(true);
         plot4.legend().titleFormat(<span></span>);
 
-        // const macdData = calculateMACD(purifiedData, 12, 26);
-        // const signalData = calculateSignal(macdData, 9);
-        // const histData = calculateHist(macdData, signalData);
-        // const macdSeries = plot4.line(macdData);
-        // const signalSeries = plot4.line(signalData);
-        // const histSeries = plot4.column(histData);
+        const macdData = calculateMACD(purifiedData, 12, 26);
+        const signalData = calculateSignal(macdData, 9);
+        const histData = calculateHist(macdData, signalData);
+        const macdSeries = plot4.line(macdData);
+        const signalSeries = plot4.line(signalData);
+        const histSeries = plot4.column(histData);
         
-        // macdSeries.name("MACD");
-        // signalSeries.name("Signal")
-        // histSeries.name("Hist")
+        macdSeries.name("MACD");
+        signalSeries.name("Signal")
+        histSeries.name("Hist")
 
         plot1.height("70%");
         plot2.enabled(true);

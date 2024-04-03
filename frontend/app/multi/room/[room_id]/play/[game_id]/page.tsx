@@ -26,6 +26,9 @@ export default function page() {
   const [data, setData] = useState<dataType[]>([]);
   const { day, roundNumber, maxRoundNumber, roomId, gameId, multiGameStockIds } = socketStore();
   const { stockId, setStockId, stockChartList, setStockChartList } = multigameStore();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
 
   const fetchMultigameData = async () => {
     try {
@@ -51,18 +54,28 @@ export default function page() {
           Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
         }
       })
-      console.log("stockId : ", response.data.result.stockId);
-      console.log("stockChartList : ", response.data.result.stockChartList);
+      console.log("zz")
+      // console.log("stockId : ", response.data.result.stockId);
+      // console.log("stockChartList : ", response.data.result.stockChartList);
       setStockId(response.data.result.stockId);
       setStockChartList(response.data.result.stockChartList);
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
+      setIsError(true);
     }
   }
   
   useEffect(() => {
     fetchMultigameData();
   }, [])
+  
+  if (isLoading) {
+    return <div className="rainbow"></div>
+  }
+  if (isError) {
+    return <div>Error</div>
+  }
   return (
     <div>
       {/* <RoundResult/> */}
