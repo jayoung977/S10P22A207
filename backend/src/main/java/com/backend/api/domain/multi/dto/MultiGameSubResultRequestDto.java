@@ -8,7 +8,13 @@ public record MultiGameSubResultRequestDto(
     Long gameId,
 
     @Schema(description = "라운드")
-    Integer roundNumber
+    Integer roundNumber,
+
+    @Schema(description = "방 Id")
+    Long roomId,
+
+    @Schema(description = "멀티게임 로그 ID")
+    long multiGameLogId
 ) {
 
 }
