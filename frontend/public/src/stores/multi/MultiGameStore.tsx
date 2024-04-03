@@ -29,9 +29,15 @@ type Store = {
   setMaxRoundNumber :(value :number) => void;
   day :number;
   setDay :(value :number) => void;
-  
   getMultigameRoomInfo: (value: number) => void;
-  
+  tradeStocksAmount: number;
+  setTradeStocksAmount:(value: number) => void;
+  isAvailableTradeStocks: number;
+  setIsAvailableTradeStocks:(value: number) => void;
+  fee: number;
+  setFee:(value: number) => void;
+  tradeType: string;
+  setTradeType: (value: string) => void;
 };
 
 export interface MultiGameRoomInfoList {
@@ -118,7 +124,15 @@ const multigameStore = create<Store>((set: any) => ({
     .catch((e)=> {
       console.error(e)
     })
-  }
+  },
+  tradeStocksAmount: 0,
+  setTradeStocksAmount: (value) => set({ tradeStocksAmount: value}),
+  isAvailableTradeStocks: 0,
+  setIsAvailableTradeStocks: (value) => set({ isAvailableTradeStocks: value }),
+  fee: 1,
+  setFee: (value) => set({ fee: value }),
+  tradeType: "",
+  setTradeType: (value) => set({ tradeType: value})
 }));
 
 export default multigameStore;
