@@ -7,7 +7,7 @@ import socketStore from '@/public/src/stores/websocket/socketStore'
 import { ParticipantsType } from '@/public/src/stores/websocket/socketStore'
 import userStore from '@/public/src/stores/user/userStore'
 import axios from 'axios'
-import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
+import useGetProfileImage from '@/public/src/hooks/useGetProfileImage'
 
 
 export default function GameMembers(){

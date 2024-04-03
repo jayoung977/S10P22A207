@@ -24,6 +24,7 @@ export const useWebSocket = () => {
     setRoundNumber,
     setGameId,
     setMultiGameStockIds,
+    setDay,
   } = socketStore();
 
   const { receiveAlarm, setReceiveAlarm, roomInfo, setRoomInfo } =
@@ -132,6 +133,7 @@ export const useWebSocket = () => {
             setGameId(parsedMessage.result.gameId);
             setMultiGameStockIds(parsedMessage.result.multiGameStockIds);
             setRoomId(parsedMessage.result.roomId);
+            setDay(1);
             router.push(
               `${parsedMessage.result.roomId}/play/${parsedMessage.result.gameId}`
             );
@@ -160,12 +162,12 @@ export const useWebSocket = () => {
     e.returnValue = ""; // for chrome. deprectaed.
   };
 
-  // useEffect(() => {
-  //   window.addEventListener("beforeunload", preventClose);
-  //   return () => {
-  //     window.removeEventListener("beforeunload", preventClose);
-  //   };
-  // }, []);
+  useEffect(() => {
+    window.addEventListener("beforeunload", preventClose);
+    return () => {
+      window.removeEventListener("beforeunload", preventClose);
+    };
+  }, []);
   // 새로고침 방지 로직
 
   const preventGoBack = () => {
