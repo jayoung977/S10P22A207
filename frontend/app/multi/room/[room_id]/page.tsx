@@ -1,5 +1,5 @@
 "use client";
-import ChartImage from "./chartImage";
+import { ChartImage } from "./chartImage";
 import Chat from "./chat";
 import FriendSearch from "./friendSearch";
 import GameRule from "./gameRule";
@@ -9,6 +9,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { useEffect } from "react";
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 import { useParams } from "next/navigation";
+import PeacefulBgm from "@/public/src/components/bgm/PeacefulBgm";
+
 
 const queryClient = new QueryClient();
 
@@ -26,6 +28,7 @@ export default function page() {
       <div className="grid grid-rows-12 h-screen border-separate">
         <Header />
         <div className="row-start-2 row-end-13 grid grid-cols-12 border">
+        <PeacefulBgm></PeacefulBgm>
           <aside className="col-span-3 grid grid-rows-6 text-center">
             <FriendSearch />
             <GameRule />

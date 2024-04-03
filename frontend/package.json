@@ -20,7 +20,7 @@
     "axios": "^1.6.8",
     "clsx": "^2.1.0",
     "event-source-polyfill": "^1.0.31",
-    "framer-motion": "^11.0.18",
+    "framer-motion": "^11.0.24",
     "next": "14.1.2",
     "react": "^18",
     "react-dom": "^18",
