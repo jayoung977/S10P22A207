@@ -8,6 +8,7 @@ import com.backend.api.domain.multi.dto.request.MultiGameChartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameRoomCreateRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiGameStartRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiNextDayRequestDto;
+import com.backend.api.domain.multi.dto.request.MultiPlayerInfoRequestDto;
 import com.backend.api.domain.multi.dto.request.MultiTradeRequestDto;
 import com.backend.api.domain.multi.dto.response.*;
 import com.backend.api.domain.multi.service.MultiGameService;
@@ -37,8 +38,8 @@ public class MultiGameController {
     private final MultiGameSocketService multiGameSocketService;
 
     @GetMapping("")
-    @Operation(summary = "멀티게임 대기실 불러오기", description = "멀티게임 모드를 선택하면 현재 생성되어있는 방 리스트를 불러옵니다.", tags = { "멀티게임" })
-    public ResponseEntity<BaseResponse<MultiGameRoomsResponseDto>> getMultiGameRooms(@RequestParam int pageNumber){
+    @Operation(summary = "멀티게임 대기실 불러오기", description = "멀티게임 모드를 선택하면 현재 생성되어있는 방 리스트를 불러옵니다.", tags = {"멀티게임"})
+    public ResponseEntity<BaseResponse<MultiGameRoomsResponseDto>> getMultiGameRooms(@RequestParam int pageNumber) {
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.getMultiGameRooms(pageNumber));
     }
 
@@ -50,13 +51,14 @@ public class MultiGameController {
             () -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)
         );
         MultiGameRoomEnterResponseDto dto = new MultiGameRoomEnterResponseDto(userDetails.getId(), member.getNickname());
-       multiGameSocketService.enterMultiWaitingRoom(userDetails, roomId, userDetails.getNickname());
+        multiGameSocketService.enterMultiWaitingRoom(userDetails, roomId, userDetails.getNickname());
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, dto);
     }
 
     @PostMapping("/create-room")
     @Operation(summary = "멀티게임 만들기", description = "멀티게임 방을 만듭니다.", tags = {"멀티게임"})
-    public ResponseEntity<BaseResponse<MultiGameRoomCreateResponseDto>> createMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameRoomCreateRequestDto dto) throws
+    public ResponseEntity<BaseResponse<MultiGameRoomCreateResponseDto>> createMultiGameRoom(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MultiGameRoomCreateRequestDto dto)
+        throws
         JsonProcessingException {
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, multiGameService.createMultiGameRoom(userDetails, dto));
     }
@@ -91,6 +93,7 @@ public class MultiGameController {
     public ResponseEntity<BaseResponse<MultiTradeResponseDto>> shortStock(@RequestBody MultiTradeRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         return BaseResponse.success(SuccessCode.BUY_SUCCESS, multiGameService.shortSelling(dto, userDetails.getId()));
     }
+
     @PostMapping("/close-short")
     @Operation(summary = "멀티 - 공매도 청산", description = "멀티게임 내에서 공매도 물량을 청산하면 해당 종목을 청산합니다.", tags = {"멀티게임"})
     public ResponseEntity<BaseResponse<MultiTradeResponseDto>> closeShortPosition(@RequestBody MultiTradeRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -104,16 +107,17 @@ public class MultiGameController {
         return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.getTomorrow(dto, userDetails.getId()));
     }
 
-    @GetMapping("/final-result")
-    @Operation(summary = "멀티 - 최종 결과", description = "멀티게임이 끝나면 모든 결과를 보내줍니다.", tags = {"멀티게임"})
-    public ResponseEntity<BaseResponse<MultiGameFinalResultDto>> getFinalResult(@RequestBody MultiGameResultRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.getFinalResult(dto));
+
+    @PostMapping("/round-result")
+    @Operation(summary = "멀티 - 라운드 결과", description = "멀티게임 특정 라운드가 끝나면 결과를 보내줍니다.", tags = {"멀티게임"})
+    public ResponseEntity<BaseResponse<List<MultiGameResultDto>>> getResult(@RequestBody MultiGameSubResultRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.getSubResult(userDetails.getId(), dto));
     }
 
-    @GetMapping("/round-result")
-    @Operation(summary = "멀티 - 라운드 결과", description = "멀티게임 특정 라운드가 끝나면 결과를 보내줍니다.", tags = {"멀티복기"})
-    public ResponseEntity<BaseResponse<List<MultiGameResultDto>>> getSubResult(@RequestBody MultiGameSubResultRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.getSubResult(userDetails.getId(), dto));
+    @PostMapping("/player-info")
+    @Operation(summary = "멀티 - 방 참여자 정보", description = "멀티게임 특정 시각의 멤버 정보를 보여줍니다.", tags = {"멀티게임"})
+    public ResponseEntity<BaseResponse<List<PlayerRankInfo>>> getResult(@RequestBody MultiPlayerInfoRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.sendResultToRest(dto.gameId(), dto.roundNumber()));
     }
 
     @GetMapping("/log")
@@ -121,5 +125,11 @@ public class MultiGameController {
     public ResponseEntity<BaseResponse<MultiLogResponseDto>> getMultiGameLog(@RequestParam(name = "multiGameLogId") Long multiGameLogId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         MultiLogResponseDto responseDto = multiGameService.getMultiGameLog(multiGameLogId, userDetails.getId());
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, responseDto);
+    }
+
+    @GetMapping("/final-result")
+    @Operation(summary = "멀티 - 최종 결과", description = "멀티게임이 끝나면 모든 결과를 보내줍니다.", tags = {"멀티게임"})
+    public ResponseEntity<BaseResponse<MultiGameFinalResultDto>> getFinalResult(@RequestBody MultiGameResultRequestDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return BaseResponse.success(SuccessCode.CHECK_SUCCESS, multiGameService.getFinalResult(dto));
     }
 }
