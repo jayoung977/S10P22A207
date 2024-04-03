@@ -63,6 +63,8 @@ interface WebSocketStore {
   setRoundNumber: (roundNumber: number) => void;
   multiGameStockIds: MultiGameStockIdsType[];
   setMultiGameStockIds: (multiGameStockIds: MultiGameStockIdsType[]) => void;
+  multiGameLogId: number;
+  setMultiGameLogId: (multiGameLogId: number) => void;
   day: number;
   setDay: (day: number) => void;
   averagePrice: number;
@@ -93,6 +95,8 @@ interface WebSocketStore {
   setUnrealizedGain: (unrealizedGain: number) => void;
   players: PlayersType[];
   setPlayers: (players: PlayersType[]) => void;
+  isGameOver: boolean;
+  setIsGameOver: (isGameOver: boolean) => void;
 }
 
 const socketStore = create<WebSocketStore>((set) => ({
@@ -161,6 +165,10 @@ const socketStore = create<WebSocketStore>((set) => ({
   setUnrealizedGain: (value) => set({ unrealizedGain: value }),
   players: [],
   setPlayers: (value) => set({ players: value }),
+  multiGameLogId: 0,
+  setMultiGameLogId: (value) => set({ multiGameLogId: value }),
+  isGameOver: false,
+  setIsGameOver: (value) => set({ isGameOver: value }),
 }));
 
 export default socketStore;
