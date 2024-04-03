@@ -280,9 +280,9 @@ public class MultiGameService {
 		);
 		Long gameLogId = null;
 
+		// 게시글 - 사람
 		MultiGameLog multiGameLog
 				= MultiGameLog.builder()
-				.memberId(memberId)
 				.gameId(dto.gameId())
 				.stockId(dto.stockId())
 				.startDate(firstDayStockChart.getDate())
