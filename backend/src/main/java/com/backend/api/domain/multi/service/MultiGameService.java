@@ -35,6 +35,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -271,15 +281,20 @@ public class MultiGameService {
 			() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
 		);
 		Long gameLogId = null;
-		MultiGameLog multiGameLog
-			= MultiGameLog.builder()
-			.memberId(memberId)
-			.gameId(dto.gameId())
-			.stockId(dto.stockId())
-			.startDate(firstDayStockChart.getDate())
-			.round(dto.roundNumber())
-			.build();
-		gameLogId = multiGameLogRepository.save(multiGameLog).getId();
+
+		MultiGameLog multiGameLog = null;
+		if(multiGameLogRepository.findByMemberIdAndGameIdAndRound(memberId, dto.gameId(), dto.roundNumber()).isEmpty()) {
+			 multiGameLog
+				= MultiGameLog.builder()
+				.memberId(memberId)
+				.gameId(dto.gameId())
+				.stockId(dto.stockId())
+				.startDate(firstDayStockChart.getDate())
+				.round(dto.roundNumber())
+				.build();
+			log.info("multiGameLog.id() - {}", multiGameLog.getId());
+			gameLogId = multiGameLogRepository.save(multiGameLog).getId();
+		}
 
 		// 게임아이디를 줄것이 아니라, roomId를 줘야한다.
 		MultiWaitingRoom multiWaitingRoom = getWaitingRoom(dto.roomId());
@@ -1035,7 +1050,7 @@ public class MultiGameService {
 
 		AtomicInteger i = new AtomicInteger(1);
 		List<MultiGameTotalResultDto> totalResult = memberProfitMap.entrySet().stream()
-			.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) // finalProfit을 기준으로 내림차순 정렬
+			.sorted(Entry.comparingByValue(Comparator.reverseOrder())) // finalProfit을 기준으로 내림차순 정렬
 			.map(entry -> {
 				Member member = entry.getKey();
 				int totalProfit = entry.getValue();
