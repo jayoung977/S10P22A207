@@ -11,7 +11,6 @@ import com.backend.api.domain.multi.dto.response.*;
 import com.backend.api.domain.multi.entity.*;
 import com.backend.api.domain.multi.repository.MultiGameLogRepository;
 import com.backend.api.domain.multi.repository.MultiTradeRepository;
-import com.backend.api.domain.single.dto.response.StockChartDataDto;
 import com.backend.api.domain.single.dto.response.StockChartDto;
 import com.backend.api.domain.stock.entity.Stock;
 import com.backend.api.domain.stock.entity.StockChart;
@@ -45,7 +44,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -276,15 +274,13 @@ public class MultiGameService {
 		return new MultiGameStartResponseDto(gameId, firstDayStockChartIds, dto.roomId());
 	}
 
-	public StockChartDataDto getGameChart(Long memberId, MultiGameChartRequestDto dto) {
+	public MultiStockChartDataDto getGameChart(Long memberId, MultiGameChartRequestDto dto) {
 		StockChart firstDayStockChart = stockChartRepository.findById(dto.firstDayStockChartId()).orElseThrow(
 			() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
 		);
 		Long gameLogId = null;
 
-		MultiGameLog multiGameLog = null;
-		if(multiGameLogRepository.findByMemberIdAndGameIdAndRound(memberId, dto.gameId(), dto.roundNumber()).isEmpty()) {
-			 multiGameLog
+		MultiGameLog multiGameLog
 				= MultiGameLog.builder()
 				.memberId(memberId)
 				.gameId(dto.gameId())
@@ -292,9 +288,8 @@ public class MultiGameService {
 				.startDate(firstDayStockChart.getDate())
 				.round(dto.roundNumber())
 				.build();
-			log.info("multiGameLog.id() - {}", multiGameLog.getId());
-			gameLogId = multiGameLogRepository.save(multiGameLog).getId();
-		}
+
+		gameLogId = multiGameLogRepository.save(multiGameLog).getId();
 
 		// 게임아이디를 줄것이 아니라, roomId를 줘야한다.
 		MultiWaitingRoom multiWaitingRoom = getWaitingRoom(dto.roomId());
@@ -410,7 +405,7 @@ public class MultiGameService {
 			stockChartDtoList.add(stockChartDto);
 		});
 
-		return new StockChartDataDto(dto.stockId(), stockChartDtoList);
+		return new MultiStockChartDataDto(dto.stockId(), gameLogId, stockChartDtoList);
 	}
 
 	public void sendResultToSocket(Long gameId, int roundNumber, Long roomId){
@@ -810,7 +805,7 @@ public class MultiGameService {
                 (long) currentGame.getProfit(), roi, dto.roundNumber()
             );
 
-			MultiGameLog multiGameLog = multiGameLogRepository.findByMemberIdAndGameIdAndRound(memberId, dto.gameId(), dto.roundNumber())
+			MultiGameLog multiGameLog = multiGameLogRepository.findById(dto.multiGameLogId())
 				.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
             MultiGamePlayer memberGamePlayer = multiGamePlayerRepository.findByMultiGameLog_IdAndMember_Id(multiGameLog.getId(), memberId)
 				.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
@@ -836,7 +831,7 @@ public class MultiGameService {
 				for (Long playerId : waitingRoom.getParticipantIds()) { // 채팅방에 있는 모든 유저에게 메시지 전송
 					log.info("메시지 전송 대상: {}", playerId);
 					template.convertAndSend("/api/sub/" + playerId, new SocketBaseDtoRes<>(SocketType.ROUNDFINISHED,
-						getSubResult(memberId, new MultiGameSubResultRequestDto(dto.gameId(), dto.roundNumber(), currentGame.getRoomId()))));
+						getSubResult(memberId, new MultiGameSubResultRequestDto(dto.gameId(), dto.roundNumber(), currentGame.getRoomId(), dto.multiGameLogId()))));
 					log.info("socketBaseDtoRes : gameId : {} roundNumber : {}", dto.gameId(), 1);
 				}
 				log.info("메시지 전송 완료");
@@ -948,8 +943,8 @@ public class MultiGameService {
 	}
 
     public List<MultiGameResultDto> getSubResult(Long memberId, MultiGameSubResultRequestDto dto) {
-        MultiGameLog multiGameLog = multiGameLogRepository.findByMemberIdAndGameIdAndRound(memberId, dto.gameId(), dto.roundNumber())
-            .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
+		MultiGameLog multiGameLog = multiGameLogRepository.findById(dto.multiGameLogId())
+			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
 
 		String stockName = stockRepository.findById(multiGameLog.getStockId()).orElseThrow(
             () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
