@@ -131,7 +131,7 @@ function calculateSignal(macdData :any, signalPeriod :number) {
 
 function calculateHist(macdData :any, signalData :any) {
     const result = [];
-    console.log(macdData)
+    // console.log(macdData)
     for (let i = 0; i < macdData.length; i++) {
         result.push([macdData[i][0], macdData[i][1] - signalData[i][1]]);
     }
@@ -146,7 +146,7 @@ export default function RoundChart({ data }: any) {
     const [selectedSecondaryIndicator, setSelectedSecondaryIndicator] = useState<number>(1);
     useEffect(() => {
         const purifiedData = filteringLowPriceZero(data);
-        console.log("purifiedData : ", purifiedData)
+        // console.log("purifiedData : ", purifiedData)
         // 차트 생성
         const chart = anychart.stock();
         // 차트를 담을 컨테이너 생성
@@ -375,7 +375,7 @@ export default function RoundChart({ data }: any) {
         plot3.legend().useHtml(true);
         plot3.legend().title().useHtml(true);
         plot3.legend().titleFormat(<span></span>);
-        console.log(calculateRSI(purifiedData, 14))
+        // console.log(calculateRSI(purifiedData, 14))
         const rsiSeries = plot3.line(calculateRSI(purifiedData, 14));
         rsiSeries.name("RSI");
         rsiSeries.hovered().markers().enabled(true).type("circle").size(2);
@@ -482,7 +482,7 @@ export default function RoundChart({ data }: any) {
         (window as any).handleShowAll = handleShowAll;
         (window as any).handleShowPlot = handleShowPlot;
         handleShowPlot(selectedSecondaryIndicator);
-        // chart.selectRange(purifiedData[day+249]?.date.split('T')[0], purifiedData[day+299]?.date.split('T')[0])
+        chart.selectRange(purifiedData[day+249]?.date.split('T')[0], purifiedData[day+299]?.date.split('T')[0])
 
         return () => {
             document.removeEventListener('keypress', handleKeyPress);

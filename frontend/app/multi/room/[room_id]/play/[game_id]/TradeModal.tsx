@@ -60,7 +60,7 @@ export default function TradeModal({ tradeType, isOpen, onClose }: any) {
         },
       })
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           if (res.data.result != undefined) {
             setAveragePrice(res.data.result.averagePrice);
             setCash(res.data.result.cash);
