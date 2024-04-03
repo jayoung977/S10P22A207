@@ -45,10 +45,8 @@ export default function TradeModal({ tradeType, isOpen, onClose }: any) {
 
   function handleStocksChange(e: React.ChangeEvent<HTMLInputElement>) {
     playClickSound();
-    if (Number(e.target.value) < 0) {
-      e.target.value = "0";
-    }
-    let stocks = Number(e.target.value);
+    const value = e.target.value;
+    const stocks = value === '' ? 0 : Math.max(0, Number(value));
     setTradeStocksAmount(stocks);
   }
 
@@ -249,7 +247,7 @@ export default function TradeModal({ tradeType, isOpen, onClose }: any) {
             <input
               type="number"
               id="number-input"
-              value={tradeStocksAmount}
+              value={tradeStocksAmount || ''}
               onChange={(e) => {handleStocksChange(e)}}
               aria-describedby="helper-text-explanation"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
