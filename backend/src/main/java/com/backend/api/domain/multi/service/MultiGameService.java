@@ -782,7 +782,6 @@ public class MultiGameService {
             String key = "multiGame:" + dto.gameId() + ":" + memberId + ":" + dto.roundNumber(); // Redis에 저장할 키
             redisTemplate.opsForValue().set(key, currentGame);
 
-
             // roi : (총수익) / (총 투자한 돈) * 100
             double roi = currentGame.getTotalPurchaseAmount() == 0L ? 0 :
                 (100.0 * (currentGame.getProfit() +
@@ -797,7 +796,7 @@ public class MultiGameService {
                 stockRepository.findById(todayChart.getStock().getId()).orElseThrow(
                     () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
                 ).getStockName(),
-				1,
+				1, // TODO: 게임 결과에서 랭크보여주기
                 stockChartRepository.findById(currentGame.getFirstDayStockChartId()).orElseThrow(
                     () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
                 ).getDate(),
@@ -884,6 +883,9 @@ public class MultiGameService {
 			currentGame.getTotalAsset() - currentGame.getCash(),
 			currentGame.getTradeList()
 		);
+
+		redisTemplate.opsForValue().set("multiGame:" + dto.gameId() + ":" + memberId + ":" + dto.roundNumber(), currentGame);
+		sendResultToSocket(dto.gameId(), dto.roundNumber(), currentGame.getRoomId()); // TODO: 51턴일때도?
 
 		return new MultiNextDayResponseDto(multiTradeResponseDto, null);
 	}
