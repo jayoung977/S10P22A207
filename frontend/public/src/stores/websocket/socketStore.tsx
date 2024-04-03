@@ -87,18 +87,47 @@ const socketStore = create<WebSocketStore>((set) => ({
   setDay:(value) => set({ day: value }),
   multiGameStockIds: [],
   setMultiGameStockIds:(value) => set({ multiGameStockIds: value }),
-  // initialAsset
-  // totalAsset
-  // profitMargin
-  // unrealizedGain
-  // cash
-  // stockAmount
-  // totalPurchaseAmount
-  // averagePurchasePrice
-  // TodayEndPrice * amount?
-  // TodayEndPrice
-  // 거래내역
+  // ---buy
+  // cash: 0, 
+  // cash:(value) => set({ day: value }),
+  // price: 0,
+  // price:(value) => set({ price: value }),
+  // amount: 0,
+  // amount:(value) => set({ amount: value }),
+  // fee: 0, 
+  // fee:(value) => set({ fee: value }),
+  // profit: 0,
+  // profit:(value) => set({ profit: value }),
+  // totalAsset: 10000000,
+  // totalAsset:(value) => set({ totalAsset: value }),
+  // tradeList: [],
+  // tradeList:(value) => set({ tradeList: value }),
 
+  // nextDay
+  // initialAsset: 0,
+  // setInitialAsset: (value) => set({ initialAsset: value }),
+  // totalAsset: 0,
+  // setTotalAsset: (value) => set({ totalAsset: value }),
+  // profitMargin: 0,
+  // setProfitMargin: (value) => set({ profitMargin: value }),
+  // unrealizedGain: 0,
+  // setUnrealizedGain:(value) => set({ unrealizedGain: value }),
+  // cash: 0,
+  // setCash:(value) => set({ cash: value }),
+  // stockAmount: 0,
+  // setStockAmount:(value) => set({ stockAmount: value }),
+  // shortStockAmount: 0,
+  // setShortStockAmount:(value) => set({ shortStockAmount: value }),
+  // totalPurchaseAmount: 0,
+  // setTotalPurchaseAmount:(value) => set({ totalPurchaseAmount: value }),
+  // averagePrice: 0,
+  // setAveragePrice:(value) => set({ averagePrice: value }),
+  // shortAveragePrice: 0,
+  // setShortAveragePrice:(value) => set({ shortAveragePrice: value }),
+  // todayEndPrice: 0,
+  // setTodayEndPrice:(value) => set({ todayEndPrice: value }),
+  // stockValue: 0,
+  // setStockValue:(value) => set({ stockValue: value }),
 
 }));
 
