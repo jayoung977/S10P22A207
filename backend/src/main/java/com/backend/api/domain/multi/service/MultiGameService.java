@@ -543,12 +543,10 @@ public class MultiGameService {
 		currentGame.addProfit(dto.amount() * (todayChart.getEndPrice() * 0.9975 - currentGame.getAveragePrice()));
 
 		// 총 자산 -> 현금 + 주식 + 공매도주식
-		long totalAsset = (long) (currentGame.getCash() + ((long) currentGame.getStockAmount() * (todayChart.getEndPrice() - currentGame.getAveragePrice()) * 0.9975 +
-                    ((long) currentGame.getShortStockAmount() * (currentGame.getShortAveragePrice() - todayChart.getEndPrice()) * 0.9975)
-                ));
+		long totalAsset = (long) (currentGame.getCash() + ((long) (currentGame.getShortStockAmount() + currentGame.getStockAmount()) * todayChart.getEndPrice() * 0.9975));
 		currentGame.updateTotalAsset(totalAsset);
 
-		double resultRoi = 100.0 * currentGame.getProfit() / currentGame.getInitial();
+		double resultRoi = 100.0 * (currentGame.getTotalAsset() - currentGame.getInitial()) / currentGame.getInitial();
 		MultiTrade multiTrade = MultiTrade.builder()
 			.tradeType(TradeType.SELL)
 			.memberId(memberId)
@@ -594,7 +592,7 @@ public class MultiGameService {
 			currentGame.getAveragePrice(),
 			currentGame.getShortAveragePrice(),
 			todayChart.getEndPrice(),
-			totalAsset - currentGame.getCash(),
+            (long) ((totalAsset - currentGame.getCash()) * 0.9975),
 			currentGame.getTradeList()
 		);
     }
@@ -725,7 +723,7 @@ public class MultiGameService {
 				multiTrade.getTradeType(),
 				multiTrade.getAmount(),
 				multiTrade.getPrice(),
-				(long) (dto.amount() * todayChart.getEndPrice() * 0.0025
+				(long) (dto.amount() * (currentGame.getShortAveragePrice() - todayChart.getEndPrice() * 1.0025)
 				)
 			));
 
@@ -766,9 +764,12 @@ public class MultiGameService {
 
         // 어제에 비해서 얼마나 바뀌었는지. 매수 수량은 더해주고
         // 공매도는 반대.
-        currentGame.addProfit((currentGame.getStockAmount() - currentGame.getShortStockAmount()) * (todayChart.getEndPrice() - yesterdayChart.getEndPrice()));
+		currentGame.addProfit((currentGame.getStockAmount() - currentGame.getShortStockAmount()) * (todayChart.getEndPrice() - yesterdayChart.getEndPrice()));
 
-        long totalAssets = currentGame.getCash();
+		// 오늘의 가치 -> 현금 + 주식의 가치
+		long totalAssets = currentGame.getCash()
+			+ (long) (currentGame.getStockAmount() + currentGame.getShortStockAmount()) * todayChart.getEndPrice();
+		currentGame.updateTotalAsset(totalAssets);
 
         if (dto.day() == 51) {
 
@@ -784,10 +785,10 @@ public class MultiGameService {
 
             // roi : (총수익) / (총 투자한 돈) * 100
             double roi = currentGame.getTotalPurchaseAmount() == 0L ? 0 :
-                (100.0 * (currentGame.getProfit() +
-                    (currentGame.getStockAmount() * (todayChart.getEndPrice() - currentGame.getAveragePrice())) +
-					1.0 * (currentGame.getShortStockAmount() * (currentGame.getShortAveragePrice() - todayChart.getEndPrice()))
-                    / currentGame.getTotalPurchaseAmount()));
+                (100.0 * (currentGame.getCash() +
+					(currentGame.getStockAmount() * (todayChart.getEndPrice() - currentGame.getAveragePrice())) +
+					1.0 * (currentGame.getShortStockAmount() * (currentGame.getShortAveragePrice() - todayChart.getEndPrice())) - (double) currentGame.getInitial()
+                    / currentGame.getInitial()));
 
             MultiGameResultDto multiGameResult = new MultiGameResultDto(
                 memberId,
@@ -871,7 +872,7 @@ public class MultiGameService {
 		MultiTradeResponseDto multiTradeResponseDto = new MultiTradeResponseDto(
 			currentGame.getInitial(),
 			currentGame.getTotalAsset(),
-			roi,
+			100.0 * (currentGame.getTotalAsset() - currentGame.getInitial())/ currentGame.getInitial(),
 			currentGame.getTotalAsset() - currentGame.getInitial(),
 			currentGame.getCash(),
 			currentGame.getStockAmount(),
