@@ -63,10 +63,14 @@ export default function Header() {
       }
     })
       .then((res) => {
+<<<<<<< HEAD
         console.log("다음턴! : ", res.data);
+=======
+        console.log(res.data);
+>>>>>>> 02c09d70d57b86a2e60ef8375975da73b8fe0a90
       })
       .catch((error) => {
-        // console.error(error);
+        console.error(error);
       });
   }
 
@@ -84,17 +88,10 @@ export default function Header() {
       }
       handleTomorrow(day)
       if(day == 51){
-        if (roundNumber === maxRoundNumber) {
-          console.log("경기 종료");
-          setDay(1)
-          setRoundNumber(1)
-          setIsGameover(true)
+        setIsGameover(true)
+        setDay(1);
           return
         }
-        setRoundNumber(roundNumber + 1);
-        setDay(1)
-        return
-      }
       playClickSound();
       setDay(day + 1);
     };
@@ -138,6 +135,11 @@ export default function Header() {
           disabled={day === 51}
           // day이 50이면 disabled 속성이 true가 됩니다.
           onClick={() => {
+            if(day == 51){
+              setIsGameover(true)
+              setDay(1);
+                return
+              }
             playClickSound();
             handleTomorrow(day)
             //day == 50이면

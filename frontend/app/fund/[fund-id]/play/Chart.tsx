@@ -524,7 +524,7 @@ export default function Chart({ data }: any) {
   return (
     <div className="row-span-12 grid grid-rows-12">
       <div className="row-span-1 grid grid-cols-8 items-center">
-        <div className="text-center">종목 {selectedStockIndex+1}</div>
+        <div className="bg-textColor-1 text-white rounded-md text-center">종목 {selectedStockIndex+1}</div>
         <button 
           onClick={() => {
             playClickSound();

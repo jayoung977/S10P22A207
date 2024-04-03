@@ -148,7 +148,7 @@ export default function FundPlay() {
         <Navbar />
         <div className="row-span-11 grid grid-cols-12">
           {/* left aside */}
-          <aside className="col-span-3 grid grid-rows-3">
+          <aside className="col-span-3 grid grid-rows-3 ">
             <TotalAssets />
             <AssetsHeld />
             <SalesHistory />
