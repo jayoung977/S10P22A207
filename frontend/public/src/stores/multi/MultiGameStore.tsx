@@ -27,8 +27,8 @@ type Store = {
   setRoundNumber :(value :number) => void;
   maxRoundNumber :number;
   setMaxRoundNumber :(value :number) => void;
-  turn :number;
-  setTurn :(value :number) => void;
+  day :number;
+  setDay :(value :number) => void;
   
   getMultigameRoomInfo: (value: number) => void;
   
@@ -101,8 +101,8 @@ const multigameStore = create<Store>((set: any) => ({
   setRoundNumber :(value) => set({ roundNumber: value }),
   maxRoundNumber :0,
   setMaxRoundNumber: (value) => set({ maxRoundNumber: value }),
-  turn: 1,
-  setTurn: (value) => set({ turn: value }),
+  day: 1,
+  setDay: (value) => set({ day: value }),
   
   getMultigameRoomInfo: (value: number) => {
     axios({
