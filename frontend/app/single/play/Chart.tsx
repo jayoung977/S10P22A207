@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import anychart from "anychart";
 import SingleGameStore from "@/public/src/stores/single/SingleGameStore";
-import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 
 
@@ -24,25 +23,6 @@ function filteringLowPriceZero(data :any) {
     return newData;
 }
 
-function CheckAvgPrice (tradeListData :any, stockId :number) {
-    let sumPrice = 0;
-    let sumNumber = 0;
-    tradeListData?.map((item :any, index :number) => {
-        if (item?.stockId == stockId) {
-            if (item?.tradeType == 'BUY') {
-                sumNumber += item?.amount;
-                sumPrice += item?.amount * item?.price;
-            } else if (item?.tradeType == 'SELL') {
-                sumNumber -= item?.amount;
-                sumPrice -= item?.amount * item?.price;
-            }
-        }
-    })
-    if (sumNumber > 0) {
-        return sumPrice/sumNumber;
-    }
-    return 0
-}
 
 // 이동평균선 데이터 생성 함수
 function calculateMovingAverage(data :any, period :any) {
@@ -179,7 +159,6 @@ export default function Chart({ data }: any) {
         // 스크롤러
         const scroller = chart.scroller();
         scroller.xAxis(false);
-       
         scroller.selectedFill({
             src: 'https://static.anychart.com/images/beach.png',
             mode: 'stretch',
@@ -237,8 +216,8 @@ export default function Chart({ data }: any) {
         });
 
 
-        if (assetListData[selectedStockIndex].stockAmount > 0) {
-            const avgPrice = assetListData[selectedStockIndex].averagePurchasePrice;
+        if (assetListData &&  assetListData[selectedStockIndex]?.stockAmount > 0) {
+            const avgPrice = assetListData[selectedStockIndex]?.averagePurchasePrice;
             const avgPriceLineMarker = plot1.lineMarker(1);
             avgPriceLineMarker.value(avgPrice);
             avgPriceLineMarker.stroke({
@@ -253,7 +232,6 @@ export default function Chart({ data }: any) {
             avgPriceLineMarker.listen("mouseOut", function() {
                 avgPriceLineMarker.stroke({thickness: 2, color: "black"});
             });
-            console.log(assetListData[selectedStockIndex].averagePurchasePrice)
             
             const avgPriceTextMarker = plot1.textMarker(1);
             avgPriceTextMarker.value(avgPrice);
@@ -284,8 +262,6 @@ export default function Chart({ data }: any) {
         } else {
             console.log(0);
         }
-
-        
 
         // line series 생성
         const lineSeries = plot1.line(
@@ -569,18 +545,11 @@ export default function Chart({ data }: any) {
         (window as any).handleShowAll = handleShowAll;
         (window as any).handleShowPlot = handleShowPlot;
         handleShowPlot(selectedSecondaryIndicator);
-        // console.log("purifiedData", purifiedData[turn+249].date.split('T')[0]);
+
         chart.selectRange(purifiedData[turn+249].date.split('T')[0], purifiedData[turn+299].date.split('T')[0])
-        // chart.selectRange(anychart.format.dateTime(new Date(startDate), 'yyyy-MM-dd'), anychart.format.dateTime(new Date(endDate), 'yyyy-MM-dd'))  
-        // chart.scroller().listen('scrollerChange', function () {
-        //   var range = chart.getSelectedRange();
-        //   setStartDate(range.firstSelected);
-        //   setEndDate(range.lastSelected);
-        // })
         return () => {
             document.removeEventListener('keypress', handleKeyPress);
-            // setStartDate(chart.getSelectedRange().firstSelected);
-            // setEndDate(chart.getSelectedRange().lastSelected);
+
             chart.dispose();
             (window as any).handleShowAll = null;
             (window as any).handleShowPlot = null;
