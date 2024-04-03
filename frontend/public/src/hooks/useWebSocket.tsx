@@ -36,6 +36,7 @@ export const useWebSocket = () => {
     setReadyState,
     setPlayers,
     setMultiGameLogId,
+    setIsGameOver,
   } = socketStore();
   const router = useRouter();
   const fetchAlarmData = async () => {
@@ -139,6 +140,10 @@ export const useWebSocket = () => {
           if (parsedMessage.type === "MULTIGAMEINFO") {
             setPlayers(parsedMessage.result);
           }
+
+          if (parsedMessage.type === "MULTIRESULT") {
+            setIsGameOver(true);
+          }
         });
       });
       return () => {
@@ -161,15 +166,17 @@ export const useWebSocket = () => {
   //     window.removeEventListener("beforeunload", preventClose);
   //   };
   // }, []);
+  // 새로고침 방지 로직
 
-  // const preventGoBack = () => {
-  //   history.pushState(null, "", location.href);
-  // };
-  // useEffect(() => {
-  //   history.pushState(null, "", location.href);
-  //   window.addEventListener("popstate", preventGoBack);
-  //   return () => {
-  //     window.removeEventListener("popstate", preventGoBack);
-  //   };
-  // }, []);
+  const preventGoBack = () => {
+    history.pushState(null, "", location.href);
+  };
+  useEffect(() => {
+    history.pushState(null, "", location.href);
+    window.addEventListener("popstate", preventGoBack);
+    return () => {
+      window.removeEventListener("popstate", preventGoBack);
+    };
+  }, []);
+  //  뒤로가기 방지 로직
 };

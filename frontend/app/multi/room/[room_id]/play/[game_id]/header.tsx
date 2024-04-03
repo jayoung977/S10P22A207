@@ -28,7 +28,7 @@ export default function Header() {
   } = socketStore();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [isGameover, setIsGameover] = useState(false);
+  const { isGameOver, setIsGameOver } = socketStore();
   const {
     roomTitle,
     maxRoundNumber,
@@ -39,6 +39,7 @@ export default function Header() {
     roundNumber,
     multiGameLogId,
   } = socketStore();
+
   const roundPercentage = (day / 50) * 100;
   const playClickSound = useClickSound();
   const [remainingTime, setRemainingTime] = useState(100000); // 초기 남은 시간을 100초(100,000밀리초)로 설정
@@ -60,8 +61,6 @@ export default function Header() {
         multiGameLogId: multiGameLogId,
       },
     });
-    console.log(gameId, roomId);
-    console.log(response.data);
     return response.data;
   };
   useEffect(() => {
@@ -132,12 +131,14 @@ export default function Header() {
     if (e.key === "r") {
       handleTomorrow(day);
       if (day === 50) {
-        setIsDisabled(true);
         fetchEndGame();
         setDay(1);
         setRoundNumber(1);
+        setIsDisabled(true);
       } else {
-        setDay(day + 1);
+        if (!isDisabled) {
+          setDay(day + 1);
+        }
       }
     }
   };
@@ -152,12 +153,7 @@ export default function Header() {
 
   return (
     <header className="row-span-1 grid grid-cols-12 border gap-2 items-center">
-      <FinalResult
-        isOpen={isGameover}
-        onClose={() => {
-          setIsGameover(false);
-        }}
-      />
+      {isGameOver && <FinalResult />}
       <div className="col-start-2 col-end-3 flex items-center">
         <div className="flex gap-2 items-center">
           <Image src={logo} alt="Logo" className="h-8" width={32} height={32} />
@@ -176,16 +172,16 @@ export default function Header() {
           onClick={() => {
             handleTomorrow(day);
             if (day === 50) {
+              fetchEndGame();
               setDay(1);
               setRoundNumber(1);
-              fetchEndGame();
               setIsDisabled(true);
             } else {
               setDay(day + 1);
             }
           }}
           className={`bg-teal-400 hover:bg-teal-300 px-2 py-1 m-1 text-white rounded-md ${
-            day === 51 ? "opacity-50 cursor-not-allowed" : ""
+            isDisabled ? "opacity-50 cursor-not-allowed " : ""
           }`}
         >
           {" "}
@@ -197,9 +193,9 @@ export default function Header() {
         <div className="w-full h-4  bg-gray-200 rounded-full dark:bg-gray-700">
           <div
             className="bg-red-600 text-xs h-4 font-bold text-white text-center p-0.5 leading-none rounded-full"
-            style={{ width: `${roundPercentage}%` }}
+            style={{ width: `${!isDisabled ? roundPercentage : 100}%` }}
           >
-            {day}/50
+            {!isDisabled ? `${day}/50` : `완료`}
           </div>
         </div>
       </div>
