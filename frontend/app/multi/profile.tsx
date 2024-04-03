@@ -6,6 +6,7 @@ import useGetProfileRank from "@/public/src/hooks/useGetProfileRank";
 
 export default function Profile() {
   const { nickname, rankPoint, win, lose, asset, singleAvgRoi } = userStore();
+
   return (
     <div className="col-span-4 bg-background-1 rounded-md grid grid-rows-5 gap-2 shadow-md m-2">
       {/* 프로필 상단 */}

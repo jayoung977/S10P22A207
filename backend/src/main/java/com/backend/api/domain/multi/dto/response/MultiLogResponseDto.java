@@ -3,10 +3,15 @@ package com.backend.api.domain.multi.dto.response;
 import com.backend.api.domain.single.dto.response.StockChartDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Schema(name = "멀티게임기록 response Dto", description = "멀티게임기록 관련 response Dto")
 public record MultiLogResponseDto(
+        @Schema(description = "시작일")
+        LocalDateTime startDate,
+        @Schema(description = "종료일")
+        LocalDateTime endDate,
         @Schema(description = "종목 이름")
         String stockName,
         @Schema(description = "종목 코드")

@@ -8,6 +8,7 @@ import axios from "axios";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 import socketStore from "@/public/src/stores/websocket/socketStore";
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
+import { useParams } from "next/navigation";
 
 export default function Header() {
   const {
@@ -27,7 +28,7 @@ export default function Header() {
   } = socketStore();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [isGameover, setIsGameover] = useState(false);
+  const { isGameOver, setIsGameOver } = socketStore();
   const {
     roomTitle,
     maxRoundNumber,
@@ -36,12 +37,32 @@ export default function Header() {
     day,
     setRoundNumber,
     roundNumber,
+    multiGameLogId,
   } = socketStore();
+
   const roundPercentage = (day / 50) * 100;
   const playClickSound = useClickSound();
-
   const [remainingTime, setRemainingTime] = useState(100000); // 초기 남은 시간을 100초(100,000밀리초)로 설정
   const [isDisabled, setIsDisabled] = useState(false);
+  const params = useParams();
+  const roomId = params["room_id"];
+
+  const fetchEndGame = async () => {
+    const response = await axios({
+      url: "https://j10a207.p.ssafy.io/api/multi/round-result",
+      method: "post",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+      data: {
+        gameId: gameId,
+        roundNumber: 1,
+        roomId: roomId,
+        multiGameLogId: multiGameLogId,
+      },
+    });
+    return response.data;
+  };
   useEffect(() => {
     const targetTime = new Date().getTime() + remainingTime; // 타이머 만료 시간 계산
 
@@ -52,6 +73,7 @@ export default function Header() {
       if (remaining <= 0) {
         clearInterval(interval);
         console.log("Countdown finished!");
+        fetchEndGame();
       } else {
         setRemainingTime(remaining); // 상태 업데이트
       }
@@ -79,7 +101,7 @@ export default function Header() {
       },
     })
       .then((res) => {
-        console.log("다음턴! : ", res.data);
+        // console.log("다음턴! : ", res.data);
         if (res.data.result.nextDayInfo != undefined) {
           setAveragePrice(res.data.result.nextDayInfo.averagePrice);
           setCash(res.data.result.nextDayInfo.cash);
@@ -91,7 +113,9 @@ export default function Header() {
           setStockValue(res.data.result.nextDayInfo.stockValue);
           setTodayEndPrice(res.data.result.nextDayInfo.todayEndPrice);
           setTotalAsset(res.data.result.nextDayInfo.totalAsset);
-          setTotalPurchaseAmount(res.data.result.nextDayInfo.totalPurchaseAmount);
+          setTotalPurchaseAmount(
+            res.data.result.nextDayInfo.totalPurchaseAmount
+          );
           setTradeList(res.data.result.nextDayInfo.tradeList);
           if (res.data.result.nextDayInfo.unrealizedGain != undefined) {
             setUnrealizedGain(res.data.result.nextDayInfo.unrealizedGain);
@@ -107,32 +131,29 @@ export default function Header() {
     if (e.key === "r") {
       handleTomorrow(day);
       if (day === 50) {
+        fetchEndGame();
         setDay(1);
         setRoundNumber(1);
-        setIsGameover(true);
         setIsDisabled(true);
       } else {
-        setDay(day + 1);
+        if (!isDisabled) {
+          setDay(day + 1);
+        }
       }
     }
   };
 
   useEffect(() => {
-    window.addEventListener("keydown", handleTradeDay);
+    window.addEventListener("keyup", handleTradeDay);
 
     return () => {
-      window.removeEventListener("keydown", handleTradeDay);
+      window.removeEventListener("keyup", handleTradeDay);
     };
   }, [day]);
 
   return (
     <header className="row-span-1 grid grid-cols-12 border gap-2 items-center">
-      <FinalResult
-        isOpen={isGameover}
-        onClose={() => {
-          setIsGameover(false);
-        }}
-      />
+      {isGameOver && <FinalResult />}
       <div className="col-start-2 col-end-3 flex items-center">
         <div className="flex gap-2 items-center">
           <Image src={logo} alt="Logo" className="h-8" width={32} height={32} />
@@ -151,16 +172,16 @@ export default function Header() {
           onClick={() => {
             handleTomorrow(day);
             if (day === 50) {
+              fetchEndGame();
               setDay(1);
               setRoundNumber(1);
-              setIsGameover(true);
               setIsDisabled(true);
             } else {
               setDay(day + 1);
             }
           }}
           className={`bg-teal-400 hover:bg-teal-300 px-2 py-1 m-1 text-white rounded-md ${
-            day === 51 ? "opacity-50 cursor-not-allowed" : ""
+            isDisabled ? "opacity-50 cursor-not-allowed " : ""
           }`}
         >
           {" "}
@@ -172,9 +193,9 @@ export default function Header() {
         <div className="w-full h-4  bg-gray-200 rounded-full dark:bg-gray-700">
           <div
             className="bg-red-600 text-xs h-4 font-bold text-white text-center p-0.5 leading-none rounded-full"
-            style={{ width: `${roundPercentage}%` }}
+            style={{ width: `${!isDisabled ? roundPercentage : 100}%` }}
           >
-            {day}/50
+            {!isDisabled ? `${day}/50` : `완료`}
           </div>
         </div>
       </div>

@@ -25,12 +25,10 @@ export default function MultiRanking() {
       newTradeData.map((item :any) => {
         newSelectedTradeList.push(item);
       })
-      console.log("새로 선택된 조합 : ", newSelectedTradeList);
       setSelectedTradeList(newSelectedTradeList);
       
     } else {
         const newTradeData = selectedTradeList.filter((item :any) => item.memberId != memberId)
-        console.log("새로 선택된 조합 : ", newTradeData);
         setSelectedTradeList(newTradeData);
       }
     }
@@ -76,7 +74,7 @@ export default function MultiRanking() {
               ))
 
             ) : (
-              <div>ㅋㅋ</div>
+              <div className="row-span-4 m-auto">랭킹 유저가 존재하지 않습니다.</div>
             )
           }
         </tbody>

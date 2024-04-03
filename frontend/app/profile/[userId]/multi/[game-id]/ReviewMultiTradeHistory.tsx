@@ -21,6 +21,7 @@ export default function MultiTradeHistory() {
         <tbody className="row-span-10 grid-rows-12 overflow-y-auto block" style={{ height: "calc(25vh)"}}>           
           {
             userInfo && userInfo.multiLogTradeDtoList.length > 0 ? (
+              
               userInfo.multiLogTradeDtoList?.map((item :any, index :number) => (
                   <tr key={index} className={`row-span-1 grid grid-cols-4 text-center bg-white ${item.tradeType=="BUY" ? "bg-red-500 text-white" : (item.tradeType=="SELL" ? "bg-blue-500 text-white" : "bg-white text-yellow-500" )}rounded-lg m-1`}>
                     <td className="col-span-2">{item.tradeType}</td>
@@ -28,7 +29,7 @@ export default function MultiTradeHistory() {
                   </tr>
               ))
             ) : (
-              <div className="row-span-1 flex items-center justify-center">매매 내역이 없습니다.</div>
+              <div className="row-span-4 flex justify-center mt-4">매매 내역이 없습니다.</div>
             )
           }
         </tbody>

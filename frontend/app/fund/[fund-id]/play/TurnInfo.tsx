@@ -50,22 +50,25 @@ export default function TurnInfo () {
                         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`
                     }
                 })
-            console.log("다음턴 : ", response.data.result);
+            console.log('fundId : ', params['fund-id']);
+            console.log('gameIdx : ', gameIdx);
+            console.log('보내는 day : ', turn+1);
+            console.log("다음턴 정보 : ", response.data.result);
             if (turn == 50) {
-                const stockInfoDtoList = response.data.result.stockInfoDtoList;
-                console.log("끝남!", stockInfoDtoList)
-                setFundGameEndInfoData({
-                    initialAsset :stockInfoDtoList.initialAsset,
-                    finalAsset :stockInfoDtoList.finalAsset,
-                    netProfit :stockInfoDtoList.netProfit,
-                    profitMargin :stockInfoDtoList.profitMargin,
+                // const stockInfoDtoList = response.data.result.stockInfoDtoList;
+                // console.log("끝남!", stockInfoDtoList)
+                // setFundGameEndInfoData({
+                //     initialAsset :stockInfoDtoList.initialAsset,
+                //     finalAsset :stockInfoDtoList.finalAsset,
+                //     netProfit :stockInfoDtoList.netProfit,
+                //     profitMargin :stockInfoDtoList.profitMargin,
                 
-                    startDate :stockInfoDtoList.StartDate,
-                    endDate :stockInfoDtoList.endDate,
+                //     startDate :stockInfoDtoList.StartDate,
+                //     endDate :stockInfoDtoList.endDate,
                 
-                    stockInfoDtoList :stockInfoDtoList.stockInfoDtoList,
-                    fundGameChance :stockInfoDtoList.fundGameChance,
-                })
+                //     stockInfoDtoList :stockInfoDtoList.stockInfoDtoList,
+                //     fundGameChance :stockInfoDtoList.fundGameChance,
+                // })
                 setIsOpenEndModal(true);
     
             } else {
