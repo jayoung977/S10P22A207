@@ -6,7 +6,7 @@ import RoundChart from "./roundChart";
 import Chat from "../../chat";
 import TradeHistory from "./tradeHistory";
 import { useState, useEffect } from "react";
-import { useParams } from 'next/navigation';
+import { useParams } from "next/navigation";
 import TradeButtons from "../../tradeButton";
 import GameMembers from "./GameMembers";
 import axios from "axios";
@@ -24,37 +24,49 @@ export type dataType = {
 
 export default function page() {
   const [data, setData] = useState<dataType[]>([]);
-  const { day, roundNumber, maxRoundNumber, roomId, gameId, multiGameStockIds } = socketStore();
-  const { stockId, setStockId, stockChartList, setStockChartList } = multigameStore();
+  const {
+    day,
+    roundNumber,
+    maxRoundNumber,
+    roomId,
+    gameId,
+    multiGameStockIds,
+    setMultiGameLogId,
+  } = socketStore();
+  const { stockId, setStockId, stockChartList, setStockChartList } =
+    multigameStore();
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
-
 
   const fetchMultigameData = async () => {
     try {
       const data = {
         roundNumber: roundNumber,
-        stockId: multiGameStockIds[roundNumber-1].stockId,
+        stockId: multiGameStockIds[roundNumber - 1].stockId,
         gameId: gameId,
-        firstDayStockChartId: multiGameStockIds[roundNumber-1].firstDayStockChartId,
+        firstDayStockChartId:
+          multiGameStockIds[roundNumber - 1].firstDayStockChartId,
         roomId: roomId,
-      }
-      console.log(data)
+      };
+      console.log(data);
       const response = await axios({
-        method: 'post',
+        method: "post",
         url: "https://j10a207.p.ssafy.io/api/multi/game-chart",
         data: {
           roundNumber: roundNumber,
-          stockId: multiGameStockIds[roundNumber-1].stockId,
+          stockId: multiGameStockIds[roundNumber - 1].stockId,
           gameId: gameId,
-          firstDayStockChartId: multiGameStockIds[roundNumber-1].firstDayStockChartId,
+          firstDayStockChartId:
+            multiGameStockIds[roundNumber - 1].firstDayStockChartId,
           roomId: roomId,
         },
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
-        }
-      })
-      console.log("zz")
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
+      console.log(response.data);
+      setMultiGameLogId(response.data.result.multiGameLogId);
+      console.log("zz");
       // console.log("stockId : ", response.data.result.stockId);
       // console.log("stockChartList : ", response.data.result.stockChartList);
       setStockId(response.data.result.stockId);
@@ -64,17 +76,17 @@ export default function page() {
       console.log(error);
       setIsError(true);
     }
-  }
-  
+  };
+
   useEffect(() => {
     fetchMultigameData();
-  }, [])
-  
+  }, []);
+
   if (isLoading) {
-    return <div className="rainbow"></div>
+    return <div className="rainbow"></div>;
   }
   if (isError) {
-    return <div>Error</div>
+    return <div>Error</div>;
   }
   return (
     <div>
@@ -87,7 +99,9 @@ export default function page() {
             <TradeHistory />
           </aside>
           <main className="col-span-8 grid grid-rows-12">
-            <RoundChart data={stockChartList?.slice(0, 300+day)}/>
+            <RoundChart
+              data={stockChartList ? stockChartList.slice(0, 300 + day) : null}
+            />
             <div className="row-span-3 border">
               <Chat />
             </div>

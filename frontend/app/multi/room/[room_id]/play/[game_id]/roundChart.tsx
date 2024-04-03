@@ -141,6 +141,7 @@ function calculateHist(macdData: any, signalData: any) {
 export default function RoundChart({ data }: any) {
   const { day } = socketStore();
   console.log("차트 새로 그림");
+  //   const [day, setDay] = useState(1);
   // const { selectedStockIndex, turn, startDate, setStartDate, endDate, setEndDate, isBuySellModalOpen } = SingleGameStore();
   const [selectedSecondaryIndicator, setSelectedSecondaryIndicator] =
     useState<number>(1);

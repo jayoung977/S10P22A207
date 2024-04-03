@@ -8,6 +8,7 @@ import axios from "axios";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 import socketStore from "@/public/src/stores/websocket/socketStore";
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
+import { useParams } from "next/navigation";
 
 export default function Header() {
   const {
@@ -36,12 +37,33 @@ export default function Header() {
     day,
     setRoundNumber,
     roundNumber,
+    multiGameLogId,
   } = socketStore();
   const roundPercentage = (day / 50) * 100;
   const playClickSound = useClickSound();
-
   const [remainingTime, setRemainingTime] = useState(100000); // 초기 남은 시간을 100초(100,000밀리초)로 설정
   const [isDisabled, setIsDisabled] = useState(false);
+  const params = useParams();
+  const roomId = params["room_id"];
+
+  const fetchEndGame = async () => {
+    const response = await axios({
+      url: "https://j10a207.p.ssafy.io/api/multi/round-result",
+      method: "post",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+      data: {
+        gameId: gameId,
+        roundNumber: 1,
+        roomId: roomId,
+        multiGameLogId: multiGameLogId,
+      },
+    });
+    console.log(gameId, roomId);
+    console.log(response.data);
+    return response.data;
+  };
   useEffect(() => {
     const targetTime = new Date().getTime() + remainingTime; // 타이머 만료 시간 계산
 
@@ -52,6 +74,7 @@ export default function Header() {
       if (remaining <= 0) {
         clearInterval(interval);
         console.log("Countdown finished!");
+        fetchEndGame();
       } else {
         setRemainingTime(remaining); // 상태 업데이트
       }
@@ -91,7 +114,9 @@ export default function Header() {
           setStockValue(res.data.result.nextDayInfo.stockValue);
           setTodayEndPrice(res.data.result.nextDayInfo.todayEndPrice);
           setTotalAsset(res.data.result.nextDayInfo.totalAsset);
-          setTotalPurchaseAmount(res.data.result.nextDayInfo.totalPurchaseAmount);
+          setTotalPurchaseAmount(
+            res.data.result.nextDayInfo.totalPurchaseAmount
+          );
           setTradeList(res.data.result.nextDayInfo.tradeList);
           if (res.data.result.nextDayInfo.unrealizedGain != undefined) {
             setUnrealizedGain(res.data.result.nextDayInfo.unrealizedGain);
@@ -107,10 +132,10 @@ export default function Header() {
     if (e.key === "r") {
       handleTomorrow(day);
       if (day === 50) {
+        setIsDisabled(true);
+        fetchEndGame();
         setDay(1);
         setRoundNumber(1);
-        setIsGameover(true);
-        setIsDisabled(true);
       } else {
         setDay(day + 1);
       }
@@ -153,7 +178,7 @@ export default function Header() {
             if (day === 50) {
               setDay(1);
               setRoundNumber(1);
-              setIsGameover(true);
+              fetchEndGame();
               setIsDisabled(true);
             } else {
               setDay(day + 1);

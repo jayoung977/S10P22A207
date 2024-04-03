@@ -40,7 +40,7 @@ export default function GameMembers() {
                   style={{ width: `${(player.day / 50) * 100}%` }}
                 >
                   {" "}
-                  ({player.day+1}/50)
+                  ({player.day}/50)
                 </div>
               </div>
             </div>
