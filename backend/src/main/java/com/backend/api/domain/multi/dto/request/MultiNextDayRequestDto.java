@@ -11,7 +11,10 @@ public record MultiNextDayRequestDto(
     @Schema(description = "라운드")
     int roundNumber,
     @Schema(description = "시작일로부터의 날짜")
-    int day
+    int day,
+
+    @Schema(description = "멀티게임 로그 ID")
+    long multiGameLogId
 
 ) {
 
