@@ -25,6 +25,8 @@ export default function TradeModal({ tradeType, isOpen, onClose }: any) {
     setTotalPurchaseAmount,
     setTradeList,
     setUnrealizedGain,
+    cash,
+    todayEndPrice,
   } = socketStore();
 
   const params = useParams();
@@ -112,27 +114,14 @@ export default function TradeModal({ tradeType, isOpen, onClose }: any) {
         <hr></hr>
         <div className="row-start-3 row-end-7 m-3">
           <div className="flex justify-between m-1">
-            <div className="text-textColor-1">
-              {tradeType == "buy" ? (
-                <span className="text-small-3 mt-1">매수</span>
-              ) : tradeType == "sell" ? (
-                <span className="text-small-1 mt-1">매도</span>
-              ) : tradeType == "short-selling" ? (
-                <span className="text-small-10 mt-1">공매도</span>
-              ) : (
-                <span className="text-small-12 mt-1">공매도 청산</span>
-              )}
-              종목
-            </div>
-            <div className="text-textColor-1">C 화학</div>
-          </div>
-          <div className="flex justify-between m-1">
             <div>주문 단가</div>
-            <div>80,700</div>
+            <div>{todayEndPrice}</div>
           </div>
           <div className="flex justify-between m-1">
             <div className="text-textColor-1">주문 가능 수량</div>
-            <div className="text-textColor-1">123주</div>
+            <div className="text-textColor-1">
+              {Number(cash / todayEndPrice).toFixed(0)}주
+            </div>
           </div>
         </div>
         <div className="row-start-7 row-end-10 flex justify-center items-center gap-4 m-3">

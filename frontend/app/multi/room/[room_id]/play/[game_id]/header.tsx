@@ -10,6 +10,22 @@ import socketStore from "@/public/src/stores/websocket/socketStore";
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 
 export default function Header() {
+  const {
+    setAveragePrice,
+    setCash,
+    setInitialAsset,
+    setProfitMargin,
+    setShortAveragePrice,
+    setShortStockAmount,
+    setStockAmount,
+    setStockValue,
+    setTodayEndPrice,
+    setTotalAsset,
+    setTotalPurchaseAmount,
+    setTradeList,
+    setUnrealizedGain,
+  } = socketStore();
+
   const [isOpen, setIsOpen] = useState(false);
   const [isGameover, setIsGameover] = useState(false);
   const {
@@ -64,6 +80,23 @@ export default function Header() {
     })
       .then((res) => {
         console.log("다음턴! : ", res.data);
+        if (res.data.result.nextDayInfo != undefined) {
+          setAveragePrice(res.data.result.nextDayInfo.averagePrice);
+          setCash(res.data.result.nextDayInfo.cash);
+          setInitialAsset(res.data.result.nextDayInfo.initialAsset);
+          setProfitMargin(res.data.result.nextDayInfo.profitMargin);
+          setShortAveragePrice(res.data.result.nextDayInfo.shortAveragePrice);
+          setShortStockAmount(res.data.result.nextDayInfo.shortStockAmount);
+          setStockAmount(res.data.result.nextDayInfo.stockAmount);
+          setStockValue(res.data.result.nextDayInfo.stockValue);
+          setTodayEndPrice(res.data.result.nextDayInfo.todayEndPrice);
+          setTotalAsset(res.data.result.nextDayInfo.totalAsset);
+          setTotalPurchaseAmount(res.data.result.nextDayInfo.totalPurchaseAmount);
+          setTradeList(res.data.result.nextDayInfo.tradeList);
+          if (res.data.result.nextDayInfo.unrealizedGain != undefined) {
+            setUnrealizedGain(res.data.result.nextDayInfo.unrealizedGain);
+          }
+        }
       })
       .catch((error) => {
         console.error(error);
