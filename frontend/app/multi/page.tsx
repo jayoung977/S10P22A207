@@ -47,7 +47,7 @@ export default function Multi() {
                 <h1
                   className={cn("md:text-4xl text-xl text-white text-center relative z-20")}
                 >
-                    <div>주식 투자의 핵심은 </div>
+                  <div>주식 투자의 핵심은 </div>
                    <div>자신의 감정을 통제하는 것이다.</div> 
                 </h1>
                 <p className="text-center mt-2 text-white relative z-20">
