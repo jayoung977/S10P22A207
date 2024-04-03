@@ -245,13 +245,23 @@ export default function Chart({ data }: any) {
                 thickness: 2,
                 color: "black",
                 dash: "1 0",
-            });    
+            });
+            // lineMarker에 hover 효과 부여
+            avgPriceLineMarker.listen("mouseOver", function() {
+                avgPriceLineMarker.stroke({thickness: 3, color: "black"});
+            });
+            avgPriceLineMarker.listen("mouseOut", function() {
+                avgPriceLineMarker.stroke({thickness: 2, color: "black"});
+            });
+            console.log(assetListData[selectedStockIndex].averagePurchasePrice)
+            
             const avgPriceTextMarker = plot1.textMarker(1);
             avgPriceTextMarker.value(avgPrice);
             avgPriceTextMarker.text(avgPrice)
             avgPriceTextMarker.fontColor("black");
             avgPriceTextMarker.background().enabled(true);
-            avgPriceTextMarker.background().stroke("2 black");
+            avgPriceTextMarker.background().fill('lightgray');
+            avgPriceTextMarker.background().stroke("2 lightgray");
             avgPriceTextMarker.padding(3);
             avgPriceTextMarker.align("right");
             avgPriceTextMarker.offsetX(-65);
@@ -261,19 +271,16 @@ export default function Chart({ data }: any) {
             avgPriceTextMarker.listen("mouseOver", function() {
                 avgPriceTextMarker.background().enabled(true);
                 avgPriceTextMarker.background().fill("lightgray");
+                avgPriceTextMarker.background().stroke("3 lightgray");
+
             });
             avgPriceTextMarker.listen("mouseOut", function() {
-                avgPriceTextMarker.background().enabled(false);
+                avgPriceTextMarker.background().enabled(true);
+                avgPriceTextMarker.background().fill("white");
+                avgPriceTextMarker.background().stroke("2 lightgray");
+
             });
 
-            // lineMarker에 hover 효과 부여
-            avgPriceLineMarker.listen("mouseOver", function() {
-                avgPriceLineMarker.stroke({thickness: 3, color: "red"});
-            });
-            avgPriceLineMarker.listen("mouseOut", function() {
-                avgPriceLineMarker.stroke({thickness: 2, color: "black"});
-            });
-            console.log(assetListData[selectedStockIndex].averagePurchasePrice)
         } else {
             console.log(0);
         }
