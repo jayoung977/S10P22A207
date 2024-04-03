@@ -27,8 +27,6 @@ export default function FriendSearch() {
 
   // 친구목록 react-query로 구현
   const { result }: { result: Friend[] } = data ? data : { result: [] };
-  const { searchFriend } = multigameStore();
-  const [filteredFriendList, setfilteredFriendList] = useState<Friend[]>([]);
   const playClickSound = useClickSound();
 
   const invitationRequest = async (request: any) => {

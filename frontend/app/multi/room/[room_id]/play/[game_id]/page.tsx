@@ -12,6 +12,8 @@ import GameMembers from "./GameMembers";
 import axios from "axios";
 import socketStore from "@/public/src/stores/websocket/socketStore";
 import multigameStore from "@/public/src/stores/multi/MultiGameStore";
+import InGameBgm from "@/public/src/components/bgm/InGameBgm";
+
 
 export type dataType = {
   date: string;
@@ -95,6 +97,7 @@ export default function page() {
       {/* <RoundResult/> */}
       <div className="grid grid-rows-12 h-screen border-separate">
         <Header />
+        <InGameBgm></InGameBgm>
         <div className="row-span-11 grid grid-cols-12 border">
           <aside className="col-span-2 text-center border p-2 grid grid-rows-12">
             <GameStatus />
