@@ -47,8 +47,16 @@ import com.backend.api.global.common.type.SocketType;
 import com.backend.api.global.common.type.TradeType;
 import com.backend.api.global.exception.BaseExceptionHandler;
 import com.backend.api.global.security.userdetails.CustomUserDetails;
+import com.backend.api.global.websocket.dto.request.WebSocketMessageReq;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -210,26 +218,29 @@ public class MultiGameService {
 
 	public MultiGameStartResponseDto startMultiGame(Long memberId, MultiGameStartRequestDto dto) {
 		log.info("MULTIGAMESTART:::");
-		MultiWaitingRoom multiwaitingRoom = getWaitingRoom(dto.roomId());
+		MultiWaitingRoom multiWaitingRoom = getWaitingRoom(dto.roomId());
 		/* 예외 처리*/
 		// if (multiwaitingRoom.getParticipantIds().size() < 2) {
 		// 	throw new BaseExceptionHandler(ErrorCode.NOT_ENOUGH_PARTICIPANTS);
 		// }
-		if (multiwaitingRoom.getIsPlaying()) {
+		if(multiWaitingRoom.getIsPlaying()) {
 			throw new BaseExceptionHandler(ErrorCode.IS_PLAYING);
 		}
-
-		Long gameId = null;
-		if (dto.roundNumber() == 1) {
-			// multiGame 저장 키: multiGame:gameId:memberId:roundNumber
-			gameId = redisTemplate.opsForValue().increment("gameId", 1); // Redis에서 Atomic한 증가
-			if (gameId == null || gameId == 1) {
-				gameId = 1L; // 초기값 설정
-				redisTemplate.opsForValue().set("gameId", gameId);
-			}
-		} else {
-			// Redis에서 memberId가 주어진 값을 가진 키 중에서 gameId가 가장 큰 값을 찾기 위한 패턴
-			String pattern = "multiGame:*:" + memberId + ":*";
+		if(!multiWaitingRoom.getIsPlaying()){
+			multiWaitingRoom.setIsPlaying(true);
+			redisTemplate.opsForValue().set("multiGame:" + dto.roomId(), multiWaitingRoom);
+		}
+        Long gameId = null;
+        if (dto.roundNumber() == 1) {
+            // multiGame 저장 키: multiGame:gameId:memberId:roundNumber
+            gameId = redisTemplate.opsForValue().increment("gameId", 1); // Redis에서 Atomic한 증가
+            if (gameId == null || gameId == 1) {
+                gameId = 1L; // 초기값 설정
+                redisTemplate.opsForValue().set("gameId", gameId);
+            }
+        } else {
+            // Redis에서 memberId가 주어진 값을 가진 키 중에서 gameId가 가장 큰 값을 찾기 위한 패턴
+            String pattern = "multiGame:*:" + memberId + ":*";
 
 			// 패턴과 일치하는 키를 모두 가져옴
 			Set<String> keys = redisTemplate.keys(pattern);
@@ -247,6 +258,7 @@ public class MultiGameService {
 			gameId = maxGameId;
 
 		}
+
 
 		// 가능한 날짜를 찾는다. -> 동일한 날짜의 데이터 주기 위함.
 		LocalDateTime lastDate = LocalDateTime.of(2024, 3, 10, 0, 0);
@@ -408,6 +420,7 @@ public class MultiGameService {
 		redisTemplate.opsForValue().set(key, multiGame);
 		multiGamePlayerRepository.save(multiGamePlayer);
 
+
 		// 350일치 차트
 		List<StockChart> stockChartList = stockChartRepository.findByIdBetween(dto.firstDayStockChartId(), dto.firstDayStockChartId() + 349);
 
@@ -426,61 +439,7 @@ public class MultiGameService {
 			);
 			stockChartDtoList.add(stockChartDto);
 		});
-
-		return new StockChartDataDto(dto.stockId(), stockChartDtoList);
-	}
-
-	//TODO: 이거 어떻게 응용?
-//	@Async
-//	public CompletableFuture<Void> sendRequestPeriodically() {
-//		int time = 100;
-//		while (time > 0) {
-//			try {
-//				List<Long> memberIdRank = multiGameRankService.getUserRanksByTotalAsset(dto.gameId(), dto.roundNumber());
-//				List<PlayerRankInfo> playerRankInfos = new ArrayList<>();
-//				for (int i = 0; i < memberIdRank.size(); i++) {
-//					Member player = memberRepository.findById(memberIdRank.get(i)).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
-//					MultiGame playerGame = getGame(memberIdRank.get(i), dto.gameId());
-//					playerRankInfos.add(new PlayerRankInfo(player.getNickname(), playerGame.getDay(), (i + 1), playerGame.getTotalAsset()));
-//				}
-//				// 여기에 원하는 작업 수행
-//				MultiWaitingRoom multiWaitingRoom = getWaitingRoom(currentGame.getRoomId());
-//
-//				List<PlayerRankInfo> playerRankInfos = new ArrayList<>();
-//				// 순위 계산 - Sorted Set (매 초마다 보내줘야 함!)
-//				List<Long> memberIdRank = multiGameRankService.getUserRanksByTotalAsset(dto.gameId(), dto.roundNumber());
-//				for(int i = 0; i < memberIdRank.size(); i++){
-//					Member player = memberRepository.findById(memberIdRank.get(i)).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
-//					MultiGame playerGame = getGame(memberIdRank.get(i), dto.gameId());
-//					playerRankInfos.add(new PlayerRankInfo(player.getNickname(), playerGame.getDay(), (i + 1), playerGame.getTotalAsset()));
-//				}
-//
-//				for(Long participantId : multiWaitingRoom.getParticipantIds()){
-//					String nickname = memberRepository.findById(memberId).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)).getNickname();
-//					template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIGAMEINFO, new MultiGameInfo(playerRankInfos, time)));
-//				}
-//
-//				TimeUnit.SECONDS.sleep(1); // 1초 대기
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		}
-//	}
-
-	public void sendResultToSocket(Long gameId, int roundNumber, Long roomId){
-		List<Long> memberIdRank = multiGameRankService.getUserRanksByTotalAsset(gameId, roundNumber);
-		List<PlayerRankInfo> playerRankInfos = new ArrayList<>();
-		for (int i = 0; i < memberIdRank.size(); i++) {
-			Member player = memberRepository.findById(memberIdRank.get(i)).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
-			MultiGame playerGame = getGame(memberIdRank.get(i), gameId);
-			playerRankInfos.add(new PlayerRankInfo(player.getNickname(), playerGame.getDay(), (i + 1), playerGame.getTotalAsset()));
-		}
-		MultiWaitingRoom multiWaitingRoom = getWaitingRoom(roomId);
-
-		// 순위 계산 - Sorted Set (매 초마다 보내줘야 함!)
-		for(Long participantId : multiWaitingRoom.getParticipantIds()){
-			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIGAMEINFO, playerRankInfos));
-		}
+        return new StockChartDataDto(dto.stockId(), stockChartDtoList);
 	}
 
 
@@ -810,26 +769,6 @@ public class MultiGameService {
 
         long totalAssets = currentGame.getCash();
 
-		// 모두 다 끝나면 결과를 뿌려준다.
-
-
-//		// 방의 다른 참여자들에게 현재 진행상황을 전한다.
-//		MultiWaitingRoom multiWaitingRoom = getWaitingRoom(currentGame.getRoomId());
-//
-//		List<PlayerRankInfo> playerRankInfos = new ArrayList<>();
-//		// 순위 계산 - Sorted Set (매 초마다 보내줘야 함!)
-//		List<Long> memberIdRank = multiGameRankService.getUserRanksByTotalAsset(dto.gameId(), dto.roundNumber());
-//		for(int i = 0; i < memberIdRank.size(); i++){
-//			Member player = memberRepository.findById(memberIdRank.get(i)).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
-//			MultiGame playerGame = getGame(memberIdRank.get(i), dto.gameId());
-//			playerRankInfos.add(new PlayerRankInfo(player.getNickname(), playerGame.getDay(), (i + 1), playerGame.getTotalAsset()));
-//		}
-//
-//		for(Long participantId : multiWaitingRoom.getParticipantIds()){
-//			String nickname = memberRepository.findById(memberId).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)).getNickname();
-//			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIGAMEINFO, new MultiGameInfo(nickname, dto.day())));
-//		}
-
         if (dto.day() == 51) {
 
             // 아직 매도하지 않은 물량은 팔아준다.
@@ -844,6 +783,7 @@ public class MultiGameService {
 
 
             // roi : (총수익) / (총 투자한 돈) * 100
+
             double roi = currentGame.getTotalPurchaseAmount() == 0L ? 0 :
                 (100.0 * (currentGame.getProfit() +
                     (currentGame.getStockAmount() * (todayChart.getEndPrice() - currentGame.getAveragePrice())) +

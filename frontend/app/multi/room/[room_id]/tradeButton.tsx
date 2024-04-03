@@ -48,28 +48,40 @@ export default function TradeButtons(){
        />
       <div className="gap-1 grid grid-rows-4">
         <button
-          onClick={()=>{
+          onClick={() => {
             playClickSound();
-            setTradeType('buy');
-            setIsOpenTradeModal(true)
+            setTradeType("buy");
+            setIsOpenTradeModal(true);
           }}
-         className='border p-1 m-2 rounded-md text-white font-bold bg-red-500 hover:bg-red-400'>매수 (Q)
+          className="border p-1 m-2 rounded-md text-white font-bold bg-red-500 hover:bg-red-400"
+        >
+          매수 (Q)
         </button>
         <button
           onClick={()=>{
             playClickSound();
-            setTradeType('sell')
-            setIsOpenTradeModal(true)
+            setTradeType("sell");
+            setIsOpenTradeModal(true);
           }}
-         className='border p-1 m-2 rounded-md text-white font-bold bg-blue-500 hover:bg-small-1'>매도 (W)
-         </button>
+          className="border p-1 m-2 rounded-md text-white font-bold bg-blue-500 hover:bg-small-1"
+        >
+          매도 (W)
+        </button>
         <button
           onClick={()=>{
             playClickSound();
-            setTradeType('shortSell')
+            setTradeType('short-selling')
             setIsOpenTradeModal(true)
           }}
          className='border p-1 m-2 rounded-md text-white font-bold bg-yellow-500 hover:bg-small-10'>공매도 (E)
+        </button>
+        <button
+          onClick={()=>{
+            playClickSound();
+            setTradeType('close-short')
+            setIsOpenTradeModal(true)
+          }}
+         className='border p-1 m-2 rounded-md text-white font-bold bg-small-12 hover:bg-small-12'>공매도 청산
         </button>
       </div>
     </div>

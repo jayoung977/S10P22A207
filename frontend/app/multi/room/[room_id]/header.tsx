@@ -1,7 +1,7 @@
 "use client";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
-import logo from "@/public/src/assets/images/logo.png"
+import logo from "@/public/src/assets/images/logo.png";
 import axios from "axios";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 import socketStore from "@/public/src/stores/websocket/socketStore";
@@ -16,7 +16,7 @@ export default function Header() {
   const params = useParams<{ room_id?: string }>();
   const room_id: string | undefined = params.room_id;
   const { deleteReceiveMessages, readyState } = socketStore();
-  const { roomId, roomTitle, hostId, roundNumber, maxRoundNumber } =
+  const { roomId, roomTitle, hostId, maxRoundNumber, roundNumber } =
     socketStore();
   const [allReady, setAllReady] = useState(false);
   const [ready, setReady] = useState(false);
@@ -56,34 +56,34 @@ export default function Header() {
   const handleGameStart = async () => {
     const numberKeys = Object.keys(readyState).map(Number);
     // if(numberKeys.length > 1){
-      const token = sessionStorage.getItem("accessToken");
-      await axios({
-        url: "https://j10a207.p.ssafy.io/api/multi/start-game",
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {
-          playerIds: numberKeys,
-          maxRoundNumber: maxRoundNumber,
-          roundNumber: 1,
-          roomId: params.room_id
-        }
-      })
+    const token = sessionStorage.getItem("accessToken");
+    await axios({
+      url: "https://j10a207.p.ssafy.io/api/multi/start-game",
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: {
+        playerIds: numberKeys,
+        roundNumber: roundNumber,
+        roomId: params.room_id,
+        maxRoundNumber: maxRoundNumber,
+      },
+    })
       .then((res) => {
         console.log(res);
       })
-      .catch ((error) => {
-        console.error(error)
-      })
+      .catch((error) => {
+        console.error(error);
+      });
     // } else {
     //   Swal.fire({
     //     title: '2명 이상일 때 시작 가능합니다.',
     //     icon: 'error'
     //   })
-      // return
+    // return
     // }
-  }
+  };
 
   const [receiveMessage, setReceiveMessage] = useState<any>([]);
   function handleExit() {
@@ -153,7 +153,7 @@ export default function Header() {
           onClick={() => {
             playClickSound();
             handleExit();
-            router.back();
+            router.push('/multi');
           }}
           className="border p-2 rounded-md border-gray-400 hover:bg-gray-100 hover:border-2"
         >

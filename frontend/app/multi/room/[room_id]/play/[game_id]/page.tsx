@@ -2,7 +2,7 @@
 
 import Header from "./header";
 import GameStatus from "./gameStatus";
-import Chart from "@/app/single/play/Chart";
+import Chart from "./roundChart";
 import Chat from "../../chat";
 import TradeHistory from "./tradeHistory";
 import { useState, useEffect } from "react";
@@ -72,7 +72,7 @@ export default function page() {
           </aside>
           <main className="col-span-8 grid grid-rows-16">
             <div className="row-span-12"></div>
-            {/* <Chart data={data}/> */}
+            {/* <RoundChart/> */}
             <div className="border grid grid-cols-12 row-span-4">
               <Chat />
               <TradeButtons />
