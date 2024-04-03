@@ -492,7 +492,7 @@ export default function RoundChart({ data }: any) {
             (window as any).handleShowPlot = null;
         };
     
-    }, [data]);
+    }, [day]);
 
     const playClickSound = useClickSound();
   
