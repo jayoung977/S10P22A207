@@ -224,8 +224,8 @@ export default function Chart({ data }: any) {
         });
         todayEndPriceTextMarker.listen("mouseOut", function() {
             todayEndPriceTextMarker.fontColor("pink");
-            todayEndPriceTextMarker.background().enabled(false);
             todayEndPriceTextMarker.background().stroke("2 pink");
+            todayEndPriceTextMarker.background().enabled(false);
         });
 
         // lineMarker에 hover 효과 부여
