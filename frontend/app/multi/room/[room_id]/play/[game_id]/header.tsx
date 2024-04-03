@@ -79,7 +79,7 @@ export default function Header() {
       },
     })
       .then((res) => {
-        console.log("다음턴! : ", res.data);
+        // console.log("다음턴! : ", res.data);
         if (res.data.result.nextDayInfo != undefined) {
           setAveragePrice(res.data.result.nextDayInfo.averagePrice);
           setCash(res.data.result.nextDayInfo.cash);
@@ -118,10 +118,10 @@ export default function Header() {
   };
 
   useEffect(() => {
-    window.addEventListener("keydown", handleTradeDay);
+    window.addEventListener("keyup", handleTradeDay);
 
     return () => {
-      window.removeEventListener("keydown", handleTradeDay);
+      window.removeEventListener("keyup", handleTradeDay);
     };
   }, [day]);
 
