@@ -287,8 +287,7 @@ public class MultiGameService {
 
 		for (Long playerId : dto.playerIds()) { // 채팅방에 있는 모든 유저에게 메시지 전송
 			log.info("메시지 전송 대상: {}", playerId);
-			template.convertAndSend("/api/sub/" + playerId, new SocketBaseDtoRes<>(SocketType.START,
-				new MultiGameStartResponseDto(gameId, firstDayStockChartIds, dto.roomId())));
+			template.convertAndSend("/api/sub/" + playerId, new SocketBaseDtoRes<>(SocketType.START, new MultiGameStartResponseDto(gameId, firstDayStockChartIds, dto.roomId())));
 			log.info("socketBaseDtoRes : gameId : {} roundNumber : {}", gameId, 1);
 		}
 		log.info("메시지 전송 완료");
@@ -886,7 +885,6 @@ public class MultiGameService {
 			currentGame.getTradeList()
 		);
 
-
 		return new MultiNextDayResponseDto(multiTradeResponseDto, null);
 	}
 
@@ -947,67 +945,41 @@ public class MultiGameService {
         MultiGameLog multiGameLog = multiGameLogRepository.findByMemberIdAndGameIdAndRound(memberId, dto.gameId(), dto.roundNumber())
             .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
 
-        List<MultiGamePlayer> multiGamePlayers = multiGameLog.getMultiGamePlayers();
-        List<Long> memberIds = multiGamePlayers.stream()
-            .map(MultiGamePlayer::getMember)
-            .map(Member::getId)
-            .toList();
-
-        String stockName = stockRepository.findById(multiGameLog.getStockId()).orElseThrow(
+		String stockName = stockRepository.findById(multiGameLog.getStockId()).orElseThrow(
             () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
         ).getStockName();
+
         StockChart firstDayStockChart = stockChartRepository.findByStock_IdAndDate(multiGameLog.getStockId(), multiGameLog.getStartDate())
             .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_LOG_STOCK_CHART));
         StockChart lastDayStockChart = stockChartRepository.findById(firstDayStockChart.getId() + 349)
             .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_LOG_STOCK_CHART));
 
         List<MultiGameResultDto> result = new ArrayList<>();
+		List<Long> userRanksByTotalAsset = multiGameRankService.getUserRanksByTotalAsset(dto.gameId(), dto.roundNumber());
 
+        // 결과를 보여달라고 할 때 MultiGamePlayer 내의 랭크를 설정
+		List<MultiGamePlayer> multiGameLogMultiGamePlayers = multiGameLog.getMultiGamePlayers();
 
-        Map<Long, Integer> map = new HashMap<>(); // 랭크를 담을 map
-        // 결과를 보여달라고 할 때 랭크를 설정해서 보여준다.
-        if (dto.roundNumber() != 1) {
-            Long finalGameId = dto.gameId();
-            List<MultiGame> multiGames = new ArrayList<>(memberIds.stream().map(playerId -> {
-                try {
-                    String jsonStr = objectMapper.writeValueAsString(redisTemplate.opsForValue().get("multiGame:" + finalGameId + ":" + playerId + ":" + (dto.roundNumber())));
-                    return objectMapper.readValue(jsonStr, MultiGame.class);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
+		for (int i = 0; i < userRanksByTotalAsset.size(); i++) {
+            for (MultiGamePlayer multiGameLogMultiGamePlayer : multiGameLogMultiGamePlayers) {
+                if (Objects.equals(userRanksByTotalAsset.get(i), multiGameLogMultiGamePlayer.getMember().getId())) {
+                    int rank = i + 1;
+                    MultiGameResultDto multiGameResultDto = new MultiGameResultDto(
+                        multiGameLogMultiGamePlayer.getMember().getId(),
+                        multiGameLogMultiGamePlayer.getMember().getNickname(),
+                        stockName,
+                        rank,
+                        multiGameLog.getStartDate(),
+                        lastDayStockChart.getDate(),
+                        (long) multiGameLogMultiGamePlayer.getFinalProfit(),
+                        multiGameLogMultiGamePlayer.getFinalRoi(),
+                        dto.roundNumber());
+					result.add(multiGameResultDto);
+					break;
                 }
-            }).toList());
 
-            // Sort players by profit in descending order
-            multiGames.sort(Comparator.comparing(MultiGame::getProfit).reversed());
-            for (int i = 0; i < multiGames.size(); i++) {
-                map.put(multiGames.get(i).getMemberId(), i + 1);
             }
-
-            // 정산할 때 rank를 바꿔준다. -> 새로 API 요청!
-            MultiGameLog beforeMultigameLog = multiGameLogRepository.findByMemberIdAndGameIdAndRound(memberId, dto.gameId(), dto.roundNumber())
-                .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
-            List<MultiGamePlayer> beforeMultiGameLogMultiGamePlayers = beforeMultigameLog.getMultiGamePlayers();
-
-            for (MultiGamePlayer gamePlayer : beforeMultiGameLogMultiGamePlayers) {
-                gamePlayer.updateRanking(map.get(gamePlayer.getMember().getId()));
-            }
-        }
-
-        for (MultiGamePlayer multiGamePlayer : multiGamePlayers) {
-            MultiGameResultDto multiGameResultDto = new MultiGameResultDto(
-                multiGamePlayer.getMember().getId(),
-                multiGamePlayer.getMember().getNickname(),
-                stockName,
-                multiGamePlayer.getRanking(),
-                multiGameLog.getStartDate(),
-                lastDayStockChart.getDate(),
-                (long) multiGamePlayer.getFinalProfit(),
-                multiGamePlayer.getFinalRoi(),
-                dto.roundNumber());
-
-            result.add(multiGameResultDto);
-        }
-
+		}
         return result;
     }
 
