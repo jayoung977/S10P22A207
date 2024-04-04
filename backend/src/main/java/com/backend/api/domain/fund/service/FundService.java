@@ -745,31 +745,6 @@ public class FundService {
 			);
 			assetList.add(assetListDto);
 
-			if (dto.day() == 51) {
-				// FundStock 에 저장
-				FundStock fundGameStock = fundStockRepository.findByFund_IdAndStock_Id(currentGame.getFundId(),todayChart.getStock().getId() )
-						.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK));
-
-				Long stockId = todayChart.getStock().getId();
-				Integer index = currentGame.getStocks().get(stockId);
-
-				// 최종 투자금액, 보유개수 저장
-				log.info("fundGameStock.updateInvestmentAmount : {}",currentGame.getStockPurchaseAmount()[stockIdx]);
-				log.info("fundGameStock.updateStockAmount : {}",(long) currentGame.getStockAmount()[stockIdx]);
-				log.info("fundGameStock.updateAveragePurchasePrice : {}",currentGame.getAveragePrice()[index]);
-				log.info("(long) currentGame.getStockAmount()[stockIdx] : {}",currentGame.getProfits()[index] + currentGame.getStockAmount()[index] * (todayChart.getEndPrice() - currentGame.getAveragePrice()[index]));
-				fundGameStock.updateInvestmentAmount(currentGame.getStockPurchaseAmount()[stockIdx]);
-				fundGameStock.updateStockAmount((long) currentGame.getStockAmount()[stockIdx]);
-
-				fundGameStock.updateAveragePurchasePrice(currentGame.getAveragePrice()[index]);
-				fundGameStock.updateProfit(currentGame.getProfits()[index] + currentGame.getStockAmount()[index] * (todayChart.getEndPrice() - currentGame.getAveragePrice()[index]));
-				double roi = currentGame.getStockPurchaseAmount()[index] == 0L ? 0 :
-						(100.0 * (currentGame.getProfits()[index] +
-								currentGame.getStockAmount()[index] * (todayChart.getEndPrice() - currentGame.getAveragePrice()[index]))
-								/ currentGame.getStockPurchaseAmount()[index]);
-				fundGameStock.updateRoi(roi);
-				log.info("fundGameStock.updateRoi : {}",roi);
-			}
 		}
 		// 총 profit 계산
 		long resultProfit = totalAsset - currentGame.getInitial();
