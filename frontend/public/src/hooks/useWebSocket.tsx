@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 export const useWebSocket = () => {
   const params = useParams();
   const client = useRef<CompatClient>({} as CompatClient);
-  const { setClientObject, clientObject } = socketStore();
+  const { setClientObject, clientObject, setResultNumberCount } = socketStore();
   const { memberId, nickname } = userStore();
   const [receiveMessage, setReceiveMessage] = useState<any>([]);
   const [receiveInvitation, setReceiveInvitation] = useState<any>([]);
@@ -38,7 +38,9 @@ export const useWebSocket = () => {
     setPlayers,
     setMultiGameLogId,
     setIsGameOver,
+    incrementresultNumberCount,
   } = socketStore();
+
   const router = useRouter();
   const fetchAlarmData = async () => {
     try {
@@ -144,7 +146,7 @@ export const useWebSocket = () => {
           }
 
           if (parsedMessage.type === "MULTIRESULT") {
-            setIsGameOver(true);
+            incrementresultNumberCount();
           }
         });
       });
@@ -156,5 +158,4 @@ export const useWebSocket = () => {
       };
     }
   }, [memberId]);
-
 };

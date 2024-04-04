@@ -61,8 +61,13 @@ export default function page() {
     setMultiGameLogId,
     setTodayEndPrice,
     setPlayers,
+    setResultNumberCount,
   } = socketStore();
 
+  useEffect(() => {
+    setResultNumberCount(0);
+  }, []);
+  
   const { stockId, setStockId, stockChartList, setStockChartList } =
     multigameStore();
   const [isLoading, setIsLoading] = useState(true);
