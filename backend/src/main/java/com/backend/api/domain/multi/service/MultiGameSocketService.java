@@ -80,7 +80,7 @@ public class MultiGameSocketService {
 		// 웹소켓에 연결시키는 과정
 		checkStatus(userDetails); // 내가 방에 입장해 있는지 확인
 		MultiWaitingRoom multiWaitingRoom = getMultiWaitingRoom(roomId);
-		if(multiWaitingRoom.getParticipantIds().size() >= 4) {
+		if(multiWaitingRoom.getParticipantIds().size() >= 6) {
 			throw new BaseExceptionHandler(ErrorCode.FULL_ROOM);
 		}
 		if(multiWaitingRoom.getIsPlaying()) {
