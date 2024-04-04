@@ -600,6 +600,8 @@ public class FundService {
 					() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK)
 			);
 			log.info("currentGame.getStocks().get(firstDayChartId) : {}", currentGame.getStocks().get(firstDayChartId));
+			log.info("currentGame.getStocks() : {}", currentGame.getStocks());
+			log.info("firstDayChartId : {}", firstDayChartId);
 			int amount = currentGame.getStockAmount()[currentGame.getStocks().get(firstDayChartId)]; // 해당 Stock의 보유량 가져오기
 
 			totalAsset += (long) (amount * todayStockCharts.getEndPrice() * 0.9975); // 총 자산 계산
