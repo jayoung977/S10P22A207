@@ -785,8 +785,6 @@ public class FundService {
 
 			// 레디스에서 삭제해주기
 			redisTemplate.delete("fundGame:" + dto.fundId() + ":" + dto.gameIdx());
-			// 펀드 종료
-			fund.updateFundStatus(FundStatus.CLOSED);
 			// 펀드 종료 알림
 			for (Member member : fund.getFundMemberList().stream().map(FundMember::getMember).toList()) {
 				log.info("펀드 종료 알림: {}", member.getNickname());
@@ -801,6 +799,8 @@ public class FundService {
 				noticeService.createNotification(notice);
 			}
 			fundAndMemberService.closeFund(managerId, fund.getId());
+			// 펀드 종료
+			fund.updateFundStatus(FundStatus.CLOSED);
 			return new NextDayResponseDto(stockSummaries, currentGame.getCash(), resultProfit, resultRoi, currentGame.getTotalPurchaseAmount(),
 					totalAsset, assetList, fundGameResultDto);
 		}
