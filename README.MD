@@ -113,7 +113,9 @@
 
 ## 3. Redis
 
-![](./assets/skills/redis.png)
+[//]: # (![]&#40;./assets/skills/redis.png&#41;)
+<img src="./assets/skills/redis.png" width="200">
+
 
 > Redis는 주로 애플리케이션 캐시나 빠른 응답 속도를 가진 데이터베이스로 사용되는 오픈 소스 인메모리 NoSQL 저장소 입니다.
 
@@ -142,7 +144,8 @@
 - 커뮤니티 파일 업로드 기능
 
 ## 5. Hadoop, Spark
-
+![](./assets/skills/skill_hadoop.png)
+![](./assets/skills/skill_hadoop2.png)
 > Hadoop 은 대용량 데이터를 분산 처리하는 데 사용되는 Apache의 오픈소스 프레임워크입니다.
 
 > Apache Spark는 빅데이터 처리를 위한 오픈소스 클러스터 컴퓨팅 프레임워크입니다.
@@ -157,6 +160,7 @@
 
 
 ## 6. Docker
+![](./assets/skills/skill_docker.png)
 > Docker는 컨테이너 기반의 오픈소스 가상화 플랫폼입니다.
 >
 > Docker를 사용하면 개발자는 어플리케이션을 빌드, 배포, 실행할 수 있습니다.
@@ -283,13 +287,13 @@
 
 Git flow 사용을 위해 `sourcetree` 프로그램을 사용하였고 `git convention`을 지켜가며 프로젝트 개발에 임하였습니다.
 
-![gitflow.gif](./assets/skills/zigeum_gitflow.png)
+![gitflow.gif](./assets/skills/skill_git_flow.gif)
 
 ## 프로젝트 산출물
 
 ### 1. Figma
 
-![figma.JPG](./assets/skills/zigeum_figma.jpg)
+![figma.JPG](./assets/skills/zigeum_figma.png)
 
 ### 2. ERD
 
@@ -297,7 +301,7 @@ Git flow 사용을 위해 `sourcetree` 프로그램을 사용하였고 `git conv
 
 ### 3. API 문서
 
-![swagger.gif](./assets/skills/zigeum_swagger.png)
+![swagger.gif](./assets/skills/skill_swagger.gif)
 
 ### 4. Gitlab 이슈 관리를 통한 기능 구현
 

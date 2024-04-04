@@ -59,12 +59,28 @@ export default function page() {
     gameId,
     multiGameStockIds,
     setMultiGameLogId,
+    setTodayEndPrice,
+    setPlayers,
   } = socketStore();
+
   const { stockId, setStockId, stockChartList, setStockChartList } =
     multigameStore();
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
-
+  const {
+    setAveragePrice,
+    setCash,
+    setInitialAsset,
+    setProfitMargin,
+    setShortAveragePrice,
+    setShortStockAmount,
+    setStockAmount,
+    setStockValue,
+    setTotalAsset,
+    setTotalPurchaseAmount,
+    setUnrealizedGain,
+    setTradeList,
+  } = socketStore();
   const fetchMultigameData = async () => {
     setDay(1);
     try {
@@ -100,6 +116,19 @@ export default function page() {
       setStockId(response.data.result.stockId);
       setStockChartList(response.data.result.stockChartList);
       setIsLoading(false);
+      setTodayEndPrice(response.data.result.stockChartList[300].endPrice);
+      setAveragePrice(0);
+      setCash(10000000);
+      setInitialAsset(10000000);
+      setProfitMargin(0);
+      setShortAveragePrice(0);
+      setShortStockAmount(0);
+      setStockAmount(0);
+      setStockValue(0);
+      setTotalAsset(10000000);
+      setTotalPurchaseAmount(0);
+      setUnrealizedGain(0);
+      setTradeList([]);
     } catch (error) {
       console.log(error);
       setIsError(true);
@@ -110,12 +139,37 @@ export default function page() {
     fetchMultigameData();
   }, []);
 
+  const params = useParams<{ room_id?: string; game_id?: string }>();
+  const room_id: string | undefined = params.room_id;
+  const game_id: string | undefined = params.game_id;
+
+  const fetchMultiPlayUsers = async () => {
+    const response = await axios({
+      url: `https://j10a207.p.ssafy.io/api/multi/player-info`,
+      method: `post`,
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+      data: {
+        gameId: game_id,
+        roundNumber: 1,
+        roomId: room_id,
+      },
+    });
+    setPlayers(response.data.result);
+  };
+
+  useEffect(() => {
+    fetchMultiPlayUsers();
+  }, [isLoading, isError]);
+
   if (isLoading) {
     return <div className="rainbow"></div>;
   }
   if (isError) {
     return <div>Error</div>;
   }
+
   return (
     <div>
       {/* <RoundResult/> */}
