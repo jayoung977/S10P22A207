@@ -62,6 +62,7 @@ export default function Header() {
         multiGameLogId: multiGameLogId,
       },
     });
+    console.log(response.data);
     return response.data;
   };
   const [flag, setFlag] = useState(true);
@@ -136,7 +137,7 @@ export default function Header() {
       handleTomorrow(day);
       if (day === 50) {
         setIsGameOver(true);
-        fetchEndGame()
+        fetchEndGame();
         setFlag(false);
         setDay(1);
         setRoundNumber(1);
@@ -179,7 +180,7 @@ export default function Header() {
             handleTomorrow(day);
             if (day === 50) {
               setIsGameOver(true);
-              fetchEndGame()
+              fetchEndGame();
               setDay(1);
               setRoundNumber(1);
               setIsDisabled(true);
