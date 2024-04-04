@@ -198,7 +198,7 @@ export default function Chart({ data }: any) {
 
         // 가장 최근 종가 Line
         const todayEndPriceLineMarker = plot1.lineMarker(0);
-        todayEndPriceLineMarker.value(purifiedData[299+day]?.endPrice);
+        todayEndPriceLineMarker.value(purifiedData[298+day]?.endPrice);
         todayEndPriceLineMarker.stroke({
             thickness: 2,
             color: "pink",
@@ -208,6 +208,7 @@ export default function Chart({ data }: any) {
         const todayEndPriceTextMarker = plot1.textMarker(0);
         todayEndPriceTextMarker.value(purifiedData[299+day]?.endPrice);
         todayEndPriceTextMarker.text(purifiedData[299+day]?.endPrice)
+        console.log(todayEndPriceTextMarker);
         todayEndPriceTextMarker.fontColor("pink");
         todayEndPriceTextMarker.background().enabled(true);
         todayEndPriceTextMarker.background().stroke("2 pink");
