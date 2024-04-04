@@ -97,6 +97,9 @@ interface WebSocketStore {
   setPlayers: (players: PlayersType[]) => void;
   isGameOver: boolean;
   setIsGameOver: (isGameOver: boolean) => void;
+  resultNumberCount: number;
+  setResultNumberCount: (resultNumberCount: number) => void;
+  incrementresultNumberCount: () => void;
 }
 
 const socketStore = create<WebSocketStore>((set) => ({
@@ -169,6 +172,10 @@ const socketStore = create<WebSocketStore>((set) => ({
   setMultiGameLogId: (value) => set({ multiGameLogId: value }),
   isGameOver: false,
   setIsGameOver: (value) => set({ isGameOver: value }),
+  resultNumberCount: 0,
+  setResultNumberCount: (value) => set({ resultNumberCount: value }),
+  incrementresultNumberCount: () =>
+    set((state) => ({ resultNumberCount: state.resultNumberCount + 1 })),
 }));
 
 export default socketStore;
