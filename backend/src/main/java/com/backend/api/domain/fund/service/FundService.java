@@ -339,7 +339,8 @@ public class FundService {
 				.initial(fund.getFundAsset())
 				.totalPurchaseAmount(0L)
 				.profits(new int[10])
-				.stockPurchaseAmount(new long[10]).build();
+				.stockPurchaseAmount(new long[10])
+			.build();
 
 		Long nextId = null; //사실 fundGame은 한번밖에 못해서 필요없는 변수이기는 함
 		nextId = redisTemplate.opsForValue().increment("nextId", 1); // Redis에서 Atomic한 증가
@@ -576,16 +577,19 @@ public class FundService {
 			throw new BaseExceptionHandler(ErrorCode.NOT_ENOUGH_MONEY);
 		}
 
+		log.info("flag 0");
 		// 평균단가 계산 => (평균단가 * 수량 + 이번에 사는데 쓴 돈) / (원래수량 + 이번에 사는 수량)
 		int averagePrice = (currentGame.getAveragePrice()[stockIdx] * currentGame.getStockAmount()[stockIdx]
 				+ dto.amount() * todayChart.getEndPrice()) / (currentGame.getStockAmount()[stockIdx] + dto.amount());
+
+		log.info("flag 1");
 		//  샀으니 game 바꿔주기
 		currentGame.getStockAmount()[stockIdx] += dto.amount();
 		currentGame.updateCash(currentGame.getCash() - (long) (dto.amount() * todayChart.getEndPrice() * 1.0015));
 		currentGame.getAveragePrice()[stockIdx] = averagePrice;
 		currentGame.getStockPurchaseAmount()[stockIdx] += (long) dto.amount() * todayChart.getEndPrice();
 		currentGame.getProfits()[stockIdx] -= (int) (dto.amount() * todayChart.getEndPrice() * 0.0015);
-
+		log.info("flag 2");
 		// 총 roi 계산
 		long totalAsset = currentGame.getCash();
 		for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
@@ -598,11 +602,14 @@ public class FundService {
 
 			totalAsset += (long) (amount * todayStockCharts.getEndPrice() * 0.9975); // 총 자산 계산
 		}
+		log.info("flag 3");
 		// 총 구입 금액 계산
 		currentGame.addTotalPurchaseAmount((long) dto.amount() * todayChart.getEndPrice());
 		currentGame.updateTotalAsset(totalAsset);
 
 		double resultRoi = 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx];
+
+		log.info("flag 4");
 		// 총 profit 계산
 		FundTrade fundTrade = FundTrade.builder()
 				.fund(fund)
@@ -615,12 +622,15 @@ public class FundService {
 				.roi(Double.parseDouble(String.format("%.2f", resultRoi)))
 				.profit((-1) *(long) (dto.amount() * todayChart.getEndPrice() * 0.0015))
 				.build();
+
+		log.info("flag 5");
 		fundTradeRepository.save(fundTrade);
 		try{
 			hadoopService.saveFundTradeLogHdfs(fundTrade, managerId);
 		} catch (Exception e){
 
 		}
+		log.info("flag 6");
 		//Redis - 매매내역 추가 및 값 변경
 		currentGame.getTradeList().add(
 				new FundTradeListDto(
@@ -640,12 +650,16 @@ public class FundService {
 						averagePrice, //평균단가
 						100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx] // 수익률
 				);
+
+		log.info("flag 7");
 		redisTemplate.opsForValue().set("fundGame:" + dto.fundId() + ":" + dto.gameIdx(), currentGame);
 
 		long totalProfit = 0;
 		for (int i = 0; i < currentGame.getProfits().length; i++) {
 			totalProfit += currentGame.getProfits()[i];
 		}
+
+		log.info("flag 8");
 		double totalRoi = 100.0 * totalProfit / currentGame.getInitial();
 		TotalAssetDto totalAssetDto = new TotalAssetDto(currentGame.getCash(), totalProfit, totalRoi, currentGame.getTotalPurchaseAmount(), currentGame.getTotalAsset());
 
@@ -663,6 +677,7 @@ public class FundService {
 			);
 			assetList.add(assetListDto);
 		}
+		log.info("flag 9");
 		// 보유현금, 보유자산 변동, 매매내역
 		return new FundTradeResponseDto(
 				currentGame.getCash(),
