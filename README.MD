@@ -45,50 +45,85 @@
 
 # 🌹 화면 소개
 
-![](./assets/scenario/SSAFY%201st%20Project%20기능%20소개.jpg)
+![](./assets/components/scenario01.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(1).jpg>)
+![](./assets/components/scenario02.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(2).jpg>)
+![](./assets/components/scenario03.png>)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(3).jpg>)
+![](./assets/components/scenario04.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(4).jpg>)
+![](./assets/components/scenario05.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(5).jpg>)
+![](./assets/components/scenario06.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(6).jpg>)
+![](./assets/components/scenario07.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(7).jpg>)
+![](./assets/components/scenario08.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(8).jpg>)
+![](./assets/components/scenario09.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(9).jpg>)
+![](./assets/components/scenario10.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(10).jpg>)
+![](./assets/components/scenario11.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(11).jpg>)
+![](./assets/components/scenario12.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(12).jpg>)
+![](./assets/components/scenario13.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(13).jpg>)
+![](./assets/components/scenario14.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(14).jpg>)
+![](./assets/components/scenario15.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(15).jpg>)
+![](./assets/components/scenario16.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(16).jpg>)
+![](./assets/components/scenario17.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(17).jpg>)
+![](./assets/components/scenario18.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(18).jpg>)
+![](./assets/components/scenario19.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(19).jpg>)
+![](./assets/components/scenario20.png)
 
-![](<./assets/scenario/SSAFY%201st%20Project%20기능%20소개%20(20).jpg>)
+![](./assets/components/scenario21.png)
+
+![](./assets/components/scenario22.png)
+
+![](./assets/components/scenario23.png)
+
+![](./assets/components/scenario24.png)
+
+![](./assets/components/scenario25.png)
+
+![](./assets/components/scenario26.png)
+
+![](./assets/components/scenario27.png)
+
+![](./assets/components/scenario28.png)
+
+![](./assets/components/scenario29.png)
+
+![](./assets/components/scenario30.png)
+
+![](./assets/components/scenario31.png)
+
+![](./assets/components/scenario32.png)
+
+![](./assets/components/scenario33.png)
+
+![](./assets/components/scenario34.png)
+
+![](./assets/components/scenario35.png)
+
+![](./assets/components/scenario36.png)
+
+![](./assets/components/scenario37.png)
+
+![](./assets/components/scenario38.png)
+
+![](./assets/components/scenario39.png)
 
 # ✨ 기술 스택 ✨
-
 
 ## 1. WebRTC
 
