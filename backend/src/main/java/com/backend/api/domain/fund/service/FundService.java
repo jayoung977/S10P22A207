@@ -431,14 +431,11 @@ public class FundService {
 		return LocalDateTime.of(randomLocalDate, randomLocalTime);
 	}
 
-
 	@Transactional
 	public FundTradeResponseDto sell(FundTradeRequestDto dto, Long managerId) {
 		Fund fund = fundRepository.findById(dto.fundId()).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_FUND));
 		FundGame currentGame = this.getGame(dto.fundId(), dto.gameIdx());
 
-		FundStock fundGameStock = fundStockRepository.findByFund_IdAndStock_Id(currentGame.getFundId(), dto.stockId())
-				.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK));
 
 		// 세션에 저장된 게임을 가져온다.
 		Integer stockIdx = currentGame.getStocks().get(dto.stockId()); // Map으로 저장한 stockId에 대한 index값을 가져온다.
@@ -473,10 +470,11 @@ public class FundService {
 		currentGame.updateTotalAsset(totalAsset);
 
 		double resultRoi = 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx];
+		Stock stock = stockRepository.findById(dto.stockId()).get();
 		//Mysql - 매매내역 추가
 		FundTrade fundTrade = FundTrade.builder()
 				.fund(fund)
-				.stock(fundGameStock.getStock())
+				.stock(stock)
 				.tradeDate(todayChart.getDate())
 				.tradeType(TradeType.SELL)
 				.tradeAmount(dto.amount())
@@ -782,21 +780,19 @@ public class FundService {
 
 		if (dto.day() == 51) {
 			// 결과 저장.
-
 			LocalDateTime startDate = null, endDate = null;
 			List<StockInfoDto> stockInfoDtoList = new ArrayList<>();
 			for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
-				StockChart startStockChart = stockChartRepository.findById(currentGame.getFirstDayChartList().get(i)).orElseThrow(
-						() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR)
-				);
+				Long firstDateChartId = currentGame.getFirstDayChartList().get(i);
+				StockChart stockChart = stockChartRepository.findById(firstDateChartId).get();
 				if (i == 0) {
 					// 한번만 실행 -> 날짜 받아오기
-					startDate = startStockChart.getDate();
-					endDate = stockChartRepository.findById(startStockChart.getId() + 349).orElseThrow(
-							() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK)
+					startDate = stockChart.getDate();
+					endDate = stockChartRepository.findById(stockChart.getId() + 349).orElseThrow(
+						() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK)
 					).getDate();
 				}
-				stockInfoDtoList.add(new StockInfoDto(startStockChart.getStock().getId(), startStockChart.getStock().getStockName()));
+				stockInfoDtoList.add(new StockInfoDto(stockChart.getStock().getId(), stockChart.getStock().getStockName()));
 			}
 
 			// 게임 로그 저장하기
