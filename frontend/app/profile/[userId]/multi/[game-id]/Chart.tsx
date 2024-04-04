@@ -37,7 +37,13 @@ function calculateMovingAverage(data :any, period :any) {
 
 
 export default function Chart({ data }: any) {
-    const { selectedTradeList } = MultiReviewStore();
+    const { 
+        selectedTradeList, 
+        startDate,
+        endDate,
+        stockName,
+        
+    } = MultiReviewStore();
     useEffect(() => {
         const purifiedData = filteringLowPriceZero(data);
 
@@ -379,11 +385,14 @@ export default function Chart({ data }: any) {
         chart.dispose();
         };
         
-    }, [data, selectedTradeList]);
+    }, [data]);
  
   
   return (
     <div className="row-span-12 grid grid-rows-12">
+        <div className="row-span-1 text-center">
+            <div className="bg-blue-200 m-auto rounded-t-md">종목명 : {stockName} ({startDate} ~ {endDate})</div>
+        </div>
         <div id="chart-container" className="row-span-12 flex items-center justify-center"></div>
     </div>
 

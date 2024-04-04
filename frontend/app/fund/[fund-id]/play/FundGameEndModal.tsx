@@ -1,10 +1,31 @@
 'use client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import FundGameStore from '@/public/src/stores/fund/game/FundGameStore';
+import axios from 'axios';
 export default function FundGameEndModal ({ isOpen, onClose } :any) {
     const { fundGameEndInfoData, setSelectedStockIndex } = FundGameStore();
+    const params = useParams();
     const router = useRouter();
     
+    const handleCloseFund = async () => {
+        try {
+            const response = axios({
+                method: "put",
+                url : 'https://j10a207.p.ssafy.io/api/fund/close', 
+                data: {
+                    fundId: params['fund-id'],
+                },
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`
+                }
+            })
+            console.log(response);
+            onClose();
+            router.push('/multi');
+        } catch (error) {
+            console.log(error);
+        }
+    }
     if (!isOpen) return null;
     
     
@@ -36,23 +57,11 @@ export default function FundGameEndModal ({ isOpen, onClose } :any) {
                     <div className="row-span-3 grid grid-cols-6">
                         <button onClick={() => {
                             setSelectedStockIndex(0);
-                            onClose();
-                            router.push('/multi')
-                            
-                            }} className="col-span-3 rounded-full mx-16 my-8 text-white bg-gray-500"
+                            handleCloseFund();
+                            }} className="col-start-3 col-end-6 rounded-full mx-16 my-8 text-white bg-gray-500"
                         >
-                            나가기
+                            펀드 종료
                         </button>
-                        {/* <button 
-                            onClick={() => {
-                                setSelectedStockIndex(0);
-                                fundGameAgainHandler();
-                            }} 
-                            disabled={fundGameEndInfoData?.fundGameChance == 0}
-                            className="col-span-3 rounded-full mx-16 my-8 text-white bg-gray-500"
-                        >
-                            한번 더!
-                        </button> */}
                     </div>
                 </div>
             </div>
