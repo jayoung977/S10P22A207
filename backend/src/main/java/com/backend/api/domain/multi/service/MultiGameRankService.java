@@ -20,8 +20,9 @@ public class MultiGameRankService {
 
     // totalAssetRank:gameId:roundNumber:
     // 사용자의 totalAsset 을 업데이트하고 Redis Sorted Set 을 업데이트하는 메서드
-    public void updateUserTotalAsset(long gameId, int roundNumber, Long memberId, long totalAsset) {
-        zSetOperations.add("totalAssetRank:" + gameId + ":" + roundNumber, memberId, totalAsset);
+    public void updateUserTotalAsset(long gameId, int roundNumber, long memberId, long totalAsset) {
+        // memberId를 추가해준다.
+        zSetOperations.addIfAbsent("totalAssetRank:" + gameId + ":" + roundNumber, memberId, totalAsset);
     }
     //매수, 매도, 공매도, 공매도청산, 다음날 일때도 update 해줘야 한다.
 
