@@ -16,4 +16,7 @@ public record PlayerRankInfo(
     long totalAsset
 ) {
 
+    public PlayerRankInfo withRank(int newRank) {
+        return new PlayerRankInfo(nickName, day, newRank, totalAsset);
+    }
 }
