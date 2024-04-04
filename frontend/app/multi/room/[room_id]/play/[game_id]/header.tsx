@@ -179,6 +179,7 @@ export default function Header() {
             handleTomorrow(day);
             if (day === 50) {
               setIsGameOver(true);
+              fetchEndGame()
               setDay(1);
               setRoundNumber(1);
               setIsDisabled(true);
