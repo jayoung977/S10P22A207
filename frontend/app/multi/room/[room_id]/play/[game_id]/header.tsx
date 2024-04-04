@@ -25,7 +25,6 @@ export default function Header() {
     setTotalPurchaseAmount,
     setTradeList,
     setUnrealizedGain,
-    players,
     incrementresultNumberCount,
   } = socketStore();
 
@@ -66,14 +65,6 @@ export default function Header() {
     return response.data;
   };
   const [flag, setFlag] = useState(true);
-  
-  useEffect(() => {
-    if (resultNumberCount == players.length) {
-      setIsGameOver(true);
-    }
-    console.log(resultNumberCount, "겜끝난개수");
-    console.log(players, "유저수");
-  }, [resultNumberCount]);
 
   useEffect(() => {
     const targetTime = new Date().getTime() + remainingTime; // 타이머 만료 시간 계산
@@ -144,7 +135,7 @@ export default function Header() {
     if (e.key === "r") {
       handleTomorrow(day);
       if (day === 50) {
-        fetchEndGame();
+        setIsGameOver(true);
         setFlag(false);
         setDay(1);
         setRoundNumber(1);
@@ -186,7 +177,7 @@ export default function Header() {
           onClick={() => {
             handleTomorrow(day);
             if (day === 50) {
-              fetchEndGame();
+              setIsGameOver(true);
               setDay(1);
               setRoundNumber(1);
               setIsDisabled(true);
