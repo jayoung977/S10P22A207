@@ -967,7 +967,6 @@ public class MultiGameService {
 
 	public List<MultiGameResultDto> getSubResult(Long memberId, MultiGameSubResultRequestDto dto) {
 
-
 		List<Long> memberIdRank = multiGameRankService.getUserRanksByTotalAsset(dto.gameId(), dto.roundNumber());
 		List<MultiGameResultDto> multiGameResults = new ArrayList<>();
 		for (int i = 0; i < memberIdRank.size(); i++) {
@@ -986,13 +985,17 @@ public class MultiGameService {
 				100.0 * (playerGame.getTotalAsset() - playerGame.getInitial()) / playerGame.getInitial(),
 				dto.roundNumber()));
 		}
+		MultiWaitingRoom waitingRoom = getWaitingRoom(dto.roomId());
+		waitingRoom.setIsPlaying(false);
+		redisTemplate.opsForValue().set("multiGame:" + dto.roomId(), waitingRoom);
+
 		for(Long participantId : memberIdRank){
 			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIRESULT, multiGameResults));
 		}
 
 		return multiGameResults;
 	}
-
+r
     public MultiGameFinalResultDto getFinalResult(MultiGameResultRequestDto dto) {
 
         List<MultiGameLog> multiGameLogs = multiGameLogRepository.findByGameId(dto.gameId());
