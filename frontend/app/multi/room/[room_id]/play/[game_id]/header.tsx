@@ -25,6 +25,8 @@ export default function Header() {
     setTotalPurchaseAmount,
     setTradeList,
     setUnrealizedGain,
+    players,
+    incrementresultNumberCount,
   } = socketStore();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +48,7 @@ export default function Header() {
   const [isDisabled, setIsDisabled] = useState(false);
   const params = useParams();
   const roomId = params["room_id"];
-
+  const { resultNumberCount } = socketStore();
   const fetchEndGame = async () => {
     const response = await axios({
       url: "https://j10a207.p.ssafy.io/api/multi/round-result",
@@ -63,9 +65,18 @@ export default function Header() {
     });
     return response.data;
   };
+  const [flag, setFlag] = useState(true);
+  
+  useEffect(() => {
+    if (resultNumberCount == players.length) {
+      setIsGameOver(true);
+    }
+    console.log(resultNumberCount, "겜끝난개수");
+    console.log(players, "유저수");
+  }, [resultNumberCount]);
+
   useEffect(() => {
     const targetTime = new Date().getTime() + remainingTime; // 타이머 만료 시간 계산
-
     const interval = setInterval(() => {
       const currentTime = new Date().getTime();
       const remaining = targetTime - currentTime;
@@ -75,7 +86,9 @@ export default function Header() {
         console.log("Countdown finished!");
         fetchEndGame();
       } else {
-        setRemainingTime(remaining); // 상태 업데이트
+        if (flag) {
+          setRemainingTime(remaining); // 상태 업데이트
+        }
       }
     }, 1000); // 1초마다 실행
 
@@ -132,6 +145,7 @@ export default function Header() {
       handleTomorrow(day);
       if (day === 50) {
         fetchEndGame();
+        setFlag(false);
         setDay(1);
         setRoundNumber(1);
         setIsDisabled(true);
