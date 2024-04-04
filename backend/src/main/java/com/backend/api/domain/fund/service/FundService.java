@@ -17,8 +17,10 @@ import com.backend.api.domain.member.repository.MemberRepository;
 import com.backend.api.domain.notice.entity.Notice;
 import com.backend.api.domain.notice.service.NotificationService;
 import com.backend.api.domain.notice.type.AlarmType;
+import com.backend.api.domain.stock.entity.Stock;
 import com.backend.api.domain.stock.entity.StockChart;
 import com.backend.api.domain.stock.repository.StockChartRepository;
+import com.backend.api.domain.stock.repository.StockRepository;
 import com.backend.api.global.common.code.ErrorCode;
 import com.backend.api.global.common.type.FeeType;
 import com.backend.api.global.common.type.TradeType;
@@ -41,6 +43,8 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 @RequiredArgsConstructor
 public class FundService {
+
+	private final StockRepository stockRepository;
 	private final FundRepository fundRepository;
 	private final FundMemberRepository fundMemberRepository;
 	private final MemberRepository memberRepository;
@@ -561,8 +565,6 @@ public class FundService {
 	public FundTradeResponseDto buy(FundTradeRequestDto dto, Long managerId) {
 		Fund fund = fundRepository.findById(dto.fundId()).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_FUND));
 		FundGame currentGame = this.getGame(dto.fundId(), dto.gameIdx());
-		FundStock fundGameStock = fundStockRepository.findByFund_IdAndStock_Id(currentGame.getFundId(), dto.stockId())
-				.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK));
 		Integer stockIdx = currentGame.getStocks().get(dto.stockId());
 
 		// 차트에서 첫 날짜, 오늘 날짜의 종가를 가져온다.
@@ -598,6 +600,8 @@ public class FundService {
 					() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK)
 			);
 			log.info("currentGame.getStocks().get(firstDayChartId) : {}", currentGame.getStocks().get(firstDayChartId));
+			log.info("currentGame.getStocks() : {}", currentGame.getStocks());
+			log.info("firstDayChartId : {}", firstDayChartId);
 			int amount = currentGame.getStockAmount()[currentGame.getStocks().get(firstDayChartId)]; // 해당 Stock의 보유량 가져오기
 
 			totalAsset += (long) (amount * todayStockCharts.getEndPrice() * 0.9975); // 총 자산 계산
@@ -608,12 +612,12 @@ public class FundService {
 		currentGame.updateTotalAsset(totalAsset);
 
 		double resultRoi = 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx];
-
+		Stock stock = stockRepository.findById(dto.stockId()).get();
 		log.info("flag 4");
 		// 총 profit 계산
 		FundTrade fundTrade = FundTrade.builder()
 				.fund(fund)
-				.stock(fundGameStock.getStock())
+				.stock(stock)
 				.tradeDate(todayChart.getDate())
 				.tradeType(TradeType.BUY)
 				.tradeAmount(dto.amount())
