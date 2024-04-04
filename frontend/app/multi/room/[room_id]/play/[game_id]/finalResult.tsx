@@ -22,7 +22,7 @@ export default function FinalResult() {
       <div className="row-span-1 text-4xl rounded-t-lg text-white text-center p-4 bg-small-3">
         <div>최 종 결 과</div>
       </div>
-      <div className="row-span-1 bg-background-1 grid grid-cols-12 border rounded-md items-center">
+      {/* <div className="row-span-1 bg-background-1 grid grid-cols-12 border rounded-md items-center">
         <div className="col-start-2 col-span-1 justify-center items-center m-2">
           <Image
             src={ProfileImage}
@@ -53,21 +53,17 @@ export default function FinalResult() {
             +17
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="row-span-7 grid grid-cols-12 gap-2 m-2">
         <div className="col-span-10 ms-2">
           <div className="row-span-5 rounded-md bg-background-1">
             <div
               className="px-4 overflow-auto"
               style={{ height: "calc(52vh)" }}
-            >{
-              players.map((player, i ) => {
-                return ( 
-                  
-                  <FinalUser player={player}/>
-                )
-              })
-            }
+            >
+              {players.map((player, i) => {
+                return <FinalUser player={player} />;
+              })}
             </div>
           </div>
         </div>
