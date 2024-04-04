@@ -708,7 +708,7 @@ public class MultiGameService {
 			throw new BaseExceptionHandler(ErrorCode.NOT_ENOUGH_STOCK_AMOUNT);
 		}
 
-		currentGame.updateCash(currentGame.getCash() + (long) (dto.amount() * todayChart.getEndPrice() * 0.9975));
+		currentGame.updateCash(currentGame.getCash() + (long) (dto.amount() * 2L * currentGame.getShortAveragePrice() - todayChart.getEndPrice() * 0.9975));
 		currentGame.addProfit(dto.amount() * (currentGame.getShortAveragePrice() - todayChart.getEndPrice() * 1.0025)); // 수수료 고려
 		// 현재 총 자산 -> 현금 + 현재가 * (주식 + 공매도) //수수료제외
 		long totalAsset =
