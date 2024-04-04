@@ -26,6 +26,7 @@ export default function page() {
   const [data, setData] = useState<dataType[]>([]);
   const {
     day,
+    setDay,
     roundNumber,
     maxRoundNumber,
     roomId,
@@ -39,6 +40,7 @@ export default function page() {
   const [isError, setIsError] = useState(false);
 
   const fetchMultigameData = async () => {
+    setDay(1);
     try {
       const data = {
         roundNumber: roundNumber,
@@ -66,9 +68,8 @@ export default function page() {
       });
       console.log(response.data);
       setMultiGameLogId(response.data.result.multiGameLogId);
-      console.log("zz");
       // console.log("stockId : ", response.data.result.stockId);
-      // console.log("stockChartList : ", response.data.result.stockChartList);
+      console.log("stockChartList : ", response.data.result.stockChartList);
       setStockId(response.data.result.stockId);
       setStockChartList(response.data.result.stockChartList);
       setIsLoading(false);
