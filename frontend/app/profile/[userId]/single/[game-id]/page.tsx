@@ -108,24 +108,30 @@ export default function page() {
         <div className="row-span-11 grid grid-cols-12">
           <aside className="col-span-2">
             <SingleTradeHistory />
-            <div>
-              <div>{stockInfoDtoList[selectedIndex].stockName}</div>
-              <div>최대({maxPriceDateList[0]?.price}원)</div>
+            <div className="grid grid-rows-10 bg-sky-400 m-1 rounded-md p-1">
+              <div className="row-span-1 m-auto">{stockInfoDtoList[selectedIndex].stockName}</div>
+              <div className="row-span-1 bg-white rounded-sm text-center">최대({maxPriceDateList[0]?.price}원)</div>
+          
               {
                 maxPriceDateList.map((item :any, index :number) => (
-                  <div>{item.date} {item.highPrice}</div>
-     
+                  <div className="row-span-1">{item.date}</div>
+    
                 ))
               }
-              <div>최소({minPriceDateList[0]?.price}원)</div>
+
+              <div className="row-span-1 bg-white rounded-sm text-center">최소({minPriceDateList[0]?.price}원)</div>
               {
                 minPriceDateList.map((item :any, index :number) => (
                   <div>{item.date}</div>
                 ))
               }
-              <div>posneg</div>
-              <div>{positiveCount} {negativeCount}</div>
-              
+              <div className="row-span-1 bg-white rounded-sm text-center">증감률(전날 대비)</div>
+              <div className="row-span-1 grid grid-cols-4">
+                <div className="col-span-1">증가 : </div>
+                <div className="col-span-1 text-red-600">{positiveCount}</div>
+                <div className="col-span-1">감소 : </div>
+                <div className="col-span-1 text-blue-600">{negativeCount}</div>
+              </div>              
             </div>
             {/* <SingleStock /> */}
           </aside>
