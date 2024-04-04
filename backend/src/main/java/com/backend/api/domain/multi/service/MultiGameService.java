@@ -421,6 +421,11 @@ public class MultiGameService {
 		// totalAsset으로 내림차순 정렬
 		playerRankInfos.sort(Comparator.comparing(PlayerRankInfo::totalAsset, Comparator.reverseOrder()));
 
+		for (int i = 0; i < playerRankInfos.size(); i++) {
+			PlayerRankInfo playerRankInfo = playerRankInfos.get(i);
+			playerRankInfos.set(i, playerRankInfo.withRank(i + 1));
+		}
+
 
 		// 순위 계산 - Sorted Set (매 초마다 보내줘야 함!)
 		for(Long participantId : multiWaitingRoom.getParticipantIds()){
