@@ -707,18 +707,17 @@ public class MultiGameService {
 		if (dto.amount() > currentGame.getShortStockAmount()) {
 			throw new BaseExceptionHandler(ErrorCode.NOT_ENOUGH_STOCK_AMOUNT);
 		}
-		// 공매도 처분 - currentGame 바꿔주기
-		currentGame.decreaseShortStockAmount(dto.amount());
+
 		currentGame.updateCash(currentGame.getCash() + (long) (dto.amount() * todayChart.getEndPrice() * 0.9975));
-		currentGame.addPurchaseAmount((long) dto.amount() * todayChart.getEndPrice());
 		currentGame.addProfit(dto.amount() * (currentGame.getShortAveragePrice() - todayChart.getEndPrice() * 1.0025)); // 수수료 고려
-		
 		// 현재 총 자산 -> 현금 + 현재가 * (주식 + 공매도) //수수료제외
 		long totalAsset =
 			(long) ((currentGame.getCash()
 				+ (long) currentGame.getStockAmount() * todayChart.getEndPrice() * 0.9975 // 보유주식
 				+ (2L * currentGame.getShortAveragePrice() - todayChart.getEndPrice()) * currentGame.getShortStockAmount() * 0.9975)); // 보유 공매 가치
 
+		// 공매도 처분 - currentGame 바꿔주기
+		currentGame.decreaseShortStockAmount(dto.amount());
 
 		currentGame.updateTotalAsset(totalAsset);
 
