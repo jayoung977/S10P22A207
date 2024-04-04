@@ -148,9 +148,9 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
                 },
             });
             console.log("매수 : ", response.data);
-            // setAssetListData(response.data.result.assetList);
-            // setTotalAssetData(response.data.result.totalAsset);
-            // setTradeListData(response.data.result.tradeList);
+            setAssetListData(response.data.result.assetList);
+            setTotalAssetData(response.data.result.totalAsset);
+            setTradeListData(response.data.result.tradeList);
             handleEscape();
         
         } catch (error) {

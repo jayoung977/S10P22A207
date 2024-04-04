@@ -418,6 +418,15 @@ public class MultiGameService {
 		}
 		MultiWaitingRoom multiWaitingRoom = getWaitingRoom(roomId);
 
+		// totalAsset으로 내림차순 정렬
+		playerRankInfos.sort(Comparator.comparing(PlayerRankInfo::totalAsset, Comparator.reverseOrder()));
+
+		for (int i = 0; i < playerRankInfos.size(); i++) {
+			PlayerRankInfo playerRankInfo = playerRankInfos.get(i);
+			playerRankInfos.set(i, playerRankInfo.withRank(i + 1));
+		}
+
+
 		// 순위 계산 - Sorted Set (매 초마다 보내줘야 함!)
 		for(Long participantId : multiWaitingRoom.getParticipantIds()){
 			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIGAMEINFO, playerRankInfos));
@@ -434,7 +443,7 @@ public class MultiGameService {
 		}
 		MultiWaitingRoom multiWaitingRoom = getWaitingRoom(roomId);
 
-		for(Long participantId : multiWaitingRoom.getParticipantIds()){
+		for (Long participantId : multiWaitingRoom.getParticipantIds()) {
 			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIGAMEINFO, playerRankInfos));
 		}
 
@@ -958,7 +967,6 @@ public class MultiGameService {
 
 	public List<MultiGameResultDto> getSubResult(Long memberId, MultiGameSubResultRequestDto dto) {
 
-
 		List<Long> memberIdRank = multiGameRankService.getUserRanksByTotalAsset(dto.gameId(), dto.roundNumber());
 		List<MultiGameResultDto> multiGameResults = new ArrayList<>();
 		for (int i = 0; i < memberIdRank.size(); i++) {
@@ -977,6 +985,10 @@ public class MultiGameService {
 				100.0 * (playerGame.getTotalAsset() - playerGame.getInitial()) / playerGame.getInitial(),
 				dto.roundNumber()));
 		}
+		MultiWaitingRoom waitingRoom = getWaitingRoom(dto.roomId());
+		waitingRoom.setIsPlaying(false);
+		redisTemplate.opsForValue().set("multiGame:" + dto.roomId(), waitingRoom);
+
 		for(Long participantId : memberIdRank){
 			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIRESULT, multiGameResults));
 		}

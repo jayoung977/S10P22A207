@@ -4,32 +4,35 @@
 
 # 프로젝트 버전 정보
 
-| 공통     | 형상관리      | Gitlab                  | -        |
-| -------- | ------------- | ----------------------- | -------- |
-|          | 이슈관리      | Gitlab                  | -        |
-|          | 커뮤니케이션  | Mattermost, Notion      | -        |
-| 개발툴   | IDE           | Intellij                | 2023.2.5 |
-|          |               | Vscode                  | 1.85.1   |
-|          |               | Webstorm                | 2023.3.2 |
-| Backend  | Java          | Amazon-correto          | 17       |
-|          | Spring        | Spring boot             | 3.2.1    |
-|          |               | OAuth2                  | 6.2.1    |
-|          |               | Cloud-AWS               | 2.2.6    |
-|          | Build         | Gradle                  | 8.5      |
-|          | Cloud Storage | AWS S3                  | -        |
-|          | API Docs      | Swagger3-Springdoc      | 2.0.2    |
-| Frontend | Node          | Node                    | 20.10.0  |
-|          |               | Npm                     | 10.4.0   |
-|          | WebSocket     | Stomp                   | 2.3.3    |
-|          | API 연동      | Axios                   | 1.6.5    |
-| Database | RDMBS         | MySQL (RDS)             | 8.0.35   |
-|          | Redis         | Redis                   | 7.2.4    |
-|          | Flask         | Flask                   | 5.0.5    |
-|Big Data  | Hadoop        | Hadoop                  | 3.2.1    |
-|          | Spark         | Spark                   | 3.5.1    |
-| Infra    | AWS-EC2       | Ubuntu                  | 20.04.6  |
-|          | CI/CD         | docker                  | 25.0.0   |
-|          |               | docker-compose          | 2.21.0   |
+| 공통     | 형상관리          | Gitlab             | -        |
+| -------- |---------------|--------------------|----------|
+|          | 이슈관리          | Gitlab             | -        |
+|          | 커뮤니케이션        | Mattermost, Notion | -        |
+| 개발툴   | IDE           | Intellij           | 2023.2.5 |
+|          |               | Vscode             | 1.85.1   |
+|          |               | Webstorm           | 2023.3.2 |
+| Backend  | Java          | Amazon-correto     | 17       |
+|          | Spring        | Spring boot        | 3.2.1    |
+|          |               | OAuth2             | 6.2.1    |
+|          |               | Cloud-AWS          | 2.2.6    |
+|          | Build         | Gradle             | 8.5      |
+|          | Cloud Storage | AWS S3             | -        |
+|          | API Docs      | Swagger3-Springdoc | 2.0.2    |
+| Frontend | Next          | Next.js            | 14.1.2   |
+|          | React         | React              | 18       |
+|          | WebSocket     | Stomp              | 2.3.3    |
+|          | API 연동        | Axios              | 1.6.5    |
+|          | CSS           | TailwindCSS        | 3.4.1    |
+|          | TypeScript    | TypeScript         | 5        |
+|          | AnyChart      | AnyChart           | 8.12.0   |
+| Database | RDMBS         | MySQL (RDS)        | 8.0.35   |
+|          | Redis         | Redis              | 7.2.4    |
+|          | Flask         | Flask              | 5.0.5    |
+|Big Data  | Hadoop        | Hadoop             | 3.2.1    |
+|          | Spark         | Spark              | 3.5.1    |
+| Infra    | AWS-EC2       | Ubuntu             | 20.04.6  |
+|          | CI/CD         | docker             | 25.0.0   |
+|          |               | docker-compose     | 2.21.0   |
 
 
 ---
@@ -85,96 +88,89 @@ docker nginx를 사용하기 전에 https 인증을 위해서 일단 nginx를 �
 
 ## Docker Nginx 설정
 
-Docker Nginx 설정 파일은 프로젝트 `var/nginx/nginx.conf` 에 위치해 있습니다.
+Docker Nginx 설정 파일은 프로젝트 `/etc/nginx/sites-enabled/default.conf` 에 위치해 있습니다.
 
 ```bash
-user  nginx;
-worker_processes  auto;
-error_log  /var/log/nginx/error.log warn;
-pid        /var/run/nginx.pid;
-events {
-    worker_connections  1024;
+server {
+  listen 80;
+  server_name j10a207.p.ssafy.io;
+  return 301 https://$host$request_uri;
+}
+server {
+  listen 443 ssl;
+  server_name j10a207.p.ssafy.io;
+
+  ssl_certificate /etc/letsencrypt/live/j10a207.p.ssafy.io/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/j10a207.p.ssafy.io/privkey.pem;
+
+  ssl_protocols TLSv1.2;
+  ssl_prefer_server_ciphers on;
+
+  location / {
+          proxy_pass http://localhost:8081;
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+  location /api {
+          proxy_pass http://localhost:4000;
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+        }
+ location /swagger-ui {
+          proxy_pass http://localhost:4000;
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+        }
+ location /v3 {
+          proxy_pass http://localhost:4000;
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+        }
+ location ~ ^/(oauth2|login/oauth2) {
+          proxy_pass http://localhost:4000;
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+        }
+ location /hadoop {
+          proxy_pass http://localhost:4000;
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+ location /ws {
+          proxy_pass http://localhost:4000;
+          proxy_http_version 1.1;
+          proxy_set_header    Upgrade             $http_upgrade;
+          proxy_set_header    Connection          'upgrade';
+          proxy_set_header    Host                $host;
+          proxy_cache_bypass                      $http_upgrade;
+        }
+ location /sse {
+        proxy_pass http://localhost:4000;
+        chunked_transfer_encoding off;
+        proxy_http_version 1.1;
+        proxy_set_header Connection '';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_buffering off;
+        }
+
 }
 
-http {
-    include       /etc/nginx/mime.types;
-    default_type  application/octet-stream;
-
-		# server로 들어온 요청을 docker container로 넘김
-    upstream springboot {
-        server {{docker_container_name:port}} # ex) zigeum-api:8080;
-        keepalive 1024;
-    }
-
-		# 80 포트로 들어온 요청을 443 포트로 리다이렉트
-    server {
-        listen 80;
-        server_name {{domain-name}} # 발급한 도메인 주소 ex) j10a207.p.ssafy.io;
-        server_tokens off;
-
-        # 모든 http(80포트) 요청을 https로 리다이렉팅
-        location / {
-            return 301 https://$host$request_uri;
-        }
-    }
-
-    server {
-        listen 443 ssl;
-        server_name {{domain_name}} # 발급한 도메인 주소 ex) j10a207.p.ssafy.io;
-        server_tokens off;
-
-				# HTTPS 인증을 위한 Certbot 설정
-        ssl_certificate /etc/letsencrypt/live/{{domain_name}}/fullchain.pem; # managed by Certbot
-        ssl_certificate_key /etc/letsencrypt/live/{{domain_name}}/privkey.pem; # managed by Certbot
-        include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
-				# / 로 들어온 요청을 Front 페이지로 연결
-        location / {
-            root /usr/share/nginx/html;
-            index index.html;
-            try_files $uri $uri/ /index.html;
-
-            proxy_set_header    Host                $http_host;
-            proxy_set_header    X-Real-IP           $remote_addr;
-            proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;
-        }
-				# 아래의 주소에 대한 요청을 Back으로 연결
-        location ~ ^/(api|oauth2|login/oauth2) {
-            proxy_pass  http://springboot;
-            proxy_set_header    Host                $http_host;
-            proxy_set_header    X-Real-IP           $remote_addr;
-            proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;
-        }
-				# 아래의 주소에 대한 요청을 Back으로 연결하고 소켓 연결로 업그레이드
-        location /ws {
-            proxy_pass http://springboot;
-            proxy_http_version 1.1;
-            proxy_set_header    Upgrade             $http_upgrade;
-            proxy_set_header    Connection          'upgrade';
-            proxy_set_header    Host                $host;
-                    proxy_cache_bypass  $http_upgrade;
-        }
-				# Swagger 요청에 대해서 Back으로 연결
-        location ~ ^/(swagger|webjars|configuration|swagger-resources|v2|csrf) {
-                   proxy_pass http://springboot;
-                   proxy_set_header Host $host;
-                   proxy_set_header X-Real-IP $remote_addr;
-                   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                   proxy_set_header X-Forwarded-Proto $scheme;
-        }
-    }
-		# nginx log에 대한 포맷 설정
-    log_format timed_combined '$remote_addr - $remote_user [$time_local] '
-            '"$request" $status $body_bytes_sent '
-            '"$http_referer" "$http_user_agent" '
-            'rt $request_time urt $upstream_response_time';
-
-    access_log /var/log/nginx/access.log timed_combined;
-
-    sendfile        on;
-    keepalive_timeout  65;
-}
 ```
 
 백엔드 docker container 이름, 도메인 이름을 자신의 서버 환경에 맞게 변경해 줍니다.
@@ -184,31 +180,21 @@ http {
 Front 빌드 및 배포를 위한 도커 파일은 프로젝트내 `zigeum/Dockerfile` 에 위치하여 있습니다.
 
 ```docker
-FROM node:20.10.0-alpine as build-stage
-WORKDIR /app
-COPY package*.json ./
+FROM gradle:8.5-jdk AS build
+COPY src ./src
+COPY build.gradle settings.gradle  ./
 
-RUN rm -rf node_modules package-lock.json
-RUN npm install
+RUN gradle clean build -x test
 
-COPY ./ .
-RUN npm run build-only
+FROM amazoncorretto:17 AS run
+COPY --from=build /home/gradle/build/libs/backend-0.0.1-SNAPSHOT.jar app.jar
 
-FROM nginx:stable-alpine as production-stage
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 8080
+
+
+CMD ["java", "-jar", "app.jar"]
 ```
 
-## .env 파일 추가
-
-`gitlab-runner`을 이용하여 `CI/CD`를 구성할 경우 `Variables`에 등록
-
-- `.env`파일 작성
-  ```bash
-  VITE_SERVER_API_URL={{ domain-address }} # ex) https://j10a207.p.ssafy.io
-  ```
 
 ---
 
@@ -231,13 +217,6 @@ CMD ["nginx", "-g", "daemon off;"]
 
       ![Untitled](./potting/potting6.png)
 
-## 배포 설정
-
-`prod`, `dev`, `local`세가지의 프로필로 나누어서 프로젝트를 진행 하였습니다.
-
-- intellij에서 프로필 설정을 위해서 `Active profiles`에 프로필을 지정 주어야 합니다. (default: `prod`)
-  ![Untitled](./potting/potting5.png)
-
 ### resources 폴더 구조
 
 ![Untitled](./potting/potting4.png)
@@ -251,154 +230,153 @@ CMD ["nginx", "-g", "daemon off;"]
 - **application.yml (prod 환경)**
 
   ```yaml
-server:
-  port: 8080
-
-spring:
-  data:
-    jdbc:
-      repositories:
-        enabled: false
-    #Redis
-    redis:
-      host: redis
-      port: 6379
-      lettuce:
-        pool:
-          max-active: 5 # pool에 할당될 수 있는 커넥션 최대수
-          max-idle: 5 # pool의 'idle' 커넥션 최대수
-          min-idle: 2
-      password: zigeumghkdlxld
-  # MySQL
-  datasource:
-    url: jdbc:mysql://{{mysql-address}}mysql:3306/{{db-name}}?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8
-    username: { { mysql-username } }
-    password: { { mysql-password } }
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        format_sql: true
-    defer-datasource-initialization: true
-    generate-ddl: true
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
-  #Security
-  security:
-    oauth2:
-      client:
-        registration:
-          kakao:
-            client-id: {{ kakao-develop-restapi-key }}
-            client-secret: {{ kakao-develop-restapi-key }}
-            redirect-uri: {{ domain-address }}/login/oauth2/code/kakao https://j10a207.p.ssafy.io/login/oauth2/code/kakao
-            client-authentication-method: client_secret_post
-            authorization-grant-type: authorization_code
-            scope: account_email
-            client-name: Kakao
-        provider:
-          kakao:
-            authorization_uri: https://kauth.kakao.com/oauth/authorize
-            token_uri: https://kauth.kakao.com/oauth/token
-            user-info-uri: https://kapi.kakao.com/v2/user/me
-            user_name_attribute: id
-  ```
-#JWT
-jwt:
-  secretKey: { { jwt-key } }
-  access-token-expiration: 180000 # 50시간 (30분: 1800)
-  refresh-token-expiration: 1209600 # 14일
-  issuer: { { service-name } } # zigeum
-
-# Social Redirect Url
-client:
-  redirect-url:
-    success: https://j10a207.p.ssafy.io/login
-    anonymous: https://j10a207.p.ssafy.io/login
-    fail: https://j10a207.p.ssafy.io/signin
-
-
-logging:
-  level:
-    root: info
-
-springdoc:
-  api-docs:
-    path: /api-docs
-    groups:
-      enabled: true
-  swagger-ui:
-    path: /swagger-ui.html
-    enabled: true
-    groups-order: asc
-    tags-sorter: alpha
-    operations-sorter: alpha
-    display-request-duration: true
-    doc-expansion: none
-  cache:
-    disabled: true
-  override-with-generic-response: false
-  model-and-view-allowed: false
-  default-consumes-media-type: application/json
-  default-produces-media-type: application/json
-  group-configs:
-    - group: all-api
-      paths-to-match:
-        - /**
-      paths-to-exclude:
-        - /favicon.ico
-        - /health
-    - group: jwt-api
-      paths-to-match:
-        - /api/**
-  show-actuator: true
-
-#actuator 기능을 웹에 노출
-management:
-  server:
-    port: 9292
-  #java, os, env 정보 확인
-  info:
-    java:
-      enabled: true
-    os:
-      enabled: true
-    env:
-      enabled: true
-    git:
-      mode: "full"
-  endpoints:
-    web:
-      base-path: "/management"
-      exposure:
-        include: "*"
-        exclude: "env,beans"
-  endpoint:
-    health:
-      show-components: always
-
-info:
-  app:
-    name: zigeum-app
-    company: ssafy
-
-#s3
-cloud:
-  aws:
-    s3:
-      bucket: { { aws-s3-bucket-name } }
-    region:
-      static: { { aws-s3-region } }
-    stack:
-      auto: false
-    credentials:
-      access-key: { { aws-s3-access-key } }
-      secret-key: { { aws-s3-secret-key } }  
+    server:
+      port: 8080
+    
+    spring:
+      data:
+        jdbc:
+          repositories:
+            enabled: false
+        #Redis
+        redis:
+          host: redis
+          port: 6379
+          lettuce:
+            pool:
+              max-active: 5 # pool에 할당될 수 있는 커넥션 최대수
+              max-idle: 5 # pool의 'idle' 커넥션 최대수
+              min-idle: 2
+          password: zigeumghkdlxld
+      # MySQL
+      datasource:
+        url: jdbc:mysql://{{mysql-address}}mysql:3306/{{db-name}}?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8
+        username: { { mysql-username } }
+        password: { { mysql-password } }
+        driver-class-name: com.mysql.cj.jdbc.Driver
+      jpa:
+        hibernate:
+          ddl-auto: none
+        show-sql: false
+        properties:
+          hibernate:
+            dialect: org.hibernate.dialect.MySQLDialect
+            format_sql: true
+        defer-datasource-initialization: true
+        generate-ddl: true
+      mvc:
+        pathmatch:
+          matching-strategy: ant_path_matcher
+      #Security
+      security:
+        oauth2:
+          client:
+            registration:
+              kakao:
+                client-id: {{ kakao-develop-restapi-key }}
+                client-secret: {{ kakao-develop-restapi-key }}
+                redirect-uri: {{ domain-address }}/login/oauth2/code/kakao https://j10a207.p.ssafy.io/login/oauth2/code/kakao
+                client-authentication-method: client_secret_post
+                authorization-grant-type: authorization_code
+                scope: account_email
+                client-name: Kakao
+            provider:
+              kakao:
+                authorization_uri: https://kauth.kakao.com/oauth/authorize
+                token_uri: https://kauth.kakao.com/oauth/token
+                user-info-uri: https://kapi.kakao.com/v2/user/me
+                user_name_attribute: id
+    #JWT
+    jwt:
+      secretKey: { { jwt-key } }
+      access-token-expiration: 180000 # 50시간 (30분: 1800)
+      refresh-token-expiration: 1209600 # 14일
+      issuer: { { service-name } } # zigeum
+    
+    # Social Redirect Url
+    client:
+      redirect-url:
+        success: https://j10a207.p.ssafy.io/login
+        anonymous: https://j10a207.p.ssafy.io/login
+        fail: https://j10a207.p.ssafy.io/signin
+    
+    
+    logging:
+      level:
+        root: info
+    
+    springdoc:
+      api-docs:
+        path: /api-docs
+        groups:
+          enabled: true
+      swagger-ui:
+        path: /swagger-ui.html
+        enabled: true
+        groups-order: asc
+        tags-sorter: alpha
+        operations-sorter: alpha
+        display-request-duration: true
+        doc-expansion: none
+      cache:
+        disabled: true
+      override-with-generic-response: false
+      model-and-view-allowed: false
+      default-consumes-media-type: application/json
+      default-produces-media-type: application/json
+      group-configs:
+        - group: all-api
+          paths-to-match:
+            - /**
+          paths-to-exclude:
+            - /favicon.ico
+            - /health
+        - group: jwt-api
+          paths-to-match:
+            - /api/**
+      show-actuator: true
+    
+    #actuator 기능을 웹에 노출
+    management:
+      server:
+        port: 9292
+      #java, os, env 정보 확인
+      info:
+        java:
+          enabled: true
+        os:
+          enabled: true
+        env:
+          enabled: true
+        git:
+          mode: "full"
+      endpoints:
+        web:
+          base-path: "/management"
+          exposure:
+            include: "*"
+            exclude: "env,beans"
+      endpoint:
+        health:
+          show-components: always
+    
+    info:
+      app:
+        name: zigeum-app
+        company: ssafy
+    
+    #s3
+    cloud:
+      aws:
+        s3:
+          bucket: { { aws-s3-bucket-name } }
+        region:
+          static: { { aws-s3-region } }
+        stack:
+          auto: false
+        credentials:
+          access-key: { { aws-s3-access-key } }
+          secret-key: { { aws-s3-secret-key } }  
   ```
 
   키 발급 방법
@@ -406,37 +384,6 @@ cloud:
   1. AWS에 가입
   2. IAM 사용자로 S3FullAccess 권한을 부여한 사용자를 생성
   3. 해당 사용자의 계정으로 접속하여 키 발급
-
-- **application-redis.yml**
-  ```yaml
-  spring:
-    data:
-      redis:
-        host: 127.0.0.1
-        port: 6379
-        lettuce:
-          pool:
-            max-active: 5 # pool에 할당될 수 있는 커넥션 최대수
-            max-idle: 5 # pool의 'idle' 커넥션 최대수
-            min-idle: 2
-    config:
-      activate:
-        on-profile: local
-  ---
-  spring:
-    data:
-      redis:
-        host: { { docker-redis-container-name } } # ex) zigeum-redis
-        port: 6379
-        lettuce:
-          pool:
-            max-active: 5 # pool에 할당될 수 있는 커넥션 최대수
-            max-idle: 5 # pool의 'idle' 커넥션 최대수
-            min-idle: 2
-    config:
-      activate:
-        on-profile: prod, dev
-  ```
 
 ### Dockerfile 설정
 
@@ -540,207 +487,247 @@ ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/zigeum-api
 프로젝트 가장 상위에 `docker-compose.yml` 파일을 생성합니다.
 
 ```yaml
-version: "3"
+version: '3'
 services:
-  springboot:
-    container_name: {{ container-name }} # ex) zigeum-api
-    image: {{ docker-hub-username }}/{{ server-image:tag }} # ex) duckbill413/zigeum-docker-api:latest
-    ports:
-      - "8080:8080"
+  mysql:
+    image: mysql:latest
+    container_name: mysql
     environment:
-      TZ: "Asia/Seoul"
-    networks:
-      - {{ project-network }} # ex) zigeum_net
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
     volumes:
-      - /home/ec2-user/logs:/logs
+      - mysql_data:/var/lib/mysql
 
   redis:
-    image: redis:alpine
-    container_name: {{ container-name }} # ex) zigeum-redis
-    command: redis-server --port 6379
+    image: redis:latest
+    container_name: redis
     hostname: redis
     ports:
-      - "6800:6379" # 포트 번호 확인
-    networks:
-      - {{ project-network }} # ex) zigeum_net
+      - "6379:6379"
+    command: redis-server --save 60 1000 --loglevel notice --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+
+  spring-app:
+    container_name: spring-app
+    ports:
+      - "4000:8080"
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      MYSQL_HOST : mysql
+      MYSQL_USER : root
+      MYSQL_PASSWORD : ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB}
+    image: jayoung977/backend
+    env_file:
+      - .env
+
+  react-app:
+    container_name: react-app
+    ports:
+      - "8081:80"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /usr/share/nginx/statics:/usr/share/nginx/statics
+    image: jayoung977/frontend
+    env_file:
+      - .env
+
+
+volumes:
+  redis_data:
+    driver: local
+  mysql_data:
+    driver: local
+```
+# docker-hadoop 설정
+## docker-build.sh
+```shell
+#!/bin/bash
+
+docker-compose -f ../docker-compose.hadoop.yml down
+
+docker build -t language-base ./language-base
+docker build -t hadoop-base ./hadoopbase
+docker build -t hadoop-spark-base ./hadoopsparkbase
+
+docker build -t hadoop-namenode ./namenode
+docker build -t hadoop-datanode ./datanode
+docker build -t resourcemanager ./resourcemanager
+docker build -t yarn-timelineserver ./yarntimelineserver
+docker build -t spark-historyserver ./sparkhistoryserver
+docker build -t zeppelin ./zeppelin
+
+docker-compose -f ../docker-compose.hadoop.yml up -d
+```
+## docker-compose.hadoop.yml
+```yaml
+version: "3.7"
+
+x-datanode_base: &datanode_base
+  image: hadoop-datanode
+
+
+services:
+  namenode:
+    image: hadoop-namenode
+    container_name: namenode
+    hostname: namenode
+    ports:
+      - "50070:9870" # namenode web UI
+    volumes:
+      - namenode:/opt/hadoop/dfs/name # namenode data mount
+      - namenode:/opt/spark/eventLog # spark history log data mount 
+      - namenode:/opt/hadoop/yarn/timeline # yarn timeline data mount
+
+
+  datanode01:
+    <<: *datanode_base
+    container_name: datanode01
+    hostname: datanode01
+    depends_on:
+      - namenode
+    volumes:
+      - datanode01:/opt/hadoop/dfs/data
+      - datanode01:/opt/hadoop/yarn/data
+      - namenode:/opt/spark/eventLog
+
+  datanode02:
+    <<: *datanode_base
+    container_name: datanode02
+    hostname: datanode02
+    depends_on:
+      - namenode
+    volumes:
+      - datanode02:/opt/hadoop/dfs/data
+      - datanode02:/opt/hadoop/yarn/data
+      - namenode:/opt/spark/eventLog
+
+  datanode03:
+    <<: *datanode_base
+    container_name: datanode03
+    hostname: datanode03
+    depends_on:
+      - namenode
+    volumes:
+      - datanode03:/opt/hadoop/dfs/data
+      - datanode03:/opt/hadoop/yarn/data
+      - namenode:/opt/spark/eventLog
+
+
+  resourcemanager:
+    image: resourcemanager
+    container_name: resourcemanager
+    hostname: resourcemanager
+    ports:
+      - "8088:8088"
+
+
+  yarntimelineserver:
+    image: yarn-timelineserver
+    container_name: yarntimelineserver
+    hostname: yarntimelineserver
+    ports:
+      - "8188:8188"
+    volumes:
+      - namenode:/opt/hadoop/yarn/timeline
+
+  sparkhistoryserver:
+    image: spark-historyserver
+    container_name: sparkhistoryserver
+    hostname: sparkhistoryserver
+    ports:
+      - "18080:18080"
+    depends_on:
+      - namenode
+      - resourcemanager
+    volumes:
+      - namenode:/opt/spark/eventLog
+
+  zeppelin:
+    image: zeppelin
+    container_name: zeppelin
+    hostname: zeppelin
+    ports:
+      - "9097:8080"
+    volumes:
+      - namenode:/opt/spark/eventLog
+      - /env/hadoop-eco/hadoop/zeppelin/notebook:/zeppelin-0.10.1-bin-all/notebook
+      - /home/ec2-user/testdata:/testdata
+
+
+volumes:
+  namenode:
+  datanode01:
+  datanode02:
+  datanode03:
+
+
+```
+## docker-compose.monitor.yml
+```yaml
+version: '3'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    user: root
+    volumes:
+      - /home/monitor/prometheus/:/etc/prometheus/
+      - /home/monitor/prometheus/data:/prometheus
+    ports:
+      - 9090:9090
     restart: always
 
-  nginx:
-    container_name: {{ container-name }} # ex) zigeum-nginx
-    image: {{ docker-hub-username }}/{{ nginx-image:tag }} # ex) duckbill413/zigeum-nginx:latest
-    build:
-      context: ./zigeum # nginx dockerfile 위치
-      dockerfile: Dockerfile
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt:ro # certbot 인증서 위치
+      - /home/monitor/grafana:/var/lib/grafana
+      - /home/monitor/grafana/provisioning:/etc/grafana/provisioning
     ports:
-      - "80:80"
-      - "443:443"
-    networks:
-      - {{ project-network }} # ex) zigeum_net
-    depends_on:
-      - springboot # springboot 실행 후 nginx 실행
+      - 3000:3000
+    restart: always
+    user: root
 
-networks:
-  zigeum_net:
-    driver: bridge
 ```
-
----
-
-# EC2와 Gitlab 연결
-
-`gitlab-runner`사용을 위해서 아래와 같이 설정합니다.
-
-[velog](https://velog.io/@duckbill/EC2와-Gitlab-연결-ro0ne6jd)
-
-# EC2와 Gitlab 연결
-
-EC2와 Gitlab-Runner 연결
-
-- Ubuntu 20.04 기준으로 진행합니다.
-
-## Git Runner 설치
-
-1. root 계정 접속
-
-```bash
-$ sudo su
-$ sudo apt update
-$ sudo apt upgrade
-```
-
-1. gitlab repository 추가
-
-```bash
-$ curl -L "<https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh>" | sudo bash
-```
-
-1. gitlab-runner 설치
-
-```bash
-$ sudo apt install gitlab-runner
-```
-# gitlab-ci 구성
-
-## gitlab-ci에 환경 변수 등록하기
-
-![image.png](./potting/potting3.png)
-
-- 기존에 작성한 `yml` 파일, `docker-hub` 정보, `image-name`, `front-env` 파일 정보를 환경 변수로 등록해 줍니다.
-  ![image.png](./potting/potting2.png)
-- 환경 변수 등록 예시
-  ![Untitled](./potting/potting1.png)
-
----
-
-## .gitlab-ci.yml 생성
-
-프로젝트 가장 상위에 `.gitlab-ci.yml` 파일을 생성합니다.
-
+## docker-compose.flask.yml
 ```yaml
-stages:
-  - build
-  - package
-  - deploy
+version: '3'
 
-build: # JOB 이름
-  # 사용될 이미지 설정
-  image: gradle:8.5.0-jdk17 # gradle - java 이미지 지정
-  # stage 설정
-  stage: build
-  # 실행될 script 설정
-  script:
-    - echo [INFO] YML Settings
-    - cd ./zigeum-api # zigeum-api server 위치로 이동
-    - cd ./src/main/resources # resources 폴더 위치로 이동
-    - echo "$APPLICATION_YML" > "application.yml" # gitlab APPLICATION_YML을 이용하여 application.yml 파일 생성
-    - echo "$APPLICATION_DEV_YML" > "application-dev.yml"
-    - echo "$APPLICATION_LOCAL_YML" > "application-local.yml"
-    - echo "$APPLICATION_OAUTH_YML" > "application-oauth.yml"
-    - echo "$APPLICATION_REDIS_YML" > "application-redis.yml"
-    - echo "$APPLICATION_AWS_YML" > "application-aws.yml"
-    - ls
-    - echo [INFO] spring-boot project build
-    - cd ../../.. # 프로젝트 폴더로 경로 이동
-    - chmod +x gradlew # gradle 권한 부여
-    - ./gradlew clean
-    - ./gradlew bootjar
-    # - ./gradlew build
-  # artifacts 설정 (bulld를 통해 생성된 파일을 job artifacts에 보관하여 다음에 수행되는 JOB에서 가져다 활용할 수 있게 도와줌)
-  artifacts:
-    # 보관이 이루어질 경로 설정
-    paths:
-      - zigeum-api/build/libs/zigeum-api-0.0.1-SNAPSHOT.jar # Dockerfile에 지정한 경로로 지정
-    # 유효기간 설정
-    expire_in: 1 days
-  # JOB이 수행될 branch 설정 (설정된 branch에 push가 발생될 시 JOB 수행)
-  only:
-    - master
-    - release
-    - develop
-
-package:
-  image: docker:latest
-  stage: package
-  # service 설정 (설정한 image가 작업이 이루어지는 동안 실행되는 docker 이미지)
-  services:
-    - docker:dind
-    # script가 실행 전 수행 될 script
-  before_script:
-    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD # GitLab Container Registry에 로그인
-  # 실행될 script 설정
-  script:
-    - cd ./zigeum-api
-    - echo [INFO] Start package stage
-    - echo [INFO] SPRING_IMAGE_NAME      $SPRING_IMAGE_NAME
-    - echo [INFO] NGINX_IMAGE_NAME       $NGINX_IMAGE_NAME
-    - echo [INFO] Spring docker project build
-    - docker build -t $DOCKER_REGISTRY_USER/$SPRING_IMAGE_NAME . # Dockerfile로 build
-    - docker push $DOCKER_REGISTRY_USER/$SPRING_IMAGE_NAME:latest # Container Registry에 image push
-  # script가 실행된 후 수행 될 script
-  after_script:
-    - docker logout # GitLab Container Registry 로그아웃
-  # JOB이 수행될 branch 설정 (설정된 branch에 push가 발생될 시 JOB 수행)
-  only:
-    - master
-    - release
-    - develop
-
-deploy: # JOB 이름
-  image: docker:latest
-  # stage 설정
-  stage: deploy
-  services:
-    - docker:dind
-  # script가 실행 전 수행 될 script
-  before_script:
-    - echo [INFO] docker deploy start!
-    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD # GitLab Container Registry에 로그인
-  # 실행될 script 설정
-  script:
-    - cd ./zigeum
-    - echo "$VUE_ENV" > ".env" # 프론트 환경파일 저장
-    - cat .env
-    - cd ..
-    - docker system prune --volumes -f # 사용되지 않는 컨테이너, 이미지 삭제 및 볼륨 정리
-    - docker-compose down # docker-compose 내리기
-    - docker-compose pull # docker images pull
-    - docker-compose up --build -d # docker-compose 빌드 및 백그라운드 실행
-  # script가 실행된 후 수행 될 script
-  after_script:
-    - docker logout # GitLab Container Registry 로그아웃
-    - echo [INFO] docker deploy end!
-  # JOB이 수행될 branch 설정 (설정된 branch에 push가 발생될 시 JOB 수행)
-  only:
-    - master
-    - release
-    - develop
+services:
+  flask-app:
+    container_name: flask-app
+    image: flask-app
+    ports:
+      - "6000:8080"
 ```
+## docker-compose.hadoopapp.yml
+```yaml
+version: '3'
 
-이후 `develop`, `release`, `master` 브랜치에 `push`하게 되면 `pipeline`이 작동하면서 `.gitlab-ci.yml`의 명령어를 실행하게 됩니다.
-
+services:
+hadoop-app:
+container_name: hadoop-app
+image: hadoop-app
+ports:
+- "5000:8080"
+```
 ---
+
 
 # 프로젝트 외부 서비스
 
@@ -753,3 +740,4 @@ deploy: # JOB 이름
 ---
 
 # 시연 시나리오
+[시연 시나리오](10기_특화PJT_A207_시연시나리오.pdf)

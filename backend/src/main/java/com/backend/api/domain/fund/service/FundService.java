@@ -431,14 +431,11 @@ public class FundService {
 		return LocalDateTime.of(randomLocalDate, randomLocalTime);
 	}
 
-
 	@Transactional
 	public FundTradeResponseDto sell(FundTradeRequestDto dto, Long managerId) {
 		Fund fund = fundRepository.findById(dto.fundId()).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_FUND));
 		FundGame currentGame = this.getGame(dto.fundId(), dto.gameIdx());
 
-		FundStock fundGameStock = fundStockRepository.findByFund_IdAndStock_Id(currentGame.getFundId(), dto.stockId())
-				.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK));
 
 		// 세션에 저장된 게임을 가져온다.
 		Integer stockIdx = currentGame.getStocks().get(dto.stockId()); // Map으로 저장한 stockId에 대한 index값을 가져온다.
@@ -473,10 +470,11 @@ public class FundService {
 		currentGame.updateTotalAsset(totalAsset);
 
 		double resultRoi = 100.0 * currentGame.getProfits()[stockIdx] / currentGame.getStockPurchaseAmount()[stockIdx];
+		Stock stock = stockRepository.findById(dto.stockId()).get();
 		//Mysql - 매매내역 추가
 		FundTrade fundTrade = FundTrade.builder()
 				.fund(fund)
-				.stock(fundGameStock.getStock())
+				.stock(stock)
 				.tradeDate(todayChart.getDate())
 				.tradeType(TradeType.SELL)
 				.tradeAmount(dto.amount())
@@ -599,10 +597,11 @@ public class FundService {
 			StockChart todayStockCharts = stockChartRepository.findById(firstDayChartId + 299 + dto.day()).orElseThrow(
 					() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK)
 			);
-			log.info("currentGame.getStocks().get(firstDayChartId) : {}", currentGame.getStocks().get(firstDayChartId));
+			long stockId = todayStockCharts.getStock().getId();
+			log.info("currentGame.getStocks().get(firstDayChartId) : {}", currentGame.getStocks().get(stockId));
 			log.info("currentGame.getStocks() : {}", currentGame.getStocks());
 			log.info("firstDayChartId : {}", firstDayChartId);
-			int amount = currentGame.getStockAmount()[currentGame.getStocks().get(firstDayChartId)]; // 해당 Stock의 보유량 가져오기
+			int amount = currentGame.getStockAmount()[currentGame.getStocks().get(stockId)]; // 해당 Stock의 보유량 가져오기
 
 			totalAsset += (long) (amount * todayStockCharts.getEndPrice() * 0.9975); // 총 자산 계산
 		}
@@ -746,31 +745,6 @@ public class FundService {
 			);
 			assetList.add(assetListDto);
 
-			if (dto.day() == 51) {
-				// FundStock 에 저장
-				FundStock fundGameStock = fundStockRepository.findByFund_IdAndStock_Id(currentGame.getFundId(),todayChart.getStock().getId() )
-						.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK));
-
-				Long stockId = todayChart.getStock().getId();
-				Integer index = currentGame.getStocks().get(stockId);
-
-				// 최종 투자금액, 보유개수 저장
-				log.info("fundGameStock.updateInvestmentAmount : {}",currentGame.getStockPurchaseAmount()[stockIdx]);
-				log.info("fundGameStock.updateStockAmount : {}",(long) currentGame.getStockAmount()[stockIdx]);
-				log.info("fundGameStock.updateAveragePurchasePrice : {}",currentGame.getAveragePrice()[index]);
-				log.info("(long) currentGame.getStockAmount()[stockIdx] : {}",currentGame.getProfits()[index] + currentGame.getStockAmount()[index] * (todayChart.getEndPrice() - currentGame.getAveragePrice()[index]));
-				fundGameStock.updateInvestmentAmount(currentGame.getStockPurchaseAmount()[stockIdx]);
-				fundGameStock.updateStockAmount((long) currentGame.getStockAmount()[stockIdx]);
-
-				fundGameStock.updateAveragePurchasePrice(currentGame.getAveragePrice()[index]);
-				fundGameStock.updateProfit(currentGame.getProfits()[index] + currentGame.getStockAmount()[index] * (todayChart.getEndPrice() - currentGame.getAveragePrice()[index]));
-				double roi = currentGame.getStockPurchaseAmount()[index] == 0L ? 0 :
-						(100.0 * (currentGame.getProfits()[index] +
-								currentGame.getStockAmount()[index] * (todayChart.getEndPrice() - currentGame.getAveragePrice()[index]))
-								/ currentGame.getStockPurchaseAmount()[index]);
-				fundGameStock.updateRoi(roi);
-				log.info("fundGameStock.updateRoi : {}",roi);
-			}
 		}
 		// 총 profit 계산
 		long resultProfit = totalAsset - currentGame.getInitial();
@@ -781,21 +755,19 @@ public class FundService {
 
 		if (dto.day() == 51) {
 			// 결과 저장.
-
 			LocalDateTime startDate = null, endDate = null;
 			List<StockInfoDto> stockInfoDtoList = new ArrayList<>();
 			for (int i = 0; i < currentGame.getFirstDayChartList().size(); i++) {
-				StockChart startStockChart = stockChartRepository.findById(currentGame.getFirstDayChartList().get(i)).orElseThrow(
-						() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR)
-				);
+				Long firstDateChartId = currentGame.getFirstDayChartList().get(i);
+				StockChart stockChart = stockChartRepository.findById(firstDateChartId).get();
 				if (i == 0) {
 					// 한번만 실행 -> 날짜 받아오기
-					startDate = startStockChart.getDate();
-					endDate = stockChartRepository.findById(startStockChart.getId() + 349).orElseThrow(
-							() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK)
+					startDate = stockChart.getDate();
+					endDate = stockChartRepository.findById(stockChart.getId() + 349).orElseThrow(
+						() -> new BaseExceptionHandler(ErrorCode.NO_FUND_STOCK)
 					).getDate();
 				}
-				stockInfoDtoList.add(new StockInfoDto(startStockChart.getStock().getId(), startStockChart.getStock().getStockName()));
+				stockInfoDtoList.add(new StockInfoDto(stockChart.getStock().getId(), stockChart.getStock().getStockName()));
 			}
 
 			// 게임 로그 저장하기
@@ -813,8 +785,6 @@ public class FundService {
 
 			// 레디스에서 삭제해주기
 			redisTemplate.delete("fundGame:" + dto.fundId() + ":" + dto.gameIdx());
-			// 펀드 종료
-			fund.updateFundStatus(FundStatus.CLOSED);
 			// 펀드 종료 알림
 			for (Member member : fund.getFundMemberList().stream().map(FundMember::getMember).toList()) {
 				log.info("펀드 종료 알림: {}", member.getNickname());
@@ -829,6 +799,8 @@ public class FundService {
 				noticeService.createNotification(notice);
 			}
 			fundAndMemberService.closeFund(managerId, fund.getId());
+			// 펀드 종료
+			fund.updateFundStatus(FundStatus.CLOSED);
 			return new NextDayResponseDto(stockSummaries, currentGame.getCash(), resultProfit, resultRoi, currentGame.getTotalPurchaseAmount(),
 					totalAsset, assetList, fundGameResultDto);
 		}
