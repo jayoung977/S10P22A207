@@ -25,6 +25,7 @@ export const useWebSocket = () => {
     setGameId,
     setMultiGameStockIds,
     setDay,
+    sortPlayersByTotalAsset,
   } = socketStore();
 
   const { receiveAlarm, setReceiveAlarm, roomInfo, setRoomInfo } =

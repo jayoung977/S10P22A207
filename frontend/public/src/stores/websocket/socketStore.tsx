@@ -100,6 +100,7 @@ interface WebSocketStore {
   resultNumberCount: number;
   setResultNumberCount: (resultNumberCount: number) => void;
   incrementresultNumberCount: () => void;
+  sortPlayersByTotalAsset: () => void;
 }
 
 const socketStore = create<WebSocketStore>((set) => ({
@@ -168,6 +169,10 @@ const socketStore = create<WebSocketStore>((set) => ({
   setUnrealizedGain: (value) => set({ unrealizedGain: value }),
   players: [],
   setPlayers: (value) => set({ players: value }),
+  sortPlayersByTotalAsset: () =>
+    set((state) => ({
+      players: [...state.players].sort((a, b) => b.totalAsset - a.totalAsset),
+    })),
   multiGameLogId: 0,
   setMultiGameLogId: (value) => set({ multiGameLogId: value }),
   isGameOver: false,

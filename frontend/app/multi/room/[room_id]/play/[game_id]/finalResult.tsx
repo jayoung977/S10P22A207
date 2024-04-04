@@ -6,7 +6,7 @@ import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
 import FinalUser from "./finalUser";
 import { useParams, useRouter } from "next/navigation";
 import RoundResult from "./roundResult";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 import socketStore from "@/public/src/stores/websocket/socketStore";
 
@@ -16,7 +16,10 @@ export default function FinalResult() {
   const playClickSound = useClickSound();
   const params = useParams();
   const { isGameOver, setIsGameOver } = socketStore();
-  const { players } = socketStore();
+  const { players, sortPlayersByTotalAsset, setPlayers } = socketStore();
+  useEffect(() => {
+    sortPlayersByTotalAsset();
+  }, []);
   return (
     <div className="fixed -translate-x-1/2 translate-y-1/5 z-50 h-4/5 w-2/3 inset-0 left-1/2 border-2 bg-big-1 rounded-lg grid grid-rows-8">
       <div className="row-span-1 text-4xl rounded-t-lg text-white text-center p-4 bg-small-3">
