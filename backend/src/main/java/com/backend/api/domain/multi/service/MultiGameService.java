@@ -418,6 +418,10 @@ public class MultiGameService {
 		}
 		MultiWaitingRoom multiWaitingRoom = getWaitingRoom(roomId);
 
+		// totalAsset으로 내림차순 정렬
+		playerRankInfos.sort(Comparator.comparing(PlayerRankInfo::totalAsset, Comparator.reverseOrder()));
+
+
 		// 순위 계산 - Sorted Set (매 초마다 보내줘야 함!)
 		for(Long participantId : multiWaitingRoom.getParticipantIds()){
 			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIGAMEINFO, playerRankInfos));
@@ -434,7 +438,7 @@ public class MultiGameService {
 		}
 		MultiWaitingRoom multiWaitingRoom = getWaitingRoom(roomId);
 
-		for(Long participantId : multiWaitingRoom.getParticipantIds()){
+		for (Long participantId : multiWaitingRoom.getParticipantIds()) {
 			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIGAMEINFO, playerRankInfos));
 		}
 
