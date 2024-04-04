@@ -110,9 +110,8 @@ export default function page() {
       });
       console.log(response.data);
       setMultiGameLogId(response.data.result.multiGameLogId);
-      console.log("zz");
       // console.log("stockId : ", response.data.result.stockId);
-      // console.log("stockChartList : ", response.data.result.stockChartList);
+      console.log("stockChartList : ", response.data.result.stockChartList);
       setStockId(response.data.result.stockId);
       setStockChartList(response.data.result.stockChartList);
       setIsLoading(false);
