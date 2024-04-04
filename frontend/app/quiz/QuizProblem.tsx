@@ -106,7 +106,7 @@ export default function QuizProblem() {
         if (success >= 2) {
           Swal.fire({
             title: "축하합니다!",
-            text: `정답입니다! ${success}개 맞추셨습니다! ${
+            text: `정답입니다! ${success+1}개 맞추셨습니다! ${
               asset != null && asset <= 5000000
                 ? `100만원의 상금이 지급됩니다!`
                 : ``
@@ -122,7 +122,7 @@ export default function QuizProblem() {
         } else {
           Swal.fire({
             title: "수고하셨습니다!",
-            text: `정답입니다! ${success}개 맞추셨습니다!`,
+            text: `정답입니다! ${success+1}개 맞추셨습니다!`,
             icon: "info",
             confirmButtonText: "확인",
           }).then((result) => {

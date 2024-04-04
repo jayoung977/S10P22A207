@@ -9,6 +9,7 @@ import { Friend, FriendInfo } from "@/public/src/stores/user/userStore";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import useClickSound from "@/public/src/components/clickSound/DefaultClick";
+import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
 
 const fetchFriendInfo = async () => {
   const token = sessionStorage.getItem("accessToken");
@@ -26,8 +27,6 @@ export default function FriendSearch() {
 
   // 친구목록 react-query로 구현
   const { result }: { result: Friend[] } = data ? data : { result: [] };
-  const { searchFriend } = multigameStore();
-  const [filteredFriendList, setfilteredFriendList] = useState<Friend[]>([]);
   const playClickSound = useClickSound();
 
   const invitationRequest = async (request: any) => {
@@ -46,7 +45,7 @@ export default function FriendSearch() {
   const params = useParams<{ room_id?: string }>();
   const room_id: string | undefined = params.room_id;
   const inviteFriend = (friend: any) => {
-  const data = {
+    const data = {
       roomId: room_id,
       receiver: friend.memberId,
     };
@@ -75,7 +74,7 @@ export default function FriendSearch() {
         className="overflow-auto row-span-11"
         style={{ height: "calc(40vh)" }}
       >
-        {result.map((friend: Friend, i: number) => {
+        {result.map((friend: any, i: number) => {
           return (
             <div
               key={i}
@@ -87,7 +86,7 @@ export default function FriendSearch() {
             >
               <div className="col-span-2 items-center text-gray-900 whitespace-nowrap dark:text-white">
                 <Image
-                  src={ProfileImage}
+                  src={useGetProfileImage(friend?.asset)}
                   alt="프로필"
                   className="rounded-full"
                 />
