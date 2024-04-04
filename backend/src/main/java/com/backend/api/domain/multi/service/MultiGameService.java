@@ -995,7 +995,7 @@ public class MultiGameService {
 
 		return multiGameResults;
 	}
-r
+
     public MultiGameFinalResultDto getFinalResult(MultiGameResultRequestDto dto) {
 
         List<MultiGameLog> multiGameLogs = multiGameLogRepository.findByGameId(dto.gameId());
