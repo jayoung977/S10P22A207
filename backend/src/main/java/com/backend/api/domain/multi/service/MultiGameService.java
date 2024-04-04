@@ -440,9 +440,6 @@ public class MultiGameService {
 
 		return playerRankInfos;
 	}
-
-
-    // 공매도 청산
     public MultiTradeResponseDto buy(MultiTradeRequestDto dto, Long memberId) {
         MultiGame currentGame = this.getGame(memberId, dto.gameId());
 
@@ -959,67 +956,33 @@ public class MultiGameService {
 		return null;
 	}
 
-    public List<MultiGameResultDto> getSubResult(Long memberId, MultiGameSubResultRequestDto dto) {
-		MultiGameLog multiGameLog = multiGameLogRepository.findById(dto.multiGameLogId())
-			.orElseThrow(() -> new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR));
-		log.info("[MultiGameResult] - multiGameLog :{}", multiGameLog.getId());
+	public List<MultiGameResultDto> getSubResult(Long memberId, MultiGameSubResultRequestDto dto) {
 
-		String stockName = stockRepository.findById(multiGameLog.getStockId()).orElseThrow(
-            () -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_GAME_STOCK)
-        ).getStockName();
 
-		log.info("[MultiGameResult] - stockName :{}", multiGameLog.getId());
-
-        StockChart firstDayStockChart = stockChartRepository.findByStock_IdAndDate(multiGameLog.getStockId(), multiGameLog.getStartDate())
-            .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_LOG_STOCK_CHART));
-        StockChart lastDayStockChart = stockChartRepository.findById(firstDayStockChart.getId() + 349)
-            .orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NO_SINGLE_LOG_STOCK_CHART));
-
-        List<MultiGameResultDto> result = new ArrayList<>();
-		List<Long> userRanksByTotalAsset = multiGameRankService.getUserRanksByTotalAsset(dto.gameId(), dto.roundNumber());
-		log.info("[MultiGameResult] - userRanksByTotalAsset.size() : {}", userRanksByTotalAsset.size());
-
-        // 결과를 보여달라고 할 때 MultiGamePlayer 내의 랭크를 설정
-		List<MultiGamePlayer> multiGameLogMultiGamePlayers = multiGameLog.getMultiGamePlayers();
-		log.info("[MultiGameResult] - multiGameLogMultiGamePlayers.size() : {}", multiGameLogMultiGamePlayers.size());
-
-		for (int i = 0; i < userRanksByTotalAsset.size(); i++) {
-            for (MultiGamePlayer multiGameLogMultiGamePlayer : multiGameLogMultiGamePlayers) {
-                if (Objects.equals(userRanksByTotalAsset.get(i), multiGameLogMultiGamePlayer.getMember().getId())) {
-                    int rank = i + 1;
-					log.info("[MultiGameResult] - id : {}의 rank : {}", userRanksByTotalAsset.get(i), rank);
-                    MultiGameResultDto multiGameResultDto = new MultiGameResultDto(
-                        multiGameLogMultiGamePlayer.getMember().getId(),
-                        multiGameLogMultiGamePlayer.getMember().getNickname(),
-                        stockName,
-                        rank,
-                        multiGameLog.getStartDate(),
-                        lastDayStockChart.getDate(),
-                        (long) multiGameLogMultiGamePlayer.getFinalProfit(),
-                        multiGameLogMultiGamePlayer.getFinalRoi(),
-                        dto.roundNumber());
-					result.add(multiGameResultDto);
-					break;
-                }
-
-            }
+		List<Long> memberIdRank = multiGameRankService.getUserRanksByTotalAsset(dto.gameId(), dto.roundNumber());
+		List<MultiGameResultDto> multiGameResults = new ArrayList<>();
+		for (int i = 0; i < memberIdRank.size(); i++) {
+			Member player = memberRepository.findById(memberIdRank.get(i)).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+			MultiGame playerGame = getGame(memberIdRank.get(i), dto.gameId());
+			StockChart firstDayChart = stockChartRepository.findById(playerGame.getFirstDayStockChartId()).get();
+			StockChart endDayChart = stockChartRepository.findById(playerGame.getFirstDayStockChartId()+349).get();
+			multiGameResults.add(new MultiGameResultDto(
+				player.getId(),
+				player.getNickname(),
+				firstDayChart.getStock().getStockName(),
+				(i + 1),
+				firstDayChart.getDate(),
+				endDayChart.getDate(),
+				playerGame.getTotalAsset() - playerGame.getInitial(),
+				100.0 * (playerGame.getTotalAsset() - playerGame.getInitial()) / playerGame.getInitial(),
+				dto.roundNumber()));
 		}
-		log.info("[MultiGameResult] - result.size() : {}", result.size());
-
-		// 대기방 isPlaying -> false로
-		MultiWaitingRoom waitingRoom = getWaitingRoom(dto.roomId());
-		waitingRoom.setIsPlaying(false);
-		redisTemplate.opsForValue().set("multiGame:" + dto.roomId(), waitingRoom);
-
-		// 모두에게 결과 보내기
-		for(MultiGameResultDto resultDto : result){
-			Long participantId = resultDto.memberId();
-			log.info("[MultiGameResult] - participantId : {}", participantId);
-			redisTemplate.delete("multiGame:" + dto.gameId() + ":" + participantId + ":" + dto.roundNumber());
-			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIRESULT, result));
+		for(Long participantId : memberIdRank){
+			template.convertAndSend("/api/sub/" + participantId, new SocketBaseDtoRes<>(SocketType.MULTIRESULT, multiGameResults));
 		}
-        return result;
-    }
+
+		return multiGameResults;
+	}
 
     public MultiGameFinalResultDto getFinalResult(MultiGameResultRequestDto dto) {
 
