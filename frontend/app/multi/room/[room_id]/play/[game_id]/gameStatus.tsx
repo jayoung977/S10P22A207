@@ -1,5 +1,5 @@
 import socketStore from "@/public/src/stores/websocket/socketStore";
-
+import multigameStore from "@/public/src/stores/multi/MultiGameStore";
 //   setUnrealizedGain:(value) => set({ unrealizedGain: value }),
 export default function GameStatus() {
   const {
@@ -15,7 +15,11 @@ export default function GameStatus() {
     totalAsset,
     totalPurchaseAmount,
     unrealizedGain,
+    day
   } = socketStore();
+  const {
+    stockChartList
+  } = multigameStore()
   return (
     <div className="border rounded-md m-1 bg-small-6 text-white row-span-7 grid grid-rows-6 gap-2 items-center">
       <div className="row-span-1 flex justify-center text-sm">
@@ -75,7 +79,7 @@ export default function GameStatus() {
         </div>
         <div className="col-span-6">
           <div>현재가</div>
-          <div>{todayEndPrice.toLocaleString()}원</div>
+          <div>{stockChartList[299+day]?.endPrice.toLocaleString()}원</div>
         </div>
       </div>
     </div>
