@@ -29,7 +29,7 @@ export default function NavbarAlarmModal() {
 
   const fewtchMyNotification = async () => {
     const response = await axios({
-      url: `https://j10a207.p.ssafy.io/api/alarm/my-notification`,
+      url: `https://zayoung21.store/api/alarm/my-notification`,
       method: `get`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,

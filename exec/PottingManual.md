@@ -60,7 +60,7 @@ docker nginx를 사용하기 전에 https 인증을 위해서 일단 nginx를 �
        listen 80 default_server;
        listen [::]:80 default_server;
        root /var/www/html;
-       server_name {{domain_name}} # ex) j10a207.p.ssafy.io;
+       server_name {{domain_name}} # ex) zayoung21.store;
    }
    ```
 
@@ -93,15 +93,15 @@ Docker Nginx 설정 파일은 프로젝트 `/etc/nginx/sites-enabled/default.con
 ```bash
 server {
   listen 80;
-  server_name j10a207.p.ssafy.io;
+  server_name zayoung21.store;
   return 301 https://$host$request_uri;
 }
 server {
   listen 443 ssl;
-  server_name j10a207.p.ssafy.io;
+  server_name zayoung21.store;
 
-  ssl_certificate /etc/letsencrypt/live/j10a207.p.ssafy.io/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/j10a207.p.ssafy.io/privkey.pem;
+  ssl_certificate /etc/letsencrypt/live/zayoung21.store/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/zayoung21.store/privkey.pem;
 
   ssl_protocols TLSv1.2;
   ssl_prefer_server_ciphers on;
@@ -275,7 +275,7 @@ CMD ["java", "-jar", "app.jar"]
               kakao:
                 client-id: {{ kakao-develop-restapi-key }}
                 client-secret: {{ kakao-develop-restapi-key }}
-                redirect-uri: {{ domain-address }}/login/oauth2/code/kakao https://j10a207.p.ssafy.io/login/oauth2/code/kakao
+                redirect-uri: {{ domain-address }}/login/oauth2/code/kakao https://zayoung21.store/login/oauth2/code/kakao
                 client-authentication-method: client_secret_post
                 authorization-grant-type: authorization_code
                 scope: account_email
@@ -296,9 +296,9 @@ CMD ["java", "-jar", "app.jar"]
     # Social Redirect Url
     client:
       redirect-url:
-        success: https://j10a207.p.ssafy.io/login
-        anonymous: https://j10a207.p.ssafy.io/login
-        fail: https://j10a207.p.ssafy.io/signin
+        success: https://zayoung21.store/login
+        anonymous: https://zayoung21.store/login
+        fail: https://zayoung21.store/signin
     
     
     logging:

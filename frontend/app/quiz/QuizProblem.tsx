@@ -26,7 +26,7 @@ export default function QuizProblem() {
 
   const fetchShowMeTheMoney = async () => {
     const response = await axios({
-      url: `https://j10a207.p.ssafy.io/api/quiz/update`,
+      url: `https://zayoung21.store/api/quiz/update`,
       method: "put",
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -45,7 +45,7 @@ export default function QuizProblem() {
   const fetchQuizData = async () => {
     const response = await axios({
       method: "get",
-      url: "https://j10a207.p.ssafy.io/api/quiz",
+      url: "https://zayoung21.store/api/quiz",
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },

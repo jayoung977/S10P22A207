@@ -96,7 +96,7 @@ export default function TradeModal({ tradeType, isOpen, onClose }: any) {
     if (tradeStocksAmount > 0) {
       axios({
         method: "post",
-        url: `https://j10a207.p.ssafy.io/api/multi/${tradeType}`,
+        url: `https://zayoung21.store/api/multi/${tradeType}`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },

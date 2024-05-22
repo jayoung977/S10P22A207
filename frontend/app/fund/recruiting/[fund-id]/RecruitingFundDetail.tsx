@@ -22,7 +22,7 @@ type FundRegister = {
 
 const fetchFundDetail = async (fundId: string, token: string | null) => {
   const response = await fetch(
-    `https://j10a207.p.ssafy.io/api/fund/fund-detail?fundId=${fundId}`,
+    `https://zayoung21.store/api/fund/fund-detail?fundId=${fundId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -105,7 +105,7 @@ export default function RecruitingFundDetail() {
       investmentAmount: Number(investmoney),
     };
     await axios
-      .post("https://j10a207.p.ssafy.io/api/fund/register", registerForm, {
+      .post("https://zayoung21.store/api/fund/register", registerForm, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -129,7 +129,7 @@ export default function RecruitingFundDetail() {
       fundName: fundName,
     };
     await axios
-      .put("https://j10a207.p.ssafy.io/api/fund/start", fundInfo, {
+      .put("https://zayoung21.store/api/fund/start", fundInfo, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

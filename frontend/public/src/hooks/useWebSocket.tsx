@@ -47,7 +47,7 @@ export const useWebSocket = () => {
     try {
       const response = await axios({
         method: "get",
-        url: "https://j10a207.p.ssafy.io/api/alarm/unread-notification-count",
+        url: "https://zayoung21.store/api/alarm/unread-notification-count",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
@@ -68,7 +68,7 @@ export const useWebSocket = () => {
     if (memberId) {
       fetchAlarmData();
       client.current = Stomp.over(() => {
-        const sock = new SockJS("https://j10a207.p.ssafy.io/ws");
+        const sock = new SockJS("https://zayoung21.store/ws");
         return sock;
       });
       Swal.fire(`${nickname}님 환영합니다.`);
@@ -111,7 +111,7 @@ export const useWebSocket = () => {
                   icon: "success",
                 });
                 axios({
-                  url: `https://j10a207.p.ssafy.io/api/multi/${parsedMessage.result.roomId}`,
+                  url: `https://zayoung21.store/api/multi/${parsedMessage.result.roomId}`,
                   method: "get",
                   headers: {
                     Authorization: `Bearer ${sessionStorage.getItem(

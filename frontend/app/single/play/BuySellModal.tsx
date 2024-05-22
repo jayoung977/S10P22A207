@@ -134,7 +134,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
         try {
             const response = await axios({
                 method: "post",
-                url: "https://j10a207.p.ssafy.io/api/single/buy",
+                url: "https://zayoung21.store/api/single/buy",
                 data: {
                     gameIdx: gameIdx,
                     stockId: stockListData[selectedStockIndex]?.stockId,
@@ -161,7 +161,7 @@ export default function BuySellModal({ isBuy } :{ isBuy :boolean }) {
         try {
             const response = await axios({
                 method: "post",
-                url: "https://j10a207.p.ssafy.io/api/single/sell",
+                url: "https://zayoung21.store/api/single/sell",
                 data: {
                     gameIdx: gameIdx,
                     stockId: stockListData[selectedStockIndex]?.stockId,

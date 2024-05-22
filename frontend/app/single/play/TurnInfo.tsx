@@ -38,7 +38,7 @@ export default function TurnInfo () {
             const response = await axios(
                 {
                     method: "post",
-                    url : 'https://j10a207.p.ssafy.io/api/single/tomorrow', 
+                    url : 'https://zayoung21.store/api/single/tomorrow', 
                     data: {
                         gameIdx: gameIdx,
                         day: turn+1

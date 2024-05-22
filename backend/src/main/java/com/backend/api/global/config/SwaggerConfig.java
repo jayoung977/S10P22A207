@@ -35,7 +35,7 @@ public class SwaggerConfig {
                 .version("v0.0.1");
 
         var localServer = new Server().description("local server").url("http://localhost:8080");
-        var webServer = new Server().description("web server").url("https://j10a207.p.ssafy.io");
+        var webServer = new Server().description("web server").url("https://zayoung21.store");
 
         String jwt = "JWT";
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);

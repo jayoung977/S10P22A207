@@ -73,7 +73,7 @@ public class WebSecurityConfig {
 			"http://localhost:5173",
 			"http://localhost:4000",
 			"http://localhost:3000",
-			"https://j10a207.p.ssafy.io"
+			"https://zayoung21.store"
 		);
 		return request -> {
 			CorsConfiguration config = new CorsConfiguration();
@@ -93,7 +93,7 @@ public class WebSecurityConfig {
 	// 		"http://localhost:3000",
 	// 		"http://localhost:4000",
 	// 		"http://localhost:8081",
-	// 		"https://j10a207.p.ssafy.io")
+	// 		"https://zayoung21.store")
 	// 	);
 	// 	config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 	// 	config.setAllowedHeaders(List.of("*"));

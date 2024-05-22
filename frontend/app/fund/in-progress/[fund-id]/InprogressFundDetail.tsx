@@ -15,7 +15,7 @@ import userStore from "@/public/src/stores/user/userStore";
 const fetchFundDetail = async (fundId: string) => {
   const token = sessionStorage.getItem("accessToken");
   const response = await fetch(
-    `https://j10a207.p.ssafy.io/api/fund/fund-detail?fundId=${fundId}`,
+    `https://zayoung21.store/api/fund/fund-detail?fundId=${fundId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

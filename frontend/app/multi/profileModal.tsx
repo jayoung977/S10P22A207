@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 const fetchProfile = async (userId: number) => {
   const token = sessionStorage.getItem("accessToken");
   const response = await fetch(
-    `https://j10a207.p.ssafy.io/api/member/profile?memberId=${userId}`,
+    `https://zayoung21.store/api/member/profile?memberId=${userId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -27,7 +27,7 @@ const fetchProfile = async (userId: number) => {
 
 const checkFriend = async (followingId: number) => {
   const response = await fetch(
-    `https://j10a207.p.ssafy.io/api/friend/check-friend?followingId=${followingId}`,
+    `https://zayoung21.store/api/friend/check-friend?followingId=${followingId}`,
     {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -58,7 +58,7 @@ export default function ProfileModal() {
     const token = sessionStorage.getItem("accessToken");
     axios({
       method: "post",
-      url: "https://j10a207.p.ssafy.io/api/friend-ask",
+      url: "https://zayoung21.store/api/friend-ask",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -95,7 +95,7 @@ export default function ProfileModal() {
     const token = sessionStorage.getItem("accessToken");
     axios({
       method: "delete",
-      url: `https://j10a207.p.ssafy.io/api/friend/delete?followingId=${userId}`,
+      url: `https://zayoung21.store/api/friend/delete?followingId=${userId}`,
       headers: {
         Authorization: `Bearer ${token}`,
       },

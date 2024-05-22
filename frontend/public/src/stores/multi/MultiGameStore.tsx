@@ -113,7 +113,7 @@ const multigameStore = create<Store>((set: any) => ({
   getMultigameRoomInfo: (value: number) => {
     axios({
       method: 'post',
-      url: `https://j10a207.p.ssafy.io/api/multi/room-info?roomId=${value}`,
+      url: `https://zayoung21.store/api/multi/room-info?roomId=${value}`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
       }

@@ -16,7 +16,7 @@ import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 const fetchMultiRoomInfo = async (pageNumber: number) => {
   const token = sessionStorage.getItem("accessToken");
   const response = await fetch(
-    `https://j10a207.p.ssafy.io/api/multi?pageNumber=${pageNumber}`,
+    `https://zayoung21.store/api/multi?pageNumber=${pageNumber}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -58,7 +58,7 @@ export default function GameRoomSetting() {
 
   const handleQuickstart = () => {
     playClickSound();
-    axios.get('https://j10a207.p.ssafy.io/api/multi/1', {
+    axios.get('https://zayoung21.store/api/multi/1', {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
       }

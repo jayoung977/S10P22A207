@@ -26,7 +26,7 @@ export default function UserRecordInfoSingle() {
   const fetchUserSingleGame = async () => {
     const response = await axios({
       method: "get",
-      url: `https://j10a207.p.ssafy.io/api/member/single-game-log?memberId=${id}`,
+      url: `https://zayoung21.store/api/member/single-game-log?memberId=${id}`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },

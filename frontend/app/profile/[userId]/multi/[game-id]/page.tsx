@@ -55,7 +55,7 @@ export default function page() {
     try {
       const response = await axios({
         method: "get",
-        url: ` https://j10a207.p.ssafy.io/api/multi/log?multiGameLogId=${multiGameLogId}`,
+        url: ` https://zayoung21.store/api/multi/log?multiGameLogId=${multiGameLogId}`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },

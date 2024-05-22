@@ -7,7 +7,7 @@ import { userType, userInfo } from "./FriendUserRankingList";
 const fetchAllUserRankingInfo = async () => {
   // 전체 랭킹 불러오는 api 개발 전
   // 우선 친구 랭킹 불러오는 api 사용
-  const response = await fetch(`https://j10a207.p.ssafy.io/api/member/list`,
+  const response = await fetch(`https://zayoung21.store/api/member/list`,
   {
     headers: {
       'Authorization': `Bearer ${sessionStorage.getItem("accessToken")}`,

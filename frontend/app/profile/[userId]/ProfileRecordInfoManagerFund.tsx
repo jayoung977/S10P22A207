@@ -35,7 +35,7 @@ export default function UserRecordInfoManagerFund() {
   const fetchFundManagerBoard = async () => {
     const response = await axios({
       method: "get",
-      url: `https://j10a207.p.ssafy.io/api/fund/other-managing-list?managerId=${id}`,
+      url: `https://zayoung21.store/api/fund/other-managing-list?managerId=${id}`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },

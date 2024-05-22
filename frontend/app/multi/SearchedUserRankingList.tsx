@@ -22,7 +22,7 @@ export default function SearchedUserRankingList() {
   const fetchEntireUserData = async (search: string) => {
     const response = await axios({
       method: "get",
-      url: `https://j10a207.p.ssafy.io/api/member/search?nickname=${search}`,
+      url: `https://zayoung21.store/api/member/search?nickname=${search}`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },

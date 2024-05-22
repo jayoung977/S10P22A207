@@ -35,7 +35,7 @@ export default function UserRecordInfoMemberFund() {
   const fetchFundMemberBoard = async () => {
     const response = await axios({
       method: "get",
-      url: `https://j10a207.p.ssafy.io/api/fund/other-investing-list?memberId=${id}`,
+      url: `https://zayoung21.store/api/fund/other-investing-list?memberId=${id}`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },

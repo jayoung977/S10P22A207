@@ -27,7 +27,7 @@ interface SentFriendRequestInfo {
 
 const fetchSentFriendRequests = async () => {
   const response = await axios({
-    url: "https://j10a207.p.ssafy.io/api/friend-ask/send-list",
+    url: "https://zayoung21.store/api/friend-ask/send-list",
     method: "get",
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -60,7 +60,7 @@ export default function ProfileSentFriendRequest() {
     (nickname: string) =>
       axios({
         method: "delete",
-        url: `https://j10a207.p.ssafy.io/api/friend-ask/cancel?nickname=${nickname}`,
+        url: `https://zayoung21.store/api/friend-ask/cancel?nickname=${nickname}`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },

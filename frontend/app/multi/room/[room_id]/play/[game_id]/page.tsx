@@ -100,7 +100,7 @@ export default function page() {
       console.log(data);
       const response = await axios({
         method: "post",
-        url: "https://j10a207.p.ssafy.io/api/multi/game-chart",
+        url: "https://zayoung21.store/api/multi/game-chart",
         data: {
           roundNumber: roundNumber,
           stockId: multiGameStockIds[roundNumber - 1].stockId,
@@ -149,7 +149,7 @@ export default function page() {
 
   const fetchMultiPlayUsers = async () => {
     const response = await axios({
-      url: `https://j10a207.p.ssafy.io/api/multi/player-info`,
+      url: `https://zayoung21.store/api/multi/player-info`,
       method: `post`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,

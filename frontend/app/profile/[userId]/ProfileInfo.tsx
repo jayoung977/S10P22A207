@@ -44,7 +44,7 @@ export default function UserInfo() {
   const fetchUserInfo = async () => {
     const response = await axios({
       method: "get",
-      url: `https://j10a207.p.ssafy.io/api/member/profile?memberId=${id}`,
+      url: `https://zayoung21.store/api/member/profile?memberId=${id}`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
@@ -62,7 +62,7 @@ export default function UserInfo() {
   const checkFriendRequest = async () => {
     const response = await axios({
       method: "get",
-      url: `https://j10a207.p.ssafy.io/api/friend/check-friend?followingId=${id}`,
+      url: `https://zayoung21.store/api/friend/check-friend?followingId=${id}`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
@@ -82,7 +82,7 @@ export default function UserInfo() {
     (request: any) =>
       axios({
         method: "post",
-        url: "https://j10a207.p.ssafy.io/api/friend-ask",
+        url: "https://zayoung21.store/api/friend-ask",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
@@ -101,7 +101,7 @@ export default function UserInfo() {
     () =>
       axios({
         method: "delete",
-        url: `https://j10a207.p.ssafy.io/api/friend/delete?followingId=${id}`,
+        url: `https://zayoung21.store/api/friend/delete?followingId=${id}`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },

@@ -43,7 +43,7 @@ export default function GameRoom(props: {
         if (result.isConfirmed) {
           if (Number(result.value) === password) {
             axios
-              .get(`https://j10a207.p.ssafy.io/api/multi/${room.roomId}`, {
+              .get(`https://zayoung21.store/api/multi/${room.roomId}`, {
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
@@ -65,7 +65,7 @@ export default function GameRoom(props: {
       });
     } else {
       axios
-        .get(`https://j10a207.p.ssafy.io/api/multi/${room.roomId}`, {
+        .get(`https://zayoung21.store/api/multi/${room.roomId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

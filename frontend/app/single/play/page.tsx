@@ -81,7 +81,7 @@ export default function SinglePlay() {
     try {
       const response = await axios({
         method: "get",
-        url: "https://j10a207.p.ssafy.io/api/single",
+        url: "https://zayoung21.store/api/single",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },

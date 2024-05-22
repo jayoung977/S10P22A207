@@ -36,7 +36,7 @@ export default function KakaoLogin() {
   ];
   const loginHandler = () => {
     if (typeof window !== "undefined") {
-      const API_URL = "https://j10a207.p.ssafy.io";
+      const API_URL = "https://zayoung21.store";
       const KAKAO_AUTH_URL = `${API_URL}/oauth2/authorization/kakao`;
       window.location.href = KAKAO_AUTH_URL;
     }

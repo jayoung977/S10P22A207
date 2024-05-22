@@ -23,7 +23,7 @@ export default function SignUp() {
     try {
       const response = await axios({
         method: "get",
-        url: "https://j10a207.p.ssafy.io/api/alarm/login",
+        url: "https://zayoung21.store/api/alarm/login",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
@@ -46,7 +46,7 @@ export default function SignUp() {
   const signup = async (request: RequestType): Promise<AxiosResponse<any>> => {
     const response = await axios({
       method: "put",
-      url: `https://j10a207.p.ssafy.io/api/member/additional-info`,
+      url: `https://zayoung21.store/api/member/additional-info`,
       data: request,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -94,7 +94,7 @@ export default function SignUp() {
   const nickNameCheck = async (nickname: string) => {
     const response = await axios({
       method: "get",
-      url: `https://j10a207.p.ssafy.io/api/member/nickname/check?nickname=${nickname}`,
+      url: `https://zayoung21.store/api/member/nickname/check?nickname=${nickname}`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },

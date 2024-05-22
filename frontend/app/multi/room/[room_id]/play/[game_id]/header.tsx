@@ -50,7 +50,7 @@ export default function Header() {
   const { resultNumberCount } = socketStore();
   const fetchEndGame = async () => {
     const response = await axios({
-      url: "https://j10a207.p.ssafy.io/api/multi/round-result",
+      url: "https://zayoung21.store/api/multi/round-result",
       method: "post",
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -95,7 +95,7 @@ export default function Header() {
   function handleTomorrow(day: number) {
     axios({
       method: "post",
-      url: "https://j10a207.p.ssafy.io/api/multi/tomorrow",
+      url: "https://zayoung21.store/api/multi/tomorrow",
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },

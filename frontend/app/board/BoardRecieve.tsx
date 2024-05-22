@@ -31,7 +31,7 @@ const deleteBoard = async (
 ): Promise<AxiosResponse<DeleteBoardResponse>> => {
   const response = await axios({
     method: "delete",
-    url: `https://j10a207.p.ssafy.io/api/community?communityId=${boardId}`,
+    url: `https://zayoung21.store/api/community?communityId=${boardId}`,
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
     },
@@ -42,7 +42,7 @@ const deleteBoard = async (
 const fetchBoardInfo = async () => {
   const response = await axios({
     method: "get",
-    url: "https://j10a207.p.ssafy.io/api/community/all",
+    url: "https://zayoung21.store/api/community/all",
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
     },

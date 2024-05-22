@@ -57,7 +57,7 @@ export default function MakeRoomModal({ isOpen, onClose }: any) {
     
   const token = sessionStorage.getItem("accessToken");
     try {
-      const response = await fetch("https://j10a207.p.ssafy.io/api/multi/create-room",{
+      const response = await fetch("https://zayoung21.store/api/multi/create-room",{
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -13,7 +13,7 @@ import useGetProfileImage from "@/public/src/hooks/useGetProfileImage";
 
 const fetchFriendInfo = async () => {
   const token = sessionStorage.getItem("accessToken");
-  const response = await fetch("https://j10a207.p.ssafy.io/api/friend/list", {
+  const response = await fetch("https://zayoung21.store/api/friend/list", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -32,7 +32,7 @@ export default function FriendSearch() {
   const invitationRequest = async (request: any) => {
     const response = await axios({
       method: "post",
-      url: "https://j10a207.p.ssafy.io/api/multi/invite",
+      url: "https://zayoung21.store/api/multi/invite",
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },

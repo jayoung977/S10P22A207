@@ -8,7 +8,7 @@ export default function SingleGameEndModal ({ isOpen, onClose } :any) {
     const singleGameAgainHandler = () => {
         onClose();
         if (typeof window != undefined) {
-            // window.location.replace("https://j10a207.p.ssafy.io/api/single/play");
+            // window.location.replace("https://zayoung21.store/api/single/play");
             window.location.href = window.location.href;
         }
     }

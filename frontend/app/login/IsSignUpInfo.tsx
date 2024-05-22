@@ -21,7 +21,7 @@ export default function IsSignUpInfo() {
     }
     const response = await axios({
       method: "get",
-      url: `https://j10a207.p.ssafy.io/api/member/privilege/check`,
+      url: `https://zayoung21.store/api/member/privilege/check`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
@@ -47,7 +47,7 @@ export default function IsSignUpInfo() {
     try {
       const response = await axios({
         method: "get",
-        url: "https://j10a207.p.ssafy.io/api/alarm/login",
+        url: "https://zayoung21.store/api/alarm/login",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },

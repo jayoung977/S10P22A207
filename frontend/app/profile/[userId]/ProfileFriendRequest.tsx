@@ -28,7 +28,7 @@ interface FriendRequestInfo {
 
 const fetchFriendRequests = async () => {
   const response = await axios({
-    url: "https://j10a207.p.ssafy.io/api/friend-ask/receive-list",
+    url: "https://zayoung21.store/api/friend-ask/receive-list",
     method: "get",
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -49,7 +49,7 @@ export default function ProfileFriendRequest() {
     (nickname: string) =>
       axios({
         method: "post",
-        url: "https://j10a207.p.ssafy.io/api/friend-ask/accept",
+        url: "https://zayoung21.store/api/friend-ask/accept",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
@@ -66,7 +66,7 @@ export default function ProfileFriendRequest() {
     (nickname: string) =>
       axios({
         method: "delete",
-        url: `https://j10a207.p.ssafy.io/api/friend-ask/reject?nickname=${nickname}`,
+        url: `https://zayoung21.store/api/friend-ask/reject?nickname=${nickname}`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },

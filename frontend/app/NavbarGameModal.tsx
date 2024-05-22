@@ -31,7 +31,7 @@ export default function NavbarGameModal() {
     // api 요청으로 넘어오는 데이터 : 이어하기 유무(true/false), 게임 방 번호
     // 확인 후 res.data.result 값이 true일 경우, Swal.fire 오픈
     axios
-      .get("https://j10a207.p.ssafy.io/api/single/is-existing-single-game", {
+      .get("https://zayoung21.store/api/single/is-existing-single-game", {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },

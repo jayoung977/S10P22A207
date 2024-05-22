@@ -22,7 +22,7 @@ interface NewFund {
 
 const createFund = async(fund: NewFund) => {
   const token = sessionStorage.getItem('accessToken')
-  const { data } = await axios.post(`https://j10a207.p.ssafy.io/api/fund/open`,fund,{
+  const { data } = await axios.post(`https://zayoung21.store/api/fund/open`,fund,{
     headers: {
       'Authorization': `Bearer ${token}`
     }
@@ -64,7 +64,7 @@ export default function MakeFundModal({isOpen, onClose}: any){
       headers: {
         Authorization: `Bearer ${token}`
       },
-      url: 'https://j10a207.p.ssafy.io/api/fund/fundname/check',
+      url: 'https://zayoung21.store/api/fund/fundname/check',
       params: {
         fundName: funName,
       }

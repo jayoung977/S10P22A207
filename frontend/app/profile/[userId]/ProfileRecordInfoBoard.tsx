@@ -24,7 +24,7 @@ export default function UserRecordInfoBoard() {
   const fetchUserBoard = async () => {
     const response = await axios({
       method: "get",
-      url: `https://j10a207.p.ssafy.io/api/community/mylist?loginUserId=${id}`,
+      url: `https://zayoung21.store/api/community/mylist?loginUserId=${id}`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },

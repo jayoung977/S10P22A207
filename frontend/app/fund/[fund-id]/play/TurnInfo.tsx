@@ -40,7 +40,7 @@ export default function TurnInfo () {
             const response = await axios(
                 {
                     method: "post",
-                    url : 'https://j10a207.p.ssafy.io/api/fund/game/tomorrow', 
+                    url : 'https://zayoung21.store/api/fund/game/tomorrow', 
                     data: {
                         fundId: params['fund-id'],
                         gameIdx: gameIdx,

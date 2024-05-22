@@ -32,7 +32,7 @@ export default function UserRecord() {
   const fetchUserInfo = async () => {
     const response = await axios({
       method: "get",
-      url: `https://j10a207.p.ssafy.io/api/member/profile?memberId=${id}`,
+      url: `https://zayoung21.store/api/member/profile?memberId=${id}`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },

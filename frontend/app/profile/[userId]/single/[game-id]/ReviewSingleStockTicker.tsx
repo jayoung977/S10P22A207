@@ -13,7 +13,7 @@ export default function SingleStockTicker() {
     try {
       const response = await axios({
         method: "get",
-        url: `https://j10a207.p.ssafy.io/hadoop/stock/change-count/start-end?startDate=${startDate}&endDate=${endDate}&stockCode=${stockCode}`,
+        url: `https://zayoung21.store/hadoop/stock/change-count/start-end?startDate=${startDate}&endDate=${endDate}&stockCode=${stockCode}`,
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         }

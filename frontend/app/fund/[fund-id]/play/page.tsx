@@ -85,7 +85,7 @@ export default function FundPlay() {
     try {
       const response = await axios({
         method: "get",
-        url: `https://j10a207.p.ssafy.io/api/fund/game?fundId=${params["fund-id"]}`,
+        url: `https://zayoung21.store/api/fund/game?fundId=${params["fund-id"]}`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },

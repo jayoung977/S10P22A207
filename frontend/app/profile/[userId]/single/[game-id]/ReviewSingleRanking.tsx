@@ -19,7 +19,7 @@ export default function SingleRanking() {
     try {
       const response = await axios({
         method: "get",
-        url: `https://j10a207.p.ssafy.io/api/single/log/member?singelGameStockId=${item.singleGameStockId}&memberId=${item.memberId}`,
+        url: `https://zayoung21.store/api/single/log/member?singelGameStockId=${item.singleGameStockId}&memberId=${item.memberId}`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },

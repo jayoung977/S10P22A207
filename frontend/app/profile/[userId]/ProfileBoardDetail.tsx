@@ -32,7 +32,7 @@ export default function ProfileBoardDetail({
   const { memberId } = userStore();
   const fetchCommunityDetail = async () => {
     const response = await axios({
-      url: `https://j10a207.p.ssafy.io/api/community?communityId=${isBoardOpen}`,
+      url: `https://zayoung21.store/api/community?communityId=${isBoardOpen}`,
       method: "get",
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -47,7 +47,7 @@ export default function ProfileBoardDetail({
     (isBoardOpen: number) =>
       axios({
         method: "delete",
-        url: `https://j10a207.p.ssafy.io/api/community?communityId=${isBoardOpen}`,
+        url: `https://zayoung21.store/api/community?communityId=${isBoardOpen}`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },

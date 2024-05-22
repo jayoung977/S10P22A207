@@ -11,7 +11,7 @@ import useClickSound from "@/public/src/components/clickSound/DefaultClick";
 const fetchFundInfo = async () => {
   const token = sessionStorage.getItem("accessToken");
   const response = await fetch(
-    "https://j10a207.p.ssafy.io/api/fund/running-list",
+    "https://zayoung21.store/api/fund/running-list",
     {
       headers: {
         Authorization: `Bearer ${token}`,

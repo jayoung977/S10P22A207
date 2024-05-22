@@ -11,7 +11,7 @@ export default function FundGameEndModal ({ isOpen, onClose } :any) {
         try {
             const response = axios({
                 method: "put",
-                url : 'https://j10a207.p.ssafy.io/api/fund/close', 
+                url : 'https://zayoung21.store/api/fund/close', 
                 data: {
                     fundId: params['fund-id'],
                 },

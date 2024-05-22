@@ -18,7 +18,7 @@ export default function GameMembers(){
     console.log(`${id}번,넌 나가라!`)
     axios({
       method: 'delete',
-      url: `https://j10a207.p.ssafy.io/api/multi/kick?roomId=${roomId}&kickMemberId=${id}`,
+      url: `https://zayoung21.store/api/multi/kick?roomId=${roomId}&kickMemberId=${id}`,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
       }

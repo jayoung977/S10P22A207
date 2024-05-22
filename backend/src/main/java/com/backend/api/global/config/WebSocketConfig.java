@@ -18,7 +18,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	public void registerStompEndpoints(StompEndpointRegistry endpointRegistry) {
 		endpointRegistry.addEndpoint("/ws")
 			.setAllowedOriginPatterns(
-				"https://j10a207.p.ssafy.io",
+				"https://zayoung21.store",
 				"http://localhost:5173",
 				"http://localhost:3000"
 			)

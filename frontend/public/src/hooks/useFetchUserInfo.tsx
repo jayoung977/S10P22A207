@@ -22,7 +22,7 @@ export default function useFetchUserInfo() {
       try {
         const response = await axios({
           method: "get",
-          url: `https://j10a207.p.ssafy.io/api/member`,
+          url: `https://zayoung21.store/api/member`,
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
           },

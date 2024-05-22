@@ -16,7 +16,7 @@ export default function BoardSend() {
   const sendBoard = async (formData: FormData): Promise<AxiosResponse<any>> => {
     const response = await axios({
       method: "post",
-      url: `https://j10a207.p.ssafy.io/api/community/write-multi?loginUserId=${memberId}`,
+      url: `https://zayoung21.store/api/community/write-multi?loginUserId=${memberId}`,
       data: formData,
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,

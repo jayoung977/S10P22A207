@@ -15,7 +15,7 @@ export interface userInfo {
 }
 
 const fetchFriendUserRankingInfo = async() => {
-  const response = await fetch(`https://j10a207.p.ssafy.io/api/friend/list`,
+  const response = await fetch(`https://zayoung21.store/api/friend/list`,
   {
     headers: {
       'Authorization': `Bearer ${sessionStorage.getItem("accessToken")}`,
