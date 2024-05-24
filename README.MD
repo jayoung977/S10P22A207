@@ -11,7 +11,7 @@
 ---
 
 # 🐜 서비스 소개 🐜
-<img width="400" alt="image" src="https://github.com/jayoung977/S10P22A207/assets/61008837/d31f72cc-2e70-44c6-8b78-ef3da3ebfe94">
+<img width="300" alt="image" src="https://github.com/jayoung977/S10P22A207/assets/61008837/d31f72cc-2e70-44c6-8b78-ef3da3ebfe94">
 
 ## :globe_with_meridians:[지금 바로 지금이니 접속하기](https://zayoung21.store):globe_with_meridians:
 
