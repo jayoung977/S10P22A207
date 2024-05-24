@@ -45,83 +45,29 @@
 
 # 🌹 화면 소개
 
-![](./assets/components/scenario01.png)
+## 로그인
 
-![](./assets/components/scenario02.png)
+## 멀티 게임
 
-![](./assets/components/scenario03.png>)
+### 멀티 게임 플레이
+![멀티게임플레이 - Clipchamp로 제작](https://github.com/jayoung977/S10P22A207/assets/61008837/3a6c9044-1642-46ca-90be-2b3db4f82069)
+### 멀티 게임 세부 내용
+![멀티게임세부짤 - Clipchamp로 제작](https://github.com/jayoung977/S10P22A207/assets/61008837/db42fa89-8ef2-4692-8915-0fdc487479db)
 
-![](./assets/components/scenario04.png)
+## 싱글 게임
+### 싱글 게임 플레이
+![싱글 플레이- Clipchamp로 제작](https://github.com/jayoung977/S10P22A207/assets/61008837/edd47f06-101e-4ea3-8f61-741aaa839c1b)
+### 싱글 게임 세부 내용
+![싱글게임세부짤 - Clipchamp로 제작](https://github.com/jayoung977/S10P22A207/assets/61008837/aa4b95e4-9f70-43f4-b740-2b09ac0fe96a)
 
-![](./assets/components/scenario05.png)
+## 싱글 게임 복기  
 
-![](./assets/components/scenario06.png)
 
-![](./assets/components/scenario07.png)
+## 친구 및 알림 
+## 커뮤니티
+## 퀴즈
+## 펀드
 
-![](./assets/components/scenario08.png)
-
-![](./assets/components/scenario09.png)
-
-![](./assets/components/scenario10.png)
-
-![](./assets/components/scenario11.png)
-
-![](./assets/components/scenario12.png)
-
-![](./assets/components/scenario13.png)
-
-![](./assets/components/scenario14.png)
-
-![](./assets/components/scenario15.png)
-
-![](./assets/components/scenario16.png)
-
-![](./assets/components/scenario17.png)
-
-![](./assets/components/scenario18.png)
-
-![](./assets/components/scenario19.png)
-
-![](./assets/components/scenario20.png)
-
-![](./assets/components/scenario21.png)
-
-![](./assets/components/scenario22.png)
-
-![](./assets/components/scenario23.png)
-
-![](./assets/components/scenario24.png)
-
-![](./assets/components/scenario25.png)
-
-![](./assets/components/scenario26.png)
-
-![](./assets/components/scenario27.png)
-
-![](./assets/components/scenario28.png)
-
-![](./assets/components/scenario29.png)
-
-![](./assets/components/scenario30.png)
-
-![](./assets/components/scenario31.png)
-
-![](./assets/components/scenario32.png)
-
-![](./assets/components/scenario33.png)
-
-![](./assets/components/scenario34.png)
-
-![](./assets/components/scenario35.png)
-
-![](./assets/components/scenario36.png)
-
-![](./assets/components/scenario37.png)
-
-![](./assets/components/scenario38.png)
-
-![](./assets/components/scenario39.png)
 
 # ✨ 기술 스택 ✨
 
