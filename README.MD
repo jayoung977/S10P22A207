@@ -15,7 +15,7 @@
 
 ## :globe_with_meridians:[지금 바로 지금이니 접속하기](https://zayoung21.store):globe_with_meridians:
 
-## ✨서비스 설명 ✨
+# ✨서비스 설명 ✨
 
 ### ✨개요 ✨
 
