@@ -11,6 +11,8 @@
 ---
 
 # 🐜 서비스 소개 🐜
+![logo-face3-removebg-preview](https://github.com/jayoung977/S10P22A207/assets/61008837/d31f72cc-2e70-44c6-8b78-ef3da3ebfe94)
+:globe_with_meridians:[지금이니 접속하기](https://zayoung21.store)
 
 ## ✨서비스 설명 ✨
 
